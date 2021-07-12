@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Assets/SMT_Factory_Layout.png" type="Texture" id=1]
 [ext_resource path="res://Objects/Bot.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Scripts/Navigation/FactoryNav.gd" type="Script" id=3]
+[ext_resource path="res://Objects/Stacker.tscn" type="PackedScene" id=4]
 
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( 120, 448, 120, 440, 480, 440, 480, 448, 480, 368, 488, 368, 488, 440, 488, 448, 656, 440, 656, 240, 664, 240, 664, 336, 808, 336, 808, 344, 664, 344, 664, 440, 1096, 440, 1096, 464, 1088, 464, 1088, 448, 1032, 448, 1032, 464, 1024, 464, 1024, 448, 792, 448, 792, 496, 816, 496, 816, 504, 792, 504, 792, 568, 816, 568, 816, 576, 784, 576, 784, 448, 688, 448, 688, 520, 680, 520, 680, 448, 624, 448, 616, 448, 624, 520, 616, 520, 488, 520, 480, 520 )
@@ -25,9 +26,11 @@ navpoly = SubResource( 1 )
 [node name="Bots" type="Node" parent="."]
 
 [node name="Bot0" parent="Bots" instance=ExtResource( 2 )]
-modulate = Color( 0.858824, 0.431373, 0.431373, 1 )
 position = Vector2( 128, 440 )
 
 [node name="Bot1" parent="Bots" instance=ExtResource( 2 )]
 visible = false
 position = Vector2( 688, 496 )
+
+[node name="Stacker" parent="Bots" instance=ExtResource( 4 )]
+position = Vector2( 488, 440 )
