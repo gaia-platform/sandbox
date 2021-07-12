@@ -1,6 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Assets/SMT_Factory_Layout.png" type="Texture" id=1]
+[ext_resource path="res://Objects/Bot.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Scripts/Navigation/FactoryNav.gd" type="Script" id=3]
 
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( 104, 464, 104, 424, 464, 424, 464, 464, 464, 368, 504, 368, 504, 424, 504, 464, 640, 424, 640, 240, 680, 240, 680, 320, 808, 320, 808, 360, 680, 360, 680, 416, 664, 464, 640, 464, 1112, 416, 1112, 464, 1072, 464, 1072, 456, 1048, 456, 1048, 464, 1008, 464, 1008, 456, 808, 456, 808, 480, 816, 480, 816, 520, 808, 520, 808, 552, 816, 552, 816, 592, 768, 592, 768, 456, 704, 456, 704, 520, 664, 520, 600, 464, 640, 520, 600, 520, 504, 520, 464, 520 )
@@ -10,6 +12,8 @@ outlines = [ PoolVector2Array( 104, 424, 464, 424, 464, 368, 504, 368, 504, 424,
 [node name="SOW_Factory" type="Node2D"]
 
 [node name="Navigation2D" type="Navigation2D" parent="."]
+script = ExtResource( 3 )
+bots_node_path = NodePath("../Bots")
 
 [node name="SMT_Factory_Layout" type="Sprite" parent="Navigation2D"]
 position = Vector2( 640, 360 )
@@ -17,3 +21,12 @@ texture = ExtResource( 1 )
 
 [node name="Floor_Navigation" type="NavigationPolygonInstance" parent="Navigation2D"]
 navpoly = SubResource( 1 )
+
+[node name="Bots" type="Node" parent="."]
+
+[node name="Bot0" parent="Bots" instance=ExtResource( 2 )]
+modulate = Color( 0.858824, 0.431373, 0.431373, 1 )
+
+[node name="Bot1" parent="Bots" instance=ExtResource( 2 )]
+visible = false
+position = Vector2( 688, 496 )
