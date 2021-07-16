@@ -27,9 +27,12 @@ navpoly = SubResource( 1 )
 
 [node name="Bot0" parent="Bots" instance=ExtResource( 2 )]
 position = Vector2( 488, 512 )
+bot_id = "0"
 
 [node name="Bot1" parent="Bots" instance=ExtResource( 2 )]
-position = Vector2( 280, 544 )
+position = Vector2( 264, 552 )
+bot_id = "1"
 
 [node name="Stacker" parent="Bots" instance=ExtResource( 4 )]
-position = Vector2( 112, 608 )
+position = Vector2( 200, 552 )
+bot_id = "3"

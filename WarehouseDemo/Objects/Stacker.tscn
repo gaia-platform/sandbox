@@ -7,15 +7,14 @@
 extents = Vector2( 24, 24 )
 
 [node name="Stacker" type="KinematicBody2D"]
-scale = Vector2( 1, 1 )
 script = ExtResource( 2 )
-payload_weight = 500
+bot_type = 1
+max_payload_weight = 500
 max_speed = 1.0
-batter_time = 8
+battery_time = 8
 charge_time = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-scale = Vector2( 1, 1 )
 shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]

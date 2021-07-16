@@ -46,7 +46,7 @@ func _physics_process(_delta):
 		var loc = CommunicationManager.read_variable("robot_location")
 		if loc != location_index && loc >= 0 && loc < _factory_locations.size():
 			location_index = loc
-			_update_navigation_path(bots[0], _factory_locations[location_index])
+			_update_navigation_path(bots[0], location_index)
 
 
 func _input(event):
@@ -55,12 +55,13 @@ func _input(event):
 		if location_index == _factory_locations.size():
 			location_index = 0
 
-		_update_navigation_path(bots[0], _factory_locations[location_index])
+		_update_navigation_path(bots[0], location_index)
 
 
 # Navigation functions
-func _update_navigation_path(bot, end_position):
-	var movement_path = get_simple_path(bot.position, end_position, true)
+func _update_navigation_path(bot, loc_index):
+	var movement_path = get_simple_path(bot.position, _factory_locations[loc_index], true)
 
-	# Set bot's movement path
+	# Set bot's movement path and properties
 	bot.movement_path = movement_path
+	bot.location = loc_index
