@@ -42,10 +42,11 @@ func _ready():
 
 
 func _physics_process(_delta):
-	var loc = CommunicationManager.read_variable("robot_location")
-	if loc != location_index && loc >= 0 && loc < _factory_locations.size():
-		location_index = loc
-		_update_navigation_path(bots[0], _factory_locations[location_index])
+	if CommunicationManager.is_working:
+		var loc = CommunicationManager.read_variable("robot_location")
+		if loc != location_index && loc >= 0 && loc < _factory_locations.size():
+			location_index = loc
+			_update_navigation_path(bots[0], _factory_locations[location_index])
 
 
 func _input(event):

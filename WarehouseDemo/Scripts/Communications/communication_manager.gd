@@ -1,5 +1,7 @@
 extends Node
 
+var is_working = false
+
 
 func _ready():
 	# Cancel process if no JavaScript
@@ -25,6 +27,8 @@ func _ready():
 		aws_bundle_file.close()
 	if mqtt_bundle_file.is_open():  # MQTT
 		JavaScript.eval(mqtt_bundle_file.get_as_text())
+
+	is_working = true
 
 
 func read_variable(variable_name):

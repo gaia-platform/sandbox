@@ -27,6 +27,7 @@
       /// State
       window.robot_location = 0
 
+
       //// Setup AWS and MQTT
       AWS.config.region = AWSConfiguration.region;
 
@@ -91,6 +92,13 @@
          robot_location = parseInt(payload.toString())
       }
 
+      // Install handlers
+      mqttClient.on('connect', mqttClientConnectHandler);
+      mqttClient.on('reconnect', mqttClientReconnectHandler);
+      mqttClient.on('message', mqttClientMessageHandler);
+
+
+      //// Methods
       function updateSubscriptionTopic() { // Topic subscription handler
          var subscribeTopic = 'subscribe-topic'
          mqttClient.unsubscribe(currentlySubscribedTopic);
@@ -99,18 +107,10 @@
 
       }
 
-      function publishData() { // Topic publish handler
-         var publishText = ""; //document.getElementById('publish-data').value;
-         var publishTopic = "public-topic"; //document.getElementById('publish-topic').value;
-
-         mqttClient.publish(publishTopic, publishText);
-
+      window.publishData = function (topic, payload) { // Topic publish handler
+         mqttClient.publish(topic, payload);
       }
 
-      // Install handlers
-      mqttClient.on('connect', mqttClientConnectHandler);
-      mqttClient.on('reconnect', mqttClientReconnectHandler);
-      mqttClient.on('message', mqttClientMessageHandler);
 
    }, { "./aws-configuration.js": 1, "aws-iot-device-sdk": "aws-iot-device-sdk", "aws-sdk": "aws-sdk" }]
 }, {}, [2]);
