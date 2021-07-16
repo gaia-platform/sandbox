@@ -10,17 +10,17 @@ onready var bots = bots_node.get_children()
 export var location_index = 0
 
 const _factory_locations = [
-	Vector2(485, 496),  # WS Start
-	Vector2(124, 435),  # Production Line
-	Vector2(485, 384),  # WS End
-	Vector2(784, 336),  # Packaging Line
-	Vector2(664, 264),  # Inbound
-	Vector2(1024, 440),  # Buffer Area 0/1
-	Vector2(1096, 440),  # Buffer Area 2/3
-	Vector2(792, 496),  # Kitting Area 0/1
-	Vector2(792, 568),  # Kitting Area 2/3
-	Vector2(624, 496),  # Charging Area 0
-	Vector2(688, 496),  # Charging Area 1
+	Vector2(484, 520),  # WS Start
+	Vector2(125, 424),  # Production Line
+	Vector2(486, 368),  # WS End
+	Vector2(813, 337),  # Packaging Line
+	Vector2(659, 243),  # Inbound
+	Vector2(1025, 464),  # Buffer Area 0/1
+	Vector2(1090, 464),  # Buffer Area 2/3
+	Vector2(816, 497),  # Kitting Area 0/1
+	Vector2(816, 568),  # Kitting Area 2/3
+	Vector2(620, 520),  # Charging Area 0
+	Vector2(685, 520),  # Charging Area 1
 ]
 enum _factory_stop {
 	WS_START,
@@ -60,7 +60,7 @@ func _input(event):
 
 # Navigation functions
 func _update_navigation_path(bot, loc_index):
-	var movement_path = get_simple_path(bot.position, _factory_locations[loc_index], true)
+	var movement_path = get_simple_path(bot.position, _factory_locations[loc_index])
 
 	# Set bot's movement path and properties
 	bot.movement_path = movement_path
