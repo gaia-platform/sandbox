@@ -26,4 +26,6 @@ func _ready():
 	if mqtt_bundle_file.is_open():  # MQTT
 		JavaScript.eval(mqtt_bundle_file.get_as_text())
 
-	print("Configured MQTT!")
+
+func read_variable(variable_name):
+	return JavaScript.eval(variable_name + ";")

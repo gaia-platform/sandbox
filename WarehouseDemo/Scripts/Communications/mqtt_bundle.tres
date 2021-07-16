@@ -19,10 +19,13 @@
 
       //// Variables
       /// MQTT
-      var currentlySubscribedTopic = 'subscribe-topic';
+      var currentlySubscribedTopic = 'robot_location';
 
       /// Browser
       var clientId = 'mqtt-explorer-' + (Math.floor((Math.random() * 100000) + 1)); // Unique ID for connecting to AWS
+
+      /// State
+      window.robot_location = 0
 
       //// Setup AWS and MQTT
       AWS.config.region = AWSConfiguration.region;
@@ -85,7 +88,7 @@
 
       function mqttClientMessageHandler(topic, payload) { // Message handler
          console.log('message: ' + topic + ':' + payload.toString());
-
+         robot_location = parseInt(payload.toString())
       }
 
       function updateSubscriptionTopic() { // Topic subscription handler

@@ -6,9 +6,9 @@
 [ext_resource path="res://Objects/Stacker.tscn" type="PackedScene" id=4]
 
 [sub_resource type="NavigationPolygon" id=1]
-vertices = PoolVector2Array( 120, 448, 120, 440, 480, 440, 480, 448, 480, 368, 488, 368, 488, 440, 488, 448, 656, 440, 656, 240, 664, 240, 664, 336, 808, 336, 808, 344, 664, 344, 664, 440, 1096, 440, 1096, 464, 1088, 464, 1088, 448, 1032, 448, 1032, 464, 1024, 464, 1024, 448, 792, 448, 792, 496, 816, 496, 816, 504, 792, 504, 792, 568, 816, 568, 816, 576, 784, 576, 784, 448, 688, 448, 688, 520, 680, 520, 680, 448, 624, 448, 616, 448, 624, 520, 616, 520, 488, 520, 480, 520 )
-polygons = [ PoolIntArray( 0, 1, 2, 3 ), PoolIntArray( 2, 4, 5, 6 ), PoolIntArray( 3, 2, 6, 7 ), PoolIntArray( 8, 9, 10, 11 ), PoolIntArray( 11, 12, 13, 14 ), PoolIntArray( 8, 11, 14 ), PoolIntArray( 8, 14, 15 ), PoolIntArray( 16, 17, 18, 19 ), PoolIntArray( 15, 16, 19, 20 ), PoolIntArray( 20, 21, 22, 23 ), PoolIntArray( 15, 20, 23 ), PoolIntArray( 15, 23, 24 ), PoolIntArray( 25, 26, 27, 28 ), PoolIntArray( 29, 30, 31, 32 ), PoolIntArray( 29, 32, 33, 28 ), PoolIntArray( 25, 28, 33 ), PoolIntArray( 24, 25, 33 ), PoolIntArray( 15, 24, 33 ), PoolIntArray( 15, 33, 34 ), PoolIntArray( 34, 35, 36, 37 ), PoolIntArray( 15, 34, 37 ), PoolIntArray( 15, 37, 38, 8 ), PoolIntArray( 6, 8, 38, 39 ), PoolIntArray( 38, 40, 41, 39 ), PoolIntArray( 6, 39, 7 ), PoolIntArray( 3, 7, 42, 43 ) ]
-outlines = [ PoolVector2Array( 120, 440, 480, 440, 480, 368, 488, 368, 488, 440, 656, 440, 656, 240, 664, 240, 664, 336, 808, 336, 808, 344, 664, 344, 664, 440, 1096, 440, 1096, 464, 1088, 464, 1088, 448, 1032, 448, 1032, 464, 1024, 464, 1024, 448, 792, 448, 792, 496, 816, 496, 816, 504, 792, 504, 792, 568, 816, 568, 816, 576, 784, 576, 784, 448, 688, 448, 688, 520, 680, 520, 680, 448, 624, 448, 624, 520, 616, 520, 616, 448, 488, 448, 488, 520, 480, 520, 480, 448, 120, 448 ) ]
+vertices = PoolVector2Array( 120, 448, 120, 424, 128, 424, 128, 440, 480, 448, 480, 440, 480, 368, 488, 368, 488, 440, 488, 448, 656, 440, 656, 240, 664, 240, 664, 336, 808, 336, 808, 344, 664, 344, 664, 440, 1096, 440, 1096, 464, 1088, 464, 1088, 448, 1032, 448, 1032, 464, 1024, 464, 1024, 448, 792, 448, 792, 496, 816, 496, 816, 504, 792, 504, 792, 568, 816, 568, 816, 576, 784, 576, 784, 448, 688, 448, 688, 520, 680, 520, 680, 448, 624, 448, 616, 448, 624, 520, 616, 520, 488, 520, 480, 520 )
+polygons = [ PoolIntArray( 0, 1, 2, 3 ), PoolIntArray( 4, 0, 3, 5 ), PoolIntArray( 5, 6, 7, 8 ), PoolIntArray( 4, 5, 8, 9 ), PoolIntArray( 10, 11, 12, 13 ), PoolIntArray( 13, 14, 15, 16 ), PoolIntArray( 10, 13, 16 ), PoolIntArray( 10, 16, 17 ), PoolIntArray( 18, 19, 20, 21 ), PoolIntArray( 17, 18, 21, 22 ), PoolIntArray( 22, 23, 24, 25 ), PoolIntArray( 17, 22, 25 ), PoolIntArray( 17, 25, 26 ), PoolIntArray( 27, 28, 29, 30 ), PoolIntArray( 31, 32, 33, 34 ), PoolIntArray( 31, 34, 35, 30 ), PoolIntArray( 27, 30, 35 ), PoolIntArray( 26, 27, 35 ), PoolIntArray( 17, 26, 35 ), PoolIntArray( 17, 35, 36 ), PoolIntArray( 36, 37, 38, 39 ), PoolIntArray( 17, 36, 39 ), PoolIntArray( 17, 39, 40, 10 ), PoolIntArray( 8, 10, 40, 41 ), PoolIntArray( 40, 42, 43, 41 ), PoolIntArray( 8, 41, 9 ), PoolIntArray( 4, 9, 44, 45 ) ]
+outlines = [ PoolVector2Array( 120, 424, 128, 424, 128, 440, 480, 440, 480, 368, 488, 368, 488, 440, 656, 440, 656, 240, 664, 240, 664, 336, 808, 336, 808, 344, 664, 344, 664, 440, 1096, 440, 1096, 464, 1088, 464, 1088, 448, 1032, 448, 1032, 464, 1024, 464, 1024, 448, 792, 448, 792, 496, 816, 496, 816, 504, 792, 504, 792, 568, 816, 568, 816, 576, 784, 576, 784, 448, 688, 448, 688, 520, 680, 520, 680, 448, 624, 448, 624, 520, 616, 520, 616, 448, 488, 448, 488, 520, 480, 520, 480, 448, 120, 448 ) ]
 
 [node name="SOW_Factory" type="Node2D"]
 
@@ -26,10 +26,10 @@ navpoly = SubResource( 1 )
 [node name="Bots" type="Node" parent="."]
 
 [node name="Bot0" parent="Bots" instance=ExtResource( 2 )]
-position = Vector2( 128, 440 )
+position = Vector2( 488, 512 )
 
 [node name="Bot1" parent="Bots" instance=ExtResource( 2 )]
-position = Vector2( 238.631, 612.859 )
+position = Vector2( 328, 440 )
 
 [node name="Stacker" parent="Bots" instance=ExtResource( 4 )]
 position = Vector2( 112, 608 )

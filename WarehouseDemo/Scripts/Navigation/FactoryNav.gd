@@ -11,7 +11,7 @@ export var location_index = 0
 
 const _factory_locations = [
 	Vector2(485, 496),  # WS Start
-	Vector2(120, 440),  # Production Line
+	Vector2(124, 435),  # Production Line
 	Vector2(485, 384),  # WS End
 	Vector2(784, 336),  # Packaging Line
 	Vector2(664, 264),  # Inbound
@@ -39,8 +39,13 @@ enum _factory_stop {
 
 func _ready():
 	bots[0].position = _factory_locations[_factory_stop.WS_START]
-	# bots[1].position = _factory_locations[_factory_stop.CHARGING_AREA_0]
-	# bots[2].position = _factory_locations[_factory_stop.BUFFER_AREA_1]
+
+
+func _physics_process(_delta):
+	var loc = CommunicationManager.read_variable("robot_location")
+	if loc != location_index && loc >= 0 && loc < _factory_locations.size():
+		location_index = loc
+		_update_navigation_path(bots[0], _factory_locations[location_index])
 
 
 func _input(event):
@@ -51,16 +56,9 @@ func _input(event):
 
 		_update_navigation_path(bots[0], _factory_locations[location_index])
 
-		# var index_shift = 0
-		# for bot in bots:
-		# 	_update_navigation_path(bot, _factory_locations[location_index])
-
 
 # Navigation functions
 func _update_navigation_path(bot, end_position):
-	# get_simple_path is part of the Navigation2D class.
-	# It returns a PoolVector2Array of points that lead you
-	# from the start_position to the end_position.
 	var movement_path = get_simple_path(bot.position, end_position, true)
 
 	# Set bot's movement path

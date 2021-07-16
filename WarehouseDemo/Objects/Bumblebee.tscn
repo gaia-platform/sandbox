@@ -10,6 +10,7 @@ extents = Vector2( 24, 24 )
 script = ExtResource( 2 )
 payload_weight = 250
 max_speed = 2.0
+speed_scale = 200.0
 batter_time = 10
 charge_time = 2
 
