@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="WarehouseDemo"
-run/main_scene="res://Scenes/SOW_Factory.tscn"
+run/main_scene="res://Scenes/single_bot_movement.tscn"
 config/icon="res://icon.png"
 
 [autoload]
