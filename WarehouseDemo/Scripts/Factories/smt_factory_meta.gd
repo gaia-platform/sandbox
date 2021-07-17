@@ -1,16 +1,29 @@
 extends Node
 
+const locations = [
+	Vector2(484, 520),  # WS Start
+	Vector2(125, 424),  # Production Line
+	Vector2(486, 368),  # WS End
+	Vector2(813, 337),  # Packaging Line
+	Vector2(659, 243),  # Inbound
+	Vector2(1025, 464),  # Buffer Area 0/1
+	Vector2(1090, 464),  # Buffer Area 2/3
+	Vector2(816, 497),  # Kitting Area 0/1
+	Vector2(816, 568),  # Kitting Area 2/3
+	Vector2(620, 520),  # Charging Area 0
+	Vector2(685, 520),  # Charging Area 1
+]
 
-# Declare member variables here. Examples:
-# var a = 2
-# var b = "text"
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-#	pass
+enum stop_names {
+	WS_START,
+	PRODUCTION_LINE,
+	WS_END,
+	PACKAGING_LINE,
+	INBOUND,
+	BUFFER_AREA_0,
+	BUFFER_AREA_1,
+	KITTING_AREA_0,
+	KITTING_AREA_1,
+	CHARGING_AREA_0,
+	CHARGING_AREA_1
+}

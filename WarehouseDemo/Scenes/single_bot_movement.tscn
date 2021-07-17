@@ -16,6 +16,7 @@ script = ExtResource( 4 )
 [node name="Navigation2D" type="Navigation2D" parent="."]
 script = ExtResource( 2 )
 bots_node_path = NodePath("../Bots")
+floorplan_meta_path = NodePath("..")
 
 [node name="SMT_Factory_Layout" type="Sprite" parent="Navigation2D"]
 position = Vector2( 640, 360 )
