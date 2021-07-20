@@ -41,7 +41,7 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[node name="access_control" type="MarginContainer"]
+[node name="AccessControlDemo" type="MarginContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -52,19 +52,19 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="Split" type="HBoxContainer" parent="."]
 margin_right = 940.0
 margin_bottom = 1060.0
 custom_constants/separation = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+[node name="PlaceSplit" type="VBoxContainer" parent="Split"]
 margin_right = 460.0
 margin_bottom = 1060.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 10
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer"]
+[node name="TimePanel" type="Panel" parent="Split/PlaceSplit"]
 margin_right = 460.0
 margin_bottom = 68.0
 size_flags_horizontal = 3
@@ -72,7 +72,7 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 0.07
 custom_styles/panel = SubResource( 1 )
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer/Panel"]
+[node name="Split" type="HBoxContainer" parent="Split/PlaceSplit/TimePanel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -83,7 +83,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/Panel/HBoxContainer"]
+[node name="TimeLabel" type="Label" parent="Split/PlaceSplit/TimePanel/Split"]
 margin_top = 17.0
 margin_right = 171.0
 margin_bottom = 31.0
@@ -93,19 +93,19 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer/Panel/HBoxContainer"]
+[node name="Spacer" type="Control" parent="Split/PlaceSplit/TimePanel/Split"]
 margin_left = 175.0
 margin_right = 401.0
 margin_bottom = 48.0
 size_flags_horizontal = 3
 
-[node name="Button" type="Button" parent="HBoxContainer/VBoxContainer/Panel/HBoxContainer"]
+[node name="ForwardButton" type="Button" parent="Split/PlaceSplit/TimePanel/Split"]
 margin_left = 405.0
 margin_right = 440.0
 margin_bottom = 48.0
 text = ">>|"
 
-[node name="ColorRect2" type="Panel" parent="HBoxContainer/VBoxContainer"]
+[node name="Building" type="Panel" parent="Split/PlaceSplit"]
 margin_top = 78.0
 margin_right = 460.0
 margin_bottom = 1060.0
@@ -113,7 +113,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 2 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/ColorRect2"]
+[node name="Split" type="VBoxContainer" parent="Split/PlaceSplit/Building"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -124,7 +124,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer"]
+[node name="BuildingLabel" type="Label" parent="Split/PlaceSplit/Building/Split"]
 margin_right = 440.0
 margin_bottom = 14.0
 text = "HQ Building"
@@ -132,20 +132,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer"]
+[node name="Split" type="VBoxContainer" parent="Split/PlaceSplit/Building/Split"]
 margin_top = 18.0
 margin_right = 440.0
 margin_bottom = 962.0
 size_flags_vertical = 3
 custom_constants/separation = 10
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer"]
+[node name="Room" type="Panel" parent="Split/PlaceSplit/Building/Split/Split"]
 margin_right = 440.0
 margin_bottom = 308.0
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 3 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel"]
+[node name="Split" type="VBoxContainer" parent="Split/PlaceSplit/Building/Split/Split/Room"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -156,18 +156,18 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel/VBoxContainer"]
+[node name="RoomLabel" type="Label" parent="Split/PlaceSplit/Building/Split/Split/Room/Split"]
 margin_right = 420.0
 margin_bottom = 14.0
 text = "Little Room"
 
-[node name="MarginContainer" type="Control" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel/VBoxContainer"]
+[node name="Container" type="Control" parent="Split/PlaceSplit/Building/Split/Split/Room/Split"]
 margin_top = 18.0
 margin_right = 420.0
 margin_bottom = 288.0
 size_flags_vertical = 3
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel/VBoxContainer/MarginContainer"]
+[node name="Schedule" type="Panel" parent="Split/PlaceSplit/Building/Split/Split/Room/Split/Container"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -178,7 +178,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel/VBoxContainer/MarginContainer/Panel"]
+[node name="Split" type="VBoxContainer" parent="Split/PlaceSplit/Building/Split/Split/Room/Split/Container/Schedule"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -189,27 +189,27 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel/VBoxContainer/MarginContainer/Panel/VBoxContainer"]
+[node name="ScheduleLabel" type="Label" parent="Split/PlaceSplit/Building/Split/Split/Room/Split/Container/Schedule/Split"]
 margin_right = 380.0
 margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Schedule"
 
-[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel/VBoxContainer/MarginContainer/Panel/VBoxContainer"]
+[node name="Item1" type="Label" parent="Split/PlaceSplit/Building/Split/Split/Room/Split/Container/Schedule/Split"]
 margin_top = 18.0
 margin_right = 380.0
 margin_bottom = 32.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "9:00 am - 10:00 am : Important meeting"
 
-[node name="Panel2" type="Panel" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer"]
+[node name="Room2" type="Panel" parent="Split/PlaceSplit/Building/Split/Split"]
 margin_top = 318.0
 margin_right = 440.0
 margin_bottom = 626.0
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 3 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel2"]
+[node name="Split" type="VBoxContainer" parent="Split/PlaceSplit/Building/Split/Split/Room2"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -220,18 +220,18 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel2/VBoxContainer"]
+[node name="RoomLabel" type="Label" parent="Split/PlaceSplit/Building/Split/Split/Room2/Split"]
 margin_right = 420.0
 margin_bottom = 14.0
 text = "Big Room"
 
-[node name="MarginContainer" type="Control" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel2/VBoxContainer"]
+[node name="Container" type="Control" parent="Split/PlaceSplit/Building/Split/Split/Room2/Split"]
 margin_top = 18.0
 margin_right = 420.0
 margin_bottom = 288.0
 size_flags_vertical = 3
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel2/VBoxContainer/MarginContainer"]
+[node name="Schedule" type="Panel" parent="Split/PlaceSplit/Building/Split/Split/Room2/Split/Container"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -242,7 +242,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel2/VBoxContainer/MarginContainer/Panel"]
+[node name="Split" type="VBoxContainer" parent="Split/PlaceSplit/Building/Split/Split/Room2/Split/Container/Schedule"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -253,34 +253,34 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel2/VBoxContainer/MarginContainer/Panel/VBoxContainer"]
+[node name="ScheduleLabel" type="Label" parent="Split/PlaceSplit/Building/Split/Split/Room2/Split/Container/Schedule/Split"]
 margin_right = 380.0
 margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Schedule"
 
-[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel2/VBoxContainer/MarginContainer/Panel/VBoxContainer"]
+[node name="Item1" type="Label" parent="Split/PlaceSplit/Building/Split/Split/Room2/Split/Container/Schedule/Split"]
 margin_top = 18.0
 margin_right = 380.0
 margin_bottom = 32.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "9:00 am - 10:00 am : Important meeting"
 
-[node name="Label3" type="Label" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel2/VBoxContainer/MarginContainer/Panel/VBoxContainer"]
+[node name="Item2" type="Label" parent="Split/PlaceSplit/Building/Split/Split/Room2/Split/Container/Schedule/Split"]
 margin_top = 36.0
 margin_right = 380.0
 margin_bottom = 50.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "11:00 am - 12:00 pm : The best meeting"
 
-[node name="Panel3" type="Panel" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer"]
+[node name="Room3" type="Panel" parent="Split/PlaceSplit/Building/Split/Split"]
 margin_top = 636.0
 margin_right = 440.0
 margin_bottom = 944.0
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 3 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel3"]
+[node name="Split" type="VBoxContainer" parent="Split/PlaceSplit/Building/Split/Split/Room3"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -291,18 +291,18 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel3/VBoxContainer"]
+[node name="RoomLabel" type="Label" parent="Split/PlaceSplit/Building/Split/Split/Room3/Split"]
 margin_right = 420.0
 margin_bottom = 14.0
 text = "Auditorium"
 
-[node name="MarginContainer" type="Control" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel3/VBoxContainer"]
+[node name="Container" type="Control" parent="Split/PlaceSplit/Building/Split/Split/Room3/Split"]
 margin_top = 18.0
 margin_right = 420.0
 margin_bottom = 288.0
 size_flags_vertical = 3
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel3/VBoxContainer/MarginContainer"]
+[node name="Schedule" type="Panel" parent="Split/PlaceSplit/Building/Split/Split/Room3/Split/Container"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -313,7 +313,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel3/VBoxContainer/MarginContainer/Panel"]
+[node name="Split" type="VBoxContainer" parent="Split/PlaceSplit/Building/Split/Split/Room3/Split/Container/Schedule"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -324,20 +324,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel3/VBoxContainer/MarginContainer/Panel/VBoxContainer"]
+[node name="ScheduleLabel" type="Label" parent="Split/PlaceSplit/Building/Split/Split/Room3/Split/Container/Schedule/Split"]
 margin_right = 380.0
 margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Schedule"
 
-[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer/ColorRect2/VBoxContainer/VBoxContainer/Panel3/VBoxContainer/MarginContainer/Panel/VBoxContainer"]
+[node name="Item1" type="Label" parent="Split/PlaceSplit/Building/Split/Split/Room3/Split/Container/Schedule/Split"]
 margin_top = 18.0
 margin_right = 380.0
 margin_bottom = 32.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "12:00 pm - 2:00 : Happy hour"
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
+[node name="PeopleSplit" type="VBoxContainer" parent="Split"]
 margin_left = 480.0
 margin_right = 940.0
 margin_bottom = 1060.0
@@ -345,7 +345,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 10
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer2"]
+[node name="People" type="Panel" parent="Split/PeopleSplit"]
 margin_right = 460.0
 margin_bottom = 68.0
 size_flags_horizontal = 3
@@ -353,7 +353,7 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 0.07
 custom_styles/panel = SubResource( 1 )
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/Panel"]
+[node name="PeopleLabel" type="Label" parent="Split/PeopleSplit/People"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -367,20 +367,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit"]
 margin_top = 78.0
 margin_right = 460.0
 margin_bottom = 1060.0
 size_flags_vertical = 3
 custom_constants/separation = 10
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer2/VBoxContainer"]
+[node name="Person" type="Panel" parent="Split/PeopleSplit/Split"]
 margin_right = 460.0
-margin_bottom = 418.0
+margin_bottom = 421.0
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 5 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -392,7 +392,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer"]
+[node name="PersonLabel" type="Label" parent="Split/PeopleSplit/Split/Person/Split"]
 margin_right = 440.0
 margin_bottom = 14.0
 text = "John - Employee"
@@ -400,14 +400,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer"]
+[node name="Container" type="Control" parent="Split/PeopleSplit/Split/Person/Split"]
 margin_top = 24.0
 margin_right = 440.0
-margin_bottom = 398.0
+margin_bottom = 401.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person/Split/Container"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -420,7 +420,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer"]
+[node name="StatusSplit" type="HBoxContainer" parent="Split/PeopleSplit/Split/Person/Split/Container/Split"]
 margin_right = 420.0
 margin_bottom = 75.0
 rect_min_size = Vector2( 0, 75 )
@@ -431,14 +431,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/HBoxContainer"]
+[node name="BuildingAccess" type="Panel" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/StatusSplit"]
 margin_right = 205.0
 margin_bottom = 75.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 6 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/StatusSplit/BuildingAccess"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -452,33 +452,33 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel/VBoxContainer"]
+[node name="BuildingAccessLabel" type="Label" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/StatusSplit/BuildingAccess/Split"]
 margin_right = 185.0
 margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "HQ Front Door"
 align = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel/VBoxContainer"]
+[node name="Split" type="HBoxContainer" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/StatusSplit/BuildingAccess/Split"]
 margin_top = 24.0
 margin_right = 185.0
 margin_bottom = 44.0
 custom_constants/separation = 10
 alignment = 1
 
-[node name="Button" type="Button" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel/VBoxContainer/HBoxContainer"]
+[node name="IDButton" type="Button" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/StatusSplit/BuildingAccess/Split/Split"]
 margin_left = 53.0
 margin_right = 80.0
 margin_bottom = 20.0
 text = "ID"
 
-[node name="Button2" type="Button" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel/VBoxContainer/HBoxContainer"]
+[node name="FaceScanButton" type="Button" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/StatusSplit/BuildingAccess/Split/Split"]
 margin_left = 90.0
 margin_right = 131.0
 margin_bottom = 20.0
 text = "Face"
 
-[node name="Panel2" type="Panel" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/HBoxContainer"]
+[node name="Other" type="Panel" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/StatusSplit"]
 margin_left = 215.0
 margin_right = 420.0
 margin_bottom = 75.0
@@ -486,7 +486,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 6 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel2"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/StatusSplit/Other"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -500,41 +500,41 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel2/VBoxContainer"]
+[node name="OtherLabel" type="Label" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/StatusSplit/Other/Split"]
 margin_right = 185.0
 margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Other"
 align = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel2/VBoxContainer"]
+[node name="Split" type="HBoxContainer" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/StatusSplit/Other/Split"]
 margin_top = 24.0
 margin_right = 185.0
 margin_bottom = 44.0
 custom_constants/separation = 10
 alignment = 1
 
-[node name="Button" type="Button" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel2/VBoxContainer/HBoxContainer"]
+[node name="ParkingButton" type="Button" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/StatusSplit/Other/Split/Split"]
 margin_left = 40.0
 margin_right = 98.0
 margin_bottom = 20.0
 text = "Parking"
 
-[node name="Button2" type="Button" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel2/VBoxContainer/HBoxContainer"]
+[node name="WifiButton" type="Button" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/StatusSplit/Other/Split/Split"]
 margin_left = 108.0
 margin_right = 145.0
 margin_bottom = 20.0
 text = "Wifi"
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer"]
+[node name="Schedule" type="Panel" parent="Split/PeopleSplit/Split/Person/Split/Container/Split"]
 margin_top = 85.0
 margin_right = 420.0
-margin_bottom = 364.0
+margin_bottom = 367.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 6 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/Panel"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/Schedule"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -545,13 +545,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/Panel/VBoxContainer"]
+[node name="ScheduleLabel" type="Label" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/Schedule/Split"]
 margin_right = 400.0
 margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Schedule"
 
-[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/Panel/VBoxContainer"]
+[node name="Item1" type="Label" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/Schedule/Split"]
 margin_top = 18.0
 margin_right = 400.0
 margin_bottom = 49.0
@@ -559,7 +559,7 @@ custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "9:00 am - 10:00 am:
     Important meeting in Little Room"
 
-[node name="Label3" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/Panel/VBoxContainer"]
+[node name="Item2" type="Label" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/Schedule/Split"]
 margin_top = 53.0
 margin_right = 400.0
 margin_bottom = 84.0
@@ -567,7 +567,7 @@ custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "10:00 am - 11:00 am:
     Boring meeting in Big Room"
 
-[node name="Label4" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel/VBoxContainer/Control/VBoxContainer/Panel/VBoxContainer"]
+[node name="Item3" type="Label" parent="Split/PeopleSplit/Split/Person/Split/Container/Split/Schedule/Split"]
 margin_top = 88.0
 margin_right = 400.0
 margin_bottom = 119.0
@@ -575,14 +575,14 @@ custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "12:00 pm - 2:00 pm :
     Happy hour in Auditorium"
 
-[node name="Panel2" type="Panel" parent="HBoxContainer/VBoxContainer2/VBoxContainer"]
-margin_top = 428.0
+[node name="Person2" type="Panel" parent="Split/PeopleSplit/Split"]
+margin_top = 431.0
 margin_right = 460.0
-margin_bottom = 846.0
+margin_bottom = 852.0
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 5 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person2"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -594,7 +594,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer"]
+[node name="PersonLabel" type="Label" parent="Split/PeopleSplit/Split/Person2/Split"]
 margin_right = 440.0
 margin_bottom = 14.0
 text = "Jane - Visitor"
@@ -602,14 +602,14 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer"]
+[node name="Container" type="Control" parent="Split/PeopleSplit/Split/Person2/Split"]
 margin_top = 24.0
 margin_right = 440.0
-margin_bottom = 398.0
+margin_bottom = 401.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person2/Split/Container"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -622,22 +622,25 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer"]
+[node name="StatusSplit" type="HBoxContainer" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split"]
 margin_right = 420.0
 margin_bottom = 75.0
 rect_min_size = Vector2( 0, 75 )
 size_flags_horizontal = 3
 custom_constants/separation = 10
 alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/HBoxContainer"]
+[node name="BuildingAccess" type="Panel" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/StatusSplit"]
 margin_right = 205.0
 margin_bottom = 75.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 6 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/StatusSplit/BuildingAccess"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -651,33 +654,33 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel/VBoxContainer"]
+[node name="BuildingAccessLabel" type="Label" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/StatusSplit/BuildingAccess/Split"]
 margin_right = 185.0
 margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "HQ Front Door"
 align = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel/VBoxContainer"]
+[node name="Split" type="HBoxContainer" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/StatusSplit/BuildingAccess/Split"]
 margin_top = 24.0
 margin_right = 185.0
 margin_bottom = 44.0
 custom_constants/separation = 10
 alignment = 1
 
-[node name="Button" type="Button" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel/VBoxContainer/HBoxContainer"]
+[node name="IDButton" type="Button" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/StatusSplit/BuildingAccess/Split/Split"]
 margin_left = 53.0
 margin_right = 80.0
 margin_bottom = 20.0
 text = "ID"
 
-[node name="Button2" type="Button" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel/VBoxContainer/HBoxContainer"]
+[node name="FaceScanButton" type="Button" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/StatusSplit/BuildingAccess/Split/Split"]
 margin_left = 90.0
 margin_right = 131.0
 margin_bottom = 20.0
 text = "Face"
 
-[node name="Panel2" type="Panel" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/HBoxContainer"]
+[node name="Other" type="Panel" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/StatusSplit"]
 margin_left = 215.0
 margin_right = 420.0
 margin_bottom = 75.0
@@ -685,7 +688,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 6 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel2"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/StatusSplit/Other"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -699,41 +702,41 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel2/VBoxContainer"]
+[node name="OtherLabel" type="Label" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/StatusSplit/Other/Split"]
 margin_right = 185.0
 margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Other"
 align = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel2/VBoxContainer"]
+[node name="Split" type="HBoxContainer" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/StatusSplit/Other/Split"]
 margin_top = 24.0
 margin_right = 185.0
 margin_bottom = 44.0
 custom_constants/separation = 10
 alignment = 1
 
-[node name="Button" type="Button" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel2/VBoxContainer/HBoxContainer"]
+[node name="ParkingButton" type="Button" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/StatusSplit/Other/Split/Split"]
 margin_left = 40.0
 margin_right = 98.0
 margin_bottom = 20.0
 text = "Parking"
 
-[node name="Button2" type="Button" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/HBoxContainer/Panel2/VBoxContainer/HBoxContainer"]
+[node name="WifiButton" type="Button" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/StatusSplit/Other/Split/Split"]
 margin_left = 108.0
 margin_right = 145.0
 margin_bottom = 20.0
 text = "Wifi"
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer"]
+[node name="Schedule" type="Panel" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split"]
 margin_top = 85.0
 margin_right = 420.0
-margin_bottom = 364.0
+margin_bottom = 367.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 6 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/Panel"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/Schedule"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -744,13 +747,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/Panel/VBoxContainer"]
+[node name="ScheduleLabel" type="Label" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/Schedule/Split"]
 margin_right = 400.0
 margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Schedule"
 
-[node name="Label3" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/Panel/VBoxContainer"]
+[node name="Item1" type="Label" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/Schedule/Split"]
 margin_top = 18.0
 margin_right = 400.0
 margin_bottom = 49.0
@@ -758,7 +761,7 @@ custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "10:00 am - 11:00 am:
     Boring meeting in Big Room"
 
-[node name="Label4" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel2/VBoxContainer/Control/VBoxContainer/Panel/VBoxContainer"]
+[node name="Item2" type="Label" parent="Split/PeopleSplit/Split/Person2/Split/Container/Split/Schedule/Split"]
 margin_top = 53.0
 margin_right = 400.0
 margin_bottom = 84.0
@@ -766,15 +769,14 @@ custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "12:00 pm - 2:00 pm :
     Happy hour in Auditorium"
 
-[node name="Panel3" type="Panel" parent="HBoxContainer/VBoxContainer2/VBoxContainer"]
-margin_top = 856.0
+[node name="Person3" type="Panel" parent="Split/PeopleSplit/Split"]
+margin_top = 862.0
 margin_right = 460.0
 margin_bottom = 982.0
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.3
+rect_min_size = Vector2( 0, 120 )
 custom_styles/panel = SubResource( 5 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person3"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -786,7 +788,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer"]
+[node name="PersonLabel" type="Label" parent="Split/PeopleSplit/Split/Person3/Split"]
 margin_right = 440.0
 margin_bottom = 14.0
 text = "Mr. Stranger - Stranger"
@@ -794,23 +796,45 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer"]
+[node name="Container" type="Control" parent="Split/PeopleSplit/Split/Person3/Split"]
 margin_top = 24.0
 margin_right = 440.0
-margin_bottom = 99.0
+margin_bottom = 100.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person3/Split/Container"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 10
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StatusSplit" type="HBoxContainer" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split"]
+margin_right = 420.0
+margin_bottom = 75.0
 rect_min_size = Vector2( 0, 75 )
 size_flags_horizontal = 3
 custom_constants/separation = 10
 alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/HBoxContainer"]
-margin_right = 215.0
+[node name="BuildingAccess" type="Panel" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/StatusSplit"]
+margin_right = 205.0
 margin_bottom = 75.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 6 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/HBoxContainer/Panel"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/StatusSplit/BuildingAccess"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -824,42 +848,42 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/HBoxContainer/Panel/VBoxContainer"]
-margin_right = 195.0
+[node name="BuildingAccessLabel" type="Label" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/StatusSplit/BuildingAccess/Split"]
+margin_right = 185.0
 margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "HQ Front Door"
 align = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/HBoxContainer/Panel/VBoxContainer"]
+[node name="Split" type="HBoxContainer" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/StatusSplit/BuildingAccess/Split"]
 margin_top = 24.0
-margin_right = 195.0
+margin_right = 185.0
 margin_bottom = 44.0
 custom_constants/separation = 10
 alignment = 1
 
-[node name="Button" type="Button" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/HBoxContainer/Panel/VBoxContainer/HBoxContainer"]
-margin_left = 84.0
-margin_right = 111.0
+[node name="IDButton" type="Button" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/StatusSplit/BuildingAccess/Split/Split"]
+visible = false
+margin_left = 53.0
+margin_right = 80.0
 margin_bottom = 20.0
 text = "ID"
 
-[node name="Button2" type="Button" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/HBoxContainer/Panel/VBoxContainer/HBoxContainer"]
-visible = false
-margin_left = 95.0
-margin_right = 136.0
+[node name="FaceScanButton" type="Button" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/StatusSplit/BuildingAccess/Split/Split"]
+margin_left = 72.0
+margin_right = 113.0
 margin_bottom = 20.0
 text = "Face"
 
-[node name="Panel2" type="Panel" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/HBoxContainer"]
-margin_left = 225.0
-margin_right = 440.0
+[node name="Other" type="Panel" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/StatusSplit"]
+margin_left = 215.0
+margin_right = 420.0
 margin_bottom = 75.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 6 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/HBoxContainer/Panel2"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/StatusSplit/Other"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -873,42 +897,42 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/HBoxContainer/Panel2/VBoxContainer"]
-margin_right = 195.0
+[node name="OtherLabel" type="Label" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/StatusSplit/Other/Split"]
+margin_right = 185.0
 margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Other"
 align = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/HBoxContainer/Panel2/VBoxContainer"]
+[node name="Split" type="HBoxContainer" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/StatusSplit/Other/Split"]
 margin_top = 24.0
-margin_right = 195.0
+margin_right = 185.0
 margin_bottom = 44.0
 custom_constants/separation = 10
 alignment = 1
 
-[node name="Button" type="Button" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/HBoxContainer/Panel2/VBoxContainer/HBoxContainer"]
-margin_left = 45.0
-margin_right = 103.0
+[node name="ParkingButton" type="Button" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/StatusSplit/Other/Split/Split"]
+margin_left = 40.0
+margin_right = 98.0
 margin_bottom = 20.0
 text = "Parking"
 
-[node name="Button2" type="Button" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/HBoxContainer/Panel2/VBoxContainer/HBoxContainer"]
-margin_left = 113.0
-margin_right = 150.0
+[node name="WifiButton" type="Button" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/StatusSplit/Other/Split/Split"]
+margin_left = 108.0
+margin_right = 145.0
 margin_bottom = 20.0
 text = "Wifi"
 
-[node name="Panel" type="Panel" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer"]
+[node name="Schedule" type="Panel" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split"]
 visible = false
-margin_top = 109.0
-margin_right = 440.0
-margin_bottom = 301.0
+margin_top = 85.0
+margin_right = 420.0
+margin_bottom = 224.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = SubResource( 6 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/Panel"]
+[node name="Split" type="VBoxContainer" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/Schedule"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -919,32 +943,8 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/Panel/VBoxContainer"]
-margin_right = 420.0
+[node name="ScheduleLabel" type="Label" parent="Split/PeopleSplit/Split/Person3/Split/Container/Split/Schedule/Split"]
+margin_right = 400.0
 margin_bottom = 14.0
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Schedule"
-
-[node name="Label2" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/Panel/VBoxContainer"]
-margin_top = 18.0
-margin_right = 420.0
-margin_bottom = 49.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "9:00 am - 10:00 am:
-    Important meeting in Little Room"
-
-[node name="Label3" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/Panel/VBoxContainer"]
-margin_top = 53.0
-margin_right = 420.0
-margin_bottom = 84.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "10:00 am - 11:00 am:
-    Boring meeting in Big Room"
-
-[node name="Label4" type="Label" parent="HBoxContainer/VBoxContainer2/VBoxContainer/Panel3/VBoxContainer/Panel/VBoxContainer"]
-margin_top = 88.0
-margin_right = 420.0
-margin_bottom = 119.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "12:00 pm - 2:00 pm :
-    Happy hour in Auditorium"
