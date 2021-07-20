@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://Scripts/Bots/bot_controller.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Stacker.svg" type="Texture" id=2]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 24, 24 )
+
+[node name="Stacker" type="KinematicBody2D"]
+script = ExtResource( 1 )
+bot_type = 1
+max_payload_weight = 500
+max_speed = 1.0
+battery_time = 8
+charge_time = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+scale = Vector2( 0.35, 0.35 )
+texture = ExtResource( 2 )

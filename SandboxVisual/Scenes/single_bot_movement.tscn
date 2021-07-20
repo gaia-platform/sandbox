@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://Objects/bumblebee.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Objects/Factory Robots/bumblebee.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Scripts/Navigation/location_based_nav.gd" type="Script" id=2]
 [ext_resource path="res://Assets/SMT_Factory_Layout.png" type="Texture" id=3]
 [ext_resource path="res://Scripts/Factories/smt_factory_meta.gd" type="Script" id=4]
