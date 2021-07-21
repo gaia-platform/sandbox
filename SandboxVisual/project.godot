@@ -11,8 +11,7 @@ config_version=4
 [application]
 
 config/name="SandboxVisual"
-run/main_scene="res://Scenes/access_control.tscn"
-boot_splash/bg_color=Color( 1, 1, 1, 1 )
+run/main_scene="res://Scenes/Access Control/hq_building.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -21,7 +20,7 @@ CommunicationManager="*res://Scripts/Communications/communication_manager.gd"
 
 [display]
 
-window/size/width=960
+window/size/width=1220
 window/size/height=1080
 window/handheld/orientation="portrait"
 window/stretch/mode="2d"
