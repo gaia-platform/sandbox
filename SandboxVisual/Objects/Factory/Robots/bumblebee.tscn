@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://Assets/Bot.svg" type="Texture" id=1]
+[ext_resource path="res://Assets/Factory/Robots/bumblebee.svg" type="Texture" id=1]
 [ext_resource path="res://Scripts/Bots/bot_controller.gd" type="Script" id=2]
 
 [sub_resource type="RectangleShape2D" id=1]
