@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/fast_forward.svg-1cb0615b5f5bf25cb4640b3b94e85410.stex"
+path="res://.import/fast_forward.svg-3ea7891aafbf5238346068e7cff115ad.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Access Control/Icons/fast_forward.svg"
-dest_files=[ "res://.import/fast_forward.svg-1cb0615b5f5bf25cb4640b3b94e85410.stex" ]
+source_file="res://Assets/AccessControl/Icons/fast_forward.svg"
+dest_files=[ "res://.import/fast_forward.svg-3ea7891aafbf5238346068e7cff115ad.stex" ]
 
 [params]
 

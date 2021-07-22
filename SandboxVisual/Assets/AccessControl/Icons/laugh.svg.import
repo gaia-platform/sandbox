@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/exclamation_triangle.svg-70a6276895f8cf621c693216fcd33481.stex"
+path="res://.import/laugh.svg-23fefc7bb30edf36909faab5347a66a4.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Access Control/Icons/exclamation_triangle.svg"
-dest_files=[ "res://.import/exclamation_triangle.svg-70a6276895f8cf621c693216fcd33481.stex" ]
+source_file="res://Assets/AccessControl/Icons/laugh.svg"
+dest_files=[ "res://.import/laugh.svg-23fefc7bb30edf36909faab5347a66a4.stex" ]
 
 [params]
 

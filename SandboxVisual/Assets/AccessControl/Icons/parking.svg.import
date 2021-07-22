@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/id_badge.svg-b0616f1ff6549abe8acf63dc56aea255.stex"
+path="res://.import/parking.svg-d768f8e3d88f7ba65324890bc60f1507.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Access Control/Icons/id_badge.svg"
-dest_files=[ "res://.import/id_badge.svg-b0616f1ff6549abe8acf63dc56aea255.stex" ]
+source_file="res://Assets/AccessControl/Icons/parking.svg"
+dest_files=[ "res://.import/parking.svg-d768f8e3d88f7ba65324890bc60f1507.stex" ]
 
 [params]
 

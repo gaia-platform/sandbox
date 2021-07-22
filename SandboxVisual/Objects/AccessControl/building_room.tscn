@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://Assets/Access Control/Style Boxes/building_room_flat.tres" type="StyleBox" id=1]
+[ext_resource path="res://Assets/AccessControl/StyleBoxes/building_room_flat.tres" type="StyleBox" id=1]
 [ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_big_df.tres" type="DynamicFont" id=2]
-[ext_resource path="res://Objects/Access Control/schedule_panel.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Objects/AccessControl/schedule_panel.tscn" type="PackedScene" id=3]
 
 [node name="BuildingRoom" type="PanelContainer"]
 anchor_right = 1.0

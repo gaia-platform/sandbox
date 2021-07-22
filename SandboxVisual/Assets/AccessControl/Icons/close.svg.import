@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/laugh.svg-069b0ebc994efad977beb754f39acdeb.stex"
+path="res://.import/close.svg-a4bcf7e38898fd0ea903270fd09b187a.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Access Control/Icons/laugh.svg"
-dest_files=[ "res://.import/laugh.svg-069b0ebc994efad977beb754f39acdeb.stex" ]
+source_file="res://Assets/AccessControl/Icons/close.svg"
+dest_files=[ "res://.import/close.svg-a4bcf7e38898fd0ea903270fd09b187a.stex" ]
 
 [params]
 

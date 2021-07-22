@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://Assets/Access Control/Icons/laugh.svg" type="Texture" id=1]
+[ext_resource path="res://Assets/AccessControl/Icons/laugh.svg" type="Texture" id=1]
 [ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_med_df.tres" type="DynamicFont" id=2]
-[ext_resource path="res://Assets/Access Control/Style Boxes/schedule_panel_flat.tres" type="StyleBox" id=3]
-[ext_resource path="res://Assets/Access Control/Icons/id_badge.svg" type="Texture" id=4]
-[ext_resource path="res://Objects/Access Control/ui_button.tscn" type="PackedScene" id=5]
-[ext_resource path="res://Assets/Access Control/Icons/sign_out_alt.svg" type="Texture" id=6]
+[ext_resource path="res://Assets/AccessControl/StyleBoxes/schedule_panel_flat.tres" type="StyleBox" id=3]
+[ext_resource path="res://Assets/AccessControl/Icons/id_badge.svg" type="Texture" id=4]
+[ext_resource path="res://Objects/AccessControl/ui_button.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Assets/AccessControl/Icons/sign_out_alt.svg" type="Texture" id=6]
 
 [node name="PersonOptionsPanel" type="PanelContainer"]
 margin_right = 1180.0

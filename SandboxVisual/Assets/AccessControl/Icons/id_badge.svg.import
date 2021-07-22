@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/close.svg-a22d727fdb4884b702ebc492ba7a8546.stex"
+path="res://.import/id_badge.svg-f53dbd0e8fad9192310d8b6493b7b807.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Access Control/Icons/close.svg"
-dest_files=[ "res://.import/close.svg-a22d727fdb4884b702ebc492ba7a8546.stex" ]
+source_file="res://Assets/AccessControl/Icons/id_badge.svg"
+dest_files=[ "res://.import/id_badge.svg-f53dbd0e8fad9192310d8b6493b7b807.stex" ]
 
 [params]
 

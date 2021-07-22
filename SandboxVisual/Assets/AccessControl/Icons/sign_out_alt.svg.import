@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/sign_out_alt.svg-05d7d20d1f22722f97ff64b7d4095414.stex"
+path="res://.import/sign_out_alt.svg-31c5153671f91193e83898e0af50fdf6.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Access Control/Icons/sign_out_alt.svg"
-dest_files=[ "res://.import/sign_out_alt.svg-05d7d20d1f22722f97ff64b7d4095414.stex" ]
+source_file="res://Assets/AccessControl/Icons/sign_out_alt.svg"
+dest_files=[ "res://.import/sign_out_alt.svg-31c5153671f91193e83898e0af50fdf6.stex" ]
 
 [params]
 

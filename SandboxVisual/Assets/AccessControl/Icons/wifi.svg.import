@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/parking.svg-ebe4b398c4b0abcafaff52b59953f1d3.stex"
+path="res://.import/wifi.svg-8c0b234bdf2c20693f7615087ef0df73.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Access Control/Icons/parking.svg"
-dest_files=[ "res://.import/parking.svg-ebe4b398c4b0abcafaff52b59953f1d3.stex" ]
+source_file="res://Assets/AccessControl/Icons/wifi.svg"
+dest_files=[ "res://.import/wifi.svg-8c0b234bdf2c20693f7615087ef0df73.stex" ]
 
 [params]
 
