@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Objects/Access Control/building.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Objects/Access Control/person.tscn" type="PackedScene" id=2]
@@ -6,6 +6,10 @@
 [ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_big_df.tres" type="DynamicFont" id=4]
 [ext_resource path="res://Objects/Access Control/building_room.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Objects/Access Control/schedule_item_label.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Assets/Access Control/Icons/fast_forward.svg" type="Texture" id=7]
+[ext_resource path="res://Assets/Access Control/Icons/exclamation_triangle.svg" type="Texture" id=8]
+[ext_resource path="res://Assets/Access Control/Style Boxes/error_panel_flat.tres" type="StyleBox" id=9]
+[ext_resource path="res://Objects/Access Control/ui_button.tscn" type="PackedScene" id=10]
 
 [node name="HQBuilding" type="Control"]
 anchor_right = 1.0
@@ -18,9 +22,59 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GridContainer" type="GridContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+custom_constants/separation = 10
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ErrorPanel" type="PanelContainer" parent="VBoxContainer"]
+margin_right = 1200.0
+margin_bottom = 70.0
+custom_styles/panel = ExtResource( 9 )
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/ErrorPanel"]
+margin_right = 1200.0
+margin_bottom = 70.0
+custom_constants/margin_right = 10
+custom_constants/margin_top = 10
+custom_constants/margin_left = 10
+custom_constants/margin_bottom = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ErrorPanel/MarginContainer"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 1190.0
+margin_bottom = 60.0
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/ErrorPanel/MarginContainer/HBoxContainer"]
+modulate = Color( 0, 0, 0, 1 )
+margin_right = 50.0
+margin_bottom = 50.0
+texture = ExtResource( 8 )
+
+[node name="ErrorMessageLabel" type="Label" parent="VBoxContainer/ErrorPanel/MarginContainer/HBoxContainer"]
+margin_left = 54.0
+margin_top = 6.0
+margin_right = 1127.0
+margin_bottom = 44.0
+size_flags_horizontal = 3
+custom_fonts/font = ExtResource( 4 )
+text = "Error message!"
+align = 1
+
+[node name="CloseButton" parent="VBoxContainer/ErrorPanel/MarginContainer/HBoxContainer" instance=ExtResource( 10 )]
+margin_left = 1131.0
+margin_right = 1180.0
+margin_bottom = 50.0
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer"]
+margin_top = 80.0
+margin_right = 1200.0
+margin_bottom = 1060.0
+size_flags_vertical = 3
 custom_constants/vseparation = 10
 custom_constants/hseparation = 30
 columns = 2
@@ -28,13 +82,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TimeHeader" type="PanelContainer" parent="GridContainer"]
+[node name="TimeHeader" type="PanelContainer" parent="VBoxContainer/GridContainer"]
 margin_right = 585.0
 margin_bottom = 64.0
 size_flags_horizontal = 3
 custom_styles/panel = ExtResource( 3 )
 
-[node name="MarginContainer" type="MarginContainer" parent="GridContainer/TimeHeader"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/GridContainer/TimeHeader"]
 margin_right = 585.0
 margin_bottom = 64.0
 custom_constants/margin_right = 10
@@ -42,35 +96,36 @@ custom_constants/margin_top = 10
 custom_constants/margin_left = 10
 custom_constants/margin_bottom = 10
 
-[node name="HBoxContainer" type="HBoxContainer" parent="GridContainer/TimeHeader/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/GridContainer/TimeHeader/MarginContainer"]
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 575.0
 margin_bottom = 54.0
 
-[node name="TimeLabel" type="Label" parent="GridContainer/TimeHeader/MarginContainer/HBoxContainer"]
+[node name="TimeLabel" type="Label" parent="VBoxContainer/GridContainer/TimeHeader/MarginContainer/HBoxContainer"]
 margin_top = 3.0
-margin_right = 506.0
+margin_right = 499.0
 margin_bottom = 41.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 4 )
-text = "Locations at time: 10:00 am"
+text = "Locations at time: 8:00 am"
 
-[node name="FastForwardButton" type="Button" parent="GridContainer/TimeHeader/MarginContainer/HBoxContainer"]
-margin_left = 510.0
+[node name="Button" parent="VBoxContainer/GridContainer/TimeHeader/MarginContainer/HBoxContainer" instance=ExtResource( 10 )]
+modulate = Color( 1, 1, 1, 1 )
+margin_left = 503.0
 margin_right = 565.0
 margin_bottom = 44.0
-custom_fonts/font = ExtResource( 4 )
-text = ">>|"
+icon = ExtResource( 7 )
+base_color = Color( 1, 1, 1, 1 )
 
-[node name="PeopleHeader" type="PanelContainer" parent="GridContainer"]
+[node name="PeopleHeader" type="PanelContainer" parent="VBoxContainer/GridContainer"]
 margin_left = 615.0
 margin_right = 1200.0
 margin_bottom = 64.0
 size_flags_horizontal = 3
 custom_styles/panel = ExtResource( 3 )
 
-[node name="MarginContainer" type="MarginContainer" parent="GridContainer/PeopleHeader"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/GridContainer/PeopleHeader"]
 margin_right = 585.0
 margin_bottom = 64.0
 custom_constants/margin_right = 10
@@ -78,7 +133,7 @@ custom_constants/margin_top = 10
 custom_constants/margin_left = 10
 custom_constants/margin_bottom = 10
 
-[node name="PeopleLabel" type="Label" parent="GridContainer/PeopleHeader/MarginContainer"]
+[node name="PeopleLabel" type="Label" parent="VBoxContainer/GridContainer/PeopleHeader/MarginContainer"]
 margin_left = 10.0
 margin_top = 13.0
 margin_right = 575.0
@@ -87,484 +142,479 @@ size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 4 )
 text = "People"
 
-[node name="PlaceScrollContainer" type="ScrollContainer" parent="GridContainer"]
+[node name="PlaceScrollContainer" type="ScrollContainer" parent="VBoxContainer/GridContainer"]
 margin_top = 74.0
 margin_right = 585.0
-margin_bottom = 1060.0
+margin_bottom = 980.0
 size_flags_vertical = 3
 scroll_horizontal_enabled = false
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GridContainer/PlaceScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer"]
 margin_right = 585.0
 margin_bottom = 607.0
 size_flags_horizontal = 3
 custom_constants/separation = 10
 
-[node name="Building" parent="GridContainer/PlaceScrollContainer/VBoxContainer" instance=ExtResource( 1 )]
+[node name="Building" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer" instance=ExtResource( 1 )]
 anchor_right = 0.0
 margin_right = 585.0
 margin_bottom = 607.0
 
-[node name="MarginContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building" index="0"]
 margin_right = 585.0
 margin_bottom = 607.0
 
-[node name="VBoxContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer" index="0"]
 margin_right = 575.0
 margin_bottom = 587.0
 
-[node name="BuildingNameLabel" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer" index="0"]
+[node name="BuildingNameLabel" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer" index="0"]
 margin_right = 565.0
 text = "HQ Building"
 
-[node name="MarginContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer" index="1"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer" index="1"]
 margin_right = 565.0
 margin_bottom = 577.0
 
-[node name="VBoxContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer" index="0"]
 margin_right = 555.0
 margin_bottom = 535.0
 
-[node name="BuildingRoom" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="0"]
+[node name="BuildingRoom" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="0"]
 margin_right = 545.0
 
-[node name="MarginContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom" index="0"]
 margin_right = 545.0
 
-[node name="VBoxContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom/MarginContainer" index="0"]
 margin_right = 535.0
 
-[node name="RoomNameLabel" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom/MarginContainer/VBoxContainer" index="0"]
+[node name="RoomNameLabel" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom/MarginContainer/VBoxContainer" index="0"]
 margin_right = 525.0
 text = "Little Room"
 
-[node name="MarginContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom/MarginContainer/VBoxContainer" index="1"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom/MarginContainer/VBoxContainer" index="1"]
 margin_right = 525.0
 
-[node name="SchedulePanel" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom/MarginContainer/VBoxContainer/MarginContainer" index="0"]
+[node name="SchedulePanel" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom/MarginContainer/VBoxContainer/MarginContainer" index="0"]
 margin_right = 515.0
 
-[node name="BuildingRoom2" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="1"]
+[node name="BuildingRoom2" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="1"]
 margin_right = 545.0
 margin_bottom = 365.0
 
-[node name="MarginContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2" index="0"]
 margin_right = 545.0
 margin_bottom = 195.0
 
-[node name="VBoxContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer" index="0"]
 margin_right = 535.0
 margin_bottom = 185.0
 
-[node name="RoomNameLabel" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer" index="0"]
+[node name="RoomNameLabel" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer" index="0"]
 margin_right = 525.0
 text = "Big Room"
 
-[node name="MarginContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer" index="1"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer" index="1"]
 margin_right = 525.0
 margin_bottom = 175.0
 
-[node name="SchedulePanel" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer" index="0"]
+[node name="SchedulePanel" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer" index="0"]
 margin_right = 515.0
 margin_bottom = 123.0
 
-[node name="MarginContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel" index="0"]
 margin_right = 505.0
 margin_bottom = 123.0
 
-[node name="VBoxContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer" index="0"]
 margin_right = 495.0
 margin_bottom = 113.0
 
-[node name="ScheduleLabel" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer/VBoxContainer" index="0"]
+[node name="ScheduleLabel" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer/VBoxContainer" index="0"]
 margin_right = 485.0
 
-[node name="ScheduleItem" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer/VBoxContainer" index="1"]
+[node name="ScheduleItem" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer/VBoxContainer" index="1"]
 margin_right = 485.0
 margin_bottom = 68.0
 text = "10:00 am - 11:00 am : Boring meeting"
 
-[node name="ScheduleItem2" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer/VBoxContainer" index="2" instance=ExtResource( 6 )]
+[node name="ScheduleItem2" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer/VBoxContainer" index="2" instance=ExtResource( 6 )]
 margin_top = 72.0
 margin_right = 485.0
 margin_bottom = 103.0
 text = "11:00 am - 12:00 pm : The best meeting"
 
-[node name="BuildingRoom3" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="2" instance=ExtResource( 5 )]
+[node name="BuildingRoom3" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="2" instance=ExtResource( 5 )]
 anchor_right = 0.0
 margin_top = 375.0
 margin_right = 545.0
 margin_bottom = 535.0
 
-[node name="MarginContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3" index="0"]
 margin_right = 545.0
 
-[node name="VBoxContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer" index="0"]
 margin_right = 535.0
 
-[node name="RoomNameLabel" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer" index="0"]
+[node name="RoomNameLabel" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer" index="0"]
 margin_right = 525.0
 text = "Auditorium"
 
-[node name="MarginContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer" index="1"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer" index="1"]
 margin_right = 525.0
 
-[node name="SchedulePanel" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer/MarginContainer" index="0"]
+[node name="SchedulePanel" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer/MarginContainer" index="0"]
 margin_right = 515.0
 
-[node name="MarginContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel" index="0"]
 margin_right = 505.0
 margin_bottom = 88.0
 
-[node name="VBoxContainer" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer" index="0"]
 margin_right = 495.0
 margin_bottom = 78.0
 
-[node name="ScheduleLabel" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer/VBoxContainer" index="0"]
+[node name="ScheduleLabel" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer/VBoxContainer" index="0"]
 margin_right = 485.0
 
-[node name="ScheduleItem" parent="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer/VBoxContainer" index="1"]
+[node name="ScheduleItem" parent="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel/MarginContainer/VBoxContainer" index="1"]
 margin_right = 485.0
 margin_bottom = 68.0
 text = "12:00 pm - 2:00 pm : Happy hour"
 
-[node name="PeopleScrollContainer" type="ScrollContainer" parent="GridContainer"]
+[node name="PeopleScrollContainer" type="ScrollContainer" parent="VBoxContainer/GridContainer"]
 margin_left = 615.0
 margin_top = 74.0
 margin_right = 1200.0
-margin_bottom = 1060.0
+margin_bottom = 980.0
 scroll_horizontal_enabled = false
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GridContainer/PeopleScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer"]
 margin_right = 573.0
-margin_bottom = 1028.0
+margin_bottom = 1025.0
 size_flags_horizontal = 3
 custom_constants/separation = 10
 
-[node name="Person" parent="GridContainer/PeopleScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
+[node name="Person" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
 anchor_right = 0.0
 margin_right = 573.0
-margin_bottom = 449.0
+margin_bottom = 448.0
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person" index="0"]
 margin_right = 573.0
-margin_bottom = 449.0
+margin_bottom = 448.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer" index="0"]
 margin_right = 563.0
-margin_bottom = 429.0
+margin_bottom = 428.0
 
-[node name="PersonNameLabel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer" index="0"]
+[node name="PersonNameLabel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer" index="0"]
 margin_right = 553.0
 text = "John - Employee"
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer" index="1"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer" index="1"]
 margin_right = 553.0
-margin_bottom = 419.0
+margin_bottom = 418.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer" index="0"]
 margin_right = 543.0
-margin_bottom = 377.0
+margin_bottom = 376.0
 
-[node name="HBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="0"]
+[node name="HBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="0"]
 margin_right = 533.0
 
-[node name="PersonOptionsPanel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+[node name="PersonOptionsPanel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
 margin_right = 251.0
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel" index="0"]
 margin_right = 251.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer" index="0"]
 margin_right = 241.0
 
-[node name="OptionsLabel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="0"]
+[node name="OptionsLabel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="0"]
 margin_right = 231.0
 text = "HQ Front Door"
 
-[node name="HBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="1"]
+[node name="HBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="1"]
 margin_right = 231.0
 
-[node name="Button" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
-margin_left = 38.0
-margin_right = 84.0
-text = "ID"
+[node name="Button" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+margin_left = 54.0
+margin_right = 103.0
+stays_pressed = true
 
-[node name="Button2" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
-margin_left = 109.0
-margin_right = 193.0
-text = "Face"
+[node name="Button2" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
+margin_left = 128.0
+margin_right = 177.0
 
-[node name="PersonOptionsPanel2" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
+[node name="Button3" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="2"]
+margin_left = 159.0
+margin_right = 219.0
+
+[node name="PersonOptionsPanel2" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
 margin_left = 281.0
 margin_right = 533.0
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2" index="0"]
 margin_right = 252.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer" index="0"]
 margin_right = 242.0
 
-[node name="OptionsLabel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="0"]
+[node name="OptionsLabel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="0"]
 margin_right = 232.0
 text = "Other"
 
-[node name="HBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="1"]
+[node name="HBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="1"]
 margin_right = 232.0
 
-[node name="Button" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
-margin_left = 2.0
-margin_right = 133.0
-text = "Parking"
+[node name="Button" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+margin_left = 47.0
+margin_right = 96.0
 
-[node name="Button2" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
-margin_left = 158.0
-margin_right = 229.0
-text = "Wifi"
+[node name="Button2" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
+margin_left = 121.0
+margin_right = 185.0
 
-[node name="SchedulePanel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="1"]
+[node name="SchedulePanel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="1"]
 margin_right = 533.0
-margin_bottom = 377.0
+margin_bottom = 376.0
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel" index="0"]
 margin_right = 533.0
 margin_bottom = 260.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer" index="0"]
 margin_right = 523.0
 margin_bottom = 250.0
 
-[node name="ScheduleLabel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="0"]
+[node name="ScheduleLabel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="0"]
 margin_right = 513.0
 
-[node name="ScheduleItem" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="1"]
+[node name="ScheduleItem" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="1"]
 margin_right = 513.0
 text = "9:00 am - 10:00 am :
         Important meeting in Little Room"
 
-[node name="ScheduleItem2" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="2" instance=ExtResource( 6 )]
+[node name="ScheduleItem2" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="2" instance=ExtResource( 6 )]
 margin_top = 106.0
 margin_right = 513.0
 margin_bottom = 171.0
 text = "10:00 am - 11:00am :
         Boring meeting in Big Room"
 
-[node name="ScheduleItem3" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="3" instance=ExtResource( 6 )]
+[node name="ScheduleItem3" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="3" instance=ExtResource( 6 )]
 margin_top = 175.0
 margin_right = 513.0
 margin_bottom = 240.0
 text = "12:00 pm - 2:00 pm :
         Happy hour in Auditorium"
 
-[node name="Person2" parent="GridContainer/PeopleScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
+[node name="Person2" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
 anchor_right = 0.0
-margin_top = 459.0
+margin_top = 458.0
 margin_right = 573.0
-margin_bottom = 839.0
+margin_bottom = 837.0
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2" index="0"]
 margin_right = 573.0
-margin_bottom = 380.0
+margin_bottom = 379.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer" index="0"]
 margin_right = 563.0
-margin_bottom = 360.0
+margin_bottom = 359.0
 
-[node name="PersonNameLabel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer" index="0"]
+[node name="PersonNameLabel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer" index="0"]
 margin_right = 553.0
 text = "Jane - Visitor"
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer" index="1"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer" index="1"]
 margin_right = 553.0
-margin_bottom = 350.0
+margin_bottom = 349.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer" index="0"]
 margin_right = 543.0
-margin_bottom = 308.0
+margin_bottom = 307.0
 
-[node name="HBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="0"]
+[node name="HBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="0"]
 margin_right = 533.0
 
-[node name="PersonOptionsPanel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+[node name="PersonOptionsPanel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
 margin_right = 251.0
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel" index="0"]
 margin_right = 251.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer" index="0"]
 margin_right = 241.0
 
-[node name="OptionsLabel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="0"]
+[node name="OptionsLabel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="0"]
 margin_right = 231.0
 text = "HQ Front Door"
 
-[node name="HBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="1"]
+[node name="HBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="1"]
 margin_right = 231.0
 
-[node name="Button" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
-margin_left = 38.0
-margin_right = 84.0
-text = "ID"
+[node name="Button" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+margin_left = 54.0
+margin_right = 103.0
+stays_pressed = true
 
-[node name="Button2" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
-margin_left = 109.0
-margin_right = 193.0
-text = "Face"
+[node name="Button2" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
+margin_left = 128.0
+margin_right = 177.0
 
-[node name="PersonOptionsPanel2" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
+[node name="PersonOptionsPanel2" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
 margin_left = 281.0
 margin_right = 533.0
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2" index="0"]
 margin_right = 252.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer" index="0"]
 margin_right = 242.0
 
-[node name="OptionsLabel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="0"]
+[node name="OptionsLabel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="0"]
 margin_right = 232.0
 text = "Other"
 
-[node name="HBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="1"]
+[node name="HBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="1"]
 margin_right = 232.0
 
-[node name="Button" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
-margin_left = 2.0
-margin_right = 133.0
-text = "Parking"
+[node name="Button" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+margin_left = 47.0
+margin_right = 96.0
 
-[node name="Button2" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
-margin_left = 158.0
-margin_right = 229.0
-text = "Wifi"
+[node name="Button2" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
+margin_left = 121.0
+margin_right = 185.0
 
-[node name="SchedulePanel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="1"]
+[node name="SchedulePanel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="1"]
 margin_right = 533.0
-margin_bottom = 308.0
+margin_bottom = 307.0
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel" index="0"]
 margin_right = 533.0
 margin_bottom = 191.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer" index="0"]
 margin_right = 523.0
 margin_bottom = 181.0
 
-[node name="ScheduleLabel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="0"]
+[node name="ScheduleLabel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="0"]
 margin_right = 513.0
 
-[node name="ScheduleItem" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="1"]
+[node name="ScheduleItem" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="1"]
 margin_right = 513.0
 text = "10:00 am - 11:00 am :
         Boring meeting in Big Room"
 
-[node name="ScheduleItem2" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="2" instance=ExtResource( 6 )]
+[node name="ScheduleItem2" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel/MarginContainer/VBoxContainer" index="2" instance=ExtResource( 6 )]
 margin_top = 106.0
 margin_right = 513.0
 margin_bottom = 171.0
 text = "12:00 pm - 2:00 pm :
         Happy hour in Auditorium"
 
-[node name="Person3" parent="GridContainer/PeopleScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
+[node name="Person3" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
 anchor_right = 0.0
-margin_top = 849.0
+margin_top = 847.0
 margin_right = 573.0
-margin_bottom = 1028.0
+margin_bottom = 1025.0
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3" index="0"]
 margin_right = 573.0
-margin_bottom = 179.0
+margin_bottom = 178.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer" index="0"]
 margin_right = 563.0
-margin_bottom = 159.0
+margin_bottom = 158.0
 
-[node name="PersonNameLabel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer" index="0"]
+[node name="PersonNameLabel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer" index="0"]
 margin_right = 553.0
 text = "Mr. Stranger - Stranger"
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer" index="1"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer" index="1"]
 margin_right = 553.0
-margin_bottom = 149.0
+margin_bottom = 148.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer" index="0"]
 margin_right = 543.0
-margin_bottom = 107.0
+margin_bottom = 106.0
 
-[node name="HBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="0"]
+[node name="HBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="0"]
 margin_right = 533.0
 
-[node name="PersonOptionsPanel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+[node name="PersonOptionsPanel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
 margin_right = 251.0
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel" index="0"]
 margin_right = 251.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer" index="0"]
 margin_right = 241.0
 
-[node name="OptionsLabel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="0"]
+[node name="OptionsLabel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="0"]
 margin_right = 231.0
 text = "HQ Front Door"
 
-[node name="HBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="1"]
+[node name="HBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="1"]
 margin_right = 231.0
 
-[node name="Button" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+[node name="Button" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
 visible = false
-margin_left = 14.0
-margin_right = 100.0
+margin_left = 54.0
+margin_right = 103.0
 
-[node name="Button2" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
-margin_left = 73.0
-margin_right = 157.0
-text = "Face"
+[node name="Button2" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
+margin_left = 91.0
+margin_right = 140.0
 
-[node name="PersonOptionsPanel2" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
+[node name="PersonOptionsPanel2" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
 margin_left = 281.0
 margin_right = 533.0
 
-[node name="MarginContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2" index="0"]
 margin_right = 252.0
 
-[node name="VBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer" index="0"]
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer" index="0"]
 margin_right = 242.0
 
-[node name="OptionsLabel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="0"]
+[node name="OptionsLabel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="0"]
 margin_right = 232.0
 text = "Other"
 
-[node name="HBoxContainer" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="1"]
+[node name="HBoxContainer" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="1"]
 margin_right = 232.0
 
-[node name="Button" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
-margin_left = 2.0
-margin_right = 133.0
-text = "Parking"
+[node name="Button" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+margin_left = 47.0
+margin_right = 96.0
 
-[node name="Button2" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
-margin_left = 158.0
-margin_right = 229.0
-text = "Wifi"
+[node name="Button2" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
+margin_left = 121.0
+margin_right = 185.0
 
-[node name="SchedulePanel" parent="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="1"]
+[node name="SchedulePanel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="1"]
 visible = false
 margin_right = 533.0
 
-[editable path="GridContainer/PlaceScrollContainer/VBoxContainer/Building"]
-[editable path="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom"]
-[editable path="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2"]
-[editable path="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel"]
-[editable path="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3"]
-[editable path="GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel"]
-[editable path="GridContainer/PeopleScrollContainer/VBoxContainer/Person"]
-[editable path="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel"]
-[editable path="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2"]
-[editable path="GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel"]
-[editable path="GridContainer/PeopleScrollContainer/VBoxContainer/Person2"]
-[editable path="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel"]
-[editable path="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2"]
-[editable path="GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel"]
-[editable path="GridContainer/PeopleScrollContainer/VBoxContainer/Person3"]
-[editable path="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel"]
-[editable path="GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2"]
+[editable path="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building"]
+[editable path="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom"]
+[editable path="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2"]
+[editable path="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom2/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel"]
+[editable path="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3"]
+[editable path="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom3/MarginContainer/VBoxContainer/MarginContainer/SchedulePanel"]
+[editable path="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person"]
+[editable path="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel"]
+[editable path="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2"]
+[editable path="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel"]
+[editable path="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2"]
+[editable path="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel"]
+[editable path="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2"]
+[editable path="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person2/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/SchedulePanel"]
+[editable path="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3"]
+[editable path="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel"]
+[editable path="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2"]
