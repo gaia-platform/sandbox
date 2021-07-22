@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://Objects/Access Control/building.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Objects/Access Control/person.tscn" type="PackedScene" id=2]
@@ -10,6 +10,8 @@
 [ext_resource path="res://Assets/Access Control/Icons/exclamation_triangle.svg" type="Texture" id=8]
 [ext_resource path="res://Assets/Access Control/Style Boxes/error_panel_flat.tres" type="StyleBox" id=9]
 [ext_resource path="res://Objects/Access Control/ui_button.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Scripts/Access Control/UI/error_panel.gd" type="Script" id=11]
+[ext_resource path="res://Scripts/Access Control/UI/time_header.gd" type="Script" id=12]
 
 [node name="HQBuilding" type="Control"]
 anchor_right = 1.0
@@ -34,6 +36,7 @@ __meta__ = {
 margin_right = 1200.0
 margin_bottom = 70.0
 custom_styles/panel = ExtResource( 9 )
+script = ExtResource( 11 )
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/ErrorPanel"]
 margin_right = 1200.0
@@ -62,6 +65,7 @@ margin_right = 1127.0
 margin_bottom = 44.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 4 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Error message!"
 align = 1
 
@@ -87,6 +91,8 @@ margin_right = 585.0
 margin_bottom = 64.0
 size_flags_horizontal = 3
 custom_styles/panel = ExtResource( 3 )
+script = ExtResource( 12 )
+time_label_path = NodePath("MarginContainer/HBoxContainer/TimeLabel")
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/GridContainer/TimeHeader"]
 margin_right = 585.0
@@ -110,7 +116,7 @@ size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 4 )
 text = "Locations at time: 8:00 am"
 
-[node name="Button" parent="VBoxContainer/GridContainer/TimeHeader/MarginContainer/HBoxContainer" instance=ExtResource( 10 )]
+[node name="FastForwardButton" parent="VBoxContainer/GridContainer/TimeHeader/MarginContainer/HBoxContainer" instance=ExtResource( 10 )]
 modulate = Color( 1, 1, 1, 1 )
 margin_left = 503.0
 margin_right = 565.0
@@ -600,6 +606,9 @@ margin_right = 185.0
 [node name="SchedulePanel" parent="VBoxContainer/GridContainer/PeopleScrollContainer/VBoxContainer/Person3/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" index="1"]
 visible = false
 margin_right = 533.0
+
+[connection signal="pressed" from="VBoxContainer/ErrorPanel/MarginContainer/HBoxContainer/CloseButton" to="VBoxContainer/ErrorPanel" method="_on_CloseButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/GridContainer/TimeHeader/MarginContainer/HBoxContainer/FastForwardButton" to="VBoxContainer/GridContainer/TimeHeader" method="_on_FastForwardButton_pressed"]
 
 [editable path="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building"]
 [editable path="VBoxContainer/GridContainer/PlaceScrollContainer/VBoxContainer/Building/MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/BuildingRoom"]

@@ -12,7 +12,7 @@ var _prev_color: Color
 func _on_Button_mouse_entered():
 	if not (stays_pressed and selected):
 		_prev_color = modulate
-		modulate = Color("47c0d7") # Highlighted color
+		modulate = Color("47c0d7")  # Highlighted color
 
 
 func _on_Button_mouse_exited():
@@ -29,4 +29,3 @@ func _on_Button_pressed():
 		modulate = Color("28a745")
 		selected = true
 		set_button_mask(0)
-

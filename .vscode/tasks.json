@@ -6,7 +6,7 @@
         {
             "label": "Auto Format Code",
             "type": "shell",
-            "command": "gdformat ./WarehouseDemo/Scripts/**/*.gd",
+            "command": "gdformat ./SandboxVisual/Scripts/**/**/*.gd",
             "group": "none",
             "presentation": {
                 "echo": true,
