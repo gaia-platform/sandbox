@@ -67,6 +67,7 @@ margin_bottom = 96.0
 
 [node name="OptionsLabel" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="0"]
 margin_right = 555.0
+text = "Building Name"
 
 [node name="HBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="1"]
 margin_right = 555.0
@@ -74,10 +75,18 @@ margin_right = 555.0
 [node name="Button" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
 margin_left = 216.0
 margin_right = 265.0
+hint_tooltip = "Scan ID badge"
+stays_pressed = true
 
 [node name="Button2" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
 margin_left = 290.0
 margin_right = 339.0
+hint_tooltip = "Scan face"
+
+[node name="Button3" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="2"]
+margin_left = 321.0
+margin_right = 381.0
+hint_tooltip = "Leave"
 
 [node name="PersonOptionsPanel2" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 4 )]
 margin_left = 605.0
@@ -93,6 +102,7 @@ margin_bottom = 96.0
 
 [node name="OptionsLabel" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="0"]
 margin_right = 555.0
+text = "Other"
 
 [node name="HBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="1"]
 margin_right = 555.0
@@ -100,12 +110,14 @@ margin_right = 555.0
 [node name="Button" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
 margin_left = 208.0
 margin_right = 257.0
+hint_tooltip = "Enable parked"
 toggle_mode = true
 icon = ExtResource( 5 )
 
 [node name="Button2" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
 margin_left = 282.0
 margin_right = 346.0
+hint_tooltip = "Connect to wifi"
 toggle_mode = true
 icon = ExtResource( 6 )
 

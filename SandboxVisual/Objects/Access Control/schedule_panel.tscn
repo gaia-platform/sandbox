@@ -1,16 +1,20 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Objects/Access Control/schedule_item_label.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_med_df.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Assets/Access Control/Style Boxes/schedule_panel_flat.tres" type="StyleBox" id=3]
+[ext_resource path="res://Scripts/Access Control/UI/schedule_panel.gd" type="Script" id=4]
 
 [node name="SchedulePanel" type="PanelContainer"]
 margin_right = 429.0
 margin_bottom = 88.0
 custom_styles/panel = ExtResource( 3 )
+script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+schedule_item = ExtResource( 1 )
+schedule_list_path = NodePath("MarginContainer/VBoxContainer")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_right = 429.0

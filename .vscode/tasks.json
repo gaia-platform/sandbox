@@ -6,7 +6,7 @@
         {
             "label": "Auto Format Code",
             "type": "shell",
-            "command": "gdformat ./SandboxVisual/Scripts/**/**/*.gd",
+            "command": "gdformat $(find ./SandboxVisual/Scripts/ -name '*.gd')",
             "group": "none",
             "presentation": {
                 "echo": true,
