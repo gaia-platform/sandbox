@@ -46,13 +46,13 @@ func set_building_options_label(building: Dictionary):
 
 ## Set button options state
 func set_button_options_states(person: Dictionary):
-	if ! person["parked"]:
-		other_options.button_one.hide()
-	if ! person["on_wifi"]:
-		other_options.button_two.hide()
+	if person["parked"]:
+		other_options.button_one.press_button()
+	if person["on_wifi"]:
+		other_options.button_two.press_button()
 
 	# Badge
 	if person["stranger"]:
 		building_options.button_one.hide()
 	elif person["badged"]:
-		building_options.button_one._on_Button_pressed()
+		building_options.button_one.press_button()

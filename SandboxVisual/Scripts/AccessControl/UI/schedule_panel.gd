@@ -9,27 +9,30 @@ onready var event_list = get_node(event_list_path)
 ### Methods
 ## Add events/items to the schedule listing
 func add_schedule_events(events: Array, with_room_name: bool = false):
-	for event in events:
-		var new_event = event_label.instance()  # Create new event line
-		event_list.add_child(new_event)
+	if events.size() != 0:
+		for event in events:
+			var new_event = event_label.instance()  # Create new event line
+			event_list.add_child(new_event)
 
-		# Read and combine time stamps and event name
-		var time_and_event_string = (
-			"%s - %s : %s"
-			% [
-				minutes_to_string(event["start_timestamp"]),
-				minutes_to_string(event["end_timestamp"]),
-				event["name"]
-			]
-		)
+			# Read and combine time stamps and event name
+			var time_and_event_string = (
+				"%s - %s : %s"
+				% [
+					minutes_to_string(event["start_timestamp"]),
+					minutes_to_string(event["end_timestamp"]),
+					event["name"]
+				]
+			)
 
-		# Append room name if necessary, then set label
-		var event_string: String
-		if with_room_name:
-			event_string = "%s in %s" % [time_and_event_string, event["room_name"]]
-		else:
-			event_string = time_and_event_string
-		new_event.set_deferred("text", event_string)
+			# Append room name if necessary, then set label
+			var event_string: String
+			if with_room_name:
+				event_string = "%s in %s" % [time_and_event_string, event["room_name"]]
+			else:
+				event_string = time_and_event_string
+			new_event.set_deferred("text", event_string)
+	else:
+		hide()
 
 
 

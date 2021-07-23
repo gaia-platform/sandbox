@@ -35,4 +35,4 @@ func _ready():
 			new_person.call_deferred("set_person_properties", person)
 
 		# Close the error panel (deferred) once everything runs
-		error_panel.call_deferred("_on_CloseButton_pressed")
+		error_panel.call_deferred("hide")
