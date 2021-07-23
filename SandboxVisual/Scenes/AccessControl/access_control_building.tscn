@@ -1,15 +1,15 @@
 [gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://Assets/AccessControl/StyleBoxes/header_panel_flat.tres" type="StyleBox" id=3]
-[ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_big_df.tres" type="DynamicFont" id=4]
-[ext_resource path="res://Assets/AccessControl/Icons/fast_forward.svg" type="Texture" id=7]
-[ext_resource path="res://Assets/AccessControl/Icons/exclamation_triangle.svg" type="Texture" id=8]
-[ext_resource path="res://Assets/AccessControl/StyleBoxes/error_panel_flat.tres" type="StyleBox" id=9]
-[ext_resource path="res://Objects/AccessControl/ui_button.tscn" type="PackedScene" id=10]
-[ext_resource path="res://Scripts/AccessControl/UI/error_panel.gd" type="Script" id=11]
-[ext_resource path="res://Scripts/AccessControl/UI/time_header.gd" type="Script" id=12]
+[ext_resource path="res://Assets/AccessControl/StyleBoxes/error_panel_flat.tres" type="StyleBox" id=1]
+[ext_resource path="res://Scripts/AccessControl/UI/time_header.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/AccessControl/UI/error_panel.gd" type="Script" id=3]
+[ext_resource path="res://Assets/AccessControl/StyleBoxes/header_panel_flat.tres" type="StyleBox" id=4]
+[ext_resource path="res://Assets/AccessControl/Icons/exclamation_triangle.svg" type="Texture" id=5]
+[ext_resource path="res://Assets/AccessControl/Icons/fast_forward.svg" type="Texture" id=6]
+[ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_big_df.tres" type="DynamicFont" id=7]
+[ext_resource path="res://Objects/AccessControl/ui_button.tscn" type="PackedScene" id=8]
 
-[node name="HQBuilding" type="Control"]
+[node name="AccessControlBuilding" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 10.0
@@ -31,8 +31,8 @@ __meta__ = {
 [node name="ErrorPanel" type="PanelContainer" parent="VBoxContainer"]
 margin_right = 1200.0
 margin_bottom = 70.0
-custom_styles/panel = ExtResource( 9 )
-script = ExtResource( 11 )
+custom_styles/panel = ExtResource( 1 )
+script = ExtResource( 3 )
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/ErrorPanel"]
 margin_right = 1200.0
@@ -52,7 +52,7 @@ margin_bottom = 60.0
 modulate = Color( 0, 0, 0, 1 )
 margin_right = 50.0
 margin_bottom = 50.0
-texture = ExtResource( 8 )
+texture = ExtResource( 5 )
 
 [node name="ErrorMessageLabel" type="Label" parent="VBoxContainer/ErrorPanel/MarginContainer/HBoxContainer"]
 margin_left = 54.0
@@ -60,12 +60,12 @@ margin_top = 6.0
 margin_right = 1127.0
 margin_bottom = 44.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 7 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Unable to connect to Gaia! Please rerun the demo."
 align = 1
 
-[node name="CloseButton" parent="VBoxContainer/ErrorPanel/MarginContainer/HBoxContainer" instance=ExtResource( 10 )]
+[node name="CloseButton" parent="VBoxContainer/ErrorPanel/MarginContainer/HBoxContainer" instance=ExtResource( 8 )]
 margin_left = 1131.0
 margin_right = 1180.0
 margin_bottom = 50.0
@@ -87,8 +87,8 @@ __meta__ = {
 margin_right = 585.0
 margin_bottom = 64.0
 size_flags_horizontal = 3
-custom_styles/panel = ExtResource( 3 )
-script = ExtResource( 12 )
+custom_styles/panel = ExtResource( 4 )
+script = ExtResource( 2 )
 time_label_path = NodePath("MarginContainer/HBoxContainer/TimeLabel")
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/GridContainer/TimeHeader"]
@@ -110,16 +110,16 @@ margin_top = 3.0
 margin_right = 499.0
 margin_bottom = 41.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 7 )
 text = "Locations at time: 8:00 am"
 
-[node name="FastForwardButton" parent="VBoxContainer/GridContainer/TimeHeader/MarginContainer/HBoxContainer" instance=ExtResource( 10 )]
+[node name="FastForwardButton" parent="VBoxContainer/GridContainer/TimeHeader/MarginContainer/HBoxContainer" instance=ExtResource( 8 )]
 modulate = Color( 1, 1, 1, 1 )
 margin_left = 503.0
 margin_right = 565.0
 margin_bottom = 44.0
 hint_tooltip = "Fast forward"
-icon = ExtResource( 7 )
+icon = ExtResource( 6 )
 base_color = Color( 1, 1, 1, 1 )
 
 [node name="PeopleHeader" type="PanelContainer" parent="VBoxContainer/GridContainer"]
@@ -127,7 +127,7 @@ margin_left = 615.0
 margin_right = 1200.0
 margin_bottom = 64.0
 size_flags_horizontal = 3
-custom_styles/panel = ExtResource( 3 )
+custom_styles/panel = ExtResource( 4 )
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/GridContainer/PeopleHeader"]
 margin_right = 585.0
@@ -143,7 +143,7 @@ margin_top = 13.0
 margin_right = 575.0
 margin_bottom = 51.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 7 )
 text = "People"
 
 [node name="PlaceScrollContainer" type="ScrollContainer" parent="VBoxContainer/GridContainer"]
