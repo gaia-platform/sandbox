@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Assets/Fonts/OpenSans/open_sans_regular_df.tres" type="DynamicFont" id=1]
+[ext_resource path="res://Scripts/AccessControl/UI/event.gd" type="Script" id=2]
+
+[node name="Event" type="Label"]
+margin_right = 409.0
+margin_bottom = 102.0
+custom_fonts/font = ExtResource( 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "9:00 am - 10:00 am : Important meeting"
+autowrap = true
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="SandboxVisual"
-run/main_scene="res://Scenes/single_bot_movement.tscn"
+run/main_scene="res://Scenes/AccessControl/access_control_building.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -20,8 +20,10 @@ CommunicationManager="*res://Scripts/Communications/communication_manager.gd"
 
 [display]
 
-window/size/width=1280
-window/size/height=720
+window/size/width=930
+window/size/height=830
+window/dpi/allow_hidpi=true
+window/handheld/orientation="portrait"
 
 [physics]
 
@@ -32,4 +34,5 @@ common/enable_pause_aware_picking=true
 quality/driver/driver_name="GLES2"
 vram_compression/import_etc=true
 vram_compression/import_etc2=false
+environment/default_clear_color=Color( 1, 1, 1, 1 )
 environment/default_environment="res://default_env.tres"

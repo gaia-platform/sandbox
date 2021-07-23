@@ -2,7 +2,7 @@
   "use strict";
 
   function receiveData() {
-    $.get('/receive', function(data) {
+    $.get('/receive', function (data) {
       handleData(data);
     });
   }
@@ -14,8 +14,8 @@
   function getTimeString(minutes) {
     var hours = Math.floor(minutes / 60);
     return (((hours % 12) == 0) ? '12' : (hours % 12).toString())
-            + ':' + (((minutes % 60) == 0) ? '00' : (minutes % 60).toString()) + ' '
-            + (hours >= 12 ? 'pm' : 'am');
+      + ':' + (((minutes % 60) == 0) ? '00' : (minutes % 60).toString()) + ' '
+      + (hours >= 12 ? 'pm' : 'am');
   }
 
   function addSchedule(events, with_room_name) {
@@ -26,7 +26,7 @@
           <div class="box schedule">
             <h5>Schedule</h5>`;
 
-      events.forEach(function(event) {
+      events.forEach(function (event) {
         result += '<p style="color:Black;">';
         result += getTimeString(event.start_timestamp) + ' - ';
         result += getTimeString(event.end_timestamp) + ' : ';
@@ -50,7 +50,7 @@
     var result = `
       <div class="col-sm-6">
         <div style="text-align: center;" class="box other" data-person-id="`
-          + person.person_id + `">
+      + person.person_id + `">
           <h5>Other</h5>
           <i class="fas fa-parking`;
     if (person.parked) {
@@ -71,8 +71,8 @@
   function addBadgeIn(person, building) {
     var result = `
       <div class="col-sm-6">
-        <div style="text-align: center;" class="box move" data-person-id="` 
-          + person.person_id + `" data-building-id="` + building.building_id + `">
+        <div style="text-align: center;" class="box move" data-person-id="`
+      + person.person_id + `" data-building-id="` + building.building_id + `">
           <h5>HQ Front Door</h5>`;
     if (!person.stranger) {
       result += '<i class="fas fa-id-badge';
@@ -91,9 +91,9 @@
   function addLocationNav(person, room) {
     return `
       <div class="col-sm-6">
-        <div style="text-align: center;" class="box move" data-person-id="` 
-          + person.person_id + `" data-room-id="` + room.room_id 
-          + `" data-building-id="` + cachedData.buildings[0].building_id + `">
+        <div style="text-align: center;" class="box move" data-person-id="`
+      + person.person_id + `" data-room-id="` + room.room_id
+      + `" data-building-id="` + cachedData.buildings[0].building_id + `">
           <h5 class="room-name">` + room.name + `</h5>
           <i class="fas fa-laugh"></i>
           <i class="fas fa-sign-out-alt"></i>
@@ -147,7 +147,7 @@
             <div id="` + room.name.toLowerCase().replace(/\s/g, '') + `">`;
 
     if (room.people) {
-      room.people.forEach(function(person) {
+      room.people.forEach(function (person) {
         result += addPerson(person, room);
       });
     }
@@ -158,7 +158,7 @@
         </div>
       </div>
     `;
-    
+
     return result;
   }
 
@@ -171,12 +171,12 @@
             <div id="building">`;
 
     if (building.people) {
-      building.people.forEach(function(person) {
+      building.people.forEach(function (person) {
         newElem += addPerson(person);
       });
     }
 
-    building.rooms.forEach(function(room) {
+    building.rooms.forEach(function (room) {
       newElem += addLocation(room);
     });
     newElem += `
@@ -191,7 +191,7 @@
   function addPeople(people) {
     $("#people").empty();
     if (people) {
-      people.forEach(function(person) {
+      people.forEach(function (person) {
         $("#people").append(addPerson(person, cachedData.buildings[0].rooms[0]));
       });
     }
@@ -203,7 +203,7 @@
     //alert(data);
     var parsedData = JSON.parse(data);
     if (parsedData.data && parsedData.data == 'none') {
-      return; 
+      return;
     }
 
     if (parsedData.buildings) {
@@ -213,7 +213,7 @@
       addPeople(parsedData.people);
     } else if (parsedData.alert) {
       $("#message-output").text(parsedData.alert);
-      $("#messages").attr("hidden",false);
+      $("#messages").attr("hidden", false);
     }
     receiveData();
   }
@@ -221,7 +221,7 @@
   function nextRoom(roomId) {
     var i = 0;
     while (i < cachedData.buildings[0].rooms.length
-          && cachedData.buildings[0].rooms[i].room_id != roomId) {
+      && cachedData.buildings[0].rooms[i].room_id != roomId) {
       i++;
     }
     if (++i >= cachedData.buildings[0].rooms.length) {
@@ -230,13 +230,13 @@
     return cachedData.buildings[0].rooms[i];
   }
 
-  $(document).on("click", ".room-name", function() {
+  $(document).on("click", ".room-name", function () {
     var newRoom = nextRoom(parseInt($(this).parent().attr("data-room-id")));
     $(this).parent().attr("data-room-id", newRoom.room_id);
     $(this).html(newRoom.name);
   });
 
-  $(document).on("click", "#location-time", function() {
+  $(document).on("click", "#location-time", function () {
     var minutes = parseInt($("#time").attr("data-minutes")) + 30;
     $("#time").attr("data-minutes", minutes.toString());
     $("#time").text(getTimeString(minutes));
@@ -244,36 +244,37 @@
   });
 
   function sendScan(scan_type, elem) {
-    sendData({ scan: {
-      scan_type: scan_type,
-      person_id: parseInt(elem.attr("data-person-id")),
-      building_id: parseInt(elem.attr("data-building-id")),
-      room_id: parseInt(elem.attr("data-room-id"))
+    sendData({
+      scan: {
+        scan_type: scan_type,
+        person_id: parseInt(elem.attr("data-person-id")),
+        building_id: parseInt(elem.attr("data-building-id")),
+        room_id: parseInt(elem.attr("data-room-id"))
       }
     });
   }
 
-  $(document).on("click", ".fas", function() {
-    $("#messages").attr("hidden",true);
+  $(document).on("click", ".fas", function () {
+    $("#messages").attr("hidden", true);
   });
 
-  $(document).on("click", "#messages", function() {
-    $("#messages").attr("hidden",true);
+  $(document).on("click", "#messages", function () {
+    $("#messages").attr("hidden", true);
   });
 
-  $(document).on("click", ".fa-id-badge", function() {
+  $(document).on("click", ".fa-id-badge", function () {
     sendScan('badge', $(this).parent());
   });
 
-  $(document).on("click", ".fa-laugh", function() {
+  $(document).on("click", ".fa-laugh", function () {
     sendScan('face', $(this).parent());
   });
 
-  $(document).on("click", ".fa-sign-out-alt", function() {
+  $(document).on("click", ".fa-sign-out-alt", function () {
     sendScan('leaving', $(this).parent());
   });
 
-  $(document).on("click", ".fa-parking", function() {
+  $(document).on("click", ".fa-parking", function () {
     if ($(this).hasClass("selected")) {
       sendScan('vehicle_departing', $(this).parent());
     } else {
@@ -281,7 +282,7 @@
     }
   });
 
-  $(document).on("click", ".fa-wifi", function() {
+  $(document).on("click", ".fa-wifi", function () {
     if ($(this).hasClass("selected")) {
       sendScan('leaving_wifi', $(this).parent());
     } else {
@@ -300,7 +301,7 @@
   }
 
   function sendData(data) {
-    postMessage(JSON.stringify(data), function() {
+    postMessage(JSON.stringify(data), function () {
       postMessage('{ "database" : "get" }', receiveData);
     });
   }

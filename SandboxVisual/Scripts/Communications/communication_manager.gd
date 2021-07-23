@@ -33,3 +33,15 @@ func _ready():
 
 func read_variable(variable_name):
 	return JavaScript.eval(variable_name + ";")
+
+
+func get_setup_data():
+	var sample_json_file = File.new()
+	sample_json_file.open("res://Labs/sample_json.tres", File.READ)
+	if sample_json_file.is_open():
+		var json_as_text = sample_json_file.get_as_text()
+		var json_parse = JSON.parse(json_as_text)
+		if ! json_parse.error:
+			return json_parse.result
+
+	return null
