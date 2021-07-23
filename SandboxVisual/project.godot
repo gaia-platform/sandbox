@@ -20,8 +20,8 @@ CommunicationManager="*res://Scripts/Communications/communication_manager.gd"
 
 [display]
 
-window/size/width=1220
-window/size/height=1080
+window/size/width=930
+window/size/height=830
 window/dpi/allow_hidpi=true
 window/handheld/orientation="portrait"
 

@@ -26,6 +26,5 @@ func set_building_room_properties(room: Dictionary):
 		people_container.move_child(new_person, 0)
 		new_person.call_deferred("set_person_properties", person, room)
 
-
 	# Add schedule
 	schedule_panel.add_schedule_events(room["events"])

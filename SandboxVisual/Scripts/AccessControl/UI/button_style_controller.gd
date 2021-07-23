@@ -8,6 +8,7 @@ export (bool) var stays_pressed = false
 var selected = false
 var _prev_color: Color
 
+
 # Signals
 func _on_Button_mouse_entered():
 	if not (stays_pressed and selected):
@@ -29,6 +30,7 @@ func _on_Button_pressed():
 		modulate = Color("28a745")
 		selected = true
 		set_button_mask(0)
+
 
 # Public methods
 func press_button():

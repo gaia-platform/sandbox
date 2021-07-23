@@ -16,7 +16,7 @@ func add_schedule_events(events: Array, with_room_name: bool = false):
 
 			# Read and combine time stamps and event name
 			var time_and_event_string = (
-				"%s - %s : %s"
+				"%s - %s :\n        %s"
 				% [
 					minutes_to_string(event["start_timestamp"]),
 					minutes_to_string(event["end_timestamp"]),
@@ -33,7 +33,6 @@ func add_schedule_events(events: Array, with_room_name: bool = false):
 			new_event.set_deferred("text", event_string)
 	else:
 		hide()
-
 
 
 ## Convert minutes into a time stamp
