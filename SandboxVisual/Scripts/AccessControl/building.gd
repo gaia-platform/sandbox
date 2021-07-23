@@ -15,7 +15,7 @@ onready var room_container = get_node(room_container_path)
 ## Set building properties
 func set_building_properties(building: Dictionary):
 	# Set building name
-	building_name_label = building["name"]
+	building_name_label.text = building["name"]
 
 	# Populate with people
 	for person in building["people"]:

@@ -32,7 +32,7 @@ func _ready():
 			people_container.add_child(new_person)
 
 			# Run setup deferred (to give tiem for item to load)
-			new_person.call_deferred("set_person_properties", person)
+			new_person.call_deferred("set_person_properties", person, setup_data["buildings"][0])
 
 		# Close the error panel (deferred) once everything runs
 		error_panel.call_deferred("hide")

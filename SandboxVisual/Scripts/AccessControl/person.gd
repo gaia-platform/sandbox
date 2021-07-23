@@ -18,7 +18,7 @@ var person_id: int
 
 ### Methods
 ## Set person properties
-func set_person_properties(person: Dictionary, room: Dictionary = {}):
+func set_person_properties(person: Dictionary, building: Dictionary, room: Dictionary = {}):
 	# Set name label
 	var name_text_suffix = (
 		"Employee"
@@ -32,7 +32,8 @@ func set_person_properties(person: Dictionary, room: Dictionary = {}):
 	if room != {}:
 		pass
 
-	# Options
+	# Options and labels
+	set_building_options_label(building)
 	set_button_options_states(person)
 
 	# Schedule
@@ -41,7 +42,7 @@ func set_person_properties(person: Dictionary, room: Dictionary = {}):
 
 ## Set building title label
 func set_building_options_label(building: Dictionary):
-	building_options.options_label.text = "%s door" % building["name"]
+	building_options.options_label.text = "%s" % building["name"]
 
 
 ## Set button options state
