@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://Assets/Fonts/OpenSans/open_sans_regular_df.tres" type="DynamicFont" id=1]
-[ext_resource path="res://Scripts/AccessControl/UI/schedule_item.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/AccessControl/UI/event.gd" type="Script" id=2]
 
-[node name="ScheduleItem" type="Label"]
+[node name="Event" type="Label"]
 margin_right = 409.0
 margin_bottom = 102.0
 custom_fonts/font = ExtResource( 1 )
