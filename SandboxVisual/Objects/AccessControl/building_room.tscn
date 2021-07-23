@@ -1,15 +1,18 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Assets/AccessControl/StyleBoxes/building_room_flat.tres" type="StyleBox" id=1]
 [ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_big_df.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Objects/AccessControl/schedule_panel.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scripts/AccessControl/UI/building_room.gd" type="Script" id=4]
 
 [node name="BuildingRoom" type="PanelContainer"]
 anchor_right = 1.0
 custom_styles/panel = ExtResource( 1 )
+script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+schedule_panel_path = NodePath("MarginContainer/VBoxContainer/MarginContainer/SchedulePanel")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_right = 1220.0
