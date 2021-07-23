@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Assets/AccessControl/Icons/laugh.svg" type="Texture" id=1]
 [ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_med_df.tres" type="DynamicFont" id=2]
@@ -6,15 +6,20 @@
 [ext_resource path="res://Assets/AccessControl/Icons/id_badge.svg" type="Texture" id=4]
 [ext_resource path="res://Objects/AccessControl/ui_button.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Assets/AccessControl/Icons/sign_out_alt.svg" type="Texture" id=6]
+[ext_resource path="res://Scripts/AccessControl/UI/person_options_panel.gd" type="Script" id=7]
 
 [node name="PersonOptionsPanel" type="PanelContainer"]
 margin_right = 1180.0
 margin_bottom = 107.0
 size_flags_horizontal = 3
 custom_styles/panel = ExtResource( 3 )
+script = ExtResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+button_one_path = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Button")
+button_two_path = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Button2")
+button_three_path = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Button3")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_right = 1180.0
