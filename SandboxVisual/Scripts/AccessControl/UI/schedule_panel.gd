@@ -8,7 +8,7 @@ onready var event_list = get_node(event_list_path)
 
 ### Methods
 ## Add events/items to the schedule listing
-func add_schedule_events(events: Array, with_room_name: bool):
+func add_schedule_events(events: Array, with_room_name: bool = false):
 	for event in events:
 		var new_event = event_label.instance()  # Create new event line
 

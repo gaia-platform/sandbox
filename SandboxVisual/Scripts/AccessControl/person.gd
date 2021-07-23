@@ -16,8 +16,8 @@ onready var schedule_panel = get_node(schedule_panel_path)
 var person_id: int
 
 
-## Methods
-# Set person properties
+### Methods
+## Set person properties
 func set_person_properties(person: Dictionary, room: Dictionary = {}):
 	# Set name label
 	var name_text_suffix = (
@@ -28,6 +28,10 @@ func set_person_properties(person: Dictionary, room: Dictionary = {}):
 
 	name_label.text = "%s - %s" % [person["first_name"], name_text_suffix]
 
+	# TODO: Room stuff?
+	if room != {}:
+		pass
+
 	# Options
 	set_button_options_states(person)
 
@@ -35,12 +39,12 @@ func set_person_properties(person: Dictionary, room: Dictionary = {}):
 	schedule_panel.add_schedule_events(person["events"], true)
 
 
-# Set building title label
+## Set building title label
 func set_building_options_label(building: Dictionary):
 	building_options.options_label.text = "%s door" % building["name"]
 
 
-# Set button options state
+## Set button options state
 func set_button_options_states(person: Dictionary):
 	if ! person["parked"]:
 		other_options.button_one.hide()
