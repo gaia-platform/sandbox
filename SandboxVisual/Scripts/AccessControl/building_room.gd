@@ -20,13 +20,12 @@ func set_building_room_properties(room: Dictionary):
 
 	# Add people
 	for person in room["people"]:
-		# Create and setup instance
+		# Create and add instance to top of list
 		var new_person = person_node.instance()
-		new_person.set_person_properties(person, room)
-
-		# Add to top of list
 		people_container.add_child(new_person)
 		people_container.move_child(new_person, 0)
+		new_person.call_deferred("set_person_properties", person, room)
+
 
 	# Add schedule
 	schedule_panel.add_schedule_events(room["events"])
