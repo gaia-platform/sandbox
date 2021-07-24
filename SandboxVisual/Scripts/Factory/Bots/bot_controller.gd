@@ -79,4 +79,4 @@ func _physics_process(delta):
 			"is_charging": is_charging,
 			"speed_squared": cur_speed_squared
 		}
-		JavaScript.eval("publishData('%s/status', '%s')" % [bot_id, to_json(status)])
+		JavaScript.eval("parent.publishData('%s/status', '%s')" % [bot_id, to_json(status)])
