@@ -18,7 +18,6 @@ onready var people_container = get_node(people_container_path)
 func _ready():
 	var setup_data = CommunicationManager.get_setup_data()
 	if setup_data != null:
-		print("Running root")
 		# Add buildings
 		for building in setup_data["buildings"]:
 			var new_building = building_node.instance()

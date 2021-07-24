@@ -2,9 +2,7 @@ extends PanelContainer
 
 # Settings
 export (String) var label_prefix = "Location at time:"
-export (int) var hour = 8
-export (int) var minute = 0
-export (bool) var is_am = true
+export (int) var minutes = 480  # 8 am
 
 # Nodes
 export (NodePath) var time_label_path
@@ -16,24 +14,35 @@ func _ready():
 
 
 func _on_FastForwardButton_pressed():
-	minute += 30
-
-	if minute >= 60:
-		hour += 1
-		minute -= 60
-
-	if hour >= 12:
-		if hour == 12 and minute == 0:
-			is_am = not is_am
-		elif hour > 12:
-			hour -= 12
-
+	minutes += 30
 	_display_time_label()
+	
+	var data_send = {"time": minutes}
+	var as_json = to_json(data_send)
+	# TODO implement data send
 
 
 func _display_time_label():
-	var minute_text = minute
-	if minute < 10:
-		minute_text = "0%d" % minute
+	time_label.text = label_prefix + _minutes_to_string()
 
-	time_label.text = "%s %d:%s %s" % [label_prefix, hour, minute_text, "am" if is_am else "pm"]
+
+func _minutes_to_string():
+	# Hours
+	var hours = floor(minutes / 60.0)
+	var hours_mod = int(hours) % 12
+	hours = "12" if hours_mod == 0 else String(hours_mod)  # 12 hour time
+
+	# Minutes
+	var str_minutes: String
+	var minutes_mod = minutes % 60
+	if minutes_mod == 0:  # 00 for 0 minutes
+		str_minutes = "00"
+	elif minutes_mod < 10:  # Add 0 in front of single digit time
+		str_minutes = "0%d" % (minutes_mod)
+	else:  # Put whole number otherwise
+		str_minutes = String(minutes_mod)
+
+	# Append AM/PM
+	var am_pm = "pm" if int(hours) >= 12 else "am"
+
+	return "%s:%s %s" % [hours, str_minutes, am_pm]
