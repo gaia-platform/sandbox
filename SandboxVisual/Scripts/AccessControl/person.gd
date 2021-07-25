@@ -44,7 +44,7 @@ func set_person_properties(person: Dictionary, building: Dictionary, room: Dicti
 
 ## Set building title label
 func set_building_options_label(building: Dictionary):
-	building_options.options_label.text = "%s" % building["name"]
+	building_options.options_label.text = building["name"]
 
 
 ## Set button options state

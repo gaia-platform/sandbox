@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="SandboxVisual"
-run/main_scene="res://Scenes/Factory/single_bot_movement.tscn"
+run/main_scene="res://Scenes/AccessControl/access_control_building.tscn"
 config/icon="res://icon.png"
 
 [autoload]
