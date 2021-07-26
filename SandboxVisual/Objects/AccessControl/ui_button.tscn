@@ -20,3 +20,4 @@ __meta__ = {
 [connection signal="mouse_entered" from="." to="." method="_on_Button_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_Button_mouse_exited"]
 [connection signal="pressed" from="." to="." method="_on_Button_pressed"]
+[connection signal="pressed" from="." to="." method="_on_Button_pressed_as_person_option"]

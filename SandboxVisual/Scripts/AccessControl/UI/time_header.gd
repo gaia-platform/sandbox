@@ -16,7 +16,7 @@ func _ready():
 func _on_FastForwardButton_pressed():
 	minutes += 30
 	_display_time_label()
-	
+
 	var data_send = {"time": minutes}
 	var as_json = to_json(data_send)
 	# TODO implement data send
