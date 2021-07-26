@@ -33,7 +33,7 @@ func set_person_properties(person: Dictionary, building: Dictionary, room: Dicti
 	# ID
 	person_id = person["person_id"]
 	building_id = building["building_id"]
-	if !room.empty():
+	if ! room.empty():
 		room_id = room["room_id"]
 
 	# Options and labels

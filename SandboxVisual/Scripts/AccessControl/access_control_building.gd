@@ -7,6 +7,7 @@ export (NodePath) var place_container_path
 export (NodePath) var people_container_path
 export (PackedScene) var building_node
 export (PackedScene) var person_node
+export (String, FILE) var scene_picker_scene
 
 # Get their nodes
 onready var error_panel = get_node(error_panel_path)
@@ -35,3 +36,9 @@ func _ready():
 
 		# Close the error panel (deferred) once everything runs
 		error_panel.call_deferred("hide")
+
+
+func _on_ExitButton_pressed():
+	var change_scene_status = get_tree().change_scene(scene_picker_scene)
+	if ! change_scene_status:
+		print("Error changing scene: %d" % change_scene_status)
