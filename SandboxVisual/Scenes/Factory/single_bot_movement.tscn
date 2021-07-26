@@ -31,6 +31,7 @@ navpoly = SubResource( 1 )
 [node name="Bot0" parent="Bots" instance=ExtResource( 1 )]
 position = Vector2( 483, 520 )
 bot_id = "0"
+speed_scale = 250.0
 
 [node name="ExitButton" type="Button" parent="."]
 margin_right = 12.0

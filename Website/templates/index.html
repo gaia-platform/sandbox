@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8">
-  <title>Access Control Application</title>
+  <title>Gaia Sandbox</title>
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
   <!-- Favicons -->
@@ -27,11 +27,10 @@
   ============================-->
   <header id="header" class="fixed-top">
     <div class="container">
-
       <div class="logo float-left">
         <a href="#main" class="scrollto"><img src="{{ url_for('static', filename='img/logo.png') }}" alt=""
             class="img-fluid"></a>
-        <h4>Access Control Application</h4>
+        <!-- <h4>Access Control Application</h4> -->
       </div>
     </div>
   </header><!-- #header -->
@@ -40,7 +39,8 @@
 
     <section id="main-ui" class="section-bg">
       <div class="row">
-        <div class="col-sm-6"> <!-- VSCode editor -->
+        <div class="col-sm-6">
+          <!-- VSCode editor -->
           <div class="container">
             <input class="tab active" type="button" data-tab-name="ruleset" value="ruleset" />
             <input class="tab" type="button" data-tab-name="ddl" value="ddl" />
@@ -48,10 +48,13 @@
             <input type="button" style="float: right" id="run-button" value="run" />
           </div>
           <div class="container" id="sandboxEditor" style="overflow-y:auto; height: 800px; border: 1px solid grey">
+            The editor is not ready for the demo today. Sorry!
           </div>
         </div>
-        <div class="col-sm-6"> <!-- Sandbox Visual -->
-          <iframe src="{{ url_for('static', filename='visual/index.html') }}" style="position: relative; height: 100%; width: 100%;"></iframe>
+        <div class="col-sm-6">
+          <!-- Sandbox Visual -->
+          <iframe src="{{ url_for('static', filename='visual/index.html') }}"
+            style="position: relative; height: 100%; width: 100%;"></iframe>
           <!-- <div class="container" style="overflow-y:auto; height: 830px; border: 1px solid grey">
             <div class="row">
               <div class="col-sm-6">
@@ -115,12 +118,12 @@
 
   <script src="{{ url_for('static', filename='lib/monaco/vs/loader.js') }}"></script>
 
-  <script src="{{ url_for('static', filename='lib/aws/aws_bundle.js') }}"></script>
-
   <!-- <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> -->
 
   <!-- Main and MQTT Javascript File -->
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+  <script src="{{ url_for('static', filename='lib/aws/aws_bundle.js') }}"></script>
   <script src="{{ url_for('static', filename='js/mqtt_bundle.js') }}"></script>
 
   <!-- access_control Javascript File -->
