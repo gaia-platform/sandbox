@@ -28,5 +28,5 @@ navpoly = SubResource( 1 )
 [node name="Bots" type="Node" parent="."]
 
 [node name="Bot0" parent="Bots" instance=ExtResource( 1 )]
-position = Vector2( 484, 520 )
+position = Vector2( 483, 520 )
 bot_id = "0"
