@@ -14,6 +14,8 @@ onready var schedule_panel = get_node(schedule_panel_path)
 
 # Properties
 var person_id: int
+var room_id: int
+var building_id: int
 
 
 ### Methods
@@ -28,9 +30,11 @@ func set_person_properties(person: Dictionary, building: Dictionary, room: Dicti
 
 	name_label.text = "%s - %s" % [person["first_name"], name_text_suffix]
 
-	# TODO: Room stuff?
-	if room != {}:
-		pass
+	# ID
+	person_id = person["person_id"]
+	building_id = building["building_id"]
+	if ! room.empty():
+		room_id = room["room_id"]
 
 	# Options and labels
 	set_building_options_label(building)
@@ -42,7 +46,7 @@ func set_person_properties(person: Dictionary, building: Dictionary, room: Dicti
 
 ## Set building title label
 func set_building_options_label(building: Dictionary):
-	building_options.options_label.text = "%s" % building["name"]
+	building_options.options_label.text = building["name"]
 
 
 ## Set button options state

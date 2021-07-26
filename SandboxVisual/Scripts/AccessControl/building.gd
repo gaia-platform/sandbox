@@ -21,10 +21,10 @@ func set_building_properties(building: Dictionary):
 	for person in building["people"]:
 		var new_person = person_node.instance()
 		room_container.add_child(new_person)
-		new_person.call_deferred("set_person_properties", person)
+		new_person.call_deferred("set_person_properties", person, building)
 
 	# Populate with rooms
 	for room in building["rooms"]:
 		var new_room = building_room_node.instance()
 		room_container.add_child(new_room)
-		new_room.call_deferred("set_building_room_properties", room)
+		new_room.call_deferred("set_building_room_properties", room, building)

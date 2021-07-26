@@ -12,7 +12,7 @@ func _ready():
 
 func read_variable(variable_name):
 	if is_working:
-		return JavaScript.eval("window." + variable_name + ";")
+		return JavaScript.eval("parent." + variable_name + ";")
 
 
 func get_setup_data():

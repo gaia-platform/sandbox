@@ -1,5 +1,7 @@
 extends Node
 
+export (String, FILE) var scene_picker_scene
+
 const locations = [
 	Vector2(484, 520),  # WS Start
 	Vector2(125, 424),  # Production Line
@@ -27,3 +29,9 @@ enum stop_names {
 	CHARGING_AREA_0,
 	CHARGING_AREA_1
 }
+
+
+func _on_ExitButton_pressed():
+	var change_scene_status = get_tree().change_scene(scene_picker_scene)
+	if ! change_scene_status:
+		print("Error changing scene: %d" % change_scene_status)
