@@ -56,27 +56,28 @@ func _physics_process(delta):
 			modulate = Color.red  # Modulate to red
 
 	### Post status update
-	var current_datetime = OS.get_datetime()
-	if current_datetime["second"] != _prev_recorded_seconds:
-		_prev_recorded_seconds = current_datetime["second"]
-		var status = {
-			"id": bot_id,
-			"type": bot_type,
-			"time_stamp":
-			(
-				"%d/%d/%d %d:%d:%d"
-				% [
-					current_datetime["year"],
-					current_datetime["month"],
-					current_datetime["day"],
-					current_datetime["hour"],
-					current_datetime["minute"],
-					current_datetime["second"]
-				]
-			),
-			"location": location,
-			"charge_level": charge_level,
-			"is_charging": is_charging,
-			"speed_squared": cur_speed_squared
-		}
-		JavaScript.eval("parent.publishData('%s/status', '%s')" % [bot_id, to_json(status)])
+	if CommunicationManager.is_working:
+		var current_datetime = OS.get_datetime()
+		if current_datetime["second"] != _prev_recorded_seconds:
+			_prev_recorded_seconds = current_datetime["second"]
+			var status = {
+				"id": bot_id,
+				"type": bot_type,
+				"time_stamp":
+				(
+					"%d/%d/%d %d:%d:%d"
+					% [
+						current_datetime["year"],
+						current_datetime["month"],
+						current_datetime["day"],
+						current_datetime["hour"],
+						current_datetime["minute"],
+						current_datetime["second"]
+					]
+				),
+				"location": location,
+				"charge_level": charge_level,
+				"is_charging": is_charging,
+				"speed_squared": cur_speed_squared
+			}
+			JavaScript.eval("parent.publishData('%s/status', '%s')" % [bot_id, to_json(status)])
