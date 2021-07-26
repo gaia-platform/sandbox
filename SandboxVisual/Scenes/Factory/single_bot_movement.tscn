@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://Objects/Factory/Robots/bumblebee.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Scripts/Factory/Navigation/location_based_nav.gd" type="Script" id=2]
 [ext_resource path="res://Assets/Factory/smt_factory_layout.png" type="Texture" id=3]
 [ext_resource path="res://Scripts/Factory/Factories/smt_factory_meta.gd" type="Script" id=4]
+[ext_resource path="res://Objects/Factory/Robots/stacker.tscn" type="PackedScene" id=5]
 
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( 124, 441, 124, 424, 125, 424, 125, 440, 483, 441, 485, 440, 485, 368, 486, 368, 486, 440, 658, 440, 658, 243, 659, 243, 659, 336, 813, 336, 813, 337, 659, 337, 659, 440, 1091, 440, 1091, 464, 1090, 464, 1090, 441, 1025, 441, 1025, 464, 1024, 464, 1024, 441, 786, 441, 786, 496, 816, 496, 816, 497, 786, 497, 786, 568, 816, 568, 816, 569, 785, 569, 785, 441, 685, 441, 685, 520, 684, 520, 684, 441, 620, 441, 619, 441, 620, 520, 619, 520, 484, 441, 484, 520, 483, 520 )
@@ -31,6 +32,10 @@ navpoly = SubResource( 1 )
 [node name="Bot0" parent="Bots" instance=ExtResource( 1 )]
 position = Vector2( 483, 520 )
 bot_id = "0"
+speed_scale = 250.0
+
+[node name="Stacker" parent="Bots" instance=ExtResource( 5 )]
+position = Vector2( 896, 432 )
 
 [node name="ExitButton" type="Button" parent="."]
 margin_right = 12.0
