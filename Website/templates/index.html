@@ -48,53 +48,12 @@
             <input type="button" style="float: right" id="run-button" value="run" />
           </div>
           <div class="container" id="sandboxEditor" style="overflow-y:auto; height: 800px; border: 1px solid grey">
-            The editor is not ready for the demo today. Sorry!
           </div>
         </div>
         <div class="col-sm-6">
           <!-- Sandbox Visual -->
           <iframe src="{{ url_for('static', filename='visual/index.html') }}"
             style="position: relative; height: 100%; width: 100%;"></iframe>
-          <!-- <div class="container" style="overflow-y:auto; height: 830px; border: 1px solid grey">
-            <div class="row">
-              <div class="col-sm-6">
-                <div id="messages" class="box alert" hidden>
-                  <i style="float:left;" class="fas fa-exclamation-triangle"></i>
-                  <h4 id="message-output" style="text-align:center;">Message</h4>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-6">
-                <div id="location-time" class="box header">
-                  <h4 style="float:left;">Locations at time: <span id="time" data-minutes="480">8:00 am</span></h4>
-                  <i class="fas fa-fast-forward small"></i>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div class="box header">
-                  <h4>People</h4>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-6">
-                <div id="locations">
-                  <div class="row">
-                    <div class="col-sm-12">
-                      <div class="box building">
-                        <h4>If you see this message you may need to start or restart the Gaia application.</h4>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-sm-6">
-                <div id="people">
-                </div>
-              </div>
-            </div>
-          </div> -->
         </div>
       </div>
       </div>
@@ -117,17 +76,12 @@
   <script src="{{ url_for('static', filename='lib/jquery/jquery-migrate.min.js') }}"></script>
 
   <script src="{{ url_for('static', filename='lib/monaco/vs/loader.js') }}"></script>
+  <script src="{{ url_for('static', filename='dist/mqtt_bundle.js') }}"></script>
 
-  <!-- <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> -->
 
   <!-- Main and MQTT Javascript File -->
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
-  <script src="{{ url_for('static', filename='lib/aws/aws_bundle.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/mqtt_bundle.js') }}"></script>
-
-  <!-- access_control Javascript File -->
-  <!-- <script src="{{ url_for('static', filename='js/access_control.js') }}"></script> -->
 
 </body>
 
