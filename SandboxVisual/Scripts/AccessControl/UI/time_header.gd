@@ -17,8 +17,7 @@ func _on_FastForwardButton_pressed():
 	minutes += 30
 	_display_time_label()
 
-	var data_send = {"time": minutes}
-	CommunicationManager.publish_to_topic("access_control/time", to_json(data_send))
+	CommunicationManager.publish_to_topic("access_control/time", minutes)
 
 
 func _display_time_label():
