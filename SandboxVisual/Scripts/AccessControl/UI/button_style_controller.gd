@@ -39,13 +39,3 @@ func press_button():
 	# Set pressed state for toggle buttons
 	if toggle_mode:
 		pressed = not pressed
-
-
-func _on_Button_pressed_as_person_option():
-	# Stop if this isn't a person option button
-	if ! is_person_option_button:
-		return
-
-	# Detect what kind
-	var texture_path = get_button_icon().get_path()
-	print(texture_path)

@@ -16,7 +16,10 @@ func read_variable(variable_name):
 
 
 func publish_to_topic(topic: String, payload):
-	JavaScript.eval("parent.publishData('%s', '%s')" % [topic, String(payload)])
+	if is_working:
+		JavaScript.eval("parent.publishData('%s', '%s')" % [topic, String(payload)])
+	else:
+		print(payload)
 
 
 func get_setup_data():

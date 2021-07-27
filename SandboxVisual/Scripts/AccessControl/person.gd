@@ -18,6 +18,41 @@ var room_id: int
 var building_id: int
 
 
+func _ready():
+	for button in building_options.buttons + other_options.buttons:
+		button.connect("pressed", self, "_person_option_selected", [button])
+
+
+### Signal Methods
+func _person_option_selected(button: Button):
+	# Wait for state processing to complete
+	yield(get_tree(), "idle_frame")
+
+	# Detect what kind
+	var texture_path = button.get_button_icon().get_path()
+	var scan_type_value: String
+
+	if "badge" in texture_path:
+		scan_type_value = "badge"
+	elif "laugh" in texture_path:
+		scan_type_value = "face"
+	elif "sign" in texture_path:
+		scan_type_value = "leaving"
+	elif "parking" in texture_path:
+		scan_type_value = "vehicle_entering" if button.selected else "vehicle_departing"
+	elif "wifi" in texture_path:
+		scan_type_value = "joining_wifi" if button.selected else "leaving_wifi"
+
+	# Create message
+	var publish_dict = {
+		"scan_type": scan_type_value,
+		"person_id": person_id,
+		"building_id": building_id,
+		"room_id": room_id
+	}
+	CommunicationManager.publish_to_topic("access_control/scan", to_json(publish_dict))
+
+
 ### Methods
 ## Set person properties
 func set_person_properties(person: Dictionary, building: Dictionary, room: Dictionary = {}):
