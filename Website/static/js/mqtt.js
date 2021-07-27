@@ -98,5 +98,5 @@ function updateSubscriptionTopic() { // Topic subscription handler
 }
 
 window.publishData = function (topic, payload) { // Topic publish handler
-   mqttClient.publish(topic, payload);
+   mqttClient.publish(window.sandboxUuid + "/" + topic, payload);
 }

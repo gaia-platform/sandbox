@@ -15,6 +15,10 @@ func read_variable(variable_name):
 		return JavaScript.eval("parent." + variable_name + ";")
 
 
+func publish_to_topic(topic: String, payload):
+	JavaScript.eval("parent.publishData('%s', '%s')" % [topic, String(payload)])
+
+
 func get_setup_data():
 	var sample_json_file = File.new()
 	sample_json_file.open("res://Labs/sample_json.tres", File.READ)
