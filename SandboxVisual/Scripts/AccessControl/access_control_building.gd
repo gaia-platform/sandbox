@@ -15,23 +15,27 @@ onready var time_header = get_node(time_header_path)
 onready var place_container = get_node(place_container_path)
 onready var people_container = get_node(people_container_path)
 
+# Meta properties
+var id_to_location: Dictionary
+var id_to_person: Dictionary
+
 
 func _ready():
 	## Set initial properties
 	var setup_data = CommunicationManager.get_setup_data()
 	if setup_data != null:
 		# Add buildings
-		var building_zero
 		for building in setup_data["buildings"]:
 			var new_building = building_node.instance()
 			place_container.add_child(new_building)
+
 			# Run setup deferred (to give time for item to load)
-			new_building.call_deferred("set_building_init_properties", building)
-			if building == setup_data["buildings"][0]:
-				building_zero = new_building
+			new_building.call_deferred("set_building_init_properties", building, self)
+
+			# Add location to ID dictionary
+			id_to_location[building["building_id"]] = new_building.room_container
 
 		# Add people
-		var person_zero
 		for person in setup_data["people"]:
 			var new_person = person_node.instance()
 			people_container.add_child(new_person)
@@ -40,14 +44,12 @@ func _ready():
 			new_person.call_deferred(
 				"set_person_init_properties", person, setup_data["buildings"][0], {}, false
 			)
-			if person == setup_data["people"][0]:
-				person_zero = new_person
+
+			# Add person to ID dictionary
+			id_to_person[person["person_id"]] = new_person
 
 		# Close the error panel (deferred) once everything runs
 		error_panel.call_deferred("hide")
-
-		# yield(get_tree(), "idle_frame")
-		# move(person_zero, building_zero.room_container)
 
 
 ### Signal methods

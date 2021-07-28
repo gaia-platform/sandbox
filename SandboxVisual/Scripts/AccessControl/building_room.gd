@@ -18,7 +18,7 @@ var room_id: int
 
 ### Methods
 ## Set building properties
-func set_building_room_init_properties(room: Dictionary, building: Dictionary):
+func set_building_room_init_properties(room: Dictionary, building: Dictionary, ac_reference):
 	# Room properties
 	room_name_label.text = room["name"]
 	building_id = building["building_id"]
@@ -31,6 +31,9 @@ func set_building_room_init_properties(room: Dictionary, building: Dictionary):
 		people_container.add_child(new_person)
 		people_container.move_child(new_person, 0)
 		new_person.call_deferred("set_person_init_properties", person, building, room)
+
+		# Add person to ID dictionary
+		ac_reference.id_to_person[person["person_id"]] = new_person
 
 	# Add schedule
 	schedule_panel.add_schedule_events(room["events"])
