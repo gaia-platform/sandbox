@@ -17,6 +17,7 @@ onready var people_container = get_node(people_container_path)
 
 
 func _ready():
+	## Set initial properties
 	var setup_data = CommunicationManager.get_setup_data()
 	if setup_data != null:
 		# Add buildings
@@ -24,7 +25,7 @@ func _ready():
 			var new_building = building_node.instance()
 			place_container.add_child(new_building)
 			# Run setup deferred (to give time for item to load)
-			new_building.call_deferred("set_building_properties", building)
+			new_building.call_deferred("set_building_init_properties", building)
 
 		# Add people
 		for person in setup_data["people"]:
@@ -32,7 +33,9 @@ func _ready():
 			people_container.add_child(new_person)
 
 			# Run setup deferred (to give tiem for item to load)
-			new_person.call_deferred("set_person_properties", person, setup_data["buildings"][0])
+			new_person.call_deferred(
+				"set_person_init_properties", person, setup_data["buildings"][0]
+			)
 
 		# Close the error panel (deferred) once everything runs
 		error_panel.call_deferred("hide")

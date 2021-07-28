@@ -17,7 +17,12 @@ func read_variable(variable_name):
 
 func publish_to_topic(topic: String, payload):
 	if is_working:
-		JavaScript.eval("parent.publishData('%s', '%s')" % [topic, payload if typeof(payload) == TYPE_STRING else String(payload)])
+		JavaScript.eval(
+			(
+				"parent.publishData('%s', '%s')"
+				% [topic, payload if typeof(payload) == TYPE_STRING else String(payload)]
+			)
+		)
 	else:
 		print(payload)
 

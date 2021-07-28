@@ -18,7 +18,7 @@ var room_id: int
 
 ### Methods
 ## Set building properties
-func set_building_room_properties(room: Dictionary, building: Dictionary):
+func set_building_room_init_properties(room: Dictionary, building: Dictionary):
 	# Room properties
 	room_name_label.text = room["name"]
 	building_id = building["building_id"]
@@ -30,7 +30,7 @@ func set_building_room_properties(room: Dictionary, building: Dictionary):
 		var new_person = person_node.instance()
 		people_container.add_child(new_person)
 		people_container.move_child(new_person, 0)
-		new_person.call_deferred("set_person_properties", person, building, room)
+		new_person.call_deferred("set_person_init_properties", person, building, room)
 
 	# Add schedule
 	schedule_panel.add_schedule_events(room["events"])

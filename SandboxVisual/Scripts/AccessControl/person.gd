@@ -25,9 +25,6 @@ func _ready():
 
 ### Signal Methods
 func _person_option_selected(button: Button):
-	# Wait for state processing to complete
-	yield(get_tree(), "idle_frame")
-
 	# Detect what kind
 	var texture_path = button.get_button_icon().get_path()
 	var scan_type_value: String
@@ -39,9 +36,9 @@ func _person_option_selected(button: Button):
 	elif "sign" in texture_path:
 		scan_type_value = "leaving"
 	elif "parking" in texture_path:
-		scan_type_value = "vehicle_entering" if button.selected else "vehicle_departing"
+		scan_type_value = "vehicle_departing" if button.selected else "vehicle_entering" # If selected, user is pressing to deselect
 	elif "wifi" in texture_path:
-		scan_type_value = "joining_wifi" if button.selected else "leaving_wifi"
+		scan_type_value = "leaving_wifi" if button.selected else "joining_wifi"
 
 	# Create message
 	var publish_dict = {
@@ -55,7 +52,9 @@ func _person_option_selected(button: Button):
 
 ### Methods
 ## Set person properties
-func set_person_properties(person: Dictionary, building: Dictionary, room: Dictionary = {}):
+func set_person_init_properties(
+	person: Dictionary, building: Dictionary, room: Dictionary = {}, inside_building: bool = false
+):
 	# Set name label
 	var name_text_suffix = (
 		"Employee"
@@ -68,31 +67,23 @@ func set_person_properties(person: Dictionary, building: Dictionary, room: Dicti
 	# ID
 	person_id = person["person_id"]
 	building_id = building["building_id"]
-	if ! room.empty():
+	if not room.empty():
 		room_id = room["room_id"]
 
-	# Options and labels
-	set_building_options_label(building)
-	set_button_options_states(person)
+	# Building option label
+	building_options.options_label.text = building["name"]
+
+	# Building options state
+	if person["stranger"]:  # Badge button is shown by default, so hide if stranger
+		building_options.button_one.hide()
+	else:  # Set button state otherwise
+		building_options.button_one.set_state(person["badged"])
+
+	building_options.button_three.visible = not room.empty() or inside_building  # Show exit button if inside room or building
+
+	# Other options state
+	other_options.button_one.set_state(person["parked"])
+	other_options.button_two.set_state(person["on_wifi"])
 
 	# Schedule
 	schedule_panel.add_schedule_events(person["events"], true)
-
-
-## Set building title label
-func set_building_options_label(building: Dictionary):
-	building_options.options_label.text = building["name"]
-
-
-## Set button options state
-func set_button_options_states(person: Dictionary):
-	if person["parked"]:
-		other_options.button_one.press_button()
-	if person["on_wifi"]:
-		other_options.button_two.press_button()
-
-	# Badge
-	if person["stranger"]:
-		building_options.button_one.hide()
-	elif person["badged"]:
-		building_options.button_one.press_button()
