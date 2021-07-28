@@ -33,16 +33,6 @@ cmake ..
 make
 ```
 
-## Build Sandbox Coordinator
-Create build directory within coordinator directory, run cmake and then make.
-```bash
-cd {where_you_cloned_the_sandbox_repo}/coordinator
-mkdir build
-cd build
-cmake ..
-make
-```
-
 ## Install AWS IoT certificates
 * Go [here](https://us-west-2.console.aws.amazon.com/iot/home?region=us-west-2#/certificatehub) to create a certificate and attach to the [SandboxCoordinator Policy](arn:aws:iot:us-west-2:794670594658:policy/SandboxCoordinator).
 * Download the new certificate, private key, and Amazon root CA1 certificate.
