@@ -33,7 +33,7 @@ func set_building_room_init_properties(room: Dictionary, building: Dictionary, a
 		new_person.call_deferred("set_person_init_properties", person, building, room)
 
 		# Add person to ID dictionary
-		ac_reference.id_to_person[person["person_id"]] = new_person
+		ac_reference.id_to_person[String(person["person_id"])] = new_person
 
 	# Add schedule
 	schedule_panel.add_schedule_events(room["events"])

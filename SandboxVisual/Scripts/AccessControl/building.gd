@@ -10,15 +10,17 @@ export (PackedScene) var person_node
 onready var building_name_label = get_node(building_name_label_path)
 onready var room_container = get_node(room_container_path)
 
-# Meta properties
-var id_to_room: Dictionary
+# Properties
+var building_id: int
 
 
 ### Methods
 ## Set building properties
 func set_building_init_properties(building: Dictionary, ac_reference):
-	# Set building name
+	# Set building name, ID, and room ID space
 	building_name_label.text = building["name"]
+	building_id = building.building_id
+	ac_reference.id_to_room[String(building_id)] = {}
 
 	# Populate with people
 	for person in building["people"]:
@@ -27,7 +29,7 @@ func set_building_init_properties(building: Dictionary, ac_reference):
 		new_person.call_deferred("set_person_init_properties", person, building)
 
 		# Add person to ID dictionary
-		ac_reference.id_to_person[person["person_id"]] = new_person
+		ac_reference.id_to_person[String(person["person_id"])] = new_person
 
 	# Populate with rooms
 	for room in building["rooms"]:
@@ -36,4 +38,4 @@ func set_building_init_properties(building: Dictionary, ac_reference):
 		new_room.call_deferred("set_building_room_init_properties", room, building, ac_reference)
 
 		# Add room to ID dictionary
-		id_to_room[room["room_id"]] = new_room.people_container
+		ac_reference.id_to_room[String(building_id)][String(room["room_id"])] = new_room.people_container

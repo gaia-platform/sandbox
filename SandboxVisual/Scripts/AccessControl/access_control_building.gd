@@ -16,7 +16,8 @@ onready var place_container = get_node(place_container_path)
 onready var people_container = get_node(people_container_path)
 
 # Meta properties
-var id_to_location: Dictionary
+var id_to_building: Dictionary
+var id_to_room: Dictionary  # Two layers: building -> room
 var id_to_person: Dictionary
 
 
@@ -33,7 +34,7 @@ func _ready():
 			new_building.call_deferred("set_building_init_properties", building, self)
 
 			# Add location to ID dictionary
-			id_to_location[building["building_id"]] = new_building.room_container
+			id_to_building[String(building["building_id"])] = new_building.room_container
 
 		# Add people
 		for person in setup_data["people"]:
@@ -46,7 +47,7 @@ func _ready():
 			)
 
 			# Add person to ID dictionary
-			id_to_person[person["person_id"]] = new_person
+			id_to_person[String(person["person_id"])] = new_person
 
 		# Close the error panel (deferred) once everything runs
 		error_panel.call_deferred("hide")
@@ -60,8 +61,25 @@ func _on_ExitButton_pressed():
 
 
 ### Methods
-## Move person to new location
-func move(person, location):
+## Move person into a building. Moves them outside if no building is specified
+func move_person_to_building(person_id, building_id = -1):
+	var person = id_to_person[String(person_id)]
+	var building = id_to_building[String(building_id)]
+
 	person.get_parent().remove_child(person)  # Orphan first
-	location.add_child(person)  # Add to new location
-	location.move_child(person, 0)  # Move to top
+	building.add_child(person)  # Add to new location
+	building.move_child(person, 0)  # Move to top
+
+	person.update_options_for_inside_building(building_id != -1)
+
+
+## Moves person into a room in a given building
+func move_person_to_room(person_id, building_id, room_id):
+	var person = id_to_person[String(person_id)]
+	var room = id_to_room[String(building_id)][String(room_id)]
+
+	person.get_parent().remove_child(person)  # Orphan first
+	room.add_child(person)  # Add to new location
+	room.move_child(person, 0)  # Move to top
+
+	person.update_options_for_inside_building(true)

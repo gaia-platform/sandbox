@@ -16,6 +16,7 @@ onready var schedule_panel = get_node(schedule_panel_path)
 var person_id: int
 var room_id: int
 var building_id: int
+var is_stranger: bool
 
 
 func _ready():
@@ -74,11 +75,10 @@ func set_person_init_properties(
 	building_options.options_label.text = building["name"]
 
 	# Building options state
-	building_options.button_one.visible = not person["stranger"] or not inside_building  # Don't show if inside or if stranger
+	is_stranger = person.stranger
+	update_options_for_inside_building(inside_building)
 	if building_options.button_one.visible:  # Set state if still visible
 		building_options.button_one.set_state(person["badged"])
-
-	building_options.button_three.visible = inside_building  # Show exit button if inside room or building
 
 	# Other options state
 	other_options.button_one.set_state(person["parked"])
@@ -86,3 +86,8 @@ func set_person_init_properties(
 
 	# Schedule
 	schedule_panel.add_schedule_events(person["events"], true)
+
+
+func update_options_for_inside_building(inside_building: bool):
+	building_options.button_one.visible = not is_stranger and not inside_building  # Don't show if inside or if stranger
+	building_options.button_three.visible = inside_building  # Show exit button if inside room or building
