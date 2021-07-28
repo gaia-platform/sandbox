@@ -21,7 +21,7 @@ func set_building_init_properties(building: Dictionary):
 	for person in building["people"]:
 		var new_person = person_node.instance()
 		room_container.add_child(new_person)
-		new_person.call_deferred("set_person_init_properties", person, building, {}, true)
+		new_person.call_deferred("set_person_init_properties", person, building)
 
 	# Populate with rooms
 	for room in building["rooms"]:

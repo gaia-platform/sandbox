@@ -5,7 +5,7 @@ export (Color, RGB) var base_color = Color.black
 export (bool) var stays_selected = false
 
 # State
-var selected = false # Don't use pressed to keep track of state as this will interfere with signals
+var selected = false  # Don't use pressed to keep track of state as this will interfere with signals
 var _prev_color: Color
 
 

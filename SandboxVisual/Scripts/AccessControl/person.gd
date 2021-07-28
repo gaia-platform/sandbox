@@ -36,7 +36,7 @@ func _person_option_selected(button: Button):
 	elif "sign" in texture_path:
 		scan_type_value = "leaving"
 	elif "parking" in texture_path:
-		scan_type_value = "vehicle_departing" if button.selected else "vehicle_entering" # If selected, user is pressing to deselect
+		scan_type_value = "vehicle_departing" if button.selected else "vehicle_entering"  # If selected, user is pressing to deselect
 	elif "wifi" in texture_path:
 		scan_type_value = "leaving_wifi" if button.selected else "joining_wifi"
 
@@ -53,7 +53,7 @@ func _person_option_selected(button: Button):
 ### Methods
 ## Set person properties
 func set_person_init_properties(
-	person: Dictionary, building: Dictionary, room: Dictionary = {}, inside_building: bool = false
+	person: Dictionary, building: Dictionary, room: Dictionary = {}, inside_building: bool = true
 ):
 	# Set name label
 	var name_text_suffix = (
@@ -74,12 +74,11 @@ func set_person_init_properties(
 	building_options.options_label.text = building["name"]
 
 	# Building options state
-	if person["stranger"]:  # Badge button is shown by default, so hide if stranger
-		building_options.button_one.hide()
-	else:  # Set button state otherwise
+	building_options.button_one.visible = not person["stranger"] or not inside_building  # Don't show if inside or if stranger
+	if building_options.button_one.visible:  # Set state if still visible
 		building_options.button_one.set_state(person["badged"])
 
-	building_options.button_three.visible = not room.empty() or inside_building  # Show exit button if inside room or building
+	building_options.button_three.visible = inside_building  # Show exit button if inside room or building
 
 	# Other options state
 	other_options.button_one.set_state(person["parked"])
