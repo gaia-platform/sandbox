@@ -8,6 +8,7 @@ func _ready():
 	if ! OS.has_feature("JavaScript"):
 		print("No JavaScript! Can't run communications")
 		is_working = false
+		return
 
 
 func read_variable(variable_name):

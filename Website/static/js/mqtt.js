@@ -14,6 +14,11 @@ var awsConfig = {
 };
 var currentlySubscribedTopic = 'robot_location';
 
+// Incoming data buffers
+window.unreadMessages = false
+window.inTopics = []
+window.inPayloads = []
+
 /// State
 window.robot_location = 0
 
@@ -79,6 +84,15 @@ function mqttClientReconnectHandler() { // Reconnection handler
 
 function mqttClientMessageHandler(topic, payload) { // Message handler
    console.log('message: ' + topic + ':' + payload.toString());
+
+   // Add to message buffers
+   window.inTopics.push(topic)
+   window.inPayloads.push(payload)
+   if (!window.readNextMessage) {
+      window.readNextMessage = true;
+   }
+
+   // To be removed
    robot_location = parseInt(payload.toString())
 }
 
@@ -94,7 +108,20 @@ function updateSubscriptionTopic() { // Topic subscription handler
    mqttClient.unsubscribe(currentlySubscribedTopic);
    currentlySubscribedTopic = subscribeTopic;
    mqttClient.subscribe(currentlySubscribedTopic);
+}
 
+window.readNextTopic = function () { // Return next topic and removes from buffer (called by Godot)
+   return window.inTopics.shift();
+}
+window.readNextPayload = function () { // Returns next payload and removes from buffer (called by Godot after readNextTopic)
+   var nextPayload = window.inPayloads.shift();
+
+   // Signal to stop reading if buffers are emtpy
+   if (window.inTopics.length === 0) {
+      window.unreadMessages = false;
+   }
+
+   return nextPayload;
 }
 
 window.publishData = function (topic, payload) { // Topic publish handler
