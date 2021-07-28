@@ -44,7 +44,15 @@ gaia_id_t insert_gaia_client()
     gaia_client_writer w;
     w.id = Aws::Crt::UUID().ToString().c_str();
     w.is_active = false;
-    w.activity_timestamp = (uint64_t)time(nullptr);
+    w.is_launching = false;
+    w.created_timestamp = (uint64_t)time(nullptr);
+    return w.insert_row();
+}
+
+gaia_id_t insert_session()
+{
+    session_writer w;
+    w.id = Aws::Crt::UUID().ToString().c_str();
     return w.insert_row();
 }
 
@@ -52,10 +60,17 @@ void dump_db()
 {
     printf("\n");
     begin_transaction();
+    for (const auto& s : session_t::list())
+    {
+        printf("    session: %-37s|project: %-25s\n", s.id(), s.current_project().references() == nullptr ? "NULL" : "NOT");
+    }
+
     for (auto i : gaia_client_t::list())
     {
         printf("---------------------------------------------------------------------\n");
-        printf("client: %-37s|active: %-3s|last_active: %lu\n", i.id(), i.is_active() ? "YES" : "NO", i.activity_timestamp());
+        printf("client: %-37s|active: %-3s|launching: %-3s|created_timestamp: %lu\n",
+                i.id(), i.is_active() ? "YES" : "NO", i.is_launching() ? "YES" : "NO",
+                i.created_timestamp());
 
         for (const auto& s : i.session_list())
         {
@@ -81,11 +96,11 @@ int main()
 {
     gaia::system::initialize();
 
-    /*
-        begin_transaction();
-        insert_gaia_client();
-        commit_transaction();
-    */
+/*
+    begin_transaction();
+    insert_session();
+    commit_transaction();
+*/
 
     dump_db();
 
