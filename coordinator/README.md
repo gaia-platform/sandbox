@@ -34,7 +34,7 @@ make
 ```
 
 ## Install AWS IoT certificates
-* Go [here](https://us-west-2.console.aws.amazon.com/iot/home?region=us-west-2#/certificatehub) to create a certificate and attach to the [SandboxCoordinator Policy](arn:aws:iot:us-west-2:794670594658:policy/SandboxCoordinator).
+* Go [here](https://us-west-2.console.aws.amazon.com/iot/home?region=us-west-2#/thing/sandbox_coordinator) to create a certificate for the sandbox_coordinator thing and attach the certificate to the [SandboxCoordinator Policy](arn:aws:iot:us-west-2:794670594658:policy/SandboxCoordinator).
 * Download the new certificate, private key, and Amazon root CA1 certificate.
 * Create a new folder named certs in your sandbox repo directory and copy the downloaded files there.
 * Rename the certificate and private key respectively to: coordinator-certificate.pem.crt and coordinator-private.pem.key
