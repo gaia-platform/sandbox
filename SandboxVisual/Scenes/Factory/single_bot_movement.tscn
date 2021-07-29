@@ -14,6 +14,8 @@ outlines = [ PoolVector2Array( 124, 424, 125, 424, 125, 440, 485, 440, 485, 368,
 [node name="SMT_Factory" type="Node2D"]
 script = ExtResource( 4 )
 scene_picker_scene = "res://Scenes/scene_picker.tscn"
+pause_button_path = NodePath("HBoxContainer/PauseButton")
+speed_scale_label_path = NodePath("HBoxContainer/SpeedScaleLabel")
 
 [node name="Navigation2D" type="Navigation2D" parent="."]
 script = ExtResource( 2 )
@@ -37,12 +39,58 @@ speed_scale = 250.0
 [node name="Stacker" parent="Bots" instance=ExtResource( 5 )]
 position = Vector2( 896, 432 )
 
-[node name="ExitButton" type="Button" parent="."]
-margin_right = 12.0
-margin_bottom = 20.0
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 92.0
+margin_bottom = 24.0
+custom_constants/separation = 10
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ExitButton" type="Button" parent="HBoxContainer"]
+margin_right = 92.0
+margin_bottom = 24.0
 text = "Exit to Menu"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[connection signal="pressed" from="ExitButton" to="." method="_on_ExitButton_pressed"]
+[node name="PauseButton" type="Button" parent="HBoxContainer"]
+pause_mode = 2
+margin_left = 102.0
+margin_right = 152.0
+margin_bottom = 24.0
+focus_mode = 0
+text = "Pause"
+
+[node name="Control" type="Control" parent="HBoxContainer"]
+margin_left = 162.0
+margin_right = 162.0
+margin_bottom = 24.0
+
+[node name="SlowerButton" type="Button" parent="HBoxContainer"]
+margin_left = 172.0
+margin_right = 273.0
+margin_bottom = 24.0
+text = "<< Slow Down"
+
+[node name="SpeedScaleLabel" type="Label" parent="HBoxContainer"]
+margin_left = 283.0
+margin_top = 5.0
+margin_right = 314.0
+margin_bottom = 19.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "500x"
+align = 1
+valign = 1
+
+[node name="FasterButton" type="Button" parent="HBoxContainer"]
+margin_left = 324.0
+margin_right = 417.0
+margin_bottom = 24.0
+text = "Speed Up >>"
+
+[connection signal="pressed" from="HBoxContainer/ExitButton" to="." method="_on_ExitButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/PauseButton" to="." method="_on_PauseButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/SlowerButton" to="." method="_on_SlowerButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/FasterButton" to="." method="_on_FasterButton_pressed"]

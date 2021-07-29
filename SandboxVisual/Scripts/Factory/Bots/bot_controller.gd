@@ -6,7 +6,6 @@ export (String) var bot_id
 export (int, "Bumblebee", "Bumblebee Stacker") var bot_type
 export (int) var max_payload_weight
 export (float) var max_speed
-export (float) var speed_scale = 500
 export (int) var battery_time
 export (int) var charge_time
 
@@ -38,8 +37,7 @@ func _physics_process(delta):
 		if cur_distance_to_goal <= _prev_distance_to_goal:  # There is still distance to the next goal point
 			_prev_distance_to_goal = cur_distance_to_goal
 			var dir = (movement_path[1] - movement_path[0]).normalized()  # Normalized direction of movement
-			var frame_speed_scale = speed_scale * delta
-			var vel_vector = (dir * frame_speed_scale).clamped(max_speed * frame_speed_scale)  # Speed scaled, clamped, and delta-ed movement vector
+			var vel_vector = (dir * delta).clamped(max_speed * delta)  # Speed scaled, clamped, and delta-ed movement vector
 
 			# Update status values
 			cur_speed_squared = vel_vector.length_squared()
