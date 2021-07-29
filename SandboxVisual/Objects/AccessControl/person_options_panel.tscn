@@ -18,6 +18,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 options_label_path = NodePath("MarginContainer/VBoxContainer/OptionsLabel")
+button_container_path = NodePath("MarginContainer/VBoxContainer/HBoxContainer")
 button_one_path = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Button")
 button_two_path = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Button2")
 button_three_path = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Button3")

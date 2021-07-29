@@ -14,6 +14,14 @@ var awsConfig = {
 };
 var currentlySubscribedTopic = 'robot_location';
 
+// Incoming data buffers
+window.unreadMessages = false
+window.inTopics = []
+window.inPayloads = []
+
+// MQTT State
+let subscribedTopics = []
+
 /// State
 window.robot_location = 0
 
@@ -66,11 +74,6 @@ AWS.config.credentials.get(function (err, data) {
 //// MQTT functions
 function mqttClientConnectHandler() { // Connection handler
    console.log('connect');
-
-   //
-   // Subscribe to our current topic.
-   //
-   mqttClient.subscribe(currentlySubscribedTopic);
 }
 
 function mqttClientReconnectHandler() { // Reconnection handler
@@ -79,6 +82,15 @@ function mqttClientReconnectHandler() { // Reconnection handler
 
 function mqttClientMessageHandler(topic, payload) { // Message handler
    console.log('message: ' + topic + ':' + payload.toString());
+
+   // Add to message buffers
+   window.inTopics.push(topic.toString())
+   window.inPayloads.push(payload.toString())
+   if (!window.unreadMessages) {
+      window.unreadMessages = true;
+   }
+
+   // To be removed
    robot_location = parseInt(payload.toString())
 }
 
@@ -89,14 +101,37 @@ mqttClient.on('message', mqttClientMessageHandler);
 
 
 //// Methods
-function updateSubscriptionTopic() { // Topic subscription handler
-   var subscribeTopic = 'subscribe-topic'
-   mqttClient.unsubscribe(currentlySubscribedTopic);
-   currentlySubscribedTopic = subscribeTopic;
-   mqttClient.subscribe(currentlySubscribedTopic);
-
+// Subscribe to topics
+window.subscribeToTopic = function (topic) {
+   var fullTopicName = window.sandboxUuid + "/" + topic;
+   mqttClient.subscribe(fullTopicName);
+   subscribedTopics.push(fullTopicName)
 }
 
+// Sending data out
 window.publishData = function (topic, payload) { // Topic publish handler
-   mqttClient.publish(topic, payload);
+   mqttClient.publish(window.sandboxUuid + "/" + topic, payload);
+}
+
+// Sending data to Godot
+window.readNextTopic = function () { // Return next topic and removes from buffer (called by Godot)
+   return window.inTopics.shift();
+}
+window.readNextPayload = function () { // Returns next payload and removes from buffer (called by Godot after readNextTopic)
+   var nextPayload = window.inPayloads.shift();
+
+   // Signal to stop reading if buffers are emtpy
+   if (window.inTopics.length === 0) {
+      window.unreadMessages = false;
+   }
+
+   return nextPayload;
+}
+
+// Cleaning up
+window.mqttCleanup = function () {
+   unsubscribeFromTopics();
+}
+function unsubscribeFromTopics() {
+   subscribedTopics.forEach((topic, index) => mqttClient.unsubscribe(topic));
 }

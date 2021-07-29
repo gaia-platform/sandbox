@@ -33,5 +33,5 @@ enum stop_names {
 
 func _on_ExitButton_pressed():
 	var change_scene_status = get_tree().change_scene(scene_picker_scene)
-	if ! change_scene_status:
+	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
