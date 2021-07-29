@@ -4,6 +4,10 @@ export (String, FILE) var factory_demo_scene
 export (String, FILE) var access_control_scene
 
 
+func _ready():
+	CommunicationManager.cleanup()
+
+
 func _on_FactoryDemoButton_pressed():
 	var change_scene_status = get_tree().change_scene(factory_demo_scene)
 	if ! change_scene_status:

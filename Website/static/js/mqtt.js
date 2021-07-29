@@ -19,6 +19,9 @@ window.unreadMessages = false
 window.inTopics = []
 window.inPayloads = []
 
+// MQTT State
+let subscribedTopics = []
+
 /// State
 window.robot_location = 0
 
@@ -71,11 +74,6 @@ AWS.config.credentials.get(function (err, data) {
 //// MQTT functions
 function mqttClientConnectHandler() { // Connection handler
    console.log('connect');
-
-   //
-   // Subscribe to our current topic.
-   //
-   mqttClient.subscribe(currentlySubscribedTopic);
 }
 
 function mqttClientReconnectHandler() { // Reconnection handler
@@ -86,10 +84,10 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
    console.log('message: ' + topic + ':' + payload.toString());
 
    // Add to message buffers
-   window.inTopics.push(topic)
-   window.inPayloads.push(payload)
-   if (!window.readNextMessage) {
-      window.readNextMessage = true;
+   window.inTopics.push(topic.toString())
+   window.inPayloads.push(payload.toString())
+   if (!window.unreadMessages) {
+      window.unreadMessages = true;
    }
 
    // To be removed
@@ -103,13 +101,19 @@ mqttClient.on('message', mqttClientMessageHandler);
 
 
 //// Methods
-function updateSubscriptionTopic() { // Topic subscription handler
-   var subscribeTopic = 'subscribe-topic'
-   mqttClient.unsubscribe(currentlySubscribedTopic);
-   currentlySubscribedTopic = subscribeTopic;
-   mqttClient.subscribe(currentlySubscribedTopic);
+// Subscribe to topics
+window.subscribeToTopic = function (topic) {
+   var fullTopicName = window.sandboxUuid + "/" + topic;
+   mqttClient.subscribe(fullTopicName);
+   subscribedTopics.push(fullTopicName)
 }
 
+// Sending data out
+window.publishData = function (topic, payload) { // Topic publish handler
+   mqttClient.publish(window.sandboxUuid + "/" + topic, payload);
+}
+
+// Sending data to Godot
 window.readNextTopic = function () { // Return next topic and removes from buffer (called by Godot)
    return window.inTopics.shift();
 }
@@ -124,6 +128,10 @@ window.readNextPayload = function () { // Returns next payload and removes from 
    return nextPayload;
 }
 
-window.publishData = function (topic, payload) { // Topic publish handler
-   mqttClient.publish(window.sandboxUuid + "/" + topic, payload);
+// Cleaning up
+window.mqttCleanup = function () {
+   unsubscribeFromTopics();
+}
+function unsubscribeFromTopics() {
+   subscribedTopics.forEach((topic, index) => mqttClient.unsubscribe(topic));
 }
