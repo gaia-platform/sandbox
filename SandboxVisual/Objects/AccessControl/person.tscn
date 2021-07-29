@@ -123,8 +123,8 @@ hint_tooltip = "Connect to wifi"
 icon = ExtResource( 6 )
 
 [node name="Button3" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="2"]
-margin_left = 329.0
-margin_right = 389.0
+margin_left = 256.0
+margin_right = 316.0
 
 [node name="SchedulePanel" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
 margin_top = 111.0

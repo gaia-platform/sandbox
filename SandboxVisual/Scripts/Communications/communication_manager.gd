@@ -12,7 +12,7 @@ signal ac_init(init_data)
 signal ac_error(error_message)
 signal ac_move_to_building(person_id, building_id)
 signal ac_move_to_room(person_id, building_id, room_id)
-signal ac_option(option_type, value)
+signal ac_option(option_value)
 
 
 func _ready():
@@ -55,10 +55,10 @@ func _physics_process(_delta):
 							emit_signal(
 								"ac_move_to_room", topic_extract[-2], data_split[0], data_split[1]
 							)
-					if topic_extract[-2] == "scan":  # Person options
-						emit_signal("ac_option", topic_extract[-1], payload)
-					else:
-						print("Unknown factory topic")
+						"scan":  # Person option state change
+							emit_signal("ac_option", int(topic_extract[-2]), payload)
+						_:
+							print("Unknown factory topic")
 				_:
 					print("Unknown Demo")
 

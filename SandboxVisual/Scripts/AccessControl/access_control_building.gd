@@ -78,21 +78,25 @@ func _on_ExitButton_pressed():
 
 ### Methods
 ## Move person into a building. Moves them outside if no building is specified
-func _move_person_to_building(person_id, building_id = -1):
-	var person = id_to_person[String(person_id)]
-	var building = id_to_building[String(building_id)]
+func _move_person_to_building(person_id: String, building_id: String):
+	var person = id_to_person[person_id]
+	var target_location = (
+		id_to_building[building_id]
+		if id_to_building.has(building_id)
+		else people_container
+	)
 
 	person.get_parent().remove_child(person)  # Orphan first
-	building.add_child(person)  # Add to new location
-	building.move_child(person, 0)  # Move to top
+	target_location.add_child(person)  # Add to new location
+	target_location.move_child(person, 0)  # Move to top
 
-	person.update_options_for_inside_building(building_id != -1)
+	person.update_options_for_inside_building(target_location != people_container)
 
 
 ## Moves person into a room in a given building
-func _move_person_to_room(person_id, building_id, room_id):
-	var person = id_to_person[String(person_id)]
-	var room = id_to_room[String(building_id)][String(room_id)]
+func _move_person_to_room(person_id: String, building_id: String, room_id: String):
+	var person = id_to_person[person_id]
+	var room = id_to_room[building_id][room_id]
 
 	person.get_parent().remove_child(person)  # Orphan first
 	room.add_child(person)  # Add to new location

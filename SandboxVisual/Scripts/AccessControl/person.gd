@@ -23,6 +23,10 @@ func _ready():
 	for button in building_options.buttons + other_options.buttons:
 		button.connect("pressed", self, "_person_option_selected", [button])
 
+	var _connection_var = CommunicationManager.connect(
+		"ac_option", self, "_process_person_option_state_change"
+	)
+
 
 ### Signal Methods
 func _person_option_selected(button: Button):
@@ -49,6 +53,26 @@ func _person_option_selected(button: Button):
 		"room_id": room_id
 	}
 	CommunicationManager.publish_to_topic("access_control/scan", to_json(publish_dict))
+
+
+func _process_person_option_state_change(p_id: int, scan_type: String):
+	if p_id != person_id:  # Skip out if signal is not targeted at this person
+		return
+
+	# Match scan_type
+	match scan_type:
+		"badge":
+			building_options.button_one.set_state(true)
+		"vehicle_departing":
+			other_options.button_one.set_state(false)
+		"vehicle_entering":
+			other_options.button_one.set_state(true)
+		"leaving_wifi":
+			other_options.button_two.set_state(false)
+		"joining_wifi":
+			other_options.button_two.set_state(true)
+		_:
+			print("Unknown scan type")
 
 
 ### Methods
@@ -80,6 +104,7 @@ func set_person_init_properties(
 	# Topics and signals
 	CommunicationManager.subscribe_to_topic("access_control/%s/move_to_building" % person_id)
 	CommunicationManager.subscribe_to_topic("access_control/%s/move_to_room" % person_id)
+	CommunicationManager.subscribe_to_topic("access_control/%s/scan" % person_id)
 
 	# Building option label
 	building_options.options_label.text = building["name"]
@@ -99,5 +124,9 @@ func set_person_init_properties(
 
 
 func update_options_for_inside_building(inside_building: bool):
-	building_options.button_one.visible = not is_stranger and not inside_building  # Don't show if inside or if stranger
+	if not is_stranger and not inside_building:  # Don't show if inside or if stranger
+		building_options.button_one.show()
+		building_options.button_one.set_state(false)
+	else:
+		building_options.button_one.hide()
 	building_options.button_three.visible = inside_building  # Show exit button if inside room or building
