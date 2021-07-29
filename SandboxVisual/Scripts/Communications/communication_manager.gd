@@ -6,6 +6,7 @@ var _is_still_processing = false
 ### Signals
 ## AMR
 signal factory_move_location(bot_id, location)
+signal factory_status_request(bot_id, status_item)
 
 ## Access Control
 signal ac_init(init_data)
@@ -40,6 +41,8 @@ func _physics_process(_delta):
 					match topic_extract[-1]:  # Look at last item in topic path
 						"move_location":  # Set destination location of a bot
 							emit_signal("factory_move_location", topic_extract[-2], int(payload))  # Send bot_ID and payload
+						"status_request":  # Get info about a bot
+							emit_signal("factory_status_request", topic_extract[-2], payload)
 						_:
 							print("Unknown factory topic")
 				"access_control":
