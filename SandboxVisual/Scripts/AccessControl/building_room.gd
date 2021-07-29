@@ -23,6 +23,7 @@ func set_building_room_init_properties(room: Dictionary, building: Dictionary, a
 	room_name_label.text = room["name"]
 	building_id = building["building_id"]
 	room_id = room["room_id"]
+	ac_reference.id_to_room[String(building_id)][String(room_id)] = people_container
 
 	# Add people
 	for person in room["people"]:
@@ -30,10 +31,7 @@ func set_building_room_init_properties(room: Dictionary, building: Dictionary, a
 		var new_person = person_node.instance()
 		people_container.add_child(new_person)
 		people_container.move_child(new_person, 0)
-		new_person.call_deferred("set_person_init_properties", person, building, room)
-
-		# Add person to ID dictionary
-		ac_reference.id_to_person[String(person["person_id"])] = new_person
+		new_person.call_deferred("set_person_init_properties", person, ac_reference, building, room)
 
 	# Add schedule
 	schedule_panel.add_schedule_events(room["events"])

@@ -7,6 +7,13 @@ var _is_still_processing = false
 ## AMR
 signal factory_move_location(bot_id, location)
 
+## Access Control
+signal ac_init(init_data)
+signal ac_error(error_message)
+signal ac_move_to_building(person_id, building_id)
+signal ac_move_to_room(person_id, building_id, room_id)
+signal ac_option(option_type, value)
+
 
 func _ready():
 	# Cancel process if no JavaScript
@@ -18,9 +25,11 @@ func _ready():
 
 func _physics_process(_delta):
 	if is_working && not _is_still_processing:
-		while JavaScript.eval("parent.unreadMessages;"):
+		while JavaScript.eval("parent.unreadMessages;"):  # Read and process while there are unread
 			if not _is_still_processing:
 				_is_still_processing = true
+
+			# Read MQTT data
 			var topic = JavaScript.eval("parent.readNextTopic();")
 			var payload = JavaScript.eval("parent.readNextPayload();")
 
@@ -34,8 +43,22 @@ func _physics_process(_delta):
 						_:
 							print("Unknown factory topic")
 				"access_control":
-					# Relating to Access Control stuff
-					pass
+					match topic_extract[-1]:
+						"init":  # Verbose database output for setting up
+							emit_signal("ac_init", payload)
+						"alert":  # Error message
+							emit_signal("ac_error", payload)
+						"move_to_building":  # Moves buildlings
+							emit_signal("ac_move_to_building", topic_extract[-2], payload)
+						"move_to_room":  # Moves rooms
+							var data_split = payload.split(",")  # Divides into building_ID and room_ID
+							emit_signal(
+								"ac_move_to_room", topic_extract[-2], data_split[0], data_split[1]
+							)
+					if topic_extract[-2] == "scan":  # Person options
+						emit_signal("ac_option", topic_extract[-1], payload)
+					else:
+						print("Unknown factory topic")
 				_:
 					print("Unknown Demo")
 

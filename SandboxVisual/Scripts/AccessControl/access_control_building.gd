@@ -20,10 +20,27 @@ var id_to_building: Dictionary
 var id_to_room: Dictionary  # Two layers: building -> room
 var id_to_person: Dictionary
 
+var _connection_var: int
+
 
 func _ready():
-	## Set initial properties
-	var setup_data = CommunicationManager.get_setup_data()
+	# Subscribe to topics
+	CommunicationManager.subscribe_to_topic("access_control/init")
+
+	# Connect to signals
+	_connection_var = CommunicationManager.connect("ac_init", self, "_init_setup")
+	_connection_var = CommunicationManager.connect(
+		"ac_move_to_building", self, "_move_person_to_building"
+	)
+	_connection_var = CommunicationManager.connect("ac_move_to_room", self, "_move_person_to_room")
+
+	# Temp setup data
+	_init_setup(CommunicationManager.get_setup_data())
+
+
+### Signal methods
+## Set initial properties
+func _init_setup(setup_data):
 	if setup_data != null:
 		# Add buildings
 		for building in setup_data["buildings"]:
@@ -43,7 +60,7 @@ func _ready():
 
 			# Run setup deferred (to give tiem for item to load)
 			new_person.call_deferred(
-				"set_person_init_properties", person, setup_data["buildings"][0], {}, false
+				"set_person_init_properties", person, self, setup_data["buildings"][0], {}, false
 			)
 
 			# Add person to ID dictionary
@@ -53,7 +70,6 @@ func _ready():
 		error_panel.call_deferred("hide")
 
 
-### Signal methods
 func _on_ExitButton_pressed():
 	var change_scene_status = get_tree().change_scene(scene_picker_scene)
 	if change_scene_status != OK:
@@ -62,7 +78,7 @@ func _on_ExitButton_pressed():
 
 ### Methods
 ## Move person into a building. Moves them outside if no building is specified
-func move_person_to_building(person_id, building_id = -1):
+func _move_person_to_building(person_id, building_id = -1):
 	var person = id_to_person[String(person_id)]
 	var building = id_to_building[String(building_id)]
 
@@ -74,7 +90,7 @@ func move_person_to_building(person_id, building_id = -1):
 
 
 ## Moves person into a room in a given building
-func move_person_to_room(person_id, building_id, room_id):
+func _move_person_to_room(person_id, building_id, room_id):
 	var person = id_to_person[String(person_id)]
 	var room = id_to_room[String(building_id)][String(room_id)]
 

@@ -54,7 +54,11 @@ func _person_option_selected(button: Button):
 ### Methods
 ## Set person properties
 func set_person_init_properties(
-	person: Dictionary, building: Dictionary, room: Dictionary = {}, inside_building: bool = true
+	person: Dictionary,
+	ac_reference,
+	building: Dictionary,
+	room: Dictionary = {},
+	inside_building: bool = true
 ):
 	# Set name label
 	var name_text_suffix = (
@@ -67,9 +71,15 @@ func set_person_init_properties(
 
 	# ID
 	person_id = person["person_id"]
+	ac_reference.id_to_person[String(person_id)] = self
+
 	building_id = building["building_id"]
 	if not room.empty():
 		room_id = room["room_id"]
+
+	# Topics and signals
+	CommunicationManager.subscribe_to_topic("access_control/%s/move_to_building" % person_id)
+	CommunicationManager.subscribe_to_topic("access_control/%s/move_to_room" % person_id)
 
 	# Building option label
 	building_options.options_label.text = building["name"]
