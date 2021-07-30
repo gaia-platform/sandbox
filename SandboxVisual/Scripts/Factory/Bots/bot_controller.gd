@@ -6,12 +6,11 @@ export (String) var bot_id
 export (int, "Bumblebee", "Bumblebee Stacker") var bot_type
 export (int) var max_payload_weight
 export (float) var max_speed
-export (float) var speed_scale = 500
 export (int) var battery_time
 export (int) var charge_time
 
 ### State
-export (int) var location
+export (int) var goal_location
 export (float) var cur_speed_squared
 export (float) var charge_level = 100
 export (bool) var is_charging = false
@@ -21,6 +20,11 @@ export (bool) var is_broken = false
 var movement_path = []
 var _prev_distance_to_goal = -1
 var _prev_recorded_seconds = -1
+
+
+func _ready():
+	CommunicationManager.subscribe_to_topic("factory/%s/move_location" % bot_id)
+	CommunicationManager.subscribe_to_topic("factory/%s/status_request" % bot_id)
 
 
 func _physics_process(delta):
@@ -33,8 +37,7 @@ func _physics_process(delta):
 		if cur_distance_to_goal <= _prev_distance_to_goal:  # There is still distance to the next goal point
 			_prev_distance_to_goal = cur_distance_to_goal
 			var dir = (movement_path[1] - movement_path[0]).normalized()  # Normalized direction of movement
-			var frame_speed_scale = speed_scale * delta
-			var vel_vector = (dir * frame_speed_scale).clamped(max_speed * frame_speed_scale)  # Speed scaled, clamped, and delta-ed movement vector
+			var vel_vector = (dir * delta).clamped(max_speed * delta)  # Speed scaled, clamped, and delta-ed movement vector
 
 			# Update status values
 			cur_speed_squared = vel_vector.length_squared()
@@ -55,29 +58,29 @@ func _physics_process(delta):
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
 			modulate = Color.red  # Modulate to red
 
-	### Post status update
-	if CommunicationManager.is_working:
-		var current_datetime = OS.get_datetime()
-		if current_datetime["second"] != _prev_recorded_seconds:
-			_prev_recorded_seconds = current_datetime["second"]
-			var status = {
-				"id": bot_id,
-				"type": bot_type,
-				"time_stamp":
-				(
-					"%d/%d/%d %d:%d:%d"
-					% [
-						current_datetime["year"],
-						current_datetime["month"],
-						current_datetime["day"],
-						current_datetime["hour"],
-						current_datetime["minute"],
-						current_datetime["second"]
-					]
-				),
-				"location": location,
-				"charge_level": charge_level,
-				"is_charging": is_charging,
-				"speed_squared": cur_speed_squared
-			}
-			JavaScript.eval("parent.publishData('%s/status', '%s')" % [bot_id, to_json(status)])
+
+## Signal methods
+# Status item
+func publish_status_item(item: String):
+	var payload
+	match item:
+		"id":
+			payload = bot_id
+		"type":
+			payload = bot_type
+		"goal_location":
+			payload = goal_location
+		"world_location":
+			payload = position
+		"charge_level":
+			payload = charge_level
+		"is_charging":
+			payload = charge_level
+		"speed_squared":
+			payload = cur_speed_squared
+		"is_broken":
+			payload = is_broken
+		_:
+			print("Unknown status item request")
+
+	CommunicationManager.publish_to_topic("factory/%s/%s" % [bot_id, item], payload)

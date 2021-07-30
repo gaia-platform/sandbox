@@ -80,7 +80,7 @@ margin_right = 410.0
 margin_left = 143.0
 margin_right = 192.0
 hint_tooltip = "Scan ID badge"
-stays_pressed = true
+stays_selected = true
 
 [node name="Button2" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
 margin_left = 217.0
@@ -88,8 +88,8 @@ margin_right = 266.0
 hint_tooltip = "Scan face"
 
 [node name="Button3" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="2"]
-margin_left = 321.0
-margin_right = 381.0
+margin_left = 249.0
+margin_right = 309.0
 hint_tooltip = "Leave"
 
 [node name="PersonOptionsPanel2" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 4 )]
@@ -114,19 +114,17 @@ margin_right = 410.0
 margin_left = 136.0
 margin_right = 185.0
 hint_tooltip = "Enable parked"
-toggle_mode = true
 icon = ExtResource( 5 )
 
 [node name="Button2" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="1"]
 margin_left = 210.0
 margin_right = 274.0
 hint_tooltip = "Connect to wifi"
-toggle_mode = true
 icon = ExtResource( 6 )
 
 [node name="Button3" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="2"]
-margin_left = 329.0
-margin_right = 389.0
+margin_left = 256.0
+margin_right = 316.0
 
 [node name="SchedulePanel" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
 margin_top = 111.0

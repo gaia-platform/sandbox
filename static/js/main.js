@@ -9,7 +9,8 @@
     });
 
     // Generate UUID
-    window.sandboxUuid = generateUUID();
+    window.sandboxUuid = "asdf"; //generateUUID();
+    console.log("Sandbox UUID: " + window.sandboxUuid);
   });
 
   var editor = null;
