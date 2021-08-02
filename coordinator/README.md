@@ -29,7 +29,7 @@ Create build directory within coordinator directory, run cmake and then make.
 cd {where_you_cloned_the_sandbox_repo}/coordinator
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX="<absolute path to where_you_cloned_the_sandbox_repo>"
+cmake -DCMAKE_INSTALL_PREFIX="<absolute path to where_you_cloned_the_sandbox_repo>" ..
 make
 ```
 
