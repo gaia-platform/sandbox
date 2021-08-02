@@ -2,6 +2,34 @@
   "use strict";
 
   $(window).on('load', function () {
+    // Config elements
+    document.querySelectorAll("[data-name='div-1']").forEach((el) => {
+      el.space = 20;
+    });
+
+    document.querySelectorAll("[data-name='a-1']").forEach((el) => {
+      el.aspectRatio = 0.1682;
+      el.fitContent = false;
+    });
+
+    document.querySelectorAll("[data-name='a-2']").forEach((el) => {
+      el.openLinkInNewTab = true;
+    });
+
+    document.querySelectorAll("[data-name='a-3']").forEach((el) => {
+      el.openLinkInNewTab = true;
+    });
+
+    document.querySelectorAll("[data-name='div-2']").forEach((el) => {
+      el.space = 20;
+    });
+
+    document.querySelectorAll("[data-name='div-3']").forEach((el) => {
+      el.space = 20;
+    });
+
+
+    // Load Monaco Editor
     require.config({ paths: { vs: "static/lib/monaco/vs" } });
 
     require(['vs/editor/editor.main'], function () {
