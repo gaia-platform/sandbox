@@ -66,7 +66,7 @@ function mqttClientConnectHandler() { // Connection handler
    //
    // Subscribe to our current topic.
    //
-   mqttClient.subscribe(clientId + '/+');
+   mqttClient.subscribe(clientId + '/#');
 }
 
 function mqttClientReconnectHandler() { // Reconnection handler
@@ -75,7 +75,8 @@ function mqttClientReconnectHandler() { // Reconnection handler
 
 function mqttClientMessageHandler(topic, payload) { // Message handler
    console.log('message: ' + topic + ':' + payload.toString());
-   robot_location = parseInt(payload.toString())
+   var topicTokens = topic.split('/');
+//   robot_location = parseInt(payload.toString())
 }
 
 // Install handlers

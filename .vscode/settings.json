@@ -2,5 +2,8 @@
     "python.linting.pylintEnabled": true,
     "python.linting.flake8Enabled": false,
     "python.linting.enabled": true,
-    "python.pythonPath": "/media/microbobu/WorkDrive/Gaia/Sandbox Project/sandbox/sandbox-venv/bin/python3.9"
+    "python.pythonPath": "/media/microbobu/WorkDrive/Gaia/Sandbox Project/sandbox/sandbox-venv/bin/python3.9",
+    "files.associations": {
+        "*.ruleset": "cpp"
+    }
 }

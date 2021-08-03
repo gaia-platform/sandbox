@@ -39,21 +39,25 @@ using namespace gaia::direct_access;
 using namespace gaia::coordinator;
 using namespace gaia::rules;
 
-gaia_id_t insert_gaia_client()
+session_t get_session(std::string id)
 {
-    gaia_client_writer w;
-    w.id = Aws::Crt::UUID().ToString().c_str();
-    w.is_active = false;
-    w.is_launching = false;
-    w.created_timestamp = (uint64_t)time(nullptr);
-    return w.insert_row();
-}
-
-gaia_id_t insert_session()
-{
-    session_writer w;
-    w.id = Aws::Crt::UUID().ToString().c_str();
-    return w.insert_row();
+    auto session_iter = session_t::list().where(session_t::expr::id == id).begin();
+    if (session_iter == session_t::list().end())
+    {
+        printf("Creating new session\n");
+        session_writer w;
+        w.id = id;
+        w.agent_id = Aws::Crt::UUID().ToString().c_str();
+        w.current_project_id = "none";
+        w.is_active = false;
+        w.is_launching = false;
+        w.keep_alive_received = false;
+        w.last_active_timestamp = (uint64_t)time(nullptr);
+        w.created_timestamp = (uint64_t)time(nullptr);
+        return session_t::get(w.insert_row());
+    }
+    printf("Existing session found\n");
+    return *session_iter;
 }
 
 void dump_db()
@@ -62,45 +66,43 @@ void dump_db()
     begin_transaction();
     for (const auto& s : session_t::list())
     {
-        printf("    session: %-37s|project: %-25s\n", s.id(), s.current_project().references() == nullptr ? "NULL" : "NOT");
+        printf("-----------------------------------------------------------\n");
+        printf("session:         %-37s\n", s.id());
+        printf("agent:           %-37s\n", s.agent_id());
+        printf("current_project: %-37s\n", s.current_project_id());
     }
+    printf("-----------------------------------------------------------\n");
+    commit_transaction();
+}
 
-    for (auto i : gaia_client_t::list())
-    {
-        printf("---------------------------------------------------------------------\n");
-        printf("client: %-37s|active: %-3s|launching: %-3s|created_timestamp: %lu\n",
-                i.id(), i.is_active() ? "YES" : "NO", i.is_launching() ? "YES" : "NO",
-                i.created_timestamp());
+void handle_session(std::string id)
+{
+    begin_transaction();
 
-        for (const auto& s : i.session_list())
-        {
-            printf("    session: %-37s|project: %-25s\n", s.id(), s.current_project().name());
-        }
+    session_t session = get_session(id);
 
-        printf("\n");
-        printf("\n");
-    }
     commit_transaction();
 }
 
 void on_message(Mqtt::MqttConnection &, const String &topic, const ByteBuf &payload,
                 bool /*dup*/, Mqtt::QOS /*qos*/, bool /*retain*/)
 {
-    fprintf(stdout, "Publish received on topic %s\n", topic.c_str());
-    fprintf(stdout, "\n Message:\n");
+    std::string sub_topic = topic.substr(strlen("sandbox_coordinator/")).c_str();
+    fprintf(stdout, "Message received on topic %s\n", topic.c_str());
+    fprintf(stdout, "sub_topic %s\n", sub_topic.c_str());
+    fprintf(stdout, "Message: ");
     fwrite(payload.buffer, 1, payload.len, stdout);
     fprintf(stdout, "\n");
+
+    if (sub_topic == "session")
+    {
+        handle_session((char *)payload.buffer);
+    }
 }
 
 int main()
 {
     gaia::system::initialize();
-
-/*
-    begin_transaction();
-    insert_session();
-    commit_transaction();
-*/
 
     dump_db();
 
@@ -182,12 +184,14 @@ int main()
             else
             {
                 fprintf(stdout, "Connection completed successfully.");
+                gaia::system::initialize();
                 connectionCompletedPromise.set_value(true);
             }
         }
     };
 
-    auto onInterrupted = [&](Mqtt::MqttConnection &, int error) {
+    auto onInterrupted = [&](Mqtt::MqttConnection &, int error)
+    {
         fprintf(stdout, "Connection interrupted with error %s\n", ErrorDebugString(error));
     };
 
@@ -196,6 +200,7 @@ int main()
     auto onDisconnect = [&](Mqtt::MqttConnection &) {
         {
             fprintf(stdout, "Disconnect completed\n");
+            gaia::system::shutdown();
             connectionClosedPromise.set_value();
         }
     };
@@ -216,7 +221,8 @@ int main()
     {
         std::promise<void> subscribeFinishedPromise;
         auto onSubAck =
-            [&](Mqtt::MqttConnection &, uint16_t packetId, const String &topic, Mqtt::QOS QoS, int errorCode) {
+            [&](Mqtt::MqttConnection &, uint16_t packetId, const String &topic, Mqtt::QOS QoS, int errorCode)
+            {
                 if (errorCode)
                 {
                     fprintf(stderr, "Subscribe failed with error %s\n", aws_error_debug_str(errorCode));
@@ -237,7 +243,7 @@ int main()
                 subscribeFinishedPromise.set_value();
             };
 
-        connection->Subscribe("#", AWS_MQTT_QOS_AT_LEAST_ONCE, on_message, onSubAck);
+        connection->Subscribe("sandbox_coordinator/+", AWS_MQTT_QOS_AT_LEAST_ONCE, on_message, onSubAck);
         subscribeFinishedPromise.get_future().wait();
 
         while (true)

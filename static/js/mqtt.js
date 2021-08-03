@@ -110,7 +110,7 @@ window.subscribeToTopic = function (topic) {
 
 // Sending data out
 window.publishData = function (topic, payload) { // Topic publish handler
-   mqttClient.publish(window.sandboxUuid + "/" + topic, payload);
+   mqttClient.publish(topic, payload);
 }
 
 // Sending data to Godot

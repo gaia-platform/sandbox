@@ -11,6 +11,7 @@
     // Generate UUID
     window.sandboxUuid = "asdf"; //generateUUID();
     console.log("Sandbox UUID: " + window.sandboxUuid);
+    window.publishData("sandbox_coordinator/session", window.sandboxUuid);
   });
 
   var editor = null;
@@ -30,9 +31,9 @@
   };
 
   function load() {
-    data.ruleset.model = monaco.editor.createModel('console.log("hi")', 'cpp');
-    data.ddl.model = monaco.editor.createModel('What the', 'sql');
-    data.output.model = monaco.editor.createModel('This is output', 'text');
+    data.ruleset.model = monaco.editor.createModel('no ruleset file loaded', 'cpp');
+    data.ddl.model = monaco.editor.createModel('no ddl file loaded', 'sql');
+    data.output.model = monaco.editor.createModel('no output yet', 'text');
 
     editor = monaco.editor.create(document.getElementById('sandboxEditor'), {
       model: data.ruleset.model,
@@ -76,6 +77,11 @@
 
   $("#reset").click(function () {
     location.reload();
+  });
+
+  $("#test").click(function () {
+    window.publishData("c3e81369-36d5-4ab5-b339-d502783cb8e3/access_control/ruleset",
+      data.ruleset.model.getValue());
   });
 
 })(jQuery);
