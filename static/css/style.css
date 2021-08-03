@@ -10,6 +10,10 @@
   display: flex;
 }
 
+.header {
+  height: 5.25em;
+}
+
 @media (max-width: 999px) {
   .columns {
     flex-direction: column;
@@ -70,7 +74,7 @@
   flex-direction: column;
   line-height: normal;
   width: calc(41.667% - 15px);
-  margin-left: 20px;
+  margin-left: 7px;
 }
 
 @media (max-width: 999px) {
@@ -88,7 +92,7 @@
   height: auto;
   margin-right: auto;
   font-size: 40px;
-  margin-top: auto;
+  margin-top: -0.58em;
   margin-bottom: auto;
   font-family: "Lato", sans-serif;
 }
@@ -98,7 +102,7 @@
   flex-direction: column;
   line-height: normal;
   width: calc(16.666% - 15px);
-  margin-left: 20px;
+  margin-left: 33px;
 }
 
 @media (max-width: 999px) {
@@ -222,7 +226,7 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  height: calc(100vh - 230px);
+  height: calc(100vh - 11em);
   flex-grow: 1;
   padding-bottom: 0px;
 }
