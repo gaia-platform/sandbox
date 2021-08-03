@@ -209,7 +209,7 @@
   flex-direction: row;
 }
 
-.editor-tabs {
+.editor-tab {
   display: flex;
   flex-direction: column;
   position: relative;
@@ -225,7 +225,7 @@
   font-family: "Lato", sans-serif;
 }
 
-.selected_tab {
+.selected-tab {
   background-color: #3a2680;
 }
 

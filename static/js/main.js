@@ -76,11 +76,11 @@
   }
 
   function setTab(tabName) {
-    var currentTabName = $(".active").attr("data-tab-name");
+    var currentTabName = $(".selected-tab").attr("data-tab-name");
     data[currentTabName].state = editor.saveViewState();
-    $(".tab").removeClass("active");
+    $(".editor-tab").removeClass("selected-tab");
     var newTab = $('[data-tab-name="' + tabName + '"]');
-    newTab.addClass("active");
+    newTab.addClass("selected-tab");
     editor.setModel(data[tabName].model);
     editor.restoreViewState(data[tabName].state);
     editor.focus();
@@ -104,7 +104,7 @@
   };
 
   // Button functions
-  $(".tab").click(function () {
+  $(".editor-tab").click(function () {
     setTab($(this).attr("data-tab-name"));
   });
 
