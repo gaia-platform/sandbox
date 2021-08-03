@@ -1,8 +1,9 @@
 (function ($) {
   "use strict";
 
-  $(window).on('load', function () {
-    // Config elements
+  // Setup HTML
+  const state = {};
+  function update() {
     document.querySelectorAll("[data-name='div-1']").forEach((el) => {
       el.space = 20;
     });
@@ -27,8 +28,12 @@
     document.querySelectorAll("[data-name='div-3']").forEach((el) => {
       el.space = 20;
     });
+  }
 
+  // Update with initial state on first load
+  update();
 
+  $(window).on('load', function () {
     // Load Monaco Editor
     require.config({ paths: { vs: "static/lib/monaco/vs" } });
 

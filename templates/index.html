@@ -13,15 +13,16 @@
   <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
 
-<div stackColumnsAt="tablet" class="div" data-name="div-1">
-  <div class="builder-columns columns">
-    <div class="builder-column column">
-      <a href="https://www.gaiaplatform.io/"
-        image="https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f"
-        backgroundPosition="right" backgroundSize="contain" altText="Gaia Platform" builderTag="a" class="a"
-        data-name="a-1">
-        <picture>
-          <source srcset="
+<body>
+  <div stackColumnsAt="tablet" class="div" data-name="div-1">
+    <div class="builder-columns columns">
+      <div class="builder-column column">
+        <a href="https://www.gaiaplatform.io/"
+          image="https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f"
+          backgroundPosition="right" backgroundSize="contain" altText="Gaia Platform" builderTag="a" class="a"
+          data-name="a-1">
+          <picture>
+            <source srcset="
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=100   100w,
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=200   200w,
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=400   400w,
@@ -32,9 +33,9 @@
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f
             " type="image/webp" />
 
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f"
-            srcset="
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f"
+              srcset="
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=100   100w,
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=200   200w,
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=400   400w,
@@ -44,70 +45,71 @@
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=2000 2000w,
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f
             " class="image" />
-        </picture>
+          </picture>
 
-        <div class="builder-image-sizer image-sizer"></div>
-      </a>
-    </div>
-
-    <div class="builder-column column-2">
-      <div class="div-2">
-        <p>Sandbox</p>
-      </div>
-    </div>
-
-    <div class="builder-column column-3">
-      <a href="https://www.gaiaplatform.io/developers" class="a-2" data-name="a-2">
-        Get the SDK
-      </a>
-    </div>
-
-    <div class="builder-column column-4">
-      <a href="https://www.gaiaplatform.io/sign-up" class="a-3" data-name="a-3">
-        Sign up
-      </a>
-    </div>
-  </div>
-</div>
-<div stackColumnsAt="tablet" class="div-3" data-name="div-2">
-  <div class="builder-columns columns">
-    <div class="builder-column column-5">
-      <div class="div-4">
-        <span class="span">Editor</span>
-
-        <span class="span-2">DDL</span>
-
-        <span class="span-3">Rules</span>
+          <div class="builder-image-sizer image-sizer"></div>
+        </a>
       </div>
 
-      <div class="div-5" id="sandboxEditor"></div>
-    </div>
-
-    <div class="builder-column column-6">
-      <div stackColumnsAt="tablet" class="div-6" data-name="div-3">
-        <div class="builder-columns columns">
-          <div class="builder-column column-7">
-            <span class="span-4">Run</span>
-          </div>
-
-          <div class="builder-column column-8">
-            <span class="span-5">Reset</span>
-          </div>
-
-          <div class="builder-column column-9">
-            <span class="span-6">Test</span>
-          </div>
+      <div class="builder-column column-2">
+        <div class="div-2">
+          <p>Sandbox</p>
         </div>
       </div>
 
-      <div class="div-7">
-        <!-- Sandbox Visual -->
-        <iframe src="{{ url_for('static', filename='visual/index.html') }}"
-          style="position: relative; height: 100%; width: 100%;"></iframe>
+      <div class="builder-column column-3">
+        <a href="https://www.gaiaplatform.io/developers" class="a-2" data-name="a-2">
+          Get the SDK
+        </a>
+      </div>
+
+      <div class="builder-column column-4">
+        <a href="https://www.gaiaplatform.io/sign-up" class="a-3" data-name="a-3">
+          Sign up
+        </a>
       </div>
     </div>
   </div>
-</div>
+  <div stackColumnsAt="tablet" class="div-3" data-name="div-2">
+    <div class="builder-columns columns">
+      <div class="builder-column column-5">
+        <div class="div-4">
+          <span class="span">Ruleset</span>
+
+          <span class="span-2">DDL</span>
+
+          <span class="span-3">Output</span>
+        </div>
+
+        <div class="div-5" id="sandboxEditor">
+        </div>
+      </div>
+
+      <div class="builder-column column-6">
+        <div stackColumnsAt="tablet" class="div-6" data-name="div-3">
+          <div class="builder-columns columns">
+            <div class="builder-column column-7">
+              <span class="span-4">Run</span>
+            </div>
+
+            <div class="builder-column column-8">
+              <span class="span-5">Reset</span>
+            </div>
+
+            <div class="builder-column column-9">
+              <span class="span-6">Test</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="div-7">
+          <iframe src="{{ url_for('static', filename='visual/index.html') }}"
+            style="position: relative; height: 100%; width: 100%;" frameBorder="0"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
 
 
 <!-- JavaScript Libraries -->
