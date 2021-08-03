@@ -2,14 +2,22 @@
   "use strict";
 
   $(window).on('load', function () {
+    // Load Monaco Editor
     require.config({ paths: { vs: "static/lib/monaco/vs" } });
 
     require(['vs/editor/editor.main'], function () {
       load();
     });
 
-    // Generate UUID
-    window.sandboxUuid = "asdf"; //generateUUID();
+    // Generate UUID and store in cookie
+    let storedUuid = getCookie();
+    if (storedUuid === "") {
+      const expDate = new Date();
+      expDate.setFullYear(expDate.getFullYear() + 1);
+      storedUuid = "asdf"; //generateUUID();
+      document.cookie = "sandboxUUID=" + storedUuid + ";expires=" + expDate.toUTCString() + ";path=/";
+    }
+    window.sandboxUuid = storedUuid
     console.log("Sandbox UUID: " + window.sandboxUuid);
   });
 
@@ -43,11 +51,11 @@
   }
 
   function setTab(tabName) {
-    var currentTabName = $(".active").attr("data-tab-name");
+    var currentTabName = $(".selected-tab").attr("data-tab-name");
     data[currentTabName].state = editor.saveViewState();
-    $(".tab").removeClass("active");
+    $(".editor-tab").removeClass("selected-tab");
     var newTab = $('[data-tab-name="' + tabName + '"]');
-    newTab.addClass("active");
+    newTab.addClass("selected-tab");
     editor.setModel(data[tabName].model);
     editor.restoreViewState(data[tabName].state);
     editor.focus();
@@ -70,13 +78,40 @@
     });
   };
 
-  $(".tab").click(function () {
+  function getCookie() {
+    let name = "sandboxUUID=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+
+  // Button functions
+  $(".editor-tab").click(function () {
     setTab($(this).attr("data-tab-name"));
   });
 
-  $("#reset").click(function () {
-    location.reload();
+  $("#run-button").click(function () {
+    // Run code
+  })
+
+  $("#reset-button").click(function () {
+    // Reset Current simulation
   });
 
+  $("#privacy-button").click(function () {
+    $("#privacy-modal").show();
+  });
+  $(".modal-close-button").click(function () {
+    $("#privacy-modal").hide();
+  });
 })(jQuery);
 

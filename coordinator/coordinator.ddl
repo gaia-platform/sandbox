@@ -6,7 +6,8 @@
 create table if not exists gaia_client (
       id string,
       is_active bool,
-      activity_timestamp uint64
+      is_launching bool,
+      created_timestamp uint64
 );
 
 create table if not exists project (
