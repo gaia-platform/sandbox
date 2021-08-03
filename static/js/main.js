@@ -1,38 +1,6 @@
 (function ($) {
   "use strict";
 
-  // Setup HTML
-  const state = {};
-  function update() {
-    document.querySelectorAll("[data-name='div-1']").forEach((el) => {
-      el.space = 20;
-    });
-
-    document.querySelectorAll("[data-name='a-1']").forEach((el) => {
-      el.aspectRatio = 0.1682;
-      el.fitContent = false;
-    });
-
-    document.querySelectorAll("[data-name='a-2']").forEach((el) => {
-      el.openLinkInNewTab = true;
-    });
-
-    document.querySelectorAll("[data-name='a-3']").forEach((el) => {
-      el.openLinkInNewTab = true;
-    });
-
-    document.querySelectorAll("[data-name='div-2']").forEach((el) => {
-      el.space = 20;
-    });
-
-    document.querySelectorAll("[data-name='div-3']").forEach((el) => {
-      el.space = 20;
-    });
-  }
-
-  // Update with initial state on first load
-  update();
-
   $(window).on('load', function () {
     // Load Monaco Editor
     require.config({ paths: { vs: "static/lib/monaco/vs" } });
@@ -41,8 +9,15 @@
       load();
     });
 
-    // Generate UUID
-    window.sandboxUuid = "asdf"; //generateUUID();
+    // Generate UUID and store in cookie
+    let storedUuid = getCookie();
+    if (storedUuid === "") {
+      const expDate = new Date();
+      expDate.setFullYear(expDate.getFullYear() + 1);
+      storedUuid = "asdf"; //generateUUID();
+      document.cookie = "sandboxUUID=" + storedUuid + ";expires=" + expDate.toUTCString() + ";path=/";
+    }
+    window.sandboxUuid = storedUuid
     console.log("Sandbox UUID: " + window.sandboxUuid);
   });
 
@@ -103,13 +78,33 @@
     });
   };
 
+  function getCookie() {
+    let name = "sandboxUUID=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+
   // Button functions
   $(".editor-tab").click(function () {
     setTab($(this).attr("data-tab-name"));
   });
 
-  $("#reset").click(function () {
-    location.reload();
+  $("#run-button").click(function () {
+    // Run code
+  })
+
+  $("#reset-button").click(function () {
+    // Reset Current simulation
   });
 
   $("#privacy-button").click(function () {
