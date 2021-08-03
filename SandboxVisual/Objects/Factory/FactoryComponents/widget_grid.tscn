@@ -1,50 +1,40 @@
-[gd_scene load_steps=5 format=2]
-
-[sub_resource type="StyleBoxFlat" id=3]
-bg_color = Color( 0.886275, 0.388235, 0.388235, 1 )
-
-[sub_resource type="StyleBoxFlat" id=4]
-bg_color = Color( 0.152941, 0.537255, 0.588235, 1 )
-
-[sub_resource type="StyleBoxFlat" id=5]
-bg_color = Color( 0.34902, 0.854902, 0.345098, 1 )
-
-[sub_resource type="StyleBoxFlat" id=6]
+[gd_scene format=2]
 
 [node name="WidgetGrid" type="GridContainer"]
-margin_left = 82.0
-margin_right = 157.0
+margin_right = 75.0
 margin_bottom = 75.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/vseparation = 5
 custom_constants/hseparation = 5
 columns = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Control" type="Control" parent="."]
 margin_right = 35.0
 margin_bottom = 35.0
 rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 3 )
 
-[node name="Panel4" type="Panel" parent="."]
+[node name="Control2" type="Control" parent="."]
 margin_left = 40.0
 margin_right = 75.0
 margin_bottom = 35.0
 rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 4 )
 
-[node name="Panel7" type="Panel" parent="."]
+[node name="Control3" type="Control" parent="."]
 margin_top = 40.0
 margin_right = 35.0
 margin_bottom = 75.0
 rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="Panel6" type="Panel" parent="."]
+[node name="Control4" type="Control" parent="."]
 margin_left = 40.0
 margin_top = 40.0
 margin_right = 75.0
 margin_bottom = 75.0
 rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 6 )

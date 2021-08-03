@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Assets/Factory/StyleBoxes/stop_point_flat.tres" type="StyleBox" id=1]
 
-[node name="StopPoint" type="Panel"]
+[node name="Waypoint" type="Panel"]
 margin_right = 50.0
 margin_bottom = 50.0
 rect_min_size = Vector2( 50, 50 )
