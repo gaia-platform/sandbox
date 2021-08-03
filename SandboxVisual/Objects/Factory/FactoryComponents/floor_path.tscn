@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Scripts/Factory/FactoryParts/PathContainer.gd" type="Script" id=1]
 
-[node name="PathContainer" type="Control"]
+[node name="FloorPath" type="Control"]
 show_behind_parent = true
 margin_right = 264.0
 margin_bottom = 50.0

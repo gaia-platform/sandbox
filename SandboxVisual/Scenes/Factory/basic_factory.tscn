@@ -1,40 +1,8 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=1]
-[ext_resource path="res://Objects/Factory/FactoryComponents/PathContainer.tscn" type="PackedScene" id=2]
-
-[sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.945098, 0.945098, 0.945098, 1 )
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color( 0.286275, 0.286275, 0.286275, 1 )
-
-[sub_resource type="StyleBoxFlat" id=2]
-bg_color = Color( 0.698039, 0.866667, 1, 1 )
-border_width_left = 5
-border_width_top = 5
-border_width_right = 5
-border_width_bottom = 5
-border_color = Color( 0.172549, 0.537255, 0.733333, 1 )
-
-[sub_resource type="StyleBoxFlat" id=3]
-bg_color = Color( 0.886275, 0.388235, 0.388235, 1 )
-
-[sub_resource type="StyleBoxFlat" id=4]
-bg_color = Color( 0.152941, 0.537255, 0.588235, 1 )
-
-[sub_resource type="StyleBoxFlat" id=5]
-bg_color = Color( 0.34902, 0.854902, 0.345098, 1 )
-
-[sub_resource type="StyleBoxFlat" id=6]
-
-[sub_resource type="StyleBoxFlat" id=7]
-corner_radius_top_left = 30
-corner_radius_top_right = 30
-corner_radius_bottom_right = 30
-corner_radius_bottom_left = 30
+[ext_resource path="res://Objects/Factory/FactoryComponents/area.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Objects/Factory/FactoryComponents/floor_path.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Objects/Factory/FactoryComponents/stop_point.tscn" type="PackedScene" id=3]
 
 [node name="BasicFactory" type="Control"]
 anchor_right = 1.0
@@ -54,274 +22,297 @@ margin_left = 1.0
 margin_top = -3.0
 margin_right = 1.0
 margin_bottom = -3.0
-custom_constants/vseparation = 0
-custom_constants/hseparation = 0
+custom_constants/vseparation = 10
+custom_constants/hseparation = 10
 columns = 5
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Area" type="PanelContainer" parent="GridContainer"]
-margin_right = 270.0
-margin_bottom = 337.0
-size_flags_horizontal = 3
-custom_styles/panel = SubResource( 1 )
+[node name="Area" parent="GridContainer" instance=ExtResource( 1 )]
+margin_right = 205.0
+margin_bottom = 223.0
 
-[node name="MarginContainer" type="MarginContainer" parent="GridContainer/Area"]
-margin_left = 5.0
-margin_top = 5.0
-margin_right = 265.0
-margin_bottom = 332.0
-custom_constants/margin_right = 10
-custom_constants/margin_top = 10
-custom_constants/margin_left = 10
-custom_constants/margin_bottom = 10
+[node name="MarginContainer" parent="GridContainer/Area" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="GridContainer/Area/MarginContainer"]
-margin_left = 10.0
-margin_top = 10.0
-margin_right = 250.0
-margin_bottom = 317.0
-custom_constants/separation = 10
+[node name="VBoxContainer" parent="GridContainer/Area/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
 
-[node name="Pallet" type="PanelContainer" parent="GridContainer/Area/MarginContainer/VBoxContainer"]
-margin_right = 240.0
-margin_bottom = 145.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_styles/panel = SubResource( 2 )
+[node name="CountLabel" parent="GridContainer/Area/MarginContainer/VBoxContainer" index="0"]
+margin_right = 175.0
 
-[node name="MarginContainer" type="MarginContainer" parent="GridContainer/Area/MarginContainer/VBoxContainer/Pallet"]
-margin_left = 5.0
-margin_top = 5.0
-margin_right = 235.0
-margin_bottom = 140.0
-custom_constants/margin_right = 10
-custom_constants/margin_top = 10
-custom_constants/margin_left = 10
-custom_constants/margin_bottom = 10
+[node name="PalletSpace" parent="GridContainer/Area/MarginContainer/VBoxContainer" index="1"]
+margin_right = 175.0
+margin_bottom = 154.0
 
-[node name="CenterContainer" type="CenterContainer" parent="GridContainer/Area/MarginContainer/VBoxContainer/Pallet/MarginContainer"]
-margin_left = 10.0
-margin_top = 10.0
-margin_right = 220.0
-margin_bottom = 125.0
-
-[node name="WidgetGrid" type="GridContainer" parent="GridContainer/Area/MarginContainer/VBoxContainer/Pallet/MarginContainer/CenterContainer"]
-margin_left = 47.0
-margin_right = 162.0
-margin_bottom = 115.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_constants/vseparation = 5
-custom_constants/hseparation = 5
-columns = 3
-
-[node name="Panel" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/Pallet/MarginContainer/CenterContainer/WidgetGrid"]
-margin_right = 35.0
-margin_bottom = 35.0
-rect_min_size = Vector2( 35, 35 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_styles/panel = SubResource( 3 )
-
-[node name="Panel4" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/Pallet/MarginContainer/CenterContainer/WidgetGrid"]
-margin_left = 40.0
-margin_right = 75.0
-margin_bottom = 35.0
-rect_min_size = Vector2( 35, 35 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_styles/panel = SubResource( 4 )
-
-[node name="Panel7" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/Pallet/MarginContainer/CenterContainer/WidgetGrid"]
-margin_left = 80.0
-margin_right = 115.0
-margin_bottom = 35.0
-rect_min_size = Vector2( 35, 35 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_styles/panel = SubResource( 5 )
-
-[node name="Panel6" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/Pallet/MarginContainer/CenterContainer/WidgetGrid"]
-margin_top = 40.0
-margin_right = 35.0
-margin_bottom = 75.0
-rect_min_size = Vector2( 35, 35 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_styles/panel = SubResource( 6 )
-
-[node name="Panel9" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/Pallet/MarginContainer/CenterContainer/WidgetGrid"]
-margin_left = 40.0
-margin_top = 40.0
-margin_right = 75.0
-margin_bottom = 75.0
-rect_min_size = Vector2( 35, 35 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_styles/panel = SubResource( 3 )
-
-[node name="Panel2" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/Pallet/MarginContainer/CenterContainer/WidgetGrid"]
-margin_left = 80.0
-margin_top = 40.0
-margin_right = 115.0
-margin_bottom = 75.0
-rect_min_size = Vector2( 35, 35 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_styles/panel = SubResource( 6 )
-
-[node name="Panel5" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/Pallet/MarginContainer/CenterContainer/WidgetGrid"]
-margin_top = 80.0
-margin_right = 35.0
-margin_bottom = 115.0
-rect_min_size = Vector2( 35, 35 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_styles/panel = SubResource( 3 )
-
-[node name="Panel3" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/Pallet/MarginContainer/CenterContainer/WidgetGrid"]
-margin_left = 40.0
-margin_top = 80.0
-margin_right = 75.0
-margin_bottom = 115.0
-rect_min_size = Vector2( 35, 35 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_styles/panel = SubResource( 5 )
-
-[node name="Panel8" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/Pallet/MarginContainer/CenterContainer/WidgetGrid"]
-margin_left = 80.0
-margin_top = 80.0
-margin_right = 115.0
-margin_bottom = 115.0
-rect_min_size = Vector2( 35, 35 )
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_styles/panel = SubResource( 4 )
-
-[node name="CenterContainer" type="CenterContainer" parent="GridContainer/Area/MarginContainer/VBoxContainer"]
-margin_top = 155.0
-margin_right = 240.0
-margin_bottom = 268.0
-
-[node name="GridContainer" type="GridContainer" parent="GridContainer/Area/MarginContainer/VBoxContainer/CenterContainer"]
-margin_left = 63.0
-margin_right = 176.0
-margin_bottom = 113.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-columns = 3
-
-[node name="Panel" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/CenterContainer/GridContainer"]
-margin_right = 35.0
-margin_bottom = 35.0
-rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 3 )
-
-[node name="Panel4" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/CenterContainer/GridContainer"]
-margin_left = 39.0
-margin_right = 74.0
-margin_bottom = 35.0
-rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 4 )
-
-[node name="Panel7" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/CenterContainer/GridContainer"]
-margin_left = 78.0
-margin_right = 113.0
-margin_bottom = 35.0
-rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 5 )
-
-[node name="Panel6" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/CenterContainer/GridContainer"]
-margin_top = 39.0
-margin_right = 35.0
-margin_bottom = 74.0
-rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 6 )
-
-[node name="Panel9" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/CenterContainer/GridContainer"]
-margin_left = 39.0
-margin_top = 39.0
-margin_right = 74.0
-margin_bottom = 74.0
-rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 3 )
-
-[node name="Panel2" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/CenterContainer/GridContainer"]
-margin_left = 78.0
-margin_top = 39.0
-margin_right = 113.0
-margin_bottom = 74.0
-rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 6 )
-
-[node name="Panel5" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/CenterContainer/GridContainer"]
-margin_top = 78.0
-margin_right = 35.0
-margin_bottom = 113.0
-rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 3 )
-
-[node name="Panel3" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/CenterContainer/GridContainer"]
-margin_left = 39.0
-margin_top = 78.0
-margin_right = 74.0
-margin_bottom = 113.0
-rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 5 )
-
-[node name="Panel8" type="Panel" parent="GridContainer/Area/MarginContainer/VBoxContainer/CenterContainer/GridContainer"]
-margin_left = 78.0
-margin_top = 78.0
-margin_right = 113.0
-margin_bottom = 113.0
-rect_min_size = Vector2( 35, 35 )
-custom_styles/panel = SubResource( 4 )
-
-[node name="AreaLabel" type="Label" parent="GridContainer/Area/MarginContainer/VBoxContainer"]
-margin_top = 278.0
-margin_right = 240.0
-margin_bottom = 307.0
-custom_fonts/font = ExtResource( 1 )
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "Area Name"
-align = 1
-
-[node name="StopPoint" type="Panel" parent="GridContainer"]
-margin_left = 270.0
-margin_top = 143.0
-margin_right = 320.0
+[node name="AreaLabel" parent="GridContainer/Area/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
 margin_bottom = 193.0
-rect_min_size = Vector2( 50, 50 )
-size_flags_vertical = 4
-custom_styles/panel = SubResource( 7 )
+text = "Outbound Area"
 
-[node name="PathContainer" parent="GridContainer" instance=ExtResource( 2 )]
-margin_left = 320.0
-margin_right = 590.0
-margin_bottom = 337.0
+[node name="Area2" parent="GridContainer" instance=ExtResource( 1 )]
+margin_left = 215.0
+margin_right = 420.0
+margin_bottom = 223.0
+
+[node name="MarginContainer" parent="GridContainer/Area2" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/Area2/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/Area2/MarginContainer/VBoxContainer" index="0"]
+margin_right = 175.0
+
+[node name="PalletSpace" parent="GridContainer/Area2/MarginContainer/VBoxContainer" index="1"]
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="AreaLabel" parent="GridContainer/Area2/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Labeling Area"
+
+[node name="Area3" parent="GridContainer" instance=ExtResource( 1 )]
+margin_left = 430.0
+margin_right = 635.0
+margin_bottom = 223.0
+
+[node name="MarginContainer" parent="GridContainer/Area3" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/Area3/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/Area3/MarginContainer/VBoxContainer" index="0"]
+margin_right = 175.0
+
+[node name="PalletSpace" parent="GridContainer/Area3/MarginContainer/VBoxContainer" index="1"]
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="AreaLabel" parent="GridContainer/Area3/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Painting Area"
+
+[node name="Control" type="Control" parent="GridContainer"]
+margin_left = 645.0
+margin_right = 695.0
+margin_bottom = 223.0
+
+[node name="Control2" type="Control" parent="GridContainer"]
+margin_left = 705.0
+margin_right = 910.0
+margin_bottom = 223.0
+
+[node name="StopPoint" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 77.0
+margin_top = 233.0
+margin_right = 127.0
+margin_bottom = 283.0
+
+[node name="StopPoint2" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 292.0
+margin_top = 233.0
+margin_right = 342.0
+margin_bottom = 283.0
+
+[node name="StopPoint3" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 507.0
+margin_top = 233.0
+margin_right = 557.0
+margin_bottom = 283.0
+
+[node name="Control3" type="Control" parent="GridContainer"]
+margin_left = 645.0
+margin_top = 233.0
+margin_right = 695.0
+margin_bottom = 283.0
+
+[node name="Control4" type="Control" parent="GridContainer"]
+margin_left = 705.0
+margin_top = 233.0
+margin_right = 910.0
+margin_bottom = 283.0
+
+[node name="FloorPath" parent="GridContainer" instance=ExtResource( 2 )]
+margin_top = 293.0
+margin_right = 205.0
+margin_bottom = 516.0
 path_shape = 5
 
-[node name="StopPoint2" type="Panel" parent="GridContainer"]
-margin_left = 590.0
-margin_top = 143.0
-margin_right = 640.0
-margin_bottom = 193.0
-rect_min_size = Vector2( 50, 50 )
-size_flags_vertical = 4
-custom_styles/panel = SubResource( 7 )
+[node name="FloorPath2" parent="GridContainer" instance=ExtResource( 2 )]
+margin_left = 215.0
+margin_top = 293.0
+margin_right = 420.0
+margin_bottom = 516.0
+path_shape = 2
 
-[node name="Area2" type="PanelContainer" parent="GridContainer"]
-margin_left = 640.0
+[node name="FloorPath3" parent="GridContainer" instance=ExtResource( 2 )]
+margin_left = 430.0
+margin_top = 293.0
+margin_right = 635.0
+margin_bottom = 516.0
+path_shape = 2
+
+[node name="StopPoint4" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 645.0
+margin_top = 379.0
+margin_right = 695.0
+margin_bottom = 429.0
+
+[node name="Area4" parent="GridContainer" instance=ExtResource( 1 )]
+margin_left = 705.0
+margin_top = 293.0
 margin_right = 910.0
-margin_bottom = 337.0
-size_flags_horizontal = 3
+margin_bottom = 516.0
 
-[node name="AreaLabel" type="Label" parent="GridContainer/Area2"]
-margin_left = 7.0
-margin_top = 161.0
-margin_right = 263.0
-margin_bottom = 175.0
-text = "Area Name"
+[node name="MarginContainer" parent="GridContainer/Area4" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/Area4/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/Area4/MarginContainer/VBoxContainer" index="0"]
+margin_right = 175.0
+
+[node name="PalletSpace" parent="GridContainer/Area4/MarginContainer/VBoxContainer" index="1"]
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="AreaLabel" parent="GridContainer/Area4/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Charging Area"
+
+[node name="StopPoint5" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 77.0
+margin_top = 526.0
+margin_right = 127.0
+margin_bottom = 576.0
+
+[node name="StopPoint6" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 292.0
+margin_top = 526.0
+margin_right = 342.0
+margin_bottom = 576.0
+
+[node name="StopPoint7" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 507.0
+margin_top = 526.0
+margin_right = 557.0
+margin_bottom = 576.0
+
+[node name="Control5" type="Control" parent="GridContainer"]
+margin_left = 645.0
+margin_top = 526.0
+margin_right = 695.0
+margin_bottom = 576.0
+
+[node name="Control6" type="Control" parent="GridContainer"]
+margin_left = 705.0
+margin_top = 526.0
+margin_right = 910.0
+margin_bottom = 576.0
+
+[node name="Area5" parent="GridContainer" instance=ExtResource( 1 )]
+margin_top = 586.0
+margin_right = 205.0
+margin_bottom = 809.0
+
+[node name="MarginContainer" parent="GridContainer/Area5" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/Area5/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/Area5/MarginContainer/VBoxContainer" index="0"]
+margin_right = 175.0
+
+[node name="PalletSpace" parent="GridContainer/Area5/MarginContainer/VBoxContainer" index="1"]
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="AreaLabel" parent="GridContainer/Area5/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Inbound Area"
+
+[node name="Area6" parent="GridContainer" instance=ExtResource( 1 )]
+margin_left = 215.0
+margin_top = 586.0
+margin_right = 420.0
+margin_bottom = 809.0
+
+[node name="MarginContainer" parent="GridContainer/Area6" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/Area6/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/Area6/MarginContainer/VBoxContainer" index="0"]
+margin_right = 175.0
+
+[node name="PalletSpace" parent="GridContainer/Area6/MarginContainer/VBoxContainer" index="1"]
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="AreaLabel" parent="GridContainer/Area6/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Packing Area"
+
+[node name="Area7" parent="GridContainer" instance=ExtResource( 1 )]
+margin_left = 430.0
+margin_top = 586.0
+margin_right = 635.0
+margin_bottom = 809.0
+
+[node name="MarginContainer" parent="GridContainer/Area7" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/Area7/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/Area7/MarginContainer/VBoxContainer" index="0"]
+margin_right = 175.0
+
+[node name="PalletSpace" parent="GridContainer/Area7/MarginContainer/VBoxContainer" index="1"]
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="AreaLabel" parent="GridContainer/Area7/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Buffer Area"
+
+[editable path="GridContainer/Area"]
+[editable path="GridContainer/Area2"]
+[editable path="GridContainer/Area3"]
+[editable path="GridContainer/Area4"]
+[editable path="GridContainer/Area5"]
+[editable path="GridContainer/Area6"]
+[editable path="GridContainer/Area7"]

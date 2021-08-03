@@ -20,10 +20,10 @@ func _on_PathContainer_resized():
 	var container_size_half_x = container_size.x / 2
 
 	var center_vector = Vector2(container_size_half_x, container_size_half_y)
-	var left_vector = Vector2(0, container_size_half_y)
-	var right_vector = Vector2(container_size.x+20, container_size_half_y)
-	var up_vector = Vector2(container_size_half_x, 0)
-	var down_vector = Vector2(container_size_half_x, container_size.y)
+	var left_vector = Vector2(-20, container_size_half_y)
+	var right_vector = Vector2(container_size.x + 20, container_size_half_y)
+	var up_vector = Vector2(container_size_half_x, -20)
+	var down_vector = Vector2(container_size_half_x, container_size.y + 20)
 
 	match path_shape:
 		0:  # -
