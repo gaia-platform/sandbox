@@ -9,10 +9,11 @@
   <!-- Favicons -->
   <link href="{{ url_for('static', filename='img/favicon.png') }}" rel="icon">
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts (Lato and Roboto)-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
   <!-- Main Stylesheet File -->
   <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
@@ -62,7 +63,13 @@
         </div>
       </div>
 
-      <div class="builder-column column-3">
+      <div class="builder-column privacy-column">
+        <a id="privacy-button" class="a-2" data-name="a-2">
+          Privacy
+        </a>
+      </div>
+
+      <div class="builder-column get-sdk-column">
         <a href="https://www.gaiaplatform.io/developers" class="a-2" data-name="a-2">
           Get the SDK
         </a>
@@ -112,6 +119,24 @@
             style="position: relative; height: 100%; width: 100%;" frameBorder="0"></iframe>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Privacy Modal -->
+  <div id="privacy-modal">
+    <div id="privacy-modal-content">
+      <p>
+        For the Gaia Sandbox system to identify who is sending in code, we store a
+        single
+        <strong>strictly necessary cookie</strong>
+        on your browser which contains a randomly generated session ID. This ID
+        does not contain you IP address or any personal information. Deleting this
+        cookie will simply reset your Sandbox experience, which will mean you lose
+        any code or edits made in the sandbox. Cookies will not be used for
+        anything other than to help route sandbox commands to and from your
+        computer.
+      </p>
+      <span class="modal-close-button button">OK</span>
     </div>
   </div>
 </body>

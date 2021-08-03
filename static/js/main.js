@@ -103,6 +103,7 @@
     });
   };
 
+  // Button functions
   $(".tab").click(function () {
     setTab($(this).attr("data-tab-name"));
   });
@@ -111,5 +112,11 @@
     location.reload();
   });
 
+  $("#privacy-button").click(function () {
+    $("#privacy-modal").show();
+  });
+  $(".modal-close-button").click(function () {
+    $("#privacy-modal").hide();
+  });
 })(jQuery);
 
