@@ -13,9 +13,12 @@
     let storedUuid = getCookie();
     if (storedUuid === "") {
       const expDate = new Date();
-      expDate.setFullYear(expDate.getFullYear() + 1);
-      storedUuid = "asdf"; //generateUUID();
+      expDate.setFullYear(expDate.getFullYear() + 10); // 10 year expiration time
+      storedUuid = "asdf"; // generateUUID();
       document.cookie = "sandboxUUID=" + storedUuid + ";expires=" + expDate.toUTCString() + ";path=/";
+
+      // Show privacy message (since the cookie is new)
+      $("#privacy-modal").show();
     }
     window.sandboxUuid = storedUuid
     console.log("Sandbox UUID: " + window.sandboxUuid);
