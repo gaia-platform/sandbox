@@ -9,77 +9,149 @@
   <!-- Favicons -->
   <link href="{{ url_for('static', filename='img/favicon.png') }}" rel="icon">
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700"
-    rel="stylesheet">
-
-  <!-- Bootstrap CSS File -->
-  <link href="{{ url_for('static', filename='lib/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+  <!-- Google Fonts (Lato and Roboto)-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
   <!-- Main Stylesheet File -->
   <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 </head>
 
 <body>
+  <div stackColumnsAt="tablet" class="div" data-name="div-1">
+    <div class="builder-columns columns header">
+      <div class="builder-column column">
+        <a href="https://www.gaiaplatform.io/"
+          image="https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f"
+          backgroundPosition="right" backgroundSize="contain" altText="Gaia Platform" builderTag="a" class="a"
+          data-name="a-1">
+          <picture>
+            <source srcset="
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=100   100w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=200   200w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=400   400w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=800   800w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=1200 1200w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=1600 1600w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=2000 2000w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f
+            " type="image/webp" />
 
-  <!--==========================
-  Header
-  ============================-->
-  <header id="header" class="fixed-top">
-    <div class="container">
-      <div class="logo float-left">
-        <a href="#main" class="scrollto"><img src="{{ url_for('static', filename='img/logo.png') }}" alt=""
-            class="img-fluid"></a>
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f"
+              srcset="
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=100   100w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=200   200w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=400   400w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=800   800w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=1200 1200w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=1600 1600w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=2000 2000w,
+              https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f
+            " class="image" />
+          </picture>
+
+          <div class="builder-image-sizer image-sizer"></div>
+        </a>
       </div>
-      <h1>Sandbox</h1>
+
+      <div class="builder-column column-2">
+        <div class="div-2">
+          <p>Sandbox</p>
+        </div>
+      </div>
+
+      <div class="builder-column privacy-column">
+        <a id="privacy-button" class="a-2" data-name="a-2">
+          Privacy
+        </a>
+      </div>
+
+      <div class="builder-column get-sdk-column">
+        <a href="https://www.gaiaplatform.io/developers" class="a-2" data-name="a-2">
+          Get the SDK
+        </a>
+      </div>
+
+      <div class="builder-column column-4">
+        <a href="https://www.gaiaplatform.io/sign-up" class="a-3 button" data-name="a-3">
+          Sign up
+        </a>
+      </div>
     </div>
-  </header><!-- #header -->
+  </div>
+  <div stackColumnsAt="tablet" class="div-3" data-name="div-2">
+    <div class="builder-columns columns">
+      <div class="builder-column column-5">
+        <div class="div-4">
+          <span class="editor-tab button selected-tab" data-tab-name="ruleset">Ruleset</span>
 
-  <main id="main">
-    <section id="main-ui" class="section-bg">
-      <div class="row">
-        <div class="col-sm-4">
-          <!-- VSCode editor -->
-          <div class="container">
-            <input class="tab active" type="button" data-tab-name="ruleset" value="ruleset" />
-            <input class="tab" type="button" data-tab-name="ddl" value="ddl" />
-            <input class="tab" type="button" data-tab-name="output" value="output" />
-            <input type="button" style="float: right" id="run-button" value="run" />
-          </div>
-          <div class="container" id="sandboxEditor" style="overflow-y:auto; height: 800px; border: 1px solid grey">
+          <span class="editor-tab button" data-tab-name="ddl">DDL</span>
+
+          <span class="editor-tab button" data-tab-name="output">Output</span>
+        </div>
+
+        <div class="div-5" id="sandboxEditor">
+        </div>
+      </div>
+
+      <div class="builder-column column-6">
+        <div stackColumnsAt="tablet" class="div-6" data-name="div-3">
+          <div class="builder-columns columns">
+            <div class="builder-column column-7">
+              <span class="span-4 button" id="run-button">Run</span>
+            </div>
+
+            <div class="builder-column column-8">
+              <span class="span-5 button" id="reset-button">Reset</span>
+            </div>
+
+            <div class="builder-column column-9">
+              <span class="span-6 button" id="test-button">Test</span>
+            </div>
           </div>
         </div>
-        <div class="col-sm-8">
-          <!-- Sandbox Visual -->
+
+        <div class="div-7">
           <iframe src="{{ url_for('static', filename='visual/index.html') }}"
-            style="position: relative; height: 100%; width: 100%;"></iframe>
+            style="position: relative; height: 100%; width: 100%;" frameBorder="0"></iframe>
         </div>
       </div>
-      </div>
-    </section><!-- #main -->
-    <section id="controls" class="clearfix">
-      <div class="container">
-        <div class="controls-area">
-          <div>
-            <a id="reset" class="btn-reset">Reset</a>
-            <a id="test" class="btn-submit">Test</a>
-          </div>
-        </div>
+    </div>
+  </div>
 
-      </div>
-    </section><!-- #controls -->
-  </main>
+  <!-- Privacy Modal -->
+  <div id="privacy-modal">
+    <div id="privacy-modal-content">
+      <p>
+        For the Gaia Sandbox system to identify who is sending in code, we store a
+        single
+        <strong>strictly necessary cookie</strong>
+        on your browser which contains a randomly generated session ID. This ID
+        does not contain you IP address or any personal information. Deleting this
+        cookie will simply reset your Sandbox experience, which will mean you lose
+        any code or edits made in the sandbox. Cookies will not be used for
+        anything other than to help route sandbox commands to and from your
+        computer.
+      </p>
+      <span class="modal-close-button button">OK</span>
+    </div>
+  </div>
+</body>
 
-  <!-- JavaScript Libraries -->
-  <script src="{{ url_for('static', filename='lib/jquery/jquery.min.js') }}"></script>
-  <script src="{{ url_for('static', filename='lib/jquery/jquery-migrate.min.js') }}"></script>
 
-  <script src="{{ url_for('static', filename='lib/monaco/vs/loader.js') }}"></script>
-  <script src="{{ url_for('static', filename='dist/mqtt_bundle.js') }}"></script>
+<!-- JavaScript Libraries -->
+<script src="{{ url_for('static', filename='lib/jquery/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/jquery/jquery-migrate.min.js') }}"></script>
+
+<script src="{{ url_for('static', filename='lib/monaco/vs/loader.js') }}"></script>
 
 
-  <!-- Main and MQTT Javascript File -->
-  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<!-- Main and MQTT Javascript File -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('static', filename='dist/mqtt_bundle.js') }}"></script>
 
 
 </body>
