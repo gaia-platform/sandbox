@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Objects/Factory/FactoryComponents/area.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Objects/Factory/FactoryComponents/floor_path.tscn" type="PackedScene" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://Scripts/Factory/Factories/basic_factory.gd" type="Script" id=4]
 [ext_resource path="res://Scripts/Factory/Navigation/path_navigation_controller.gd" type="Script" id=5]
 [ext_resource path="res://Objects/Factory/Robots/widgetbot.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Objects/Factory/FactoryComponents/simulation_controller.tscn" type="PackedScene" id=7]
 
 [node name="BasicFactory" type="Control"]
 anchor_right = 1.0
@@ -152,10 +153,9 @@ margin_left = 645.0
 margin_right = 695.0
 margin_bottom = 223.0
 
-[node name="Control2" type="Control" parent="GridContainer"]
+[node name="SimulationController" parent="GridContainer" instance=ExtResource( 7 )]
 margin_left = 705.0
 margin_right = 910.0
-margin_bottom = 223.0
 
 [node name="Waypoint" parent="GridContainer" instance=ExtResource( 3 )]
 margin_left = 77.0
@@ -394,6 +394,7 @@ nav_node_paths = [ NodePath("../GridContainer/Waypoint"), NodePath("../GridConta
 test_bot_path = NodePath("../WidgetBot")
 
 [node name="WidgetBot" parent="." instance=ExtResource( 6 )]
+position = Vector2( 830.143, 369.11 )
 bot_id = "0"
 
 [editable path="GridContainer/OutboundArea"]

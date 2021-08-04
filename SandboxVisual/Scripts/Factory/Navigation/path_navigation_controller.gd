@@ -25,7 +25,7 @@ func _ready():
 	while owner.number_of_waypoints == -1:  # Wait until number of waypoints is calculated
 		yield(get_tree(), "idle_frame")
 	create_connections()
-	test_bot.movement_path = get_directions(nav_nodes[0], nav_nodes[6])
+	test_bot.movement_path = get_directions(nav_nodes[3], nav_nodes[4])
 
 
 ### Generate astar map
