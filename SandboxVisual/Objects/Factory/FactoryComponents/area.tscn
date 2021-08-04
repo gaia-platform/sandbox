@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_regular.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Assets/Factory/StyleBoxes/area_flat.tres" type="StyleBox" id=2]
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=3]
 [ext_resource path="res://Objects/Factory/FactoryComponents/widget_grid.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Scripts/Factory/FactoryParts/area.gd" type="Script" id=5]
 
 [node name="Area" type="PanelContainer"]
 margin_right = 256.0
@@ -11,9 +12,13 @@ margin_bottom = 206.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_styles/panel = ExtResource( 2 )
+script = ExtResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+count_label_path = NodePath("MarginContainer/VBoxContainer/CountLabel")
+pallet_space_path = NodePath("MarginContainer/VBoxContainer/PalletSpace")
+widget_space_path = NodePath("MarginContainer/VBoxContainer/WidgetSpace")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_left = 5.0
