@@ -17,6 +17,7 @@ script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+number_of_waypoints = 7
 inbound_area_path = NodePath("GridContainer/InboundArea")
 packing_area_path = NodePath("GridContainer/PackingArea")
 buffer_area_path = NodePath("GridContainer/BufferArea")
@@ -158,21 +159,18 @@ margin_left = 77.0
 margin_top = 233.0
 margin_right = 127.0
 margin_bottom = 283.0
-connected_node_paths = [ NodePath("../FloorPath") ]
 
 [node name="Waypoint2" parent="GridContainer" instance=ExtResource( 3 )]
 margin_left = 292.0
 margin_top = 233.0
 margin_right = 342.0
 margin_bottom = 283.0
-connected_node_paths = [ NodePath("../FloorPath2") ]
 
 [node name="Waypoint3" parent="GridContainer" instance=ExtResource( 3 )]
 margin_left = 507.0
 margin_top = 233.0
 margin_right = 557.0
 margin_bottom = 283.0
-connected_node_paths = [ NodePath("../FloorPath3") ]
 
 [node name="Control3" type="Control" parent="GridContainer"]
 margin_left = 645.0
@@ -214,7 +212,6 @@ margin_left = 645.0
 margin_top = 379.0
 margin_right = 695.0
 margin_bottom = 429.0
-connected_node_paths = [ NodePath("../FloorPath3") ]
 
 [node name="ChargingArea" parent="GridContainer" instance=ExtResource( 1 )]
 margin_left = 705.0
@@ -262,21 +259,18 @@ margin_left = 77.0
 margin_top = 526.0
 margin_right = 127.0
 margin_bottom = 576.0
-connected_node_paths = [ NodePath("../FloorPath") ]
 
 [node name="Waypoint6" parent="GridContainer" instance=ExtResource( 3 )]
 margin_left = 292.0
 margin_top = 526.0
 margin_right = 342.0
 margin_bottom = 576.0
-connected_node_paths = [ NodePath("../FloorPath2") ]
 
 [node name="Waypoint7" parent="GridContainer" instance=ExtResource( 3 )]
 margin_left = 507.0
 margin_top = 526.0
 margin_right = 557.0
 margin_bottom = 576.0
-connected_node_paths = [ NodePath("../FloorPath3") ]
 
 [node name="Control5" type="Control" parent="GridContainer"]
 margin_left = 645.0
@@ -389,6 +383,7 @@ text = "Buffer Area"
 
 [node name="PathNavigationController" type="Node" parent="."]
 script = ExtResource( 5 )
+nav_node_paths = [ NodePath("../GridContainer/Waypoint"), NodePath("../GridContainer/Waypoint2"), NodePath("../GridContainer/Waypoint3"), NodePath("../GridContainer/Waypoint4"), NodePath("../GridContainer/Waypoint5"), NodePath("../GridContainer/Waypoint6"), NodePath("../GridContainer/Waypoint7"), NodePath("../GridContainer/FloorPath"), NodePath("../GridContainer/FloorPath2"), NodePath("../GridContainer/FloorPath3") ]
 
 [editable path="GridContainer/OutboundArea"]
 [editable path="GridContainer/LabelingArea"]

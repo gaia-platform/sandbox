@@ -69,6 +69,7 @@ func _on_PathContainer_resized():
 			print("Unknown size requested")
 
 
+# Return center point
 func get_location():
 	var half_dim = rect_size / 2
 	return Vector2(rect_global_position.x + half_dim.x, rect_global_position.y + half_dim.y)

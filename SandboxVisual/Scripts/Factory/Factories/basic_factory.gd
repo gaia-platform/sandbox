@@ -1,5 +1,6 @@
 extends Control
 
+export (int) var number_of_waypoints
 export (NodePath) var inbound_area_path
 export (NodePath) var packing_area_path
 export (NodePath) var buffer_area_path

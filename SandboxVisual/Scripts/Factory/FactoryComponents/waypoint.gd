@@ -1,14 +1,5 @@
 extends Panel
 
-export (Array, NodePath) var connected_node_paths
-var connected_nodes: Array
-
-
-func _ready():
-	# Generate list of connected nodes
-	for node_path in connected_node_paths:
-		connected_nodes.append(get_node(node_path))
-
 
 # Return center point
 func get_location():
