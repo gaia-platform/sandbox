@@ -29,14 +29,14 @@ func _ready():
 
 func _physics_process(delta):
 	### Handle Movement
-	if ! is_broken && movement_path.size() >= 2:  # There is still a goal coordinate to reach
-		var cur_distance_to_goal = position.distance_squared_to(movement_path[1])
+	if ! is_broken && movement_path.size() > 0:  # There is still a goal coordinate to reach
+		var cur_distance_to_goal = position.distance_squared_to(movement_path[0])
 		if _prev_distance_to_goal == -1:
 			_prev_distance_to_goal = cur_distance_to_goal
 
 		if cur_distance_to_goal <= _prev_distance_to_goal:  # There is still distance to the next goal point
 			_prev_distance_to_goal = cur_distance_to_goal
-			var dir = (movement_path[1] - movement_path[0]).normalized()  # Normalized direction of movement
+			var dir = (movement_path[0] - position).normalized()  # Normalized direction of movement
 			var vel_vector = (dir * delta).clamped(max_speed * delta)  # Speed scaled, clamped, and delta-ed movement vector
 
 			# Update status values
@@ -47,12 +47,17 @@ func _physics_process(delta):
 				print(bot_collision.collider_id)
 				is_broken = true
 		else:
-			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
+			if (
+				movement_path.size() == 1
+				|| (movement_path[0] - position).dot(movement_path[1] - movement_path[0]) != 1
+			):  # Only lock position if there's a change in direction or if it is the last point
+				position = movement_path[0]
+
 			_prev_distance_to_goal = -1
 			cur_speed_squared = 0
 			movement_path.remove(0)
-	elif ! is_broken && movement_path.size() && position != movement_path[0]:
-		position = movement_path[0]
+	elif ! is_broken && ! movement_path.size():  # Stop at final position
+		var _stop_movement = move_and_collide(Vector2.ZERO)
 	elif is_broken:
 		if modulate != Color.red:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement

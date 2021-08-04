@@ -3,6 +3,9 @@ extends Node
 # Exports to pick waypoint and paths
 export (Array, NodePath) var nav_node_paths
 
+export (NodePath) var test_bot_path
+onready var test_bot = get_node(test_bot_path)
+
 # Store waypoint and path nodes
 var nav_nodes: Array
 
@@ -19,10 +22,10 @@ func _ready():
 		nav_nodes.append(get_node(nav_item_path))
 
 	# Generate connections
-	while owner.number_of_waypoints == -1: # Wait until number of waypoints is calculated
+	while owner.number_of_waypoints == -1:  # Wait until number of waypoints is calculated
 		yield(get_tree(), "idle_frame")
 	create_connections()
-	print(get_directions(nav_nodes[0], nav_nodes[nav_nodes.size() - 1]))
+	test_bot.movement_path = get_directions(nav_nodes[0], nav_nodes[6])
 
 
 ### Generate astar map
