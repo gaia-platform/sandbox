@@ -6,12 +6,12 @@
 [ext_resource path="res://Assets/AccessControl/StyleBoxes/header_panel_flat.tres" type="StyleBox" id=4]
 [ext_resource path="res://Assets/AccessControl/Icons/exclamation_triangle.svg" type="Texture" id=5]
 [ext_resource path="res://Assets/AccessControl/Icons/fast_forward.svg" type="Texture" id=6]
-[ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_big_df.tres" type="DynamicFont" id=7]
+[ext_resource path="res://Assets/Fonts/Lato/lato_regular.tres" type="DynamicFont" id=7]
 [ext_resource path="res://Objects/AccessControl/ui_button.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Scripts/AccessControl/access_control_building.gd" type="Script" id=9]
 [ext_resource path="res://Objects/AccessControl/person.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Objects/AccessControl/building.tscn" type="PackedScene" id=11]
-[ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_med_df.tres" type="DynamicFont" id=12]
+[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_big.tres" type="DynamicFont" id=13]
 
 [node name="AccessControlBuilding" type="Control"]
 anchor_right = 1.0
@@ -72,7 +72,7 @@ margin_top = 8.0
 margin_right = 837.0
 margin_bottom = 41.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 7 )
+custom_fonts/font = ExtResource( 13 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Unable to connect to Gaia! Please rerun the demo."
 align = 1
@@ -122,7 +122,7 @@ margin_top = 5.0
 margin_right = 354.0
 margin_bottom = 38.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 7 )
+custom_fonts/font = ExtResource( 13 )
 text = "Locations at time: 8:00 am"
 
 [node name="FastForwardButton" parent="VBoxContainer/GridContainer/TimeHeader/MarginContainer/HBoxContainer" instance=ExtResource( 8 )]
@@ -157,17 +157,17 @@ margin_bottom = 54.0
 
 [node name="PeopleLabel" type="Label" parent="VBoxContainer/GridContainer/PeopleHeader/MarginContainer/HBoxContainer"]
 margin_top = 5.0
-margin_right = 263.0
+margin_right = 282.0
 margin_bottom = 38.0
 size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 7 )
+custom_fonts/font = ExtResource( 13 )
 text = "People"
 
 [node name="ExitButton" type="Button" parent="VBoxContainer/GridContainer/PeopleHeader/MarginContainer/HBoxContainer"]
-margin_left = 267.0
+margin_left = 286.0
 margin_right = 420.0
 margin_bottom = 44.0
-custom_fonts/font = ExtResource( 12 )
+custom_fonts/font = ExtResource( 7 )
 text = "Exit to Menu"
 
 [node name="PlaceScrollContainer" type="ScrollContainer" parent="VBoxContainer/GridContainer"]

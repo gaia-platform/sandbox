@@ -1,0 +1,40 @@
+[gd_scene format=2]
+
+[node name="WidgetGrid" type="GridContainer"]
+margin_right = 75.0
+margin_bottom = 75.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/vseparation = 5
+custom_constants/hseparation = 5
+columns = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control" type="Control" parent="."]
+margin_right = 35.0
+margin_bottom = 35.0
+rect_min_size = Vector2( 35, 35 )
+
+[node name="Control2" type="Control" parent="."]
+margin_left = 40.0
+margin_right = 75.0
+margin_bottom = 35.0
+rect_min_size = Vector2( 35, 35 )
+
+[node name="Control3" type="Control" parent="."]
+margin_top = 40.0
+margin_right = 35.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 35, 35 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Control4" type="Control" parent="."]
+margin_left = 40.0
+margin_top = 40.0
+margin_right = 75.0
+margin_bottom = 75.0
+rect_min_size = Vector2( 35, 35 )

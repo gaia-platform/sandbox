@@ -1,0 +1,385 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://Objects/Factory/FactoryComponents/area.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Objects/Factory/FactoryComponents/floor_path.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Objects/Factory/FactoryComponents/waypoint.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Scripts/Factory/Factories/basic_factory.gd" type="Script" id=4]
+
+[node name="BasicFactory" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 10.0
+margin_top = 10.0
+margin_right = -10.0
+margin_bottom = -10.0
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+inbound_area_path = NodePath("GridContainer/InboundArea")
+packing_area_path = NodePath("GridContainer/PackingArea")
+buffer_area_path = NodePath("GridContainer/BufferArea")
+painting_area_path = NodePath("GridContainer/PaintingArea")
+labeling_area_path = NodePath("GridContainer/LabelingArea")
+outbound_area_path = NodePath("GridContainer/OutboundArea")
+charging_area_path = NodePath("GridContainer/ChargingArea")
+
+[node name="GridContainer" type="GridContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/vseparation = 10
+custom_constants/hseparation = 10
+columns = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="OutboundArea" parent="GridContainer" instance=ExtResource( 1 )]
+margin_right = 205.0
+margin_bottom = 223.0
+
+[node name="MarginContainer" parent="GridContainer/OutboundArea" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/OutboundArea/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/OutboundArea/MarginContainer/VBoxContainer" index="0"]
+margin_right = 175.0
+text = "Pallets: ##"
+
+[node name="PalletSpace" parent="GridContainer/OutboundArea/MarginContainer/VBoxContainer" index="1"]
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="AreaLabel" parent="GridContainer/OutboundArea/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Outbound Area"
+
+[node name="LabelingArea" parent="GridContainer" instance=ExtResource( 1 )]
+margin_left = 215.0
+margin_right = 420.0
+margin_bottom = 223.0
+
+[node name="MarginContainer" parent="GridContainer/LabelingArea" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/LabelingArea/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/LabelingArea/MarginContainer/VBoxContainer" index="0"]
+visible = false
+margin_right = 175.0
+
+[node name="PalletSpace" parent="GridContainer/LabelingArea/MarginContainer/VBoxContainer" index="1"]
+visible = false
+margin_top = 0.0
+margin_right = 175.0
+margin_bottom = 69.0
+
+[node name="WidgetSpace" parent="GridContainer/LabelingArea/MarginContainer/VBoxContainer" index="2"]
+visible = true
+margin_top = 0.0
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="WidgetGrid" parent="GridContainer/LabelingArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
+margin_left = 50.0
+margin_top = 39.0
+margin_right = 125.0
+margin_bottom = 114.0
+
+[node name="AreaLabel" parent="GridContainer/LabelingArea/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Labeling Area"
+
+[node name="PaintingArea" parent="GridContainer" instance=ExtResource( 1 )]
+margin_left = 430.0
+margin_right = 635.0
+margin_bottom = 223.0
+
+[node name="MarginContainer" parent="GridContainer/PaintingArea" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/PaintingArea/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/PaintingArea/MarginContainer/VBoxContainer" index="0"]
+visible = false
+margin_right = 175.0
+
+[node name="PalletSpace" parent="GridContainer/PaintingArea/MarginContainer/VBoxContainer" index="1"]
+visible = false
+margin_top = 0.0
+margin_right = 175.0
+margin_bottom = 72.0
+
+[node name="WidgetSpace" parent="GridContainer/PaintingArea/MarginContainer/VBoxContainer" index="2"]
+visible = true
+margin_top = 0.0
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="WidgetGrid" parent="GridContainer/PaintingArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
+margin_left = 50.0
+margin_top = 39.0
+margin_right = 125.0
+margin_bottom = 114.0
+
+[node name="AreaLabel" parent="GridContainer/PaintingArea/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Painting Area"
+
+[node name="Control" type="Control" parent="GridContainer"]
+margin_left = 645.0
+margin_right = 695.0
+margin_bottom = 223.0
+
+[node name="Control2" type="Control" parent="GridContainer"]
+margin_left = 705.0
+margin_right = 910.0
+margin_bottom = 223.0
+
+[node name="Waypoint" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 77.0
+margin_top = 233.0
+margin_right = 127.0
+margin_bottom = 283.0
+
+[node name="Waypoint2" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 292.0
+margin_top = 233.0
+margin_right = 342.0
+margin_bottom = 283.0
+
+[node name="Waypoint3" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 507.0
+margin_top = 233.0
+margin_right = 557.0
+margin_bottom = 283.0
+
+[node name="Control3" type="Control" parent="GridContainer"]
+margin_left = 645.0
+margin_top = 233.0
+margin_right = 695.0
+margin_bottom = 283.0
+
+[node name="Control4" type="Control" parent="GridContainer"]
+margin_left = 705.0
+margin_top = 233.0
+margin_right = 910.0
+margin_bottom = 283.0
+
+[node name="FloorPath" parent="GridContainer" instance=ExtResource( 2 )]
+margin_top = 293.0
+margin_right = 205.0
+margin_bottom = 516.0
+path_shape = 5
+
+[node name="FloorPath2" parent="GridContainer" instance=ExtResource( 2 )]
+margin_left = 215.0
+margin_top = 293.0
+margin_right = 420.0
+margin_bottom = 516.0
+path_shape = 2
+
+[node name="FloorPath3" parent="GridContainer" instance=ExtResource( 2 )]
+margin_left = 430.0
+margin_top = 293.0
+margin_right = 635.0
+margin_bottom = 516.0
+path_shape = 2
+
+[node name="Waypoint4" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 645.0
+margin_top = 379.0
+margin_right = 695.0
+margin_bottom = 429.0
+
+[node name="ChargingArea" parent="GridContainer" instance=ExtResource( 1 )]
+margin_left = 705.0
+margin_top = 293.0
+margin_right = 910.0
+margin_bottom = 516.0
+
+[node name="MarginContainer" parent="GridContainer/ChargingArea" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/ChargingArea/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="0"]
+visible = false
+margin_right = 175.0
+
+[node name="PalletSpace" parent="GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="1"]
+visible = false
+margin_right = 175.0
+margin_bottom = 88.0
+
+[node name="WidgetSpace" parent="GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="2"]
+visible = true
+margin_top = 0.0
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="WidgetGrid" parent="GridContainer/ChargingArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
+margin_left = 50.0
+margin_top = 39.0
+margin_right = 125.0
+margin_bottom = 114.0
+
+[node name="AreaLabel" parent="GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Charging Area"
+
+[node name="Waypoint5" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 77.0
+margin_top = 526.0
+margin_right = 127.0
+margin_bottom = 576.0
+
+[node name="Waypoint6" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 292.0
+margin_top = 526.0
+margin_right = 342.0
+margin_bottom = 576.0
+
+[node name="Waypoint7" parent="GridContainer" instance=ExtResource( 3 )]
+margin_left = 507.0
+margin_top = 526.0
+margin_right = 557.0
+margin_bottom = 576.0
+
+[node name="Control5" type="Control" parent="GridContainer"]
+margin_left = 645.0
+margin_top = 526.0
+margin_right = 695.0
+margin_bottom = 576.0
+
+[node name="Control6" type="Control" parent="GridContainer"]
+margin_left = 705.0
+margin_top = 526.0
+margin_right = 910.0
+margin_bottom = 576.0
+
+[node name="InboundArea" parent="GridContainer" instance=ExtResource( 1 )]
+margin_top = 586.0
+margin_right = 205.0
+margin_bottom = 809.0
+
+[node name="MarginContainer" parent="GridContainer/InboundArea" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/InboundArea/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/InboundArea/MarginContainer/VBoxContainer" index="0"]
+margin_right = 175.0
+text = "Pallets: ##"
+
+[node name="PalletSpace" parent="GridContainer/InboundArea/MarginContainer/VBoxContainer" index="1"]
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="AreaLabel" parent="GridContainer/InboundArea/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Inbound Area"
+
+[node name="PackingArea" parent="GridContainer" instance=ExtResource( 1 )]
+margin_left = 215.0
+margin_top = 586.0
+margin_right = 420.0
+margin_bottom = 809.0
+
+[node name="MarginContainer" parent="GridContainer/PackingArea" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/PackingArea/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/PackingArea/MarginContainer/VBoxContainer" index="0"]
+visible = false
+margin_right = 175.0
+
+[node name="PalletSpace" parent="GridContainer/PackingArea/MarginContainer/VBoxContainer" index="1"]
+margin_top = 0.0
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="AreaLabel" parent="GridContainer/PackingArea/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Packing Area"
+
+[node name="BufferArea" parent="GridContainer" instance=ExtResource( 1 )]
+margin_left = 430.0
+margin_top = 586.0
+margin_right = 635.0
+margin_bottom = 809.0
+
+[node name="MarginContainer" parent="GridContainer/BufferArea" index="0"]
+margin_right = 200.0
+margin_bottom = 218.0
+
+[node name="VBoxContainer" parent="GridContainer/BufferArea/MarginContainer" index="0"]
+margin_right = 185.0
+margin_bottom = 203.0
+
+[node name="CountLabel" parent="GridContainer/BufferArea/MarginContainer/VBoxContainer" index="0"]
+margin_right = 175.0
+text = "Widgets: ##"
+
+[node name="PalletSpace" parent="GridContainer/BufferArea/MarginContainer/VBoxContainer" index="1"]
+visible = false
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="WidgetSpace" parent="GridContainer/BufferArea/MarginContainer/VBoxContainer" index="2"]
+visible = true
+margin_top = 32.0
+margin_right = 175.0
+margin_bottom = 154.0
+
+[node name="WidgetGrid" parent="GridContainer/BufferArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
+margin_left = 50.0
+margin_top = 23.0
+margin_right = 125.0
+margin_bottom = 98.0
+
+[node name="AreaLabel" parent="GridContainer/BufferArea/MarginContainer/VBoxContainer" index="3"]
+margin_top = 164.0
+margin_right = 175.0
+margin_bottom = 193.0
+text = "Buffer Area"
+
+[editable path="GridContainer/OutboundArea"]
+[editable path="GridContainer/LabelingArea"]
+[editable path="GridContainer/PaintingArea"]
+[editable path="GridContainer/ChargingArea"]
+[editable path="GridContainer/InboundArea"]
+[editable path="GridContainer/PackingArea"]
+[editable path="GridContainer/BufferArea"]
