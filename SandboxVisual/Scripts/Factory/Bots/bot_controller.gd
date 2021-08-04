@@ -3,7 +3,7 @@ extends KinematicBody2D
 #### Variables
 ### Properties
 export (String) var bot_id
-export (int, "Bumblebee", "Bumblebee Stacker") var bot_type
+export (int, "WidgetBot", "PalletBot") var bot_type
 export (int) var max_payload_weight
 export (float) var max_speed
 export (int) var battery_time
