@@ -29,7 +29,6 @@ var number_of_waypoints = -1
 
 
 func _ready():
-	Engine.time_scale = 250
 	# Wait for everything to load in, then count number of waypoints
 	yield(get_tree(), "idle_frame")
 	number_of_waypoints = 0

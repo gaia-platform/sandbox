@@ -391,10 +391,12 @@ text = "Buffer Area"
 [node name="PathNavigationController" type="Node" parent="."]
 script = ExtResource( 5 )
 nav_node_paths = [ NodePath("../GridContainer/Waypoint"), NodePath("../GridContainer/Waypoint2"), NodePath("../GridContainer/Waypoint3"), NodePath("../GridContainer/Waypoint4"), NodePath("../GridContainer/Waypoint5"), NodePath("../GridContainer/Waypoint6"), NodePath("../GridContainer/Waypoint7"), NodePath("../GridContainer/FloorPath"), NodePath("../GridContainer/FloorPath2"), NodePath("../GridContainer/FloorPath3") ]
-test_bot_path = NodePath("../WidgetBot")
+bots_node_path = NodePath("../Bots")
 
-[node name="WidgetBot" parent="." instance=ExtResource( 6 )]
-position = Vector2( 830.143, 369.11 )
+[node name="Bots" type="Node" parent="."]
+
+[node name="WidgetBot" parent="Bots" instance=ExtResource( 6 )]
+position = Vector2( 817.796, 427.478 )
 bot_id = "0"
 
 [editable path="GridContainer/OutboundArea"]
