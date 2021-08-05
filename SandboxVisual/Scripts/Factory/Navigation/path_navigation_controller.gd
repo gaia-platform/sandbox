@@ -16,6 +16,7 @@ onready var astar = AStar2D.new()
 ### Member variables
 var _location_index: int
 var id_to_bot: Dictionary  # Map bot IDs to bot nodes
+var _screen_size = Vector2(930, 830) # Set to default size at first
 
 
 func _ready():
@@ -42,7 +43,6 @@ func _ready():
 	# Setup test bot
 	_location_index = 3  # Test bot starts in charging area
 	bots[0].goal_location = _location_index
-	bots[0].position = nav_nodes[_location_index].get_location()
 
 
 func _input(event):
@@ -72,7 +72,9 @@ func _on_FloorPath_resized():
 
 	# Recalculate bot positions
 	for bot in bots:
-		bot.position = nav_nodes[bot.goal_location].get_location()
+		var bot_position_fraction = bot.position / _screen_size
+		bot.position = owner.rect_size * bot_position_fraction
+	_screen_size = owner.rect_size
 
 
 ### Public Functions
