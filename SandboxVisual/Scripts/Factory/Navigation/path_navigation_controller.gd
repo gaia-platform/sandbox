@@ -97,7 +97,24 @@ func get_directions(from_node, to_node):
 	var from_id = nav_nodes.find(from_node)
 	var to_id = nav_nodes.find(to_node)
 
-	return astar.get_point_path(from_id, to_id)
+	# Get raw points
+	var point_path = astar.get_point_path(from_id, to_id)
+
+	# Optimize path
+	var path_index = 0  # Base index
+	while path_index < point_path.size() - 2:  # Loop while comparing against next two points
+		var inner_index = path_index + 1  # Search index
+		while inner_index < point_path.size() - 1:  # Loop while can add one more
+			var base_dir = (point_path[inner_index] - point_path[path_index]).normalized()  # From base to immediate next point
+			var next_dir = (point_path[inner_index + 1] - point_path[path_index]).normalized()  # From base to the one after that
+
+			if base_dir.dot(next_dir) > 0.99:  # If the movement base to two steps ahead are basically the same as one step ahead...
+				point_path.remove(inner_index)  # Remove the next goal location and go directly to the one after that
+			else:  # If not, stop searching
+				break
+		path_index += 1  # Move onto next point
+
+	return point_path
 
 
 ### Private functions
