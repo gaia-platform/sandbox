@@ -16,7 +16,7 @@ onready var astar = AStar2D.new()
 ### Member variables
 var _location_index: int
 var id_to_bot: Dictionary  # Map bot IDs to bot nodes
-var _screen_size = Vector2(930, 830) # Set to default size at first
+var _screen_size = Vector2(930, 830)  # Set to default size at first
 
 
 func _ready():

@@ -50,42 +50,42 @@ margin_right = 880.0
 margin_bottom = 43.0
 
 [node name="LevelNameLabel" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="0"]
-margin_right = 209.0
+margin_right = 195.0
 margin_bottom = 33.0
 text = "01: Basic Factory"
 
 [node name="PauseButton" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="1"]
-margin_left = 219.0
-margin_right = 428.0
+margin_left = 205.0
+margin_right = 401.0
 margin_bottom = 33.0
 
 [node name="Control" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="2"]
-margin_left = 438.0
-margin_right = 438.0
+margin_left = 411.0
+margin_right = 411.0
 margin_bottom = 33.0
 
 [node name="SlowerButton" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="3"]
-margin_left = 448.0
-margin_right = 543.0
+margin_left = 421.0
+margin_right = 510.0
 margin_bottom = 33.0
 
 [node name="SpeedScaleLabel" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="4"]
-margin_left = 553.0
-margin_right = 610.0
+margin_left = 520.0
+margin_right = 573.0
 margin_bottom = 33.0
 
 [node name="FasterButton" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="5"]
-margin_left = 620.0
-margin_right = 716.0
+margin_left = 583.0
+margin_right = 672.0
 margin_bottom = 33.0
 
 [node name="Control2" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="6"]
-margin_left = 726.0
-margin_right = 726.0
+margin_left = 682.0
+margin_right = 682.0
 margin_bottom = 33.0
 
 [node name="ExitButton" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="7"]
-margin_left = 736.0
+margin_left = 692.0
 margin_right = 870.0
 margin_bottom = 33.0
 

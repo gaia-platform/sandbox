@@ -2,8 +2,8 @@
 
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_regular.tres" type="DynamicFont" id=2]
-[ext_resource path="res://Assets/Fonts/Lato/lato_regular.tres" type="DynamicFont" id=3]
 [ext_resource path="res://Scripts/Factory/FactoryComponents/simulation_controller.gd" type="Script" id=4]
+[ext_resource path="res://Objects/UI/general_button.tscn" type="PackedScene" id=5]
 
 [sub_resource type="StyleBoxFlat" id=1]
 border_width_left = 10
@@ -50,7 +50,7 @@ size_flags_vertical = 3
 custom_constants/separation = 10
 
 [node name="LevelNameLabel" type="Label" parent="MarginContainer/HBoxContainer"]
-margin_right = 215.0
+margin_right = 200.0
 margin_bottom = 790.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -61,33 +61,30 @@ align = 1
 valign = 1
 autowrap = true
 
-[node name="PauseButton" type="Button" parent="MarginContainer/HBoxContainer"]
-margin_left = 225.0
-margin_right = 441.0
+[node name="PauseButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
+margin_left = 210.0
+margin_right = 410.0
 margin_bottom = 790.0
 size_flags_horizontal = 3
-size_flags_vertical = 3
 size_flags_stretch_ratio = 1.1
-custom_fonts/font = ExtResource( 3 )
 text = "Pause"
 
 [node name="Control" type="Control" parent="MarginContainer/HBoxContainer"]
-margin_left = 451.0
-margin_right = 451.0
+margin_left = 420.0
+margin_right = 420.0
 margin_bottom = 790.0
 
-[node name="SlowerButton" type="Button" parent="MarginContainer/HBoxContainer"]
-margin_left = 461.0
-margin_right = 559.0
+[node name="SlowerButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
+margin_left = 430.0
+margin_right = 522.0
 margin_bottom = 790.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.5
-custom_fonts/font = ExtResource( 3 )
 text = "<<"
 
 [node name="SpeedScaleLabel" type="Label" parent="MarginContainer/HBoxContainer"]
-margin_left = 569.0
-margin_right = 628.0
+margin_left = 532.0
+margin_right = 586.0
 margin_bottom = 790.0
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -98,25 +95,24 @@ align = 1
 valign = 1
 autowrap = true
 
-[node name="FasterButton" type="Button" parent="MarginContainer/HBoxContainer"]
-margin_left = 638.0
-margin_right = 736.0
+[node name="FasterButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
+margin_left = 596.0
+margin_right = 687.0
 margin_bottom = 790.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.5
-custom_fonts/font = ExtResource( 3 )
 text = ">>"
 
 [node name="Control2" type="Control" parent="MarginContainer/HBoxContainer"]
-margin_left = 746.0
-margin_right = 746.0
+margin_left = 697.0
+margin_right = 697.0
 margin_bottom = 790.0
 
-[node name="ExitButton" type="Button" parent="MarginContainer/HBoxContainer"]
-margin_left = 756.0
+[node name="ExitButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
+margin_left = 707.0
 margin_right = 890.0
 margin_bottom = 790.0
-custom_fonts/font = ExtResource( 3 )
+size_flags_horizontal = 3
 text = "Exit to Menu"
 
 [connection signal="pressed" from="MarginContainer/HBoxContainer/PauseButton" to="." method="_on_PauseButton_pressed"]
