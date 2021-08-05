@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Objects/AccessControl/event_label.tscn" type="PackedScene" id=1]
-[ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_med_df.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Assets/AccessControl/StyleBoxes/schedule_panel_flat.tres" type="StyleBox" id=3]
 [ext_resource path="res://Scripts/AccessControl/UI/schedule_panel.gd" type="Script" id=4]
 
@@ -18,7 +18,7 @@ event_list_path = NodePath("MarginContainer/VBoxContainer")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_right = 429.0
-margin_bottom = 122.0
+margin_bottom = 88.0
 custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
@@ -28,11 +28,11 @@ custom_constants/margin_bottom = 10
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 419.0
-margin_bottom = 112.0
+margin_bottom = 78.0
 
 [node name="ScheduleLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 margin_right = 409.0
-margin_bottom = 33.0
+margin_bottom = 29.0
 custom_fonts/font = ExtResource( 2 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Schedule"

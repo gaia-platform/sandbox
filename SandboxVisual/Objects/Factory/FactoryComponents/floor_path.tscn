@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://Scripts/Factory/FactoryParts/PathContainer.gd" type="Script" id=1]
+
+[node name="FloorPath" type="Control"]
+show_behind_parent = true
+margin_right = 264.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 50, 50 )
+size_flags_horizontal = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PathLine" type="Line2D" parent="."]
+points = PoolVector2Array( 176, 24, 24, 24 )
+width = 20.0
+default_color = Color( 0, 0, 0, 1 )
+begin_cap_mode = 1
+end_cap_mode = 1
+
+[connection signal="resized" from="." to="." method="_on_PathContainer_resized"]

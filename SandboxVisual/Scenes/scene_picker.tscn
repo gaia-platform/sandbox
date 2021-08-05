@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_big_df.tres" type="DynamicFont" id=1]
-[ext_resource path="res://Assets/Fonts/Montserrat/montserrat_regular_med_df.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_big.tres" type="DynamicFont" id=1]
+[ext_resource path="res://Assets/Fonts/Lato/lato_regular.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Scripts/scene_picker.gd" type="Script" id=3]
 
 [sub_resource type="StyleBoxEmpty" id=1]
@@ -30,9 +30,9 @@ __meta__ = {
 }
 
 [node name="PickerTitleLabel" type="Label" parent="VBoxContainer"]
-margin_top = 324.0
+margin_top = 325.0
 margin_right = 910.0
-margin_bottom = 357.0
+margin_bottom = 358.0
 custom_fonts/font = ExtResource( 1 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Sandbox Sample Environments"
@@ -40,29 +40,29 @@ align = 1
 valign = 1
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
-margin_left = 316.0
-margin_top = 407.0
-margin_right = 593.0
-margin_bottom = 485.0
+margin_left = 335.0
+margin_top = 408.0
+margin_right = 575.0
+margin_bottom = 484.0
 size_flags_horizontal = 4
 size_flags_vertical = 0
 custom_styles/panel = SubResource( 1 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer"]
-margin_right = 277.0
-margin_bottom = 78.0
+margin_right = 240.0
+margin_bottom = 76.0
 custom_constants/separation = 10
 
 [node name="FactoryDemoButton" type="Button" parent="VBoxContainer/PanelContainer/VBoxContainer"]
-margin_right = 277.0
-margin_bottom = 34.0
+margin_right = 240.0
+margin_bottom = 33.0
 custom_fonts/font = ExtResource( 2 )
 text = "AMR Factory"
 
 [node name="AccessControlButton" type="Button" parent="VBoxContainer/PanelContainer/VBoxContainer"]
-margin_top = 44.0
-margin_right = 277.0
-margin_bottom = 78.0
+margin_top = 43.0
+margin_right = 240.0
+margin_bottom = 76.0
 custom_fonts/font = ExtResource( 2 )
 text = "Building Access Control"
 
