@@ -42,6 +42,7 @@ func _ready():
 	# Setup test bot
 	_location_index = 3  # Test bot starts in charging area
 	bots[0].goal_location = _location_index
+	bots[0].position = nav_nodes[_location_index].get_location()
 
 
 func _input(event):

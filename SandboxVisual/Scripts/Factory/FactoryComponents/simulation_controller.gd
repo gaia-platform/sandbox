@@ -1,6 +1,5 @@
 extends PanelContainer
 
-export var level_name = "Basic Factory"
 export var speed_scale = 250
 export (String, FILE) var scene_picker_scene
 export (NodePath) var level_name_label_path
@@ -13,7 +12,6 @@ onready var speed_scale_label = get_node(speed_scale_label_path)
 
 
 func _ready():
-	level_name_label.text = level_name
 	_update_speed_scale_label()
 
 

@@ -18,8 +18,6 @@ export (bool) var is_broken = false
 
 ### Navigation
 var movement_path = []
-var _prev_distance_to_goal = -1
-var _prev_recorded_seconds = -1
 
 
 func _ready():
@@ -28,35 +26,24 @@ func _ready():
 
 
 func _physics_process(delta):
-	### Handle Movement
 	if ! is_broken && movement_path.size() > 0:  # There is still a goal coordinate to reach
-		var cur_distance_to_goal = position.distance_squared_to(movement_path[0])
-		if _prev_distance_to_goal == -1:
-			_prev_distance_to_goal = cur_distance_to_goal
+		var cur_dir = (movement_path[0] - position).normalized()  # Vector pointing towards next goal point
+		var movement_step = (cur_dir * delta).clamped(max_speed * delta)  # Movement increment, clamped to max speed
+		var post_movement_dir = movement_path[0] - (position + movement_step)  # Vector pointing towards goal point, but after step
+		var cur_dot_post = cur_dir.dot(post_movement_dir)  # Get alignment of current direction vector and post step vector to goal
 
-		if cur_distance_to_goal <= _prev_distance_to_goal:  # There is still distance to the next goal point
-			_prev_distance_to_goal = cur_distance_to_goal
-			var dir = (movement_path[0] - position).normalized()  # Normalized direction of movement
-			var vel_vector = (dir * delta).clamped(max_speed * delta)  # Speed scaled, clamped, and delta-ed movement vector
+		if cur_dot_post < 0:  # If directions are pointing towards each other (meaning next step overshoots goal)
+			position = movement_path[0]  # Lock to goal point
+			movement_path.remove(0)  # Remove this goal point
+		else:  # Otherwise, continue moving
+			cur_speed_squared = movement_step.length_squared()  # Update speed
 
-			# Update status values
-			cur_speed_squared = vel_vector.length_squared()
-
-			var bot_collision = move_and_collide(vel_vector)
+			# Move and check for collisions
+			var bot_collision = move_and_collide(movement_step)
 			if bot_collision != null:
-				print(bot_collision.collider_id)
 				is_broken = true
-		else:
-			if (
-				movement_path.size() == 1
-				|| (movement_path[0] - position).dot(movement_path[1] - movement_path[0]) != 1
-			):  # Only lock position if there's a change in direction or if it is the last point
-				position = movement_path[0]
-
-			_prev_distance_to_goal = -1
-			cur_speed_squared = 0
-			movement_path.remove(0)
 	elif ! is_broken && ! movement_path.size():  # Stop at final position
+		cur_speed_squared = 0
 		var _stop_movement = move_and_collide(Vector2.ZERO)
 	elif is_broken:
 		if modulate != Color.red:

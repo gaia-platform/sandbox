@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Objects/Factory/FactoryComponents/area.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Objects/Factory/FactoryComponents/floor_path.tscn" type="PackedScene" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://Scripts/Factory/Navigation/path_navigation_controller.gd" type="Script" id=5]
 [ext_resource path="res://Objects/Factory/Robots/widgetbot.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Objects/Factory/FactoryComponents/simulation_controller.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Objects/Factory/Robots/palletbot.tscn" type="PackedScene" id=8]
 
 [node name="BasicFactory" type="Control"]
 anchor_right = 1.0
@@ -156,6 +157,14 @@ margin_bottom = 223.0
 [node name="SimulationController" parent="GridContainer" instance=ExtResource( 7 )]
 margin_left = 705.0
 margin_right = 910.0
+
+[node name="LevelNameLabel" parent="GridContainer/SimulationController/MarginContainer/VBoxContainer" index="0"]
+margin_bottom = 61.0
+text = "Level 1:
+Basic Factory"
+
+[node name="PauseButton" parent="GridContainer/SimulationController/MarginContainer/VBoxContainer" index="1"]
+margin_top = 65.0
 
 [node name="Waypoint" parent="GridContainer" instance=ExtResource( 3 )]
 margin_left = 77.0
@@ -396,14 +405,19 @@ bots_node_path = NodePath("../Bots")
 [node name="Bots" type="Node" parent="."]
 
 [node name="WidgetBot" parent="Bots" instance=ExtResource( 6 )]
-position = Vector2( 807.694, 393.804 )
+position = Vector2( 835.412, 415.223 )
 bot_id = "0"
+
+[node name="PalletBot" parent="Bots" instance=ExtResource( 8 )]
+position = Vector2( 327.759, 264.901 )
+goal_location = 1
 
 [connection signal="resized" from="GridContainer/FloorPath" to="PathNavigationController" method="_on_FloorPath_resized"]
 
 [editable path="GridContainer/OutboundArea"]
 [editable path="GridContainer/LabelingArea"]
 [editable path="GridContainer/PaintingArea"]
+[editable path="GridContainer/SimulationController"]
 [editable path="GridContainer/ChargingArea"]
 [editable path="GridContainer/InboundArea"]
 [editable path="GridContainer/PackingArea"]
