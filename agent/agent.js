@@ -12,7 +12,7 @@ var awsConfig = {
    host: 'a31gq30tvzx17m-ats.iot.us-west-2.amazonaws.com', // 'YourAwsIoTEndpoint', e.g. 'prefix.iot.us-east-1.amazonaws.com'
    region: 'us-west-2' // 'YourAwsRegion', e.g. 'us-east-1'
 };
-var clientId = 'c3e81369-36d5-4ab5-b339-d502783cb8e3';
+var clientId = process.env.AGENT_ID;
 
 //// Setup AWS and MQTT
 AWS.config.region = awsConfig.region;
@@ -49,19 +49,17 @@ AWS.config.credentials.get(function (err, data) {
                data.Credentials.SessionToken);
          } else {
             console.log('error retrieving credentials: ' + err);
-            alert('error retrieving credentials: ' + err);
          }
       });
    } else {
       console.log('error retrieving identity:' + err);
-      alert('error retrieving identity: ' + err);
    }
 });
 
 
 //// MQTT functions
 function mqttClientConnectHandler() { // Connection handler
-   console.log('connect');
+   console.log('connect, clientId: ' + clientId);
 
    //
    // Subscribe to our current topic.

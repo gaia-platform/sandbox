@@ -19,7 +19,7 @@
     }
     window.sandboxUuid = storedUuid
     console.log("Sandbox UUID: " + window.sandboxUuid);
-    window.publishData("sandbox_coordinator/session", window.sandboxUuid);
+    window.publishData("sandbox_coordinator/browser", window.sandboxUuid);
   });
 
   var editor = null;

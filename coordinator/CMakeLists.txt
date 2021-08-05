@@ -21,8 +21,8 @@ endif()
 include("/opt/gaia/cmake/gaia.cmake")
 set(GAIA_INC "/opt/gaia/include")
 set(GAIA_LIB "/usr/local/lib/libgaia.so")
-set(COORDINATOR_DDL ${PROJECT_SOURCE_DIR}/coordinator.ddl)
-set(COORDINATOR_RULESET ${PROJECT_SOURCE_DIR}/coordinator.ruleset)
+set(COORDINATOR_DDL ${PROJECT_SOURCE_DIR}/src/coordinator.ddl)
+set(COORDINATOR_RULESET ${PROJECT_SOURCE_DIR}/src/coordinator.ruleset)
 
 # --- Generate EDC from DDL---
 process_schema(
@@ -33,13 +33,16 @@ process_schema(
 translate_ruleset(
   RULESET_FILE ${COORDINATOR_RULESET}
   OUTPUT_FOLDER ${PROJECT_BINARY_DIR}
+  CLANG_PARAMS
+    -I ${PROJECT_SOURCE_DIR}/include
+    -I ${GENERATED_OUTPUTS}
   DEPENDS generate_coordinator_headers)
 
 add_library(gaia SHARED IMPORTED GLOBAL)
 set_target_properties(gaia PROPERTIES IMPORTED_LOCATION ${GAIA_LIB})
 
 add_executable(coordinator
-  coordinator.cpp
+  src/coordinator.cpp
   ${PROJECT_BINARY_DIR}/coordinator_ruleset.cpp
 )
 
@@ -48,5 +51,10 @@ find_package(aws-crt-cpp REQUIRED)
 add_dependencies(coordinator translate_coordinator_ruleset)
 set_target_properties(coordinator PROPERTIES COMPILE_FLAGS "${GAIA_COMPILE_FLAGS}")
 set_target_properties(coordinator PROPERTIES LINK_FLAGS "${GAIA_LINK_FLAGS}")
-target_include_directories(coordinator PRIVATE ${GAIA_INC} ${PROJECT_BINARY_DIR})
+target_include_directories(coordinator
+  PUBLIC
+    ${PROJECT_SOURCE_DIR}/include
+  PRIVATE
+    ${GAIA_INC} ${PROJECT_BINARY_DIR}
+)
 target_link_libraries(coordinator PRIVATE AWS::aws-crt-cpp gaia rt pthread)
