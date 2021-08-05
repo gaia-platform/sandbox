@@ -63,9 +63,23 @@ func _bot_status_request(bot_id: String, status_item: String):
 	target_bot.publish_status_item(status_item)
 
 
+# Recalculate connections on resize
+func _on_FloorPath_resized():
+	# Recalculate paths
+	yield(get_tree(), "idle_frame")  # Wait for resizing
+	create_connections()
+
+	# Recalculate bot positions
+	for bot in bots:
+		bot.position = nav_nodes[bot.goal_location].get_location()
+
+
 ### Public Functions
 ## Generate astar map
 func create_connections():
+	# Reset astar
+	astar.clear()
+
 	# Create nav points
 	for nav_node in nav_nodes:
 		astar.add_point(nav_nodes.find(nav_node), nav_node.get_location())
@@ -82,15 +96,7 @@ func get_directions(from_node, to_node):
 	var from_id = nav_nodes.find(from_node)
 	var to_id = nav_nodes.find(to_node)
 
-	# Generate ID path
-	var id_pathway = astar.get_id_path(from_id, to_id)
-
-	# Convert to location
-	var location_pathway: PoolVector2Array = []
-	for id in id_pathway:
-		location_pathway.append(nav_nodes[id].get_location())  # Then append coordinates
-
-	return location_pathway
+	return astar.get_point_path(from_id, to_id)
 
 
 ### Private functions

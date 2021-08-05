@@ -396,8 +396,10 @@ bots_node_path = NodePath("../Bots")
 [node name="Bots" type="Node" parent="."]
 
 [node name="WidgetBot" parent="Bots" instance=ExtResource( 6 )]
-position = Vector2( 817.796, 427.478 )
+position = Vector2( 807.694, 393.804 )
 bot_id = "0"
+
+[connection signal="resized" from="GridContainer/FloorPath" to="PathNavigationController" method="_on_FloorPath_resized"]
 
 [editable path="GridContainer/OutboundArea"]
 [editable path="GridContainer/LabelingArea"]
