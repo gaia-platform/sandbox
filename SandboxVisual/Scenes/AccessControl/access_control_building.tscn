@@ -6,7 +6,7 @@
 [ext_resource path="res://Assets/AccessControl/StyleBoxes/header_panel_flat.tres" type="StyleBox" id=4]
 [ext_resource path="res://Assets/AccessControl/Icons/exclamation_triangle.svg" type="Texture" id=5]
 [ext_resource path="res://Assets/AccessControl/Icons/fast_forward.svg" type="Texture" id=6]
-[ext_resource path="res://Assets/Fonts/Lato/lato_regular.tres" type="DynamicFont" id=7]
+[ext_resource path="res://Objects/UI/general_button.tscn" type="PackedScene" id=7]
 [ext_resource path="res://Objects/AccessControl/ui_button.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Scripts/AccessControl/access_control_building.gd" type="Script" id=9]
 [ext_resource path="res://Objects/AccessControl/person.tscn" type="PackedScene" id=10]
@@ -45,6 +45,7 @@ margin_right = 910.0
 margin_bottom = 70.0
 custom_styles/panel = ExtResource( 1 )
 script = ExtResource( 3 )
+error_message_label_path = NodePath("MarginContainer/HBoxContainer/ErrorMessageLabel")
 
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/ErrorPanel"]
 margin_right = 910.0
@@ -163,11 +164,10 @@ size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 13 )
 text = "People"
 
-[node name="ExitButton" type="Button" parent="VBoxContainer/GridContainer/PeopleHeader/MarginContainer/HBoxContainer"]
+[node name="ExitButton" parent="VBoxContainer/GridContainer/PeopleHeader/MarginContainer/HBoxContainer" instance=ExtResource( 7 )]
 margin_left = 286.0
 margin_right = 420.0
 margin_bottom = 44.0
-custom_fonts/font = ExtResource( 7 )
 text = "Exit to Menu"
 
 [node name="PlaceScrollContainer" type="ScrollContainer" parent="VBoxContainer/GridContainer"]

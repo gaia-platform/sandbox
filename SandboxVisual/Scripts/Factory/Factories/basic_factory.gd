@@ -14,4 +14,23 @@ onready var buffer_area = get_node(buffer_area_path)
 onready var painting_area = get_node(painting_area_path)
 onready var labeling_area = get_node(labeling_area_path)
 onready var outbound_area = get_node(outbound_area_path)
-onready var chargine_area = get_node(charging_area_path)
+onready var charging_area = get_node(charging_area_path)
+
+onready var areas = [
+	inbound_area,
+	packing_area,
+	buffer_area,
+	painting_area,
+	labeling_area,
+	outbound_area,
+	charging_area
+]
+var number_of_waypoints = -1
+
+
+func _ready():
+	# Wait for everything to load in, then count number of waypoints
+	yield(get_tree(), "idle_frame")
+	number_of_waypoints = 0
+	for area in areas:
+		number_of_waypoints += area.associated_waypoints.size()
