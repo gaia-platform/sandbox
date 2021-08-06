@@ -90,6 +90,8 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
       window.unreadMessages = true;
    }
 
+   window.editorMessageHandler(topic.toString(), payload.toString());
+
    // To be removed
    robot_location = parseInt(payload.toString())
 }

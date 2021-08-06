@@ -24,7 +24,12 @@
     console.log("Sandbox UUID: " + window.sandboxUuid);
     window.publishData("sandbox_coordinator/browser/" + window.sandboxUuid,
                        window.sandboxUuid);
+    window.subscribeToTopic("editor/#");
   });
+
+  window.editorMessageHandler = function (topic, payload) {
+    // Add editor updates here
+  }
 
   var editor = null;
   var data = {
