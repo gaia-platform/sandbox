@@ -24,6 +24,7 @@ painting_area_path = NodePath("VBoxContainer/GridContainer/PaintingArea")
 labeling_area_path = NodePath("VBoxContainer/GridContainer/LabelingArea")
 outbound_area_path = NodePath("VBoxContainer/GridContainer/OutboundArea")
 charging_area_path = NodePath("VBoxContainer/GridContainer/ChargingArea")
+simulation_controller_path = NodePath("VBoxContainer/SimulationController")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
@@ -479,6 +480,7 @@ text = "Buffer Area"
 [node name="PathNavigationController" type="Node" parent="."]
 script = ExtResource( 5 )
 nav_node_paths = [ NodePath("../VBoxContainer/GridContainer/Waypoint"), NodePath("../VBoxContainer/GridContainer/Waypoint2"), NodePath("../VBoxContainer/GridContainer/Waypoint3"), NodePath("../VBoxContainer/GridContainer/Waypoint4"), NodePath("../VBoxContainer/GridContainer/Waypoint5"), NodePath("../VBoxContainer/GridContainer/Waypoint6"), NodePath("../VBoxContainer/GridContainer/Waypoint7"), NodePath("../VBoxContainer/GridContainer/FloorPath"), NodePath("../VBoxContainer/GridContainer/FloorPath2"), NodePath("../VBoxContainer/GridContainer/FloorPath3") ]
+test_widget_path = NodePath("../Widgets/Widget")
 bots_node_path = NodePath("../Bots")
 
 [node name="Bots" type="Node" parent="."]

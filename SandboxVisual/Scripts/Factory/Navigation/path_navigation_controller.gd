@@ -5,6 +5,9 @@ extends Node
 export (Array, NodePath) var nav_node_paths
 var nav_nodes: Array
 
+export (NodePath) var test_widget_path
+onready var test_widget = get_node(test_widget_path)
+
 # Bots
 export (NodePath) var bots_node_path
 onready var bots_node = get_node(bots_node_path)
@@ -46,6 +49,8 @@ func _ready():
 		bot.goal_location = _location_index
 		owner.charging_area.widget_grid.add_node(bot)
 		yield(get_tree(), "idle_frame")  # Important to add this to prevent data collision
+
+	owner.charging_area.widget_grid.add_node(test_widget)
 
 
 func _input(event):
