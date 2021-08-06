@@ -12,6 +12,7 @@ max_payload_weight = 250
 max_speed = 2.0
 battery_time = 10
 charge_time = 2
+collision_shape_path = NodePath("CollisionShape2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )

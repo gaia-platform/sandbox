@@ -1,6 +1,6 @@
 extends PanelContainer
 
-export var speed_scale = 250
+export var speed_scale = 350
 export (String, FILE) var scene_picker_scene
 export (NodePath) var level_name_label_path
 export (NodePath) var pause_button_path
