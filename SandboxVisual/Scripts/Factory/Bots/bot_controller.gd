@@ -15,9 +15,15 @@ export (float) var cur_speed_squared
 export (float) var charge_level = 100
 export (bool) var is_charging = false
 export (bool) var is_broken = false
+export (bool) var is_inside_area = false
+
+### Nodes
+export (NodePath) var collision_shape_path
+onready var collision_shape = get_node(collision_shape_path)
 
 ### Navigation
 var movement_path = []
+var _movement_queue = []
 
 
 func _ready():
@@ -26,7 +32,7 @@ func _ready():
 
 
 func _physics_process(delta):
-	if ! is_broken && movement_path.size() > 0:  # There is still a goal coordinate to reach
+	if not is_broken and movement_path.size() > 0:  # There is still a goal coordinate to reach
 		var cur_dir = (movement_path[0] - position).normalized()  # Vector pointing towards next goal point
 		var movement_step = (cur_dir * delta).clamped(max_speed * delta)  # Movement increment, clamped to max speed
 		var post_movement_dir = movement_path[0] - (position + movement_step)  # Vector pointing towards goal point, but after step
@@ -42,9 +48,17 @@ func _physics_process(delta):
 			var bot_collision = move_and_collide(movement_step)
 			if bot_collision != null:
 				is_broken = true
-	elif ! is_broken && ! movement_path.size():  # Stop at final position
+	elif not is_broken and not movement_path.size():  # Stop at final position
 		cur_speed_squared = 0
 		var _stop_movement = move_and_collide(Vector2.ZERO)
+		if collision_shape.disabled and not is_inside_area:
+			collision_shape.disabled = false
+			print("Enabled collisions")
+
+		# Check to see if there are more movements in the queue
+		var next_movement = _movement_queue.pop_front()
+		if next_movement:
+			movement_path = next_movement
 	elif is_broken:
 		if modulate != Color.red:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
@@ -76,3 +90,20 @@ func publish_status_item(item: String):
 			print("Unknown status item request")
 
 	CommunicationManager.publish_to_topic("factory/%s/%s" % [bot_id, item], payload)
+
+
+func move_to(location: Vector2):
+	if is_inside_area and not collision_shape.disabled:
+		print("Disabled collisions")
+		collision_shape.disabled = true
+		raise()
+	_movement_queue.append([location])
+
+
+func travel(path: PoolVector2Array):
+	if is_inside_area:
+		raise()
+		move_to(path[0])
+		path.remove(0)
+		is_inside_area = false
+	_movement_queue.append(path)

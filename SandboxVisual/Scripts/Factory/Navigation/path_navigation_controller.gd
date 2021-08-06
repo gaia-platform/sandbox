@@ -43,6 +43,8 @@ func _ready():
 	# Setup test bot
 	_location_index = 3  # Test bot starts in charging area
 	bots[0].goal_location = _location_index
+	for bot in bots:
+		owner.charging_area.widget_grid.add_node(bot)
 
 
 func _input(event):
@@ -127,5 +129,5 @@ func _update_navigation_path(bot, loc_index):
 	# Set bot's movement path and properties
 	if bot.position == movement_path[0]:
 		movement_path.remove(0)
-	bot.movement_path = movement_path
+	bot.travel(movement_path)
 	bot.goal_location = loc_index
