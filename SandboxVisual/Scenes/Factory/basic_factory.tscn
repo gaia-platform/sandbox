@@ -123,6 +123,12 @@ text = "Pallets: ##"
 margin_right = 175.0
 margin_bottom = 128.0
 
+[node name="WidgetGrid" parent="VBoxContainer/GridContainer/OutboundArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
+margin_left = 120.0
+margin_top = 37.0
+margin_right = 120.0
+margin_bottom = 37.0
+
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/OutboundArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 138.0
 margin_right = 175.0
@@ -160,10 +166,11 @@ margin_right = 175.0
 margin_bottom = 128.0
 
 [node name="WidgetGrid" parent="VBoxContainer/GridContainer/LabelingArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
-margin_left = 50.0
-margin_top = 26.0
-margin_right = 125.0
-margin_bottom = 101.0
+margin_left = 87.0
+margin_top = 64.0
+margin_right = 87.0
+margin_bottom = 64.0
+capacity_limit = 1
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/LabelingArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 138.0
@@ -202,10 +209,11 @@ margin_right = 175.0
 margin_bottom = 128.0
 
 [node name="WidgetGrid" parent="VBoxContainer/GridContainer/PaintingArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
-margin_left = 50.0
-margin_top = 26.0
-margin_right = 125.0
-margin_bottom = 101.0
+margin_left = 87.0
+margin_top = 64.0
+margin_right = 87.0
+margin_bottom = 64.0
+capacity_limit = 1
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/PaintingArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 138.0
@@ -313,10 +321,11 @@ margin_right = 175.0
 margin_bottom = 128.0
 
 [node name="WidgetGrid" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
-margin_left = 50.0
-margin_top = 26.0
-margin_right = 125.0
-margin_bottom = 101.0
+margin_left = 87.0
+margin_top = 64.0
+margin_right = 87.0
+margin_bottom = 64.0
+for_widgets = false
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 138.0
@@ -376,6 +385,12 @@ text = "Pallets: ##"
 margin_right = 175.0
 margin_bottom = 128.0
 
+[node name="WidgetGrid" parent="VBoxContainer/GridContainer/InboundArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
+margin_left = 120.0
+margin_top = 37.0
+margin_right = 120.0
+margin_bottom = 37.0
+
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/InboundArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 138.0
 margin_right = 175.0
@@ -405,6 +420,12 @@ margin_right = 175.0
 margin_top = 0.0
 margin_right = 175.0
 margin_bottom = 128.0
+
+[node name="WidgetGrid" parent="VBoxContainer/GridContainer/PackingArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
+margin_left = 120.0
+margin_top = 37.0
+margin_right = 120.0
+margin_bottom = 37.0
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/PackingArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 138.0
@@ -443,10 +464,10 @@ margin_right = 175.0
 margin_bottom = 128.0
 
 [node name="WidgetGrid" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
-margin_left = 50.0
-margin_top = 10.0
-margin_right = 125.0
-margin_bottom = 85.0
+margin_left = 87.0
+margin_top = 48.0
+margin_right = 87.0
+margin_bottom = 48.0
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 138.0
@@ -462,12 +483,11 @@ bots_node_path = NodePath("../Bots")
 [node name="Bots" type="Node" parent="."]
 
 [node name="WidgetBot" parent="Bots" instance=ExtResource( 6 )]
-position = Vector2( 835.412, 415.223 )
+position = Vector2( 679.669, 453.159 )
 bot_id = "0"
 
 [node name="PalletBot" parent="Bots" instance=ExtResource( 8 )]
-position = Vector2( 323.979, 354.355 )
-goal_location = 1
+position = Vector2( 327.579, 323.8 )
 
 [connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="PathNavigationController" method="_on_FloorPath_resized"]
 
