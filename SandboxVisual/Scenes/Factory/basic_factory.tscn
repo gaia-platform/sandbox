@@ -487,8 +487,7 @@ position = Vector2( 679.669, 453.159 )
 bot_id = "0"
 
 [node name="PalletBot" parent="Bots" instance=ExtResource( 8 )]
-position = Vector2( 323.979, 354.355 )
-goal_location = 1
+position = Vector2( 327.579, 323.8 )
 
 [connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="PathNavigationController" method="_on_FloorPath_resized"]
 

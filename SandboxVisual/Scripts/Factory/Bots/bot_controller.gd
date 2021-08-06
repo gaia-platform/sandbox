@@ -25,6 +25,8 @@ onready var collision_shape = get_node(collision_shape_path)
 var movement_path = []
 var _movement_queue = []
 
+signal leaving_area
+
 
 func _ready():
 	CommunicationManager.subscribe_to_topic("factory/%s/move_location" % bot_id)
@@ -32,7 +34,7 @@ func _ready():
 
 
 func _physics_process(delta):
-	if not is_broken and movement_path.size() > 0:  # There is still a goal coordinate to reach
+	if not is_broken and movement_path.size():  # There is still a goal coordinate to reach
 		var cur_dir = (movement_path[0] - position).normalized()  # Vector pointing towards next goal point
 		var movement_step = (cur_dir * delta).clamped(max_speed * delta)  # Movement increment, clamped to max speed
 		var post_movement_dir = movement_path[0] - (position + movement_step)  # Vector pointing towards goal point, but after step
@@ -49,11 +51,13 @@ func _physics_process(delta):
 			if bot_collision != null:
 				is_broken = true
 	elif not is_broken and not movement_path.size():  # Stop at final position
-		cur_speed_squared = 0
-		var _stop_movement = move_and_collide(Vector2.ZERO)
+		# Stop if needed
+		if cur_speed_squared != 0:
+			cur_speed_squared = 0
+			var _stop_movement = move_and_collide(Vector2.ZERO)
+
 		if collision_shape.disabled and not is_inside_area:
 			collision_shape.disabled = false
-			print("Enabled collisions")
 
 		# Check to see if there are more movements in the queue
 		var next_movement = _movement_queue.pop_front()
@@ -94,7 +98,6 @@ func publish_status_item(item: String):
 
 func move_to(location: Vector2):
 	if is_inside_area and not collision_shape.disabled:
-		print("Disabled collisions")
 		collision_shape.disabled = true
 		raise()
 	_movement_queue.append([location])
@@ -103,7 +106,9 @@ func move_to(location: Vector2):
 func travel(path: PoolVector2Array):
 	if is_inside_area:
 		raise()
-		move_to(path[0])
+		move_to(path[0])  # Move to area waypoint
 		path.remove(0)
+		yield(get_tree(), "idle_frame")  # Wait for movement to start
 		is_inside_area = false
+		emit_signal("leaving_area")
 	_movement_queue.append(path)
