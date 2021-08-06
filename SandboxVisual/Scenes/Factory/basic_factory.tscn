@@ -1,13 +1,14 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Objects/Factory/FactoryComponents/area.tscn" type="PackedScene" id=1]
 [ext_resource path="res://Objects/Factory/FactoryComponents/floor_path.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Objects/Factory/FactoryComponents/waypoint.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scripts/Factory/Factories/basic_factory.gd" type="Script" id=4]
 [ext_resource path="res://Scripts/Factory/Navigation/path_navigation_controller.gd" type="Script" id=5]
-[ext_resource path="res://Objects/Factory/Robots/widgetbot.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Objects/Factory/Movables/widgetbot.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Objects/Factory/FactoryComponents/simulation_controller.tscn" type="PackedScene" id=7]
-[ext_resource path="res://Objects/Factory/Robots/palletbot.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Objects/Factory/Movables/palletbot.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Objects/Factory/Movables/widget.tscn" type="PackedScene" id=9]
 
 [node name="BasicFactory" type="Control"]
 anchor_right = 1.0
@@ -483,11 +484,16 @@ bots_node_path = NodePath("../Bots")
 [node name="Bots" type="Node" parent="."]
 
 [node name="WidgetBot" parent="Bots" instance=ExtResource( 6 )]
-position = Vector2( 679.669, 453.159 )
+position = Vector2( 774.163, 454.419 )
 bot_id = "0"
 
 [node name="PalletBot" parent="Bots" instance=ExtResource( 8 )]
-position = Vector2( 327.579, 323.8 )
+position = Vector2( 813.908, 394.356 )
+
+[node name="Widgets" type="Node" parent="."]
+
+[node name="Widget" parent="Widgets" instance=ExtResource( 9 )]
+position = Vector2( 528.479, 730.341 )
 
 [connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="PathNavigationController" method="_on_FloorPath_resized"]
 
