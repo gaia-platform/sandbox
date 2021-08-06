@@ -18,3 +18,5 @@ func _on_AccessControlButton_pressed():
 	var change_scene_status = get_tree().change_scene(access_control_scene)
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
+	else:
+		CommunicationManager.publish_to_topic("sandbox_coordinator/project", "access_control")
