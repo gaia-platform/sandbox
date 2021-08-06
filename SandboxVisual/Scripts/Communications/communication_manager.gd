@@ -31,8 +31,12 @@ func _physics_process(_delta):
 				_is_still_processing = true
 
 			# Read MQTT data
-			var topic = JavaScript.eval("parent.readNextTopic();")
-			var payload = JavaScript.eval("parent.readNextPayload();")
+			var message = JavaScript.eval("parent.readNextMessage();")
+			var message_decoded = JSON.parse(message)  # Parse
+			if message_decoded.error:  # Ignore this message if there was a parsing error
+				continue
+			var topic = message_decoded.result.topic
+			var payload = message_decoded.result.payload
 
 			## Detect who to send to
 			var topic_extract = topic.split("/")

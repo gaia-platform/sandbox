@@ -12,18 +12,13 @@ var awsConfig = {
    host: 'a31gq30tvzx17m-ats.iot.us-west-2.amazonaws.com', // 'YourAwsIoTEndpoint', e.g. 'prefix.iot.us-east-1.amazonaws.com'
    region: 'us-west-2' // 'YourAwsRegion', e.g. 'us-east-1'
 };
-var currentlySubscribedTopic = 'robot_location';
 
-// Incoming data buffers
-window.unreadMessages = false
-window.inTopics = []
-window.inPayloads = []
+// Incoming message buffer and state
+window.unreadMessages = false;
+window.messages = [];
 
 // MQTT State
-let subscribedTopics = []
-
-/// State
-window.robot_location = 0
+let subscribedTopics = [];
 
 
 //// Setup AWS and MQTT
@@ -83,15 +78,13 @@ function mqttClientReconnectHandler() { // Reconnection handler
 function mqttClientMessageHandler(topic, payload) { // Message handler
    console.log('message: ' + topic + ':' + payload.toString());
 
-   // Add to message buffers
-   window.inTopics.push(topic.toString())
-   window.inPayloads.push(payload.toString())
+   // Add message
+   let msg = { topic: topic.toString(), payload: payload.toString() }
+   window.messages.push(JSON.stringify(msg))
+
    if (!window.unreadMessages) {
       window.unreadMessages = true;
    }
-
-   // To be removed
-   robot_location = parseInt(payload.toString())
 }
 
 // Install handlers
@@ -114,18 +107,14 @@ window.publishData = function (topic, payload) { // Topic publish handler
 }
 
 // Sending data to Godot
-window.readNextTopic = function () { // Return next topic and removes from buffer (called by Godot)
-   return window.inTopics.shift();
-}
-window.readNextPayload = function () { // Returns next payload and removes from buffer (called by Godot after readNextTopic)
-   var nextPayload = window.inPayloads.shift();
+window.readNextMessage = function () {
+   let nextMessage = window.messages.shift();
 
-   // Signal to stop reading if buffers are emtpy
-   if (window.inTopics.length === 0) {
+   if (window.messages.length === 0) {
       window.unreadMessages = false;
    }
 
-   return nextPayload;
+   return nextMessage;
 }
 
 // Cleaning up

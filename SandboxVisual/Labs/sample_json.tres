@@ -1,0 +1,132 @@
+{
+    "buildings": [
+        {
+            "building_id": 10,
+            "name": "HQ Building",
+            "people": [],
+            "rooms": [
+                {
+                    "capacity": 3,
+                    "events": [
+                        {
+                            "end_timestamp": 600,
+                            "name": "Important meeting",
+                            "room_name": "Little Room",
+                            "start_timestamp": 540
+                        }
+                    ],
+                    "name": "Little Room",
+                    "people": [],
+                    "room_id": 103
+                },
+                {
+                    "capacity": 4,
+                    "events": [
+                        {
+                            "end_timestamp": 660,
+                            "name": "Boring meeting",
+                            "room_name": "Big Room",
+                            "start_timestamp": 600
+                        },
+                        {
+                            "end_timestamp": 720,
+                            "name": "The best meeting",
+                            "room_name": "Big Room",
+                            "start_timestamp": 660
+                        }
+                    ],
+                    "name": "Big Room",
+                    "people": [],
+                    "room_id": 104
+                },
+                {
+                    "capacity": 200,
+                    "events": [
+                        {
+                            "end_timestamp": 840,
+                            "name": "Happy hour",
+                            "room_name": "Auditorium",
+                            "start_timestamp": 720
+                        }
+                    ],
+                    "name": "Auditorium",
+                    "people": [],
+                    "room_id": 102
+                }
+            ]
+        }
+    ],
+    "people": [
+        {
+            "admissible": false,
+            "badged": false,
+            "credentialed": false,
+            "employee": true,
+            "events": [
+                {
+                    "end_timestamp": 600,
+                    "name": "Important meeting",
+                    "room_name": "Little Room",
+                    "start_timestamp": 540
+                },
+                {
+                    "end_timestamp": 660,
+                    "name": "Boring meeting",
+                    "room_name": "Big Room",
+                    "start_timestamp": 600
+                },
+                {
+                    "end_timestamp": 840,
+                    "name": "Happy hour",
+                    "room_name": "Auditorium",
+                    "start_timestamp": 720
+                }
+            ],
+            "first_name": "John",
+            "on_wifi": false,
+            "parked": false,
+            "person_id": 1,
+            "stranger": false,
+            "visitor": false
+        },
+        {
+            "admissible": false,
+            "badged": false,
+            "credentialed": false,
+            "employee": false,
+            "events": [
+                {
+                    "end_timestamp": 660,
+                    "name": "Boring meeting",
+                    "room_name": "Big Room",
+                    "start_timestamp": 600
+                },
+                {
+                    "end_timestamp": 840,
+                    "name": "Happy hour",
+                    "room_name": "Auditorium",
+                    "start_timestamp": 720
+                }
+            ],
+            "first_name": "Jane",
+            "on_wifi": false,
+            "parked": false,
+            "person_id": 2,
+            "stranger": false,
+            "visitor": true
+        },
+        {
+            "admissible": false,
+            "badged": false,
+            "credentialed": false,
+            "employee": false,
+            "events": [],
+            "first_name": "Mr. Stranger",
+            "on_wifi": false,
+            "parked": false,
+            "person_id": 3,
+            "stranger": true,
+            "visitor": false
+        }
+    ]
+}
