@@ -12,7 +12,8 @@ var awsConfig = {
    host: 'a31gq30tvzx17m-ats.iot.us-west-2.amazonaws.com', // 'YourAwsIoTEndpoint', e.g. 'prefix.iot.us-east-1.amazonaws.com'
    region: 'us-west-2' // 'YourAwsRegion', e.g. 'us-east-1'
 };
-var clientId = process.env.AGENT_ID;
+var agentId = process.env.AGENT_ID;
+var sessionId = process.env.SESSION_ID;
 
 //// Setup AWS and MQTT
 AWS.config.region = awsConfig.region;
@@ -25,7 +26,7 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 const mqttClient = AWSIoTData.device({
    region: AWS.config.region,
    host: awsConfig.host,
-   clientId: clientId,
+   clientId: agentId,
    protocol: 'wss',
    maximumReconnectTimeMs: 8000,
    debug: true,
@@ -59,12 +60,13 @@ AWS.config.credentials.get(function (err, data) {
 
 //// MQTT functions
 function mqttClientConnectHandler() { // Connection handler
-   console.log('connect, clientId: ' + clientId);
+   console.log('connect, clientId: ' + agentId);
 
    //
    // Subscribe to our current topic.
    //
-   mqttClient.subscribe(clientId + '/#');
+   mqttClient.subscribe(agentId + '/#');
+   mqttClient.publish("sandbox_coordinator/agent/" + agentId, sessionId);
 }
 
 function mqttClientReconnectHandler() { // Reconnection handler
