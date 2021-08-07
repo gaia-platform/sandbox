@@ -1,5 +1,7 @@
 extends Control
 
+### Nodes
+# Areas
 export (NodePath) var inbound_area_path
 export (NodePath) var packing_area_path
 export (NodePath) var buffer_area_path
@@ -26,6 +28,14 @@ onready var areas = [
 	charging_area
 ]
 var number_of_waypoints = -1
+
+# Widgets
+export (NodePath) var widgets_path
+onready var widgets = get_node(widgets_path)
+
+# Properties
+export (NodePath) var simulation_controller_path
+onready var simulation_controller = get_node(simulation_controller_path)
 
 
 func _ready():
