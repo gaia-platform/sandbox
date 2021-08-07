@@ -29,3 +29,9 @@ func move_to(location: Vector2, leaving = false):
 
 	if leaving:
 		emit_signal("leaving_area")
+
+func painted(done=true):
+	modulate = Color("#88ffff") if done else Color.white
+
+func labeled(done=true):
+	widget_label.visible = done
