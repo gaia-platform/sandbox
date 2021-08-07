@@ -50,7 +50,7 @@ func _ready():
 		owner.charging_area.widget_grid.add_node(bot)
 		yield(get_tree(), "idle_frame")  # Important to add this to prevent data collision
 
-	owner.charging_area.widget_grid.add_node(test_widget)
+	owner.buffer_area.add_node(test_widget)
 
 
 func _input(event):

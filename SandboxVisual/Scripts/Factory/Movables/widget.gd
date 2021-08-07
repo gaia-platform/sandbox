@@ -2,7 +2,6 @@ extends Sprite
 
 ### Properties
 export (int, "Raw", "Painted", "Labeled") var state
-export (bool) var is_inside_area
 
 ### Elements
 export (NodePath) var widget_label_path
@@ -21,7 +20,7 @@ func move_to(location: Vector2, leaving = false):
 		"position",
 		position,
 		location,
-		0.5 * owner.simulation_controller.speed_scale,
+		0.5 * get_tree().get_current_scene().simulation_controller.speed_scale,
 		Tween.TRANS_LINEAR,
 		Tween.EASE_OUT_IN
 	)
@@ -30,8 +29,10 @@ func move_to(location: Vector2, leaving = false):
 	if leaving:
 		emit_signal("leaving_area")
 
-func painted(done=true):
+
+func paint(done = true):
 	modulate = Color("#88ffff") if done else Color.white
 
-func labeled(done=true):
+
+func label(done = true):
 	widget_label.visible = done

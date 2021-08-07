@@ -29,6 +29,10 @@ onready var areas = [
 ]
 var number_of_waypoints = -1
 
+# Widgets
+export (NodePath) var widgets_path
+onready var widgets = get_node(widgets_path)
+
 # Properties
 export (NodePath) var simulation_controller_path
 onready var simulation_controller = get_node(simulation_controller_path)

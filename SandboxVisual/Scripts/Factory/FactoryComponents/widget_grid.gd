@@ -32,7 +32,7 @@ func add_node(node):
 		)
 
 		# Move the node to this location
-		node.is_inside_area = true
+		node.set("is_inside_area", true)
 		node.connect("leaving_area", self, "remove_node", [node])
 		node.move_to(location)
 
