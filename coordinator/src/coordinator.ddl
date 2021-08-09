@@ -16,6 +16,7 @@ create table if not exists session (
 create table if not exists activity (
       activity_type string,
       id string,
+      payload string,
       timestamp uint64,
       references session
 );
