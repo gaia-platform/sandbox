@@ -25,6 +25,9 @@ onready var collision_shape = get_node(collision_shape_path)
 var movement_path = []
 var _movement_queue = []
 
+### Properties
+var payload_node = null
+
 signal leaving_area
 
 
@@ -112,3 +115,23 @@ func travel(path: PoolVector2Array):
 		is_inside_area = false
 		emit_signal("leaving_area")
 	_movement_queue.append(path)
+
+
+func pickup_payload(payload):
+	if not payload_node:
+		var prev_global_pos = payload.global_position
+		payload.get_parent().remove_child(payload)
+		add_child(payload)
+		payload.global_position = prev_global_pos
+		payload.move_to(Vector2.ZERO, true)
+		payload_node = payload
+
+
+func drop_payload(at_location):
+	if payload_node:
+		var prev_global_pos = payload_node.global_position
+		remove_child(payload_node)
+		owner.widgets.add_child(payload_node)
+		payload_node.global_position = prev_global_pos
+		at_location.add_node(payload_node)
+		payload_node = null
