@@ -108,16 +108,13 @@ __meta__ = {
 
 [node name="OutboundArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 1 )]
 margin_right = 205.0
-margin_bottom = 196.0
 associated_waypoint_paths = [ NodePath("../Waypoint") ]
 
 [node name="MarginContainer" parent="VBoxContainer/GridContainer/OutboundArea" index="0"]
 margin_right = 200.0
-margin_bottom = 191.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/OutboundArea/MarginContainer" index="0"]
 margin_right = 185.0
-margin_bottom = 176.0
 
 [node name="CountLabel" parent="VBoxContainer/GridContainer/OutboundArea/MarginContainer/VBoxContainer" index="0"]
 margin_right = 175.0
@@ -125,33 +122,25 @@ text = "Pallets: ##"
 
 [node name="PalletSpace" parent="VBoxContainer/GridContainer/OutboundArea/MarginContainer/VBoxContainer" index="1"]
 margin_right = 175.0
-margin_bottom = 127.0
 
-[node name="WidgetGrid" parent="VBoxContainer/GridContainer/OutboundArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
-margin_left = 120.0
-margin_top = 37.0
-margin_right = 120.0
-margin_bottom = 37.0
+[node name="Control" parent="VBoxContainer/GridContainer/OutboundArea/MarginContainer/VBoxContainer/PalletSpace" index="0"]
+margin_left = 35.0
+margin_right = 140.0
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/OutboundArea/MarginContainer/VBoxContainer" index="3"]
-margin_top = 137.0
 margin_right = 175.0
-margin_bottom = 166.0
 text = "Outbound Area"
 
 [node name="LabelingArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 1 )]
 margin_left = 215.0
 margin_right = 420.0
-margin_bottom = 196.0
 associated_waypoint_paths = [ NodePath("../Waypoint2") ]
 
 [node name="MarginContainer" parent="VBoxContainer/GridContainer/LabelingArea" index="0"]
 margin_right = 200.0
-margin_bottom = 191.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/LabelingArea/MarginContainer" index="0"]
 margin_right = 185.0
-margin_bottom = 176.0
 
 [node name="CountLabel" parent="VBoxContainer/GridContainer/LabelingArea/MarginContainer/VBoxContainer" index="0"]
 visible = false
@@ -163,38 +152,37 @@ margin_top = 0.0
 margin_right = 175.0
 margin_bottom = 69.0
 
+[node name="Control" parent="VBoxContainer/GridContainer/LabelingArea/MarginContainer/VBoxContainer/PalletSpace" index="0"]
+margin_left = 35.0
+margin_right = 140.0
+
 [node name="WidgetSpace" parent="VBoxContainer/GridContainer/LabelingArea/MarginContainer/VBoxContainer" index="2"]
 visible = true
 margin_top = 0.0
 margin_right = 175.0
-margin_bottom = 127.0
+margin_bottom = 137.0
 
 [node name="WidgetGrid" parent="VBoxContainer/GridContainer/LabelingArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
 margin_left = 87.0
-margin_top = 63.0
+margin_top = 68.0
 margin_right = 87.0
-margin_bottom = 63.0
+margin_bottom = 68.0
 capacity_limit = 1
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/LabelingArea/MarginContainer/VBoxContainer" index="3"]
-margin_top = 137.0
 margin_right = 175.0
-margin_bottom = 166.0
 text = "Labeling Area"
 
 [node name="PaintingArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 1 )]
 margin_left = 430.0
 margin_right = 635.0
-margin_bottom = 196.0
 associated_waypoint_paths = [ NodePath("../Waypoint3") ]
 
 [node name="MarginContainer" parent="VBoxContainer/GridContainer/PaintingArea" index="0"]
 margin_right = 200.0
-margin_bottom = 191.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/PaintingArea/MarginContainer" index="0"]
 margin_right = 185.0
-margin_bottom = 176.0
 
 [node name="CountLabel" parent="VBoxContainer/GridContainer/PaintingArea/MarginContainer/VBoxContainer" index="0"]
 visible = false
@@ -206,108 +194,110 @@ margin_top = 0.0
 margin_right = 175.0
 margin_bottom = 72.0
 
+[node name="Control" parent="VBoxContainer/GridContainer/PaintingArea/MarginContainer/VBoxContainer/PalletSpace" index="0"]
+margin_left = 35.0
+margin_right = 140.0
+
 [node name="WidgetSpace" parent="VBoxContainer/GridContainer/PaintingArea/MarginContainer/VBoxContainer" index="2"]
 visible = true
 margin_top = 0.0
 margin_right = 175.0
-margin_bottom = 127.0
+margin_bottom = 137.0
 
 [node name="WidgetGrid" parent="VBoxContainer/GridContainer/PaintingArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
 margin_left = 87.0
-margin_top = 63.0
+margin_top = 68.0
 margin_right = 87.0
-margin_bottom = 63.0
+margin_bottom = 68.0
 capacity_limit = 1
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/PaintingArea/MarginContainer/VBoxContainer" index="3"]
-margin_top = 137.0
 margin_right = 175.0
-margin_bottom = 166.0
 text = "Painting Area"
 
 [node name="Control" type="Control" parent="VBoxContainer/GridContainer"]
 margin_left = 645.0
 margin_right = 695.0
-margin_bottom = 196.0
+margin_bottom = 206.0
 
 [node name="Control2" type="Control" parent="VBoxContainer/GridContainer"]
 margin_left = 705.0
 margin_right = 910.0
-margin_bottom = 196.0
+margin_bottom = 206.0
 
 [node name="Waypoint" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
 margin_left = 77.0
-margin_top = 206.0
+margin_top = 216.0
 margin_right = 127.0
-margin_bottom = 256.0
+margin_bottom = 266.0
 
 [node name="Waypoint2" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
 margin_left = 292.0
-margin_top = 206.0
+margin_top = 216.0
 margin_right = 342.0
-margin_bottom = 256.0
+margin_bottom = 266.0
 
 [node name="Waypoint3" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
 margin_left = 507.0
-margin_top = 206.0
+margin_top = 216.0
 margin_right = 557.0
-margin_bottom = 256.0
+margin_bottom = 266.0
 
 [node name="Control3" type="Control" parent="VBoxContainer/GridContainer"]
 margin_left = 645.0
-margin_top = 206.0
+margin_top = 216.0
 margin_right = 695.0
-margin_bottom = 256.0
+margin_bottom = 266.0
 
 [node name="Control4" type="Control" parent="VBoxContainer/GridContainer"]
 margin_left = 705.0
-margin_top = 206.0
+margin_top = 216.0
 margin_right = 910.0
-margin_bottom = 256.0
+margin_bottom = 266.0
 
 [node name="FloorPath" parent="VBoxContainer/GridContainer" instance=ExtResource( 2 )]
-margin_top = 266.0
+margin_top = 276.0
 margin_right = 205.0
-margin_bottom = 462.0
+margin_bottom = 457.0
 path_shape = 5
 connected_node_paths = [ NodePath("../Waypoint"), NodePath("../Waypoint5"), NodePath("../FloorPath2") ]
 
 [node name="FloorPath2" parent="VBoxContainer/GridContainer" instance=ExtResource( 2 )]
 margin_left = 215.0
-margin_top = 266.0
+margin_top = 276.0
 margin_right = 420.0
-margin_bottom = 462.0
+margin_bottom = 457.0
 path_shape = 2
 connected_node_paths = [ NodePath("../Waypoint2"), NodePath("../FloorPath"), NodePath("../FloorPath3"), NodePath("../Waypoint6") ]
 
 [node name="FloorPath3" parent="VBoxContainer/GridContainer" instance=ExtResource( 2 )]
 margin_left = 430.0
-margin_top = 266.0
+margin_top = 276.0
 margin_right = 635.0
-margin_bottom = 462.0
+margin_bottom = 457.0
 path_shape = 2
 connected_node_paths = [ NodePath("../Waypoint3"), NodePath("../FloorPath2"), NodePath("../Waypoint4"), NodePath("../Waypoint7") ]
 
 [node name="Waypoint4" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
 margin_left = 645.0
-margin_top = 339.0
+margin_top = 341.0
 margin_right = 695.0
-margin_bottom = 389.0
+margin_bottom = 391.0
 
 [node name="ChargingArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 1 )]
 margin_left = 705.0
-margin_top = 266.0
+margin_top = 276.0
 margin_right = 910.0
-margin_bottom = 462.0
+margin_bottom = 457.0
 associated_waypoint_paths = [ NodePath("../Waypoint4") ]
 
 [node name="MarginContainer" parent="VBoxContainer/GridContainer/ChargingArea" index="0"]
 margin_right = 200.0
-margin_bottom = 191.0
+margin_bottom = 176.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer" index="0"]
 margin_right = 185.0
-margin_bottom = 176.0
+margin_bottom = 161.0
 
 [node name="CountLabel" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="0"]
 visible = false
@@ -318,68 +308,70 @@ visible = false
 margin_right = 175.0
 margin_bottom = 88.0
 
+[node name="Control" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer/PalletSpace" index="0"]
+margin_left = 35.0
+margin_right = 140.0
+
 [node name="WidgetSpace" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="2"]
 visible = true
 margin_top = 0.0
 margin_right = 175.0
-margin_bottom = 127.0
+margin_bottom = 112.0
 
 [node name="WidgetGrid" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
 margin_left = 87.0
-margin_top = 63.0
+margin_top = 56.0
 margin_right = 87.0
-margin_bottom = 63.0
+margin_bottom = 56.0
 for_widgets = false
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="3"]
-margin_top = 137.0
+margin_top = 122.0
 margin_right = 175.0
-margin_bottom = 166.0
+margin_bottom = 151.0
 text = "Charging Area"
 
 [node name="Waypoint5" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
 margin_left = 77.0
-margin_top = 472.0
+margin_top = 467.0
 margin_right = 127.0
-margin_bottom = 522.0
+margin_bottom = 517.0
 
 [node name="Waypoint6" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
 margin_left = 292.0
-margin_top = 472.0
+margin_top = 467.0
 margin_right = 342.0
-margin_bottom = 522.0
+margin_bottom = 517.0
 
 [node name="Waypoint7" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
 margin_left = 507.0
-margin_top = 472.0
+margin_top = 467.0
 margin_right = 557.0
-margin_bottom = 522.0
+margin_bottom = 517.0
 
 [node name="Control5" type="Control" parent="VBoxContainer/GridContainer"]
 margin_left = 645.0
-margin_top = 472.0
+margin_top = 467.0
 margin_right = 695.0
-margin_bottom = 522.0
+margin_bottom = 517.0
 
 [node name="Control6" type="Control" parent="VBoxContainer/GridContainer"]
 margin_left = 705.0
-margin_top = 472.0
+margin_top = 467.0
 margin_right = 910.0
-margin_bottom = 522.0
+margin_bottom = 517.0
 
 [node name="InboundArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 1 )]
-margin_top = 532.0
+margin_top = 527.0
 margin_right = 205.0
-margin_bottom = 732.0
+margin_bottom = 733.0
 associated_waypoint_paths = [ NodePath("../Waypoint5") ]
 
 [node name="MarginContainer" parent="VBoxContainer/GridContainer/InboundArea" index="0"]
 margin_right = 200.0
-margin_bottom = 195.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/InboundArea/MarginContainer" index="0"]
 margin_right = 185.0
-margin_bottom = 180.0
 
 [node name="CountLabel" parent="VBoxContainer/GridContainer/InboundArea/MarginContainer/VBoxContainer" index="0"]
 margin_right = 175.0
@@ -387,39 +379,27 @@ text = "Pallets: ##"
 
 [node name="PalletSpace" parent="VBoxContainer/GridContainer/InboundArea/MarginContainer/VBoxContainer" index="1"]
 margin_right = 175.0
-margin_bottom = 131.0
 
-[node name="Pallet" parent="VBoxContainer/GridContainer/InboundArea/MarginContainer/VBoxContainer/PalletSpace" index="0" instance=ExtResource( 10 )]
-margin_left = 38.0
-margin_right = 137.0
-margin_bottom = 99.0
-
-[node name="WidgetGrid" parent="VBoxContainer/GridContainer/InboundArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
-margin_left = 120.0
-margin_top = 37.0
-margin_right = 120.0
-margin_bottom = 37.0
+[node name="Control" parent="VBoxContainer/GridContainer/InboundArea/MarginContainer/VBoxContainer/PalletSpace" index="0"]
+margin_left = 35.0
+margin_right = 140.0
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/InboundArea/MarginContainer/VBoxContainer" index="3"]
-margin_top = 141.0
 margin_right = 175.0
-margin_bottom = 170.0
 text = "Inbound Area"
 
 [node name="PackingArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 1 )]
 margin_left = 215.0
-margin_top = 532.0
+margin_top = 527.0
 margin_right = 420.0
-margin_bottom = 732.0
+margin_bottom = 733.0
 associated_waypoint_paths = [ NodePath("../Waypoint6") ]
 
 [node name="MarginContainer" parent="VBoxContainer/GridContainer/PackingArea" index="0"]
 margin_right = 200.0
-margin_bottom = 195.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/PackingArea/MarginContainer" index="0"]
 margin_right = 185.0
-margin_bottom = 180.0
 
 [node name="CountLabel" parent="VBoxContainer/GridContainer/PackingArea/MarginContainer/VBoxContainer" index="0"]
 visible = false
@@ -428,34 +408,29 @@ margin_right = 175.0
 [node name="PalletSpace" parent="VBoxContainer/GridContainer/PackingArea/MarginContainer/VBoxContainer" index="1"]
 margin_top = 0.0
 margin_right = 175.0
-margin_bottom = 131.0
 
-[node name="WidgetGrid" parent="VBoxContainer/GridContainer/PackingArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
-margin_left = 120.0
-margin_top = 37.0
-margin_right = 120.0
-margin_bottom = 37.0
+[node name="Control" parent="VBoxContainer/GridContainer/PackingArea/MarginContainer/VBoxContainer/PalletSpace" index="0"]
+margin_left = 35.0
+margin_top = 16.0
+margin_right = 140.0
+margin_bottom = 121.0
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/PackingArea/MarginContainer/VBoxContainer" index="3"]
-margin_top = 141.0
 margin_right = 175.0
-margin_bottom = 170.0
 text = "Packing Area"
 
 [node name="BufferArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 1 )]
 margin_left = 430.0
-margin_top = 532.0
+margin_top = 527.0
 margin_right = 635.0
-margin_bottom = 732.0
+margin_bottom = 733.0
 associated_waypoint_paths = [ NodePath("../Waypoint7") ]
 
 [node name="MarginContainer" parent="VBoxContainer/GridContainer/BufferArea" index="0"]
 margin_right = 200.0
-margin_bottom = 195.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer" index="0"]
 margin_right = 185.0
-margin_bottom = 180.0
 
 [node name="CountLabel" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer/VBoxContainer" index="0"]
 margin_right = 175.0
@@ -466,28 +441,33 @@ visible = false
 margin_right = 175.0
 margin_bottom = 154.0
 
+[node name="Control" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer/VBoxContainer/PalletSpace" index="0"]
+margin_left = 35.0
+margin_top = 8.0
+margin_right = 140.0
+margin_bottom = 113.0
+
 [node name="WidgetSpace" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer/VBoxContainer" index="2"]
 visible = true
 margin_top = 32.0
 margin_right = 175.0
-margin_bottom = 131.0
+margin_bottom = 137.0
 
 [node name="WidgetGrid" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
 margin_left = 87.0
-margin_top = 49.0
+margin_top = 52.0
 margin_right = 87.0
-margin_bottom = 49.0
+margin_bottom = 52.0
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer/VBoxContainer" index="3"]
-margin_top = 141.0
 margin_right = 175.0
-margin_bottom = 170.0
 text = "Buffer Area"
 
 [node name="PathNavigationController" type="Node" parent="."]
 script = ExtResource( 5 )
 nav_node_paths = [ NodePath("../VBoxContainer/GridContainer/Waypoint"), NodePath("../VBoxContainer/GridContainer/Waypoint2"), NodePath("../VBoxContainer/GridContainer/Waypoint3"), NodePath("../VBoxContainer/GridContainer/Waypoint4"), NodePath("../VBoxContainer/GridContainer/Waypoint5"), NodePath("../VBoxContainer/GridContainer/Waypoint6"), NodePath("../VBoxContainer/GridContainer/Waypoint7"), NodePath("../VBoxContainer/GridContainer/FloorPath"), NodePath("../VBoxContainer/GridContainer/FloorPath2"), NodePath("../VBoxContainer/GridContainer/FloorPath3") ]
 test_widget_path = NodePath("../Widgets/Widget")
+test_pallet_path = NodePath("../Pallets/Pallet")
 bots_node_path = NodePath("../Bots")
 
 [node name="Bots" type="Node" parent="."]
@@ -503,6 +483,11 @@ position = Vector2( 813.908, 394.356 )
 
 [node name="Widget" parent="Widgets" instance=ExtResource( 9 )]
 position = Vector2( 528.479, 730.341 )
+
+[node name="Pallets" type="Node" parent="."]
+
+[node name="Pallet" parent="Pallets" instance=ExtResource( 10 )]
+position = Vector2( 200.362, 726.468 )
 
 [connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="PathNavigationController" method="_on_FloorPath_resized"]
 

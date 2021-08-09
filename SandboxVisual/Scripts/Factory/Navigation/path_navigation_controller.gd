@@ -8,6 +8,9 @@ var nav_nodes: Array
 export (NodePath) var test_widget_path
 onready var test_widget = get_node(test_widget_path)
 
+export (NodePath) var test_pallet_path
+onready var test_pallet = get_node(test_pallet_path)
+
 # Bots
 export (NodePath) var bots_node_path
 onready var bots_node = get_node(bots_node_path)
@@ -50,7 +53,8 @@ func _ready():
 		owner.charging_area.widget_grid.add_node(bot)
 		yield(get_tree(), "idle_frame")  # Important to add this to prevent data collision
 
-	owner.buffer_area.add_node(test_widget)
+	# owner.buffer_area.add_node(test_widget)
+	owner.inbound_area.add_pallet(test_pallet)
 
 
 func _input(event):
