@@ -478,16 +478,17 @@ bot_id = "0"
 
 [node name="PalletBot" parent="Bots" instance=ExtResource( 8 )]
 position = Vector2( 813.908, 394.356 )
+rotation = 3.14159
+
+[node name="Pallets" type="Node" parent="."]
+
+[node name="Pallet" parent="Pallets" instance=ExtResource( 10 )]
+position = Vector2( 112, 720 )
 
 [node name="Widgets" type="Node" parent="."]
 
 [node name="Widget" parent="Widgets" instance=ExtResource( 9 )]
 position = Vector2( 528.479, 730.341 )
-
-[node name="Pallets" type="Node" parent="."]
-
-[node name="Pallet" parent="Pallets" instance=ExtResource( 10 )]
-position = Vector2( 200.362, 726.468 )
 
 [connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="PathNavigationController" method="_on_FloorPath_resized"]
 
