@@ -3,11 +3,11 @@
 [ext_resource path="res://Scripts/Factory/FactoryComponents/pallet.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Factory/StyleBoxes/pallet_flat.tres" type="StyleBox" id=2]
 
-[node name="Sprite" type="Sprite"]
+[node name="Pallet" type="Sprite"]
 script = ExtResource( 1 )
-widget_grid_path = NodePath("Pallet/MarginContainer/WidgetGrid")
+widget_grid_path = NodePath("PanelContainer/MarginContainer/WidgetGrid")
 
-[node name="Pallet" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="."]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -23,7 +23,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="MarginContainer" type="MarginContainer" parent="Pallet"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 margin_left = 5.0
 margin_top = 5.0
 margin_right = 100.0
@@ -33,7 +33,7 @@ custom_constants/margin_top = 10
 custom_constants/margin_left = 10
 custom_constants/margin_bottom = 10
 
-[node name="WidgetGrid" type="GridContainer" parent="Pallet/MarginContainer"]
+[node name="WidgetGrid" type="GridContainer" parent="PanelContainer/MarginContainer"]
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 85.0
@@ -47,24 +47,24 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Control" type="Control" parent="Pallet/MarginContainer/WidgetGrid"]
+[node name="Control" type="Control" parent="PanelContainer/MarginContainer/WidgetGrid"]
 margin_right = 32.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 32, 32 )
 
-[node name="Control2" type="Control" parent="Pallet/MarginContainer/WidgetGrid"]
+[node name="Control2" type="Control" parent="PanelContainer/MarginContainer/WidgetGrid"]
 margin_left = 37.0
 margin_right = 69.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 32, 32 )
 
-[node name="Control3" type="Control" parent="Pallet/MarginContainer/WidgetGrid"]
+[node name="Control3" type="Control" parent="PanelContainer/MarginContainer/WidgetGrid"]
 margin_top = 37.0
 margin_right = 32.0
 margin_bottom = 69.0
 rect_min_size = Vector2( 32, 32 )
 
-[node name="Control4" type="Control" parent="Pallet/MarginContainer/WidgetGrid"]
+[node name="Control4" type="Control" parent="PanelContainer/MarginContainer/WidgetGrid"]
 margin_left = 37.0
 margin_top = 37.0
 margin_right = 69.0

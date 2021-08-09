@@ -15,7 +15,7 @@ onready var widget_holder = $WidgetHolder
 var widgets = [null, null, null, null]
 
 
-func move_to(location: Vector2):
+func move_to(location: Vector2, _leaving = null):
 	tween.remove_all()  # Reset all
 	# Linearly move to location in 0.5 seconds
 	tween.interpolate_property(

@@ -117,17 +117,24 @@ func travel(path: PoolVector2Array):
 	_movement_queue.append(path)
 
 
-func pickup_payload(payload):
+func pickup_payload(payload, is_pallet = false):
 	if not payload_node:
 		var prev_global_pos = payload.global_position
 		payload.get_parent().remove_child(payload)
 		add_child(payload)
 		payload.global_position = prev_global_pos
-		payload.move_to(Vector2.ZERO, true)
+
+		var payload_destination = Vector2.ZERO
+		if is_pallet:
+			collision_shape.shape.extents = Vector2(53, 64)
+			collision_shape.position = Vector2(0, -40.5)
+			payload_destination = Vector2(0, -52)
+
+		payload.move_to(payload_destination, true)
 		payload_node = payload
 
 
-func drop_payload(at_location):
+func drop_payload(at_location, is_pallet = false):
 	if payload_node:
 		var prev_global_pos = payload_node.global_position
 		remove_child(payload_node)
@@ -135,3 +142,7 @@ func drop_payload(at_location):
 		payload_node.global_position = prev_global_pos
 		at_location.add_node(payload_node)
 		payload_node = null
+
+		if is_pallet:
+			collision_shape.shape.extents = Vector2(24, 24)
+			collision_shape.position = Vector2.ZERO

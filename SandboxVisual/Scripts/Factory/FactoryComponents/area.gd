@@ -26,5 +26,8 @@ func add_node(node):
 func add_pallet(pallet):
 	if pallet_space.visible:
 		var half_size = pallet_location.rect_size.x / 2
-		var location = Vector2(pallet_location.rect_global_position.x + half_size, pallet_location.rect_global_position.y + half_size)
+		var location = Vector2(
+			pallet_location.rect_global_position.x + half_size,
+			pallet_location.rect_global_position.y + half_size
+		)
 		pallet.move_to(location)
