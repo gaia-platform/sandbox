@@ -18,8 +18,8 @@ export (bool) var is_broken = false
 export (bool) var is_inside_area = false
 
 ### Nodes
-export (NodePath) var collision_shape_path
-onready var collision_shape = get_node(collision_shape_path)
+onready var collision_shape = $CollisionShape2D
+onready var tween = $Tween
 
 ### Navigation
 var movement_path = []
@@ -44,9 +44,12 @@ func _physics_process(delta):
 		var post_movement_dir = movement_path[0] - (position + movement_step)  # Vector pointing towards goal point, but after step
 		var cur_dot_post = cur_dir.dot(post_movement_dir)  # Get alignment of current direction vector and post step vector to goal
 
-		if cur_dot_post < 0:  # If directions are pointing towards each other (meaning next step overshoots goal)
+		if cur_dot_post <= 0:  # If directions are pointing towards each other (meaning next step overshoots goal)
 			position = movement_path[0]  # Lock to goal point
 			movement_path.remove(0)  # Remove this goal point
+
+			if movement_path.size():
+				_animate_rotation()
 		else:  # Otherwise, continue moving
 			cur_speed_squared = movement_step.length_squared()  # Update speed
 
@@ -67,6 +70,7 @@ func _physics_process(delta):
 		var next_movement = _movement_queue.pop_front()
 		if next_movement:
 			movement_path = next_movement
+			_animate_rotation()
 	elif is_broken:
 		if modulate != Color.red:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
@@ -129,8 +133,8 @@ func pickup_payload(payload):
 		var payload_destination = Vector2.ZERO  # Send to center of widgit if it's a pallet
 		if bot_type:  # Updates for PalletBot
 			collision_shape.shape.extents = Vector2(53, 64)
-			collision_shape.position = Vector2(0, -40.5)
-			payload_destination = Vector2(0, -52)
+			collision_shape.position = Vector2(40.5, 0)
+			payload_destination = Vector2(52, 0)
 
 		payload.move_to(payload_destination, true)  # Attach to payload
 		payload_node = payload  # Register payload
@@ -150,3 +154,17 @@ func drop_payload(at_location):
 		else:
 			at_location.add_node(payload_node)  # Adds a widget to location
 		payload_node = null  # Unregister payload
+
+
+func _animate_rotation():
+	tween.remove_all()
+	tween.interpolate_property(
+		self,
+		"rotation",
+		rotation,
+		(movement_path[0] - position).angle(),
+		0.2 / owner.simulation_controller.speed_scale,
+		Tween.TRANS_LINEAR,
+		Tween.EASE_OUT_IN
+	)
+	tween.start()

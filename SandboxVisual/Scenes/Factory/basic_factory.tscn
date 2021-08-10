@@ -478,7 +478,6 @@ bot_id = "0"
 
 [node name="PalletBot" parent="Bots" instance=ExtResource( 8 )]
 position = Vector2( 813.908, 394.356 )
-rotation = 3.14159
 
 [node name="Pallets" type="Node" parent="."]
 
