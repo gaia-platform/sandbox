@@ -13,11 +13,13 @@ max_payload_weight = 500
 max_speed = 250.0
 battery_time = 8
 charge_time = 2
-collision_shape_path = NodePath("CollisionShape2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
+rotation = 1.5708
 scale = Vector2( 0.35, 0.35 )
 texture = ExtResource( 2 )
+
+[node name="Tween" type="Tween" parent="."]
