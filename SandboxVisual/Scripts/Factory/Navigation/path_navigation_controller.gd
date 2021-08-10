@@ -55,6 +55,7 @@ func _ready():
 
 	owner.buffer_area.add_node(test_widget)
 	owner.inbound_area.add_pallet(test_pallet)
+	test_pallet.add_widget(owner.widgets.get_children()[1])
 
 
 func _input(event):
@@ -65,10 +66,10 @@ func _input(event):
 		_update_navigation_path(bots[0], _location_index)
 	elif event is InputEventKey and event.pressed:
 		match event.scancode:
-			KEY_1:
+			KEY_1:  # Move PalletBot to Inbound Area
 				_move_location(id_to_bot.keys()[1], 4)
-			KEY_2:
-				bots[1].pickup_payload(test_pallet, true)
+			KEY_2:  # PalletBot pickup pallet
+				bots[1].pickup_payload(test_pallet)
 			KEY_3:
 				_move_location(id_to_bot.keys()[1], 5)
 			KEY_4:

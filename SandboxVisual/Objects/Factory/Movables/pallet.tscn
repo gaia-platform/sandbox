@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://Scripts/Factory/FactoryComponents/pallet.gd" type="Script" id=1]
+[ext_resource path="res://Scripts/Factory/Movables/pallet.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Factory/StyleBoxes/pallet_flat.tres" type="StyleBox" id=2]
 
 [node name="Pallet" type="Sprite"]
