@@ -68,6 +68,10 @@ func _input(event):
 		match event.scancode:
 			KEY_1:  # Move PalletBot to Inbound Area
 				_move_location(id_to_bot.keys()[1], 4)
+				test_widget.show_processing(2)
+				test_widget.tween.connect(
+					"tween_all_completed", test_widget, "paint", [], CONNECT_ONESHOT
+				)
 			KEY_2:  # PalletBot pickup pallet
 				bots[1].pickup_payload(test_pallet)
 			KEY_3:
