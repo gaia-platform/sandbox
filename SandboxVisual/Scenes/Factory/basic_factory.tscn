@@ -9,7 +9,7 @@
 [ext_resource path="res://Objects/Factory/FactoryComponents/simulation_controller.tscn" type="PackedScene" id=7]
 [ext_resource path="res://Objects/Factory/Movables/palletbot.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Objects/Factory/Movables/widget.tscn" type="PackedScene" id=9]
-[ext_resource path="res://Objects/Factory/FactoryComponents/pallet.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Objects/Factory/Movables/pallet.tscn" type="PackedScene" id=10]
 
 [node name="BasicFactory" type="Control"]
 anchor_right = 1.0
@@ -489,6 +489,9 @@ position = Vector2( 112, 720 )
 
 [node name="Widget" parent="Widgets" instance=ExtResource( 9 )]
 position = Vector2( 528.479, 730.341 )
+
+[node name="Widget2" parent="Widgets" instance=ExtResource( 9 )]
+position = Vector2( 128, 728 )
 
 [connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="PathNavigationController" method="_on_FloorPath_resized"]
 

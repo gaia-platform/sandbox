@@ -8,6 +8,7 @@ extents = Vector2( 24, 24 )
 
 [node name="PalletBot" type="KinematicBody2D"]
 script = ExtResource( 1 )
+bot_type = 1
 max_payload_weight = 500
 max_speed = 1.0
 battery_time = 8
