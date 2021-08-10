@@ -44,7 +44,7 @@ func _physics_process(delta):
 		var post_movement_dir = movement_path[0] - (position + movement_step)  # Vector pointing towards goal point, but after step
 		var cur_dot_post = cur_dir.dot(post_movement_dir)  # Get alignment of current direction vector and post step vector to goal
 
-		if cur_dot_post < 0:  # If directions are pointing towards each other (meaning next step overshoots goal)
+		if cur_dot_post <= 0:  # If directions are pointing towards each other (meaning next step overshoots goal)
 			position = movement_path[0]  # Lock to goal point
 			movement_path.remove(0)  # Remove this goal point
 
