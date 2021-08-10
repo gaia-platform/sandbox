@@ -39,12 +39,13 @@ func add_node(node):
 
 # Remove node and space from grid
 func remove_node(node):
-	node_to_spaces[node].queue_free()  # Delete space
-	node.disconnect("leaving_area", self, "remove_node")
-	var _erase = node_to_spaces.erase(node)  # Remove from map
-	_resize_grid()
-	yield(get_tree(), "idle_frame")  # Wait for grid to actually resize
-	_recalculate_node_locations()  # Rearrange exsisting nodes
+	if node_to_spaces.has(node):
+		node_to_spaces[node].queue_free()  # Delete space
+		node.disconnect("leaving_area", self, "remove_node")
+		var _erase = node_to_spaces.erase(node)  # Remove from map
+		_resize_grid()
+		yield(get_tree(), "idle_frame")  # Wait for grid to actually resize
+		_recalculate_node_locations()  # Rearrange exsisting nodes
 
 
 # Try to make the grid a square

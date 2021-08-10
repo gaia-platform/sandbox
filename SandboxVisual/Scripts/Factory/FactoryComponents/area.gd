@@ -7,6 +7,7 @@ export (Array, NodePath) var associated_waypoint_paths
 
 onready var count_label = get_node(count_label_path)
 onready var pallet_space = get_node(pallet_space_path)
+onready var pallet_location = pallet_space.get_child(0)
 onready var widget_space = get_node(widget_space_path)
 onready var widget_grid = widget_space.get_child(0)
 var associated_waypoints: Array
@@ -24,5 +25,9 @@ func add_node(node):
 
 func add_pallet(pallet):
 	if pallet_space.visible:
-		pallet.get_parent().remove_child(pallet)
-		pallet_space.add_child(pallet)
+		var half_size = pallet_location.rect_size.x / 2
+		var location = Vector2(
+			pallet_location.rect_global_position.x + half_size,
+			pallet_location.rect_global_position.y + half_size
+		)
+		pallet.move_to(location)

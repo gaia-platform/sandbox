@@ -27,6 +27,7 @@ var _movement_queue = []
 
 ### Properties
 var payload_node = null
+var is_pallet: bool
 
 signal leaving_area
 
@@ -118,20 +119,34 @@ func travel(path: PoolVector2Array):
 
 
 func pickup_payload(payload):
-	if not payload_node:
-		var prev_global_pos = payload.global_position
-		payload.get_parent().remove_child(payload)
-		add_child(payload)
-		payload.global_position = prev_global_pos
-		payload.move_to(Vector2.ZERO, true)
-		payload_node = payload
+	if not payload_node:  # If there isn't already a payload registered
+		var prev_global_pos = payload.global_position  # Get current global position
+		payload.get_parent().remove_child(payload)  # Orphan
+		add_child(payload)  # Add to this bot
+		payload.global_position = prev_global_pos  # Reset position (get's messed up after parenting)
+		payload.rotation = -rotation  # Also counter bot's rotation
+
+		var payload_destination = Vector2.ZERO  # Send to center of widgit if it's a pallet
+		if bot_type:  # Updates for PalletBot
+			collision_shape.shape.extents = Vector2(53, 64)
+			collision_shape.position = Vector2(0, -40.5)
+			payload_destination = Vector2(0, -52)
+
+		payload.move_to(payload_destination, true)  # Attach to payload
+		payload_node = payload  # Register payload
 
 
 func drop_payload(at_location):
-	if payload_node:
-		var prev_global_pos = payload_node.global_position
-		remove_child(payload_node)
-		owner.widgets.add_child(payload_node)
-		payload_node.global_position = prev_global_pos
-		at_location.add_node(payload_node)
-		payload_node = null
+	if payload_node:  # If there is a registered payload
+		var prev_global_pos = payload_node.global_position  # Get global position
+		remove_child(payload_node)  # Remove from bot
+		payload_node.rotation = 0  # Reset rotation
+		owner.widgets.add_child(payload_node)  # Add back to widget pool
+		payload_node.global_position = prev_global_pos  # Set position (get's messed up after parenting)
+		if bot_type:  # Reset PalletBot
+			collision_shape.shape.extents = Vector2(24, 24)
+			collision_shape.position = Vector2.ZERO
+			at_location.add_pallet(payload_node)  # Adds a pallet to location
+		else:
+			at_location.add_node(payload_node)  # Adds a widget to location
+		payload_node = null  # Unregister payload
