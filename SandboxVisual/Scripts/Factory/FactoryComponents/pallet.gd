@@ -40,7 +40,7 @@ func add_widget(widget):
 		# Reparent
 		var widget_glob_pos = widget.global_position
 		widget.get_parent().remove_child(widget)
-		widget_holder.add_child(widget)
+		add_child(widget)
 		widget.global_position = widget_glob_pos
 
 		# Calculate position of space
@@ -49,11 +49,12 @@ func add_widget(widget):
 		var location = Vector2(
 			space.rect_global_position.x + half_size, space.rect_global_position.y + half_size
 		)
+		var local_loc = to_local(location)
 
 		# Move the node to this location
 		widget.set("is_inside_area", true)
 		widget.connect("leaving_area", self, "remove_widget", [widget])
-		widget.move_to(location)
+		widget.move_to(local_loc)
 
 
 func remove_widget(widget):
@@ -63,7 +64,7 @@ func remove_widget(widget):
 
 		# Reparent
 		var widget_glob_pos = widget.global_position
-		widget_holder.remove_child(widget_glob_pos)
+		remove_child(widget_glob_pos)
 		owner.widgets.add_child(widget)
 		widget.global_position = widget_glob_pos
 

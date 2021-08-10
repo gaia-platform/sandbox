@@ -27,6 +27,7 @@ var _movement_queue = []
 
 ### Properties
 var payload_node = null
+var is_pallet: bool
 
 signal leaving_area
 
@@ -117,12 +118,14 @@ func travel(path: PoolVector2Array):
 	_movement_queue.append(path)
 
 
-func pickup_payload(payload, is_pallet = false):
+func pickup_payload(payload, pallet = false):
 	if not payload_node:
 		var prev_global_pos = payload.global_position
 		payload.get_parent().remove_child(payload)
 		add_child(payload)
 		payload.global_position = prev_global_pos
+
+		is_pallet = pallet
 
 		var payload_destination = Vector2.ZERO
 		if is_pallet:
@@ -134,15 +137,16 @@ func pickup_payload(payload, is_pallet = false):
 		payload_node = payload
 
 
-func drop_payload(at_location, is_pallet = false):
+func drop_payload(at_location):
 	if payload_node:
 		var prev_global_pos = payload_node.global_position
 		remove_child(payload_node)
 		owner.widgets.add_child(payload_node)
 		payload_node.global_position = prev_global_pos
-		at_location.add_node(payload_node)
-		payload_node = null
-
 		if is_pallet:
 			collision_shape.shape.extents = Vector2(24, 24)
 			collision_shape.position = Vector2.ZERO
+			at_location.add_pallet(payload_node)
+		else:
+			at_location.add_node(payload_node)
+		payload_node = null

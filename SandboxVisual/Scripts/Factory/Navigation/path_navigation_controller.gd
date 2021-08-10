@@ -46,14 +46,14 @@ func _ready():
 		yield(get_tree(), "idle_frame")
 	create_connections()
 
-	# Setup test bot
+	# Setup Demo
 	_location_index = 3  # Test bot starts in charging area
 	for bot in bots:
 		bot.goal_location = _location_index
-		owner.charging_area.widget_grid.add_node(bot)
+		owner.charging_area.add_node(bot)
 		yield(get_tree(), "idle_frame")  # Important to add this to prevent data collision
 
-	# owner.buffer_area.add_node(test_widget)
+	owner.buffer_area.add_node(test_widget)
 	owner.inbound_area.add_pallet(test_pallet)
 
 
@@ -63,6 +63,28 @@ func _input(event):
 		if _location_index == owner.number_of_waypoints:
 			_location_index = 0
 		_update_navigation_path(bots[0], _location_index)
+	elif event is InputEventKey and event.pressed:
+		match event.scancode:
+			KEY_1:
+				_move_location(id_to_bot.keys()[1], 4)
+			KEY_2:
+				bots[1].pickup_payload(test_pallet, true)
+			KEY_3:
+				_move_location(id_to_bot.keys()[1], 5)
+			KEY_4:
+				bots[1].drop_payload(owner.packing_area)
+			KEY_5:
+				_move_location(id_to_bot.keys()[1], 3)
+			KEY_6:
+				owner.charging_area.add_node(bots[1])
+			KEY_7:
+				_move_location(id_to_bot.keys()[0], 6)
+			KEY_8:
+				bots[0].pickup_payload(test_widget)
+			KEY_9:
+				_move_location(id_to_bot.keys()[0], 2)
+			KEY_0:
+				bots[0].drop_payload(owner.painting_area)
 
 
 ### Signal functions
