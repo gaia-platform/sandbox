@@ -21,7 +21,7 @@ corner_radius_bottom_left = 10
 [node name="WidgetBot" type="KinematicBody2D"]
 script = ExtResource( 2 )
 max_payload_weight = 250
-max_speed = 2.0
+max_speed = 500.0
 battery_time = 10
 charge_time = 2
 collision_shape_path = NodePath("CollisionShape2D")

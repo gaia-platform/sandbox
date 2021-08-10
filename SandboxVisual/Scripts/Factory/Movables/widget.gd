@@ -18,7 +18,7 @@ func move_to(location: Vector2, leaving = false):
 		"position",
 		position,
 		location,
-		0.5 * get_tree().get_current_scene().simulation_controller.speed_scale,
+		0.5 / get_tree().get_current_scene().simulation_controller.speed_scale,
 		Tween.TRANS_LINEAR,
 		Tween.EASE_OUT_IN
 	)
@@ -43,7 +43,7 @@ func show_processing(duration: float):
 		"value",
 		100,
 		0,
-		duration * get_tree().get_current_scene().simulation_controller.speed_scale,
+		duration / get_tree().get_current_scene().simulation_controller.speed_scale,
 		Tween.TRANS_LINEAR,
 		Tween.EASE_OUT_IN
 	)

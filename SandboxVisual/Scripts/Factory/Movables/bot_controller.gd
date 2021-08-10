@@ -40,7 +40,7 @@ func _ready():
 func _physics_process(delta):
 	if not is_broken and movement_path.size():  # There is still a goal coordinate to reach
 		var cur_dir = (movement_path[0] - position).normalized()  # Vector pointing towards next goal point
-		var movement_step = (cur_dir * delta).clamped(max_speed * delta)  # Movement increment, clamped to max speed
+		var movement_step = cur_dir * max_speed * delta  # Movement increment
 		var post_movement_dir = movement_path[0] - (position + movement_step)  # Vector pointing towards goal point, but after step
 		var cur_dot_post = cur_dir.dot(post_movement_dir)  # Get alignment of current direction vector and post step vector to goal
 
