@@ -68,7 +68,7 @@ ruleset coordinator_ruleset
                 manage_gaia_container("stop", session.id, activity.id);
             }
             else if (!session.is_active ||
-                session.last_agent_timestamp + c_session_timeout < activity.timestamp)
+                session.last_session_timestamp + c_session_timeout < activity.timestamp)
             {
                 session.is_active = false;
                 manage_gaia_container("stop", session.id, session.agent_id);
@@ -79,71 +79,4 @@ ruleset coordinator_ruleset
             }
         }
     }
-
-/*
-    OnUpdate(activity)
-    {
-        gaia_log::app().info("OnUpdate activity");
-        if (activity.activity_type == e_activity_type::session_refresh)
-        {
-            gaia_log::app().info("do something activity");
-        }
-    }
-
-    OnUpdate(session)
-    {
-        gaia_log::app().info("OnUpdate session");
-        if (session.is_active)
-        {
-            gaia_log::app().info("do something session");
-        }
-    }
-*/
-
-    /*
-    // Rule 1:  keep the temperature with the range of the minimum and
-    // maximum limits of the coordinator.
-    OnUpdate(sensor.value, coordinator.max_temp, coordinator.min_temp)
-    {
-        if (!coordinator.is_on)
-        {
-            return;
-        }
-
-        if (sensor.value >= coordinator.max_temp)
-        {
-            actuator.value = min(c_fan_speed_limit, actuator.value + c_fan_speed_increment);
-            actuator.timestamp = g_timestamp;
-        }
-        else if (sensor.value <= coordinator.min_temp)
-        {
-            actuator.value = max(0.0f, actuator.value - (2*c_fan_speed_increment));
-            actuator.timestamp   = g_timestamp;
-        }
-    }
-
-    // Rule 2:  Turn off all the fans if the coordinator is powered down.
-    {
-        if (!@coordinator.is_on)
-        {
-            actuator.value = 0;
-            actuator.timestamp = g_timestamp;
-        }
-    }
-
-    // Rule 3:  If the fan is at 70% of its limit and the temperature is still too hot then
-    // set the fan to its maximum speed.
-    OnUpdate(actuator.value)
-    {
-        if (actuator.value == c_fan_speed_limit)
-        {
-            return;
-        }
-
-        if (actuator.value > c_fan_threshold * c_fan_speed_limit && sensor.value > coordinator.max_temp)
-        {
-            actuator.value = c_fan_speed_limit;
-        }
-    }
-    */
 }

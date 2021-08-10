@@ -79,12 +79,13 @@ session_t get_session(const string &id)
     return *session_iter;
 }
 
-activity_t new_activity(const string &activity_id)
+activity_t new_activity()
 {
     printf("New activity\n");
     activity_writer w;
     w.activity_type = "unknown";
-    w.id = activity_id;
+    w.id = "unknown";
+    w.payload = "empty";
     w.timestamp = (uint64_t)time(nullptr);
     return activity_t::get(w.insert_row());
 }
@@ -109,17 +110,20 @@ void dump_db()
 }
 
 void log_activity(const string &session_id,
+                  const string &activity_type,
                   const string &activity_id,
-                  const string &activity_type)
+                  const string &payload)
 {
     begin_transaction();
 
     session_t session = get_session(session_id);
-    activity_t activity = new_activity(activity_id);
+    activity_t activity = new_activity();
     session.activity_list().insert(activity);
 
     auto w = activity.writer();
     w.activity_type = activity_type;
+    w.id = activity_id;
+    w.payload = payload;
     w.update_row();
 
     commit_transaction();
@@ -163,7 +167,9 @@ void on_message(Mqtt::MqttConnection &, const String &topic, const ByteBuf &payl
         fprintf(stdout, "Unexpected topic");
         return;
     }
-    log_activity((char *)payload.buffer, topic_vector[2], topic_vector[1]);
+    log_activity(topic_vector[1], topic_vector[2],
+                 topic_vector.size() >= 4 ? topic_vector[3] : topic_vector[1],
+                 (char *)payload.buffer);
 }
 
 int main()
@@ -312,37 +318,9 @@ int main()
         connection->Subscribe("sandbox_coordinator/#", AWS_MQTT_QOS_AT_LEAST_ONCE, on_message, onSubAck);
         subscribeFinishedPromise.get_future().wait();
 
-        while (true)
-        {
-            String input;
-            fprintf(
-                stdout,
-                "Enter the message you want to publish to topic %s and press enter. Enter 'exit' to exit this "
-                "program.\n",
-                topic.c_str());
-            std::getline(std::cin, input);
-
-            if (input == "exit")
-            {
-                break;
-            }
-
-/*
-            ByteBuf payload = ByteBufFromArray((const uint8_t *)input.data(), input.length());
-
-            auto onPublishComplete = [](Mqtt::MqttConnection &, uint16_t packetId, int errorCode) {
-                if (packetId)
-                {
-                    fprintf(stdout, "Operation on packetId %d Succeeded\n", packetId);
-                }
-                else
-                {
-                    fprintf(stdout, "Operation failed with error %s\n", aws_error_debug_str(errorCode));
-                }
-            };
-            connection->Publish(topic.c_str(), AWS_MQTT_QOS_AT_LEAST_ONCE, false, payload, onPublishComplete);
-*/
-        }
+        String input;
+        fprintf(stdout, "Enter enter to exit this program.\n");
+        std::getline(std::cin, input);
 
         std::promise<void> unsubscribeFinishedPromise;
         connection->Unsubscribe(

@@ -66,7 +66,7 @@ function mqttClientConnectHandler() { // Connection handler
    // Subscribe to our current topic.
    //
    mqttClient.subscribe(agentId + '/#');
-   mqttClient.publish("sandbox_coordinator/agent/" + agentId, sessionId);
+   mqttClient.publish("sandbox_coordinator/" + sessionId + "/agent/" + agentId, "connect");
 }
 
 function mqttClientReconnectHandler() { // Reconnection handler
@@ -76,7 +76,6 @@ function mqttClientReconnectHandler() { // Reconnection handler
 function mqttClientMessageHandler(topic, payload) { // Message handler
    console.log('message: ' + topic + ':' + payload.toString());
    var topicTokens = topic.split('/');
-//   robot_location = parseInt(payload.toString())
 }
 
 // Install handlers

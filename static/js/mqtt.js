@@ -85,6 +85,8 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
    if (!window.unreadMessages) {
       window.unreadMessages = true;
    }
+
+   window.editorMessageHandler(topic.toString(), payload.toString());
 }
 
 // Install handlers

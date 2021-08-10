@@ -22,9 +22,13 @@
     }
     window.sandboxUuid = storedUuid
     console.log("Sandbox UUID: " + window.sandboxUuid);
-    window.publishData("sandbox_coordinator/browser/" + window.sandboxUuid,
-                       window.sandboxUuid);
+    window.publishData("sandbox_coordinator/" + window.sandboxUuid + "/browser", "refresh");
+    window.subscribeToTopic("editor/#");
   });
+
+  window.editorMessageHandler = function (topic, payload) {
+    // Add editor updates here
+  }
 
   var editor = null;
   var data = {
