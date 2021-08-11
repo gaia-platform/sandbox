@@ -1,10 +1,18 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_regular.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Assets/Factory/StyleBoxes/area_flat.tres" type="StyleBox" id=2]
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=3]
 [ext_resource path="res://Objects/Factory/FactoryComponents/widget_grid.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Scripts/Factory/FactoryComponents/area.gd" type="Script" id=5]
+[ext_resource path="res://Objects/UI/general_button.tscn" type="PackedScene" id=6]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0, 0, 0.529412 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="Area" type="PanelContainer"]
 margin_right = 256.0
@@ -19,6 +27,8 @@ __meta__ = {
 count_label_path = NodePath("MarginContainer/VBoxContainer/CountLabel")
 pallet_space_path = NodePath("MarginContainer/VBoxContainer/PalletSpace")
 widget_space_path = NodePath("MarginContainer/VBoxContainer/WidgetSpace")
+popup_path = NodePath("CanvasLayer/Popup")
+popup_action_button_path = NodePath("CanvasLayer/Popup/CenterContainer/ActionButton")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_left = 5.0
@@ -81,3 +91,30 @@ text = "Area Name"
 align = 1
 valign = 2
 autowrap = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Popup" type="PanelContainer" parent="CanvasLayer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_styles/panel = SubResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/Popup"]
+margin_right = 930.0
+margin_bottom = 830.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ActionButton" parent="CanvasLayer/Popup/CenterContainer" instance=ExtResource( 6 )]
+margin_left = 396.0
+margin_top = 398.0
+margin_right = 534.0
+margin_bottom = 431.0
+text = "   UNLOAD!   "
+
+[connection signal="pressed" from="CanvasLayer/Popup/CenterContainer/ActionButton" to="." method="_on_ActionButton_pressed"]
