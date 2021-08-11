@@ -59,16 +59,30 @@ auto onPublishComplete = [](Mqtt::MqttConnection &, uint16_t packetId, int error
     }
 };
 
+bool get_project(const string &session_id, const string &name, project_t& project)
+{
+    auto project_iter = project_t::list().
+            where(project_t::expr::session_id == session_id
+                && project_t::expr::name == name).begin();
+    if (project_iter == project_t::list().end())
+    {
+        return false;
+    }
+
+    project = *project_iter;
+    return true;
+}
+
 session_t get_session(const string &id)
 {
-    auto session_iter = session_t::list().where(session_t::expr::id == id).begin();
+    auto session_iter = session_t::list()
+            .where(session_t::expr::session_id == id || session_t::expr::agent_id == id).begin();
     if (session_iter == session_t::list().end())
     {
         printf("Creating new session\n");
         session_writer w;
-        w.id = id;
+        w.session_id = id;
         w.agent_id = "NONE";
-        w.current_project_id = "NONE";
         w.is_active = false;
         w.last_session_timestamp = (uint64_t)time(nullptr);
         w.last_agent_timestamp = (uint64_t)time(nullptr);
@@ -83,8 +97,8 @@ activity_t new_activity()
 {
     printf("New activity\n");
     activity_writer w;
-    w.activity_type = "unknown";
-    w.id = "unknown";
+    w.type = "unknown";
+    w.action = "unknown";
     w.payload = "empty";
     w.timestamp = (uint64_t)time(nullptr);
     return activity_t::get(w.insert_row());
@@ -97,9 +111,8 @@ void dump_db()
     for (const auto& s : session_t::list())
     {
         printf("--------------------------------------------------------\n");
-        printf("session:            %s\n", s.id());
+        printf("session:            %s\n", s.session_id());
         printf("agent:              %s\n", s.agent_id());
-        printf("current_project:    %s\n", s.current_project_id());
         printf("is_active:          %s\n", s.is_active() ? "YES" : "NO");
         printf("last_session_timestamp: %lu\n", s.last_session_timestamp());        
         printf("last_agent_timestamp: %lu\n", s.last_agent_timestamp());        
@@ -109,20 +122,28 @@ void dump_db()
     commit_transaction();
 }
 
-void log_activity(const string &session_id,
-                  const string &activity_type,
-                  const string &activity_id,
+void log_activity(const string &id,
+                  const string &type,
+                  const string &action,
                   const string &payload)
 {
     begin_transaction();
 
-    session_t session = get_session(session_id);
+    session_t session = get_session(id);
     activity_t activity = new_activity();
     session.activity_list().insert(activity);
+    if (type == "project" && action == "select")
+    {
+        project_t project;
+        if (get_project(id, payload, project))
+        {
+            project.activity_list().insert(activity);
+        }
+    }
 
     auto w = activity.writer();
-    w.activity_type = activity_type;
-    w.id = activity_id;
+    w.type = type;
+    w.action = action;
     w.payload = payload;
     w.update_row();
 

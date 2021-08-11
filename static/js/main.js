@@ -27,6 +27,7 @@
   });
 
   window.editorMessageHandler = function (topic, payload) {
+    window.publishData("test", payload);
     // Add editor updates here
   }
 

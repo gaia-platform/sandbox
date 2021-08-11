@@ -8,10 +8,12 @@
 #include <iostream>
 
 #include "gaia/logger.hpp"
+#include "gaia_coordinator.h"
 #include "json.hpp"
 
 using json = nlohmann::json;
 using namespace std;
+using namespace gaia::coordinator;
 
 string get_uuid();
 void publish_message(const string &topic, const string &payload);
@@ -22,8 +24,8 @@ void manage_gaia_container(const string &action,
                            const string &session_id,
                            const string &agent_id)
 {
-    gaia_log::app().info("Sending {} for session {} with agent_id {}",
-                         action, session_id, agent_id);
+    gaia_log::app().info("Sending {} for agent_id {}",
+                         action, agent_id);
 
     return; // do nothing for now
     json j;
@@ -33,49 +35,80 @@ void manage_gaia_container(const string &action,
     publish_message("manage_gaia_container", j.dump());    
 }
 
+void send_message(const string &id,
+                  const string &project_name,
+                  const string &action,
+                  const string &payload)
+{
+    gaia_log::app().info("Sending {} action for project {} with id {}",
+                         project_name, action, id);
+
+    publish_message(id + '/' + project_name + '/' + action, payload);
+}
+
 ruleset coordinator_ruleset
 {
     {
-        if (string(@activity.activity_type) == "browser")
+        if (string(@activity.type) == "browser")
         {
-            gaia_log::app().info("Session refresh");
+            gaia_log::app().info("{} action: {}", activity.type, activity.action);
 
             session.last_session_timestamp = activity.timestamp;
             if (session.is_active &&
                 session.last_agent_timestamp + c_session_timeout < activity.timestamp)
             {
-                gaia_log::app().info("Session {} is active but agent is MIA.", session.id);
+                gaia_log::app().info("Session {} is active but agent is MIA.", session.session_id);
                 session.is_active = false;
-                manage_gaia_container("stop", session.id, session.agent_id);
+                manage_gaia_container("stop", session.session_id, session.agent_id);
             }
             if (!session.is_active)
             {
                 session.is_active = true;
                 session.agent_id = get_uuid().c_str();
                 session.last_agent_timestamp = activity.timestamp;
-                manage_gaia_container("start", session.id, session.agent_id);
+                manage_gaia_container("start", session.session_id, session.agent_id);
             }
         }
     }
 
     {
-        if (string(@activity.activity_type) == "agent")
+        if (string(@activity.type) == "agent" && string(@activity.action) == "connect")
         {
-            gaia_log::app().info("Agent alive");
+            gaia_log::app().info("{} action: {}", activity.type, activity.action);
 
-            if (string(activity.id) != session.agent_id)
+            if (string(activity.payload) != session.agent_id)
             {
-                manage_gaia_container("stop", session.id, activity.id);
+                manage_gaia_container("stop", session.session_id, activity.payload);
             }
             else if (!session.is_active ||
                 session.last_session_timestamp + c_session_timeout < activity.timestamp)
             {
                 session.is_active = false;
-                manage_gaia_container("stop", session.id, session.agent_id);
+                manage_gaia_container("stop", session.session_id, session.agent_id);
             }
             else
             {
                 session.last_agent_timestamp = activity.timestamp;
+            }
+        }
+    }
+
+    {
+        if (string(@activity.type) == "project" && string(activity.action) == "select")
+        {
+            gaia_log::app().info("{} action: {}", activity.type, activity.action);
+
+            auto activity_row = activity_t::get(activity.gaia_id());
+            if (activity_row.project())
+            {
+                auto session_row = session_t::get(activity_row.session().gaia_id());
+                activity_row.project().session_list().insert(session_row);
+                send_message(session.agent_id, project.name, "ddl", project.ddl_file);
+                send_message(session.agent_id, project.name, "ruleset", project.ruleset_file);
+            }
+            else
+            {
+                send_message(session.agent_id, activity.payload, "get", "files");
             }
         }
     }

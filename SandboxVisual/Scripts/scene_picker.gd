@@ -7,13 +7,12 @@ export (String, FILE) var access_control_scene
 func _ready():
 	CommunicationManager.cleanup()
 
-
-func _select_project(project_name):
+func _project_action(action, payload):
 	CommunicationManager.publish_to_topic(
-		JavaScript.eval(
-			"'sandbox_coordinator/%s/project'" % CommunicationManager.read_variable("sandboxUuid")
-		),
-		project_name
+		(
+			JavaScript.eval("'sandbox_coordinator/%s/project/%s'"
+			% [CommunicationManager.read_variable("sandboxUuid"), action])
+		), payload
 	)
 
 
@@ -28,4 +27,4 @@ func _on_AccessControlButton_pressed():
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
 	else:
-		_select_project("access_control_template")
+		_project_action("select", "access_control_template")
