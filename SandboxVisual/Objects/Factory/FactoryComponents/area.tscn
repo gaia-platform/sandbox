@@ -28,6 +28,7 @@ count_label_path = NodePath("MarginContainer/VBoxContainer/CountLabel")
 pallet_space_path = NodePath("MarginContainer/VBoxContainer/PalletSpace")
 widget_space_path = NodePath("MarginContainer/VBoxContainer/WidgetSpace")
 popup_path = NodePath("CanvasLayer/Popup")
+popup_action_button_path = NodePath("CanvasLayer/Popup/CenterContainer/ActionButton")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_left = 5.0
@@ -115,3 +116,5 @@ margin_top = 398.0
 margin_right = 534.0
 margin_bottom = 431.0
 text = "   UNLOAD!   "
+
+[connection signal="pressed" from="CanvasLayer/Popup/CenterContainer/ActionButton" to="." method="_on_ActionButton_pressed"]
