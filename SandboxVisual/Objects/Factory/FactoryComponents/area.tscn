@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_regular.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Assets/Factory/StyleBoxes/area_flat.tres" type="StyleBox" id=2]
@@ -6,6 +6,9 @@
 [ext_resource path="res://Objects/Factory/FactoryComponents/widget_grid.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Scripts/Factory/FactoryComponents/area.gd" type="Script" id=5]
 [ext_resource path="res://Objects/UI/general_button.tscn" type="PackedScene" id=6]
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.494118, 0.494118, 0.494118, 1 )
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0, 0, 0, 0.529412 )
@@ -28,7 +31,45 @@ count_label_path = NodePath("MarginContainer/VBoxContainer/CountLabel")
 pallet_space_path = NodePath("MarginContainer/VBoxContainer/PalletSpace")
 widget_space_path = NodePath("MarginContainer/VBoxContainer/WidgetSpace")
 popup_path = NodePath("CanvasLayer/Popup")
-popup_action_button_path = NodePath("CanvasLayer/Popup/CenterContainer/ActionButton")
+popup_action_button_path = NodePath("CanvasLayer/Popup/CenterContainer/VBoxContainer/ActionButton")
+popup_action_progress_path = NodePath("CanvasLayer/Popup/CenterContainer/VBoxContainer/ActionProgressBar")
+
+[node name="AreaConnector" type="MarginContainer" parent="."]
+visible = false
+show_behind_parent = true
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 251.0
+margin_bottom = 201.0
+custom_constants/margin_right = -10
+custom_constants/margin_top = 20
+custom_constants/margin_left = -10
+custom_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="AreaConnector"]
+margin_left = -10.0
+margin_top = 20.0
+margin_right = 256.0
+margin_bottom = 176.0
+
+[node name="ConnectorLeft" type="Panel" parent="AreaConnector/HBoxContainer"]
+margin_right = 86.0
+margin_bottom = 156.0
+size_flags_horizontal = 3
+custom_styles/panel = SubResource( 2 )
+
+[node name="Control" type="Control" parent="AreaConnector/HBoxContainer"]
+margin_left = 90.0
+margin_right = 176.0
+margin_bottom = 156.0
+size_flags_horizontal = 3
+
+[node name="ConnectorRight" type="Panel" parent="AreaConnector/HBoxContainer"]
+margin_left = 180.0
+margin_right = 266.0
+margin_bottom = 156.0
+size_flags_horizontal = 3
+custom_styles/panel = SubResource( 2 )
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_left = 5.0
@@ -110,11 +151,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ActionButton" parent="CanvasLayer/Popup/CenterContainer" instance=ExtResource( 6 )]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Popup/CenterContainer"]
 margin_left = 396.0
-margin_top = 398.0
+margin_top = 385.0
 margin_right = 534.0
-margin_bottom = 431.0
+margin_bottom = 444.0
+
+[node name="ActionButton" parent="CanvasLayer/Popup/CenterContainer/VBoxContainer" instance=ExtResource( 6 )]
+margin_right = 138.0
 text = "   UNLOAD!   "
 
-[connection signal="pressed" from="CanvasLayer/Popup/CenterContainer/ActionButton" to="." method="_on_ActionButton_pressed"]
+[node name="ActionProgressBar" type="ProgressBar" parent="CanvasLayer/Popup/CenterContainer/VBoxContainer"]
+margin_top = 37.0
+margin_right = 138.0
+margin_bottom = 59.0
+custom_fonts/font = ExtResource( 1 )
+
+[connection signal="pressed" from="CanvasLayer/Popup/CenterContainer/VBoxContainer/ActionButton" to="." method="_on_ActionButton_pressed"]
