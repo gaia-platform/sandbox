@@ -18,8 +18,8 @@ export (bool) var is_broken = false
 export (bool) var is_inside_area = false
 
 ### Nodes
-export (NodePath) var collision_shape_path
-onready var collision_shape = get_node(collision_shape_path)
+onready var collision_shape = $CollisionShape2D
+onready var tween = $Tween
 
 ### Navigation
 var movement_path = []
@@ -27,6 +27,7 @@ var _movement_queue = []
 
 ### Properties
 var payload_node = null
+var is_pallet: bool
 
 signal leaving_area
 
@@ -39,13 +40,16 @@ func _ready():
 func _physics_process(delta):
 	if not is_broken and movement_path.size():  # There is still a goal coordinate to reach
 		var cur_dir = (movement_path[0] - position).normalized()  # Vector pointing towards next goal point
-		var movement_step = (cur_dir * delta).clamped(max_speed * delta)  # Movement increment, clamped to max speed
+		var movement_step = cur_dir * max_speed * delta  # Movement increment
 		var post_movement_dir = movement_path[0] - (position + movement_step)  # Vector pointing towards goal point, but after step
 		var cur_dot_post = cur_dir.dot(post_movement_dir)  # Get alignment of current direction vector and post step vector to goal
 
-		if cur_dot_post < 0:  # If directions are pointing towards each other (meaning next step overshoots goal)
+		if cur_dot_post <= 0:  # If directions are pointing towards each other (meaning next step overshoots goal)
 			position = movement_path[0]  # Lock to goal point
 			movement_path.remove(0)  # Remove this goal point
+
+			if movement_path.size():
+				_animate_rotation()
 		else:  # Otherwise, continue moving
 			cur_speed_squared = movement_step.length_squared()  # Update speed
 
@@ -66,6 +70,7 @@ func _physics_process(delta):
 		var next_movement = _movement_queue.pop_front()
 		if next_movement:
 			movement_path = next_movement
+			_animate_rotation()
 	elif is_broken:
 		if modulate != Color.red:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
@@ -118,20 +123,48 @@ func travel(path: PoolVector2Array):
 
 
 func pickup_payload(payload):
-	if not payload_node:
-		var prev_global_pos = payload.global_position
-		payload.get_parent().remove_child(payload)
-		add_child(payload)
-		payload.global_position = prev_global_pos
-		payload.move_to(Vector2.ZERO, true)
-		payload_node = payload
+	if not payload_node:  # If there isn't already a payload registered
+		var prev_global_pos = payload.global_position  # Get current global position
+		payload.get_parent().remove_child(payload)  # Orphan
+		add_child(payload)  # Add to this bot
+		payload.global_position = prev_global_pos  # Reset position (get's messed up after parenting)
+		payload.rotation = -rotation  # Also counter bot's rotation
+
+		var payload_destination = Vector2.ZERO  # Send to center of widgit if it's a pallet
+		if bot_type:  # Updates for PalletBot
+			collision_shape.shape.extents = Vector2(53, 64)
+			collision_shape.position = Vector2(40.5, 0)
+			payload_destination = Vector2(52, 0)
+
+		payload.move_to(payload_destination, true)  # Attach to payload
+		payload_node = payload  # Register payload
 
 
 func drop_payload(at_location):
-	if payload_node:
-		var prev_global_pos = payload_node.global_position
-		remove_child(payload_node)
-		owner.widgets.add_child(payload_node)
-		payload_node.global_position = prev_global_pos
-		at_location.add_node(payload_node)
-		payload_node = null
+	if payload_node:  # If there is a registered payload
+		var prev_global_pos = payload_node.global_position  # Get global position
+		remove_child(payload_node)  # Remove from bot
+		payload_node.rotation = 0  # Reset rotation
+		owner.widgets.add_child(payload_node)  # Add back to widget pool
+		payload_node.global_position = prev_global_pos  # Set position (get's messed up after parenting)
+		if bot_type:  # Reset PalletBot
+			collision_shape.shape.extents = Vector2(24, 24)
+			collision_shape.position = Vector2.ZERO
+			at_location.add_pallet(payload_node)  # Adds a pallet to location
+		else:
+			at_location.add_node(payload_node)  # Adds a widget to location
+		payload_node = null  # Unregister payload
+
+
+func _animate_rotation():
+	tween.remove_all()
+	tween.interpolate_property(
+		self,
+		"rotation",
+		rotation,
+		(movement_path[0] - position).angle(),
+		0.2 / owner.simulation_controller.speed_scale,
+		Tween.TRANS_LINEAR,
+		Tween.EASE_OUT_IN
+	)
+	tween.start()

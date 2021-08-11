@@ -1,6 +1,6 @@
 extends PanelContainer
 
-export var speed_scale = 350
+export var speed_scale = 1.5
 export (String, FILE) var scene_picker_scene
 export (NodePath) var level_name_label_path
 export (NodePath) var pause_button_path
@@ -31,12 +31,12 @@ func _on_PauseButton_pressed():
 
 
 func _on_SlowerButton_pressed():
-	speed_scale -= 50
+	speed_scale -= 0.25
 	_update_speed_scale_label()
 
 
 func _on_FasterButton_pressed():
-	speed_scale += 50
+	speed_scale += 0.25
 	_update_speed_scale_label()
 
 

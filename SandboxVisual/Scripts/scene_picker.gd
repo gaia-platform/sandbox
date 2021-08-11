@@ -15,6 +15,7 @@ func _project_action(action, payload):
 		), payload
 	)
 
+
 func _on_FactoryDemoButton_pressed():
 	var change_scene_status = get_tree().change_scene(factory_demo_scene)
 	if ! change_scene_status:
