@@ -110,7 +110,7 @@ __meta__ = {
 margin_right = 205.0
 associated_waypoint_paths = [ NodePath("../Waypoint") ]
 
-[node name="MarginContainer" parent="VBoxContainer/GridContainer/OutboundArea" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/OutboundArea" index="1"]
 margin_right = 200.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/OutboundArea/MarginContainer" index="0"]
@@ -136,7 +136,7 @@ margin_left = 215.0
 margin_right = 420.0
 associated_waypoint_paths = [ NodePath("../Waypoint2") ]
 
-[node name="MarginContainer" parent="VBoxContainer/GridContainer/LabelingArea" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/LabelingArea" index="1"]
 margin_right = 200.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/LabelingArea/MarginContainer" index="0"]
@@ -183,7 +183,7 @@ margin_left = 430.0
 margin_right = 635.0
 associated_waypoint_paths = [ NodePath("../Waypoint3") ]
 
-[node name="MarginContainer" parent="VBoxContainer/GridContainer/PaintingArea" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PaintingArea" index="1"]
 margin_right = 200.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/PaintingArea/MarginContainer" index="0"]
@@ -301,7 +301,7 @@ margin_right = 910.0
 margin_bottom = 467.0
 associated_waypoint_paths = [ NodePath("../Waypoint4") ]
 
-[node name="MarginContainer" parent="VBoxContainer/GridContainer/ChargingArea" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/ChargingArea" index="1"]
 margin_right = 200.0
 margin_bottom = 186.0
 
@@ -377,7 +377,7 @@ margin_right = 205.0
 margin_bottom = 743.0
 associated_waypoint_paths = [ NodePath("../Waypoint5") ]
 
-[node name="MarginContainer" parent="VBoxContainer/GridContainer/InboundArea" index="0"]
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/InboundArea" index="1"]
 margin_right = 200.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/InboundArea/MarginContainer" index="0"]
@@ -405,7 +405,26 @@ margin_right = 420.0
 margin_bottom = 743.0
 associated_waypoint_paths = [ NodePath("../Waypoint6") ]
 
-[node name="MarginContainer" parent="VBoxContainer/GridContainer/PackingArea" index="0"]
+[node name="AreaConnector" parent="VBoxContainer/GridContainer/PackingArea" index="0"]
+visible = true
+margin_right = 200.0
+
+[node name="HBoxContainer" parent="VBoxContainer/GridContainer/PackingArea/AreaConnector" index="0"]
+margin_right = 205.0
+
+[node name="ConnectorLeft" parent="VBoxContainer/GridContainer/PackingArea/AreaConnector/HBoxContainer" index="0"]
+visible = false
+margin_right = 69.0
+
+[node name="Control" parent="VBoxContainer/GridContainer/PackingArea/AreaConnector/HBoxContainer" index="1"]
+margin_left = 0.0
+margin_right = 105.0
+
+[node name="ConnectorRight" parent="VBoxContainer/GridContainer/PackingArea/AreaConnector/HBoxContainer" index="2"]
+margin_left = 109.0
+margin_right = 215.0
+
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/PackingArea" index="1"]
 margin_right = 200.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/PackingArea/MarginContainer" index="0"]
@@ -441,7 +460,26 @@ margin_right = 635.0
 margin_bottom = 743.0
 associated_waypoint_paths = [ NodePath("../Waypoint7") ]
 
-[node name="MarginContainer" parent="VBoxContainer/GridContainer/BufferArea" index="0"]
+[node name="AreaConnector" parent="VBoxContainer/GridContainer/BufferArea" index="0"]
+visible = true
+margin_right = 200.0
+
+[node name="HBoxContainer" parent="VBoxContainer/GridContainer/BufferArea/AreaConnector" index="0"]
+margin_right = 205.0
+
+[node name="ConnectorLeft" parent="VBoxContainer/GridContainer/BufferArea/AreaConnector/HBoxContainer" index="0"]
+margin_right = 105.0
+
+[node name="Control" parent="VBoxContainer/GridContainer/BufferArea/AreaConnector/HBoxContainer" index="1"]
+margin_left = 109.0
+margin_right = 215.0
+
+[node name="ConnectorRight" parent="VBoxContainer/GridContainer/BufferArea/AreaConnector/HBoxContainer" index="2"]
+visible = false
+margin_left = 146.0
+margin_right = 215.0
+
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/BufferArea" index="1"]
 margin_right = 200.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer" index="0"]

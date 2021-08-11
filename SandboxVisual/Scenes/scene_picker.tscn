@@ -18,7 +18,7 @@ script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-farobot_5_tasks_scene = "res://Scenes/Factory/farobot_5_tasks.tscn"
+farobot_3_tasks_scene = "res://Scenes/Factory/farobot_3_tasks.tscn"
 amr_scenario_1_scene = "res://Scenes/Factory/scenario_1_factory.tscn"
 access_control_scene = "res://Scenes/AccessControl/access_control_building.tscn"
 
@@ -63,11 +63,11 @@ custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "AMR Factory"
 align = 1
 
-[node name="FARobot5TasksButton" parent="VBoxContainer/PanelContainer/VBoxContainer" instance=ExtResource( 4 )]
+[node name="FARobot3TasksButton" parent="VBoxContainer/PanelContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 39.0
 margin_right = 245.0
 margin_bottom = 72.0
-text = "FARobot 5 tasks"
+text = "FARobot 3 tasks"
 
 [node name="Scenario1Button" parent="VBoxContainer/PanelContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 82.0
@@ -95,6 +95,6 @@ margin_right = 245.0
 margin_bottom = 207.0
 text = "Access Control"
 
-[connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/FARobot5TasksButton" to="." method="_on_FARobot5TasksButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/FARobot3TasksButton" to="." method="_on_FARobot3TasksButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/Scenario1Button" to="." method="_on_Scenario1Button_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/AccessControlButton" to="." method="_on_AccessControlButton_pressed"]
