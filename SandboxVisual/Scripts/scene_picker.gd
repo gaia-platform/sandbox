@@ -7,18 +7,20 @@ export (String, FILE) var access_control_scene
 func _ready():
 	CommunicationManager.cleanup()
 
+
 func _project_action(action, payload):
 	CommunicationManager.publish_to_topic(
 		(
-			JavaScript.eval("'sandbox_coordinator/%s/project/%s'"
-			% [CommunicationManager.read_variable("sandboxUuid"), action])
-		), payload
+			"sandbox_coordinator/%s/project/%s"
+			% [CommunicationManager.read_variable("sandboxUuid"), action]
+		),
+		payload
 	)
 
 
 func _on_FactoryDemoButton_pressed():
 	var change_scene_status = get_tree().change_scene(factory_demo_scene)
-	if ! change_scene_status:
+	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
 
 

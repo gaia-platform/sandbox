@@ -100,7 +100,9 @@ mqttClient.on('message', mqttClientMessageHandler);
 window.subscribeToTopic = function (topic) {
    var fullTopicName = window.sandboxUuid + "/" + topic;
    mqttClient.subscribe(fullTopicName);
-   subscribedTopics.push(fullTopicName)
+   if (topic !== "editor/#") {
+      subscribedTopics.push(fullTopicName);
+   }
 }
 
 // Sending data out
