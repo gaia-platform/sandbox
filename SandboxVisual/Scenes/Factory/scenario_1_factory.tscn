@@ -43,58 +43,58 @@ __meta__ = {
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 910.0
-margin_bottom = 73.0
-
-[node name="MarginContainer" parent="VBoxContainer/SimulationController" index="0"]
-margin_right = 900.0
 margin_bottom = 63.0
 
+[node name="MarginContainer" parent="VBoxContainer/SimulationController" index="0"]
+margin_right = 905.0
+margin_bottom = 58.0
+
 [node name="HBoxContainer" parent="VBoxContainer/SimulationController/MarginContainer" index="0"]
-margin_right = 880.0
+margin_right = 890.0
 margin_bottom = 43.0
 
 [node name="LevelNameLabel" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="0"]
-margin_right = 195.0
+margin_right = 198.0
 margin_bottom = 33.0
-text = "Scenario 1 Demo"
+text = "Zack's Scenario #1"
 
 [node name="PauseButton" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="1"]
-margin_left = 205.0
-margin_right = 401.0
+margin_left = 208.0
+margin_right = 406.0
 margin_bottom = 33.0
 
 [node name="Control" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="2"]
-margin_left = 411.0
-margin_right = 411.0
+margin_left = 416.0
+margin_right = 416.0
 margin_bottom = 33.0
 
 [node name="SlowerButton" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="3"]
-margin_left = 421.0
-margin_right = 510.0
+margin_left = 426.0
+margin_right = 516.0
 margin_bottom = 33.0
 
 [node name="SpeedScaleLabel" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="4"]
-margin_left = 520.0
-margin_right = 573.0
+margin_left = 526.0
+margin_right = 580.0
 margin_bottom = 33.0
 
 [node name="FasterButton" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="5"]
-margin_left = 583.0
-margin_right = 672.0
+margin_left = 590.0
+margin_right = 680.0
 margin_bottom = 33.0
 
 [node name="Control2" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="6"]
-margin_left = 682.0
-margin_right = 682.0
+margin_left = 690.0
+margin_right = 690.0
 margin_bottom = 33.0
 
 [node name="ExitButton" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="7"]
-margin_left = 692.0
-margin_right = 870.0
+margin_left = 700.0
+margin_right = 880.0
 margin_bottom = 33.0
 
 [node name="GridContainer" type="GridContainer" parent="VBoxContainer"]
-margin_top = 77.0
+margin_top = 67.0
 margin_right = 910.0
 margin_bottom = 810.0
 size_flags_horizontal = 3
@@ -268,7 +268,7 @@ margin_bottom = 266.0
 [node name="FloorPath" parent="VBoxContainer/GridContainer" instance=ExtResource( 5 )]
 margin_top = 276.0
 margin_right = 205.0
-margin_bottom = 457.0
+margin_bottom = 467.0
 path_shape = 5
 connected_node_paths = [ NodePath("../Waypoint"), NodePath("../Waypoint5"), NodePath("../FloorPath2") ]
 
@@ -276,7 +276,7 @@ connected_node_paths = [ NodePath("../Waypoint"), NodePath("../Waypoint5"), Node
 margin_left = 215.0
 margin_top = 276.0
 margin_right = 420.0
-margin_bottom = 457.0
+margin_bottom = 467.0
 path_shape = 2
 connected_node_paths = [ NodePath("../Waypoint2"), NodePath("../FloorPath"), NodePath("../FloorPath3"), NodePath("../Waypoint6") ]
 
@@ -284,30 +284,30 @@ connected_node_paths = [ NodePath("../Waypoint2"), NodePath("../FloorPath"), Nod
 margin_left = 430.0
 margin_top = 276.0
 margin_right = 635.0
-margin_bottom = 457.0
+margin_bottom = 467.0
 path_shape = 2
 connected_node_paths = [ NodePath("../Waypoint3"), NodePath("../FloorPath2"), NodePath("../Waypoint4"), NodePath("../Waypoint7") ]
 
 [node name="Waypoint4" parent="VBoxContainer/GridContainer" instance=ExtResource( 1 )]
 margin_left = 645.0
-margin_top = 341.0
+margin_top = 346.0
 margin_right = 695.0
-margin_bottom = 391.0
+margin_bottom = 396.0
 
 [node name="ChargingArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
 margin_left = 705.0
 margin_top = 276.0
 margin_right = 910.0
-margin_bottom = 457.0
+margin_bottom = 467.0
 associated_waypoint_paths = [ NodePath("../Waypoint4") ]
 
 [node name="MarginContainer" parent="VBoxContainer/GridContainer/ChargingArea" index="0"]
 margin_right = 200.0
-margin_bottom = 176.0
+margin_bottom = 186.0
 
 [node name="VBoxContainer" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer" index="0"]
 margin_right = 185.0
-margin_bottom = 161.0
+margin_bottom = 171.0
 
 [node name="CountLabel" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="0"]
 visible = false
@@ -326,55 +326,55 @@ margin_right = 140.0
 visible = true
 margin_top = 0.0
 margin_right = 175.0
-margin_bottom = 112.0
+margin_bottom = 122.0
 
 [node name="WidgetGrid" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
 margin_left = 87.0
-margin_top = 56.0
+margin_top = 61.0
 margin_right = 87.0
-margin_bottom = 56.0
+margin_bottom = 61.0
 for_widgets = false
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="3"]
-margin_top = 122.0
+margin_top = 132.0
 margin_right = 175.0
-margin_bottom = 151.0
+margin_bottom = 161.0
 text = "Charging Area"
 
 [node name="Waypoint5" parent="VBoxContainer/GridContainer" instance=ExtResource( 1 )]
 margin_left = 77.0
-margin_top = 467.0
+margin_top = 477.0
 margin_right = 127.0
-margin_bottom = 517.0
+margin_bottom = 527.0
 
 [node name="Waypoint6" parent="VBoxContainer/GridContainer" instance=ExtResource( 1 )]
 margin_left = 292.0
-margin_top = 467.0
+margin_top = 477.0
 margin_right = 342.0
-margin_bottom = 517.0
+margin_bottom = 527.0
 
 [node name="Waypoint7" parent="VBoxContainer/GridContainer" instance=ExtResource( 1 )]
 margin_left = 507.0
-margin_top = 467.0
+margin_top = 477.0
 margin_right = 557.0
-margin_bottom = 517.0
+margin_bottom = 527.0
 
 [node name="Control5" type="Control" parent="VBoxContainer/GridContainer"]
 margin_left = 645.0
-margin_top = 467.0
+margin_top = 477.0
 margin_right = 695.0
-margin_bottom = 517.0
+margin_bottom = 527.0
 
 [node name="Control6" type="Control" parent="VBoxContainer/GridContainer"]
 margin_left = 705.0
-margin_top = 467.0
+margin_top = 477.0
 margin_right = 910.0
-margin_bottom = 517.0
+margin_bottom = 527.0
 
 [node name="InboundArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
-margin_top = 527.0
+margin_top = 537.0
 margin_right = 205.0
-margin_bottom = 733.0
+margin_bottom = 743.0
 associated_waypoint_paths = [ NodePath("../Waypoint5") ]
 
 [node name="MarginContainer" parent="VBoxContainer/GridContainer/InboundArea" index="0"]
@@ -400,9 +400,9 @@ text = "Inbound Area"
 
 [node name="PackingArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
 margin_left = 215.0
-margin_top = 527.0
+margin_top = 537.0
 margin_right = 420.0
-margin_bottom = 733.0
+margin_bottom = 743.0
 associated_waypoint_paths = [ NodePath("../Waypoint6") ]
 
 [node name="MarginContainer" parent="VBoxContainer/GridContainer/PackingArea" index="0"]
@@ -436,9 +436,9 @@ text = "   UNPACK!   "
 
 [node name="BufferArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
 margin_left = 430.0
-margin_top = 527.0
+margin_top = 537.0
 margin_right = 635.0
-margin_bottom = 733.0
+margin_bottom = 743.0
 associated_waypoint_paths = [ NodePath("../Waypoint7") ]
 
 [node name="MarginContainer" parent="VBoxContainer/GridContainer/BufferArea" index="0"]

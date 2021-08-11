@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_regular.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Assets/Factory/StyleBoxes/area_flat.tres" type="StyleBox" id=2]
@@ -13,6 +13,9 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.494118, 0.494118, 0.494118, 1 )
 
 [node name="Area" type="PanelContainer"]
 margin_right = 256.0
@@ -116,5 +119,42 @@ margin_top = 398.0
 margin_right = 534.0
 margin_bottom = 431.0
 text = "   UNLOAD!   "
+
+[node name="AreaConnector" type="MarginContainer" parent="."]
+visible = false
+show_behind_parent = true
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 251.0
+margin_bottom = 201.0
+custom_constants/margin_right = -10
+custom_constants/margin_top = 20
+custom_constants/margin_left = -10
+custom_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="AreaConnector"]
+margin_left = -10.0
+margin_top = 20.0
+margin_right = 256.0
+margin_bottom = 176.0
+
+[node name="ConnectorLeft" type="Panel" parent="AreaConnector/HBoxContainer"]
+margin_right = 86.0
+margin_bottom = 156.0
+size_flags_horizontal = 3
+custom_styles/panel = SubResource( 2 )
+
+[node name="Control" type="Control" parent="AreaConnector/HBoxContainer"]
+margin_left = 90.0
+margin_right = 176.0
+margin_bottom = 156.0
+size_flags_horizontal = 3
+
+[node name="ConnectorRight" type="Panel" parent="AreaConnector/HBoxContainer"]
+margin_left = 180.0
+margin_right = 266.0
+margin_bottom = 156.0
+size_flags_horizontal = 3
+custom_styles/panel = SubResource( 2 )
 
 [connection signal="pressed" from="CanvasLayer/Popup/CenterContainer/ActionButton" to="." method="_on_ActionButton_pressed"]
