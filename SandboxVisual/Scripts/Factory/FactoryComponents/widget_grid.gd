@@ -35,7 +35,6 @@ func add_node(node):
 		node.set("is_inside_area", true)
 		node.connect("leaving_area", self, "remove_node", [node])
 		node.move_to(location)
-		
 
 
 # Remove node and space from grid

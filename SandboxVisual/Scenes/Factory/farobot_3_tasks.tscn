@@ -57,6 +57,7 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 910.0
 margin_bottom = 63.0
+speed_scale = 1.5
 
 [node name="MarginContainer" parent="VBoxContainer/SimulationController" index="0"]
 margin_right = 905.0

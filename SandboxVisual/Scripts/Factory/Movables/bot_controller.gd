@@ -70,16 +70,16 @@ func _physics_process(delta):
 		# Straighten bot if inside area (probabbly means charging)
 		if is_inside_area:
 			tween.remove_all()
-		tween.interpolate_property(
-			self,
-			"rotation",
-			rotation,
-			Vector2.UP.angle(),
-			0.2 / _factory.simulation_controller.speed_scale,
-			Tween.TRANS_LINEAR,
-			Tween.EASE_OUT_IN
-		)
-		tween.start()
+			tween.interpolate_property(
+				self,
+				"rotation",
+				rotation,
+				Vector2.UP.angle(),
+				0.2 / _factory.simulation_controller.speed_scale,
+				Tween.TRANS_SINE,
+				Tween.EASE_OUT
+			)
+			tween.start()
 
 		# Check to see if there are more movements in the queue
 		var next_movement = _movement_queue.pop_front()
@@ -179,7 +179,7 @@ func _animate_rotation():
 		rotation,
 		(movement_path[0] - position).angle(),
 		0.2 / _factory.simulation_controller.speed_scale,
-		Tween.TRANS_LINEAR,
-		Tween.EASE_OUT_IN
+		Tween.TRANS_SINE,
+		Tween.EASE_IN_OUT
 	)
 	tween.start()

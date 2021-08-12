@@ -49,16 +49,18 @@ onready var simulation_controller = get_node(simulation_controller_path)
 onready var widget_bot_counter = get_node(widget_bot_counter_path)
 onready var pallet_bot_counter = get_node(pallet_bot_counter_path)
 
+
 func _ready():
 	# Wait for everything to load in, then count number of waypoints
 	yield(get_tree(), "idle_frame")
 	number_of_waypoints = 0
 	for area in areas:
-		number_of_waypoints+=area.associated_waypoints.size()
+		number_of_waypoints += area.associated_waypoints.size()
 
 	# Populate bots
 	# print(get_tree().get_current_scene().simulation_controller.speed_scale)
 	_generate_bots()
+
 
 ### Private methods
 # Populate bots

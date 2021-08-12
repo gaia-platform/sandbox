@@ -5,10 +5,10 @@ extends Node
 export (Array, NodePath) var nav_node_paths
 var nav_nodes: Array
 
-# export (NodePath) var test_widget_path
+export (NodePath) var test_widget_path
 # onready var test_widget = get_node(test_widget_path)
 
-# export (NodePath) var test_pallet_path
+export (NodePath) var test_pallet_path
 # onready var test_pallet = get_node(test_pallet_path)
 
 # Bots
