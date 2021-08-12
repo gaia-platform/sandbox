@@ -2,25 +2,15 @@
 
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_regular.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Assets/Factory/StyleBoxes/simulation_controller_flat.tres" type="StyleBox" id=3]
 [ext_resource path="res://Scripts/Factory/FactoryComponents/simulation_controller.gd" type="Script" id=4]
 [ext_resource path="res://Objects/UI/general_button.tscn" type="PackedScene" id=5]
-
-[sub_resource type="StyleBoxFlat" id=1]
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color( 0.313726, 0.313726, 0.313726, 1 )
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
 
 [node name="SimulationController" type="PanelContainer"]
 pause_mode = 2
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_styles/panel = SubResource( 1 )
+custom_styles/panel = ExtResource( 3 )
 script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -31,10 +21,10 @@ pause_button_path = NodePath("MarginContainer/HBoxContainer/PauseButton")
 speed_scale_label_path = NodePath("MarginContainer/HBoxContainer/SpeedScaleLabel")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
-margin_left = 10.0
-margin_top = 10.0
-margin_right = 920.0
-margin_bottom = 820.0
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 925.0
+margin_bottom = 825.0
 custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
@@ -43,15 +33,15 @@ custom_constants/margin_bottom = 10
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 margin_left = 10.0
 margin_top = 10.0
-margin_right = 900.0
-margin_bottom = 800.0
+margin_right = 910.0
+margin_bottom = 810.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 10
 
 [node name="LevelNameLabel" type="Label" parent="MarginContainer/HBoxContainer"]
-margin_right = 200.0
-margin_bottom = 790.0
+margin_right = 202.0
+margin_bottom = 800.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 1.1
@@ -62,30 +52,30 @@ valign = 1
 autowrap = true
 
 [node name="PauseButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
-margin_left = 210.0
-margin_right = 410.0
-margin_bottom = 790.0
+margin_left = 212.0
+margin_right = 415.0
+margin_bottom = 800.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 1.1
 text = "Pause"
 
 [node name="Control" type="Control" parent="MarginContainer/HBoxContainer"]
-margin_left = 420.0
-margin_right = 420.0
-margin_bottom = 790.0
+margin_left = 425.0
+margin_right = 425.0
+margin_bottom = 800.0
 
 [node name="SlowerButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
-margin_left = 430.0
-margin_right = 522.0
-margin_bottom = 790.0
+margin_left = 435.0
+margin_right = 527.0
+margin_bottom = 800.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.5
 text = "<<"
 
 [node name="SpeedScaleLabel" type="Label" parent="MarginContainer/HBoxContainer"]
-margin_left = 532.0
-margin_right = 586.0
-margin_bottom = 790.0
+margin_left = 537.0
+margin_right = 593.0
+margin_bottom = 800.0
 size_flags_horizontal = 3
 size_flags_vertical = 1
 size_flags_stretch_ratio = 0.3
@@ -96,22 +86,22 @@ valign = 1
 autowrap = true
 
 [node name="FasterButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
-margin_left = 596.0
-margin_right = 687.0
-margin_bottom = 790.0
+margin_left = 603.0
+margin_right = 695.0
+margin_bottom = 800.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.5
 text = ">>"
 
 [node name="Control2" type="Control" parent="MarginContainer/HBoxContainer"]
-margin_left = 697.0
-margin_right = 697.0
-margin_bottom = 790.0
+margin_left = 705.0
+margin_right = 705.0
+margin_bottom = 800.0
 
 [node name="ExitButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
-margin_left = 707.0
-margin_right = 890.0
-margin_bottom = 790.0
+margin_left = 715.0
+margin_right = 900.0
+margin_bottom = 800.0
 size_flags_horizontal = 3
 text = "Exit to Menu"
 
