@@ -85,6 +85,8 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
    if (!window.unreadMessages) {
       window.unreadMessages = true;
    }
+
+   window.editorMessageHandler(topic.toString(), payload.toString());
 }
 
 // Install handlers
@@ -98,7 +100,9 @@ mqttClient.on('message', mqttClientMessageHandler);
 window.subscribeToTopic = function (topic) {
    var fullTopicName = window.sandboxUuid + "/" + topic;
    mqttClient.subscribe(fullTopicName);
-   subscribedTopics.push(fullTopicName)
+   if (topic !== "editor/#") {
+      subscribedTopics.push(fullTopicName);
+   }
 }
 
 // Sending data out

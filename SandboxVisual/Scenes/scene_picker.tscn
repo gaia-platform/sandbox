@@ -1,6 +1,7 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_light_big.tres" type="DynamicFont" id=1]
+[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Scripts/scene_picker.gd" type="Script" id=3]
 [ext_resource path="res://Objects/UI/general_button.tscn" type="PackedScene" id=4]
 
@@ -17,7 +18,8 @@ script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-factory_demo_scene = "res://Scenes/Factory/basic_factory.tscn"
+farobot_3_tasks_scene = "res://Scenes/Factory/farobot_3_tasks.tscn"
+amr_scenario_1_scene = "res://Scenes/Factory/scenario_1_factory.tscn"
 access_control_scene = "res://Scenes/AccessControl/access_control_building.tscn"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
@@ -30,9 +32,9 @@ __meta__ = {
 }
 
 [node name="PickerTitleLabel" type="Label" parent="VBoxContainer"]
-margin_top = 325.0
+margin_top = 260.0
 margin_right = 910.0
-margin_bottom = 358.0
+margin_bottom = 293.0
 custom_fonts/font = ExtResource( 1 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Sandbox Sample Environments"
@@ -40,28 +42,59 @@ align = 1
 valign = 1
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
-margin_left = 323.0
-margin_top = 408.0
-margin_right = 587.0
-margin_bottom = 484.0
+margin_left = 332.0
+margin_top = 343.0
+margin_right = 577.0
+margin_bottom = 550.0
 size_flags_horizontal = 4
 size_flags_vertical = 0
 custom_styles/panel = SubResource( 1 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer"]
-margin_right = 264.0
-margin_bottom = 76.0
+margin_right = 245.0
+margin_bottom = 207.0
 custom_constants/separation = 10
 
-[node name="FactoryDemoButton" parent="VBoxContainer/PanelContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_right = 264.0
+[node name="AMRHeader" type="Label" parent="VBoxContainer/PanelContainer/VBoxContainer"]
+margin_right = 245.0
+margin_bottom = 29.0
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "AMR Factory"
+align = 1
+
+[node name="FARobot3TasksButton" parent="VBoxContainer/PanelContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_top = 39.0
+margin_right = 245.0
+margin_bottom = 72.0
+text = "FARobot 3 tasks"
+
+[node name="Scenario1Button" parent="VBoxContainer/PanelContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_top = 82.0
+margin_right = 245.0
+margin_bottom = 115.0
+text = "Scenario #1"
+
+[node name="Control" type="Control" parent="VBoxContainer/PanelContainer/VBoxContainer"]
+margin_top = 125.0
+margin_right = 245.0
+margin_bottom = 125.0
+
+[node name="BuildingHeader" type="Label" parent="VBoxContainer/PanelContainer/VBoxContainer"]
+margin_top = 135.0
+margin_right = 245.0
+margin_bottom = 164.0
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Building Access Control"
+align = 1
 
 [node name="AccessControlButton" parent="VBoxContainer/PanelContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 43.0
-margin_right = 264.0
-margin_bottom = 76.0
-text = "   Building Access Control   "
+margin_top = 174.0
+margin_right = 245.0
+margin_bottom = 207.0
+text = "Access Control"
 
-[connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/FactoryDemoButton" to="." method="_on_FactoryDemoButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/FARobot3TasksButton" to="." method="_on_FARobot3TasksButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/Scenario1Button" to="." method="_on_Scenario1Button_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/VBoxContainer/AccessControlButton" to="." method="_on_AccessControlButton_pressed"]

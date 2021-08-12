@@ -22,8 +22,8 @@
     }
     window.sandboxUuid = storedUuid
     console.log("Sandbox UUID: " + window.sandboxUuid);
-    window.publishData("sandbox_coordinator/browser/" + window.sandboxUuid,
-                       window.sandboxUuid);
+    window.publishData("sandbox_coordinator/" + window.sandboxUuid + "/browser", "refresh");
+    window.subscribeToTopic("editor/#");
   });
 
   var editor = null;
@@ -41,6 +41,23 @@
       state: null
     }
   };
+
+  window.editorMessageHandler = function (topic, payload) {
+    let topicLevels = topic.split('/');
+
+    if (topicLevels[1] != 'editor') {
+      return;
+    }
+
+    let fileName = topicLevels[2];
+    if (fileName != 'ruleset' && fileName != 'ddl') {
+      return;
+    }
+    data[fileName].model = monaco.editor.createModel(payload, (fileName == 'ruleset' ? 'cpp' : 'sql'));
+    data[fileName].state = null;
+    editor.setModel(data[fileName].model);
+    editor.restoreViewState(data[fileName].state);
+  }
 
   function load() {
     data.ruleset.model = monaco.editor.createModel('no ruleset file loaded', 'cpp');

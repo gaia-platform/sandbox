@@ -4,11 +4,9 @@ extends Sprite
 export (int, "Raw", "Painted", "Labeled") var state
 
 ### Elements
-export (NodePath) var widget_label_path
-export (NodePath) var tween_path
-
-onready var widget_label = get_node(widget_label_path)
-onready var tween = get_node(tween_path)
+onready var widget_label = $WidgetLabel
+onready var tween = $Tween
+onready var progress_circle = $Progress
 
 signal leaving_area
 
@@ -20,9 +18,9 @@ func move_to(location: Vector2, leaving = false):
 		"position",
 		position,
 		location,
-		0.5 * get_tree().get_current_scene().simulation_controller.speed_scale,
-		Tween.TRANS_LINEAR,
-		Tween.EASE_OUT_IN
+		0.5 / get_tree().get_current_scene().simulation_controller.speed_scale,
+		Tween.TRANS_SINE,
+		Tween.EASE_IN_OUT
 	)
 	tween.start()
 
@@ -36,3 +34,17 @@ func paint(done = true):
 
 func label(done = true):
 	widget_label.visible = done
+
+
+func show_processing(duration: float):
+	tween.remove_all()
+	tween.interpolate_property(
+		progress_circle,
+		"value",
+		100,
+		0,
+		duration / get_tree().get_current_scene().simulation_controller.speed_scale,
+		Tween.TRANS_LINEAR,
+		Tween.EASE_OUT
+	)
+	tween.start()

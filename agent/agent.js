@@ -2,6 +2,8 @@
 var AWS = require('aws-sdk');
 var AWSIoTData = require('aws-iot-device-sdk');
 
+const fs = require('fs')
+
 console.log('Loaded AWS SDK for JavaScript and AWS IoT SDK for Node.js');
 
 
@@ -14,6 +16,8 @@ var awsConfig = {
 };
 var agentId = process.env.AGENT_ID;
 var sessionId = process.env.SESSION_ID;
+
+const keepAliveInterval = 15;  // in minutes
 
 //// Setup AWS and MQTT
 AWS.config.region = awsConfig.region;
@@ -57,6 +61,19 @@ AWS.config.credentials.get(function (err, data) {
    }
 });
 
+function publishToEditor(file, contents) {
+   console.log('publish to:' + sessionId + "/editor/" + file);
+   mqttClient.publish(sessionId + "/editor/" + file, contents);
+}
+
+function publishToCoordinator(action, payload) {
+   mqttClient.publish("sandbox_coordinator/" + agentId + "/agent/" + action, payload);
+}
+
+function sendKeepAlive() {
+   publishToCoordinator('connected', agentId);
+   setTimeout(sendKeepAlive, keepAliveInterval * 60 * 1000);
+}
 
 //// MQTT functions
 function mqttClientConnectHandler() { // Connection handler
@@ -66,17 +83,50 @@ function mqttClientConnectHandler() { // Connection handler
    // Subscribe to our current topic.
    //
    mqttClient.subscribe(agentId + '/#');
-   mqttClient.publish("sandbox_coordinator/agent/" + agentId, sessionId);
+   sendKeepAlive();
 }
 
 function mqttClientReconnectHandler() { // Reconnection handler
    console.log("reconnect");
 }
 
+function sendFiles(projectName) {
+   switch (projectName) {
+      case 'access_control_template':
+         fs.readFile('templates/' + projectName + '/src/access_control.ruleset', 'utf8' , (err, data) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            publishToEditor('ruleset', data);
+         });
+         fs.readFile('templates/' + projectName + '/src/access_control.ddl', 'utf8' , (err, data) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            publishToEditor('ddl', data);
+         });
+
+      break;
+
+      default:
+         break;
+   }
+}
+
 function mqttClientMessageHandler(topic, payload) { // Message handler
-   console.log('message: ' + topic + ':' + payload.toString());
+   console.log('message: ' + topic);
+   console.log('payload: ' + payload);
    var topicTokens = topic.split('/');
-//   robot_location = parseInt(payload.toString())
+   switch (topicTokens[2]) {
+      case 'get':
+         sendFiles(topicTokens[1]);
+         break;
+
+      default:
+         break;
+   }
 }
 
 // Install handlers
