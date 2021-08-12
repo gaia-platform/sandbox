@@ -14,6 +14,9 @@ onready var widget_holder = $WidgetHolder
 # Widgets
 var widgets = [null, null, null, null]
 
+# Get factory
+onready var _factory = get_tree().get_current_scene()
+
 
 func move_to(location: Vector2, _leaving = null):
 	tween.remove_all()  # Reset all
@@ -24,8 +27,8 @@ func move_to(location: Vector2, _leaving = null):
 		position,
 		location,
 		0.5 / get_tree().get_current_scene().simulation_controller.speed_scale,
-		Tween.TRANS_LINEAR,
-		Tween.EASE_OUT_IN
+		Tween.TRANS_SINE,
+		Tween.EASE_IN_OUT
 	)
 	tween.start()
 
@@ -65,7 +68,7 @@ func remove_widget(widget):
 		# Reparent
 		var widget_glob_pos = widget.global_position
 		remove_child(widget_glob_pos)
-		owner.widgets.add_child(widget)
+		_factory.widgets.add_child(widget)
 		widget.global_position = widget_glob_pos
 
 		widget.disconnect("leaving_area", self, "remove_widget")

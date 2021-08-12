@@ -20,6 +20,7 @@ export (bool) var is_inside_area = false
 ### Nodes
 onready var collision_shape = $CollisionShape2D
 onready var tween = $Tween
+onready var _factory = get_tree().get_current_scene()
 
 ### Navigation
 var movement_path = []
@@ -65,6 +66,20 @@ func _physics_process(delta):
 
 		if collision_shape.disabled and not is_inside_area:
 			collision_shape.disabled = false
+
+		# Straighten bot if inside area (probabbly means charging)
+		if is_inside_area:
+			tween.remove_all()
+			tween.interpolate_property(
+				self,
+				"rotation",
+				rotation,
+				Vector2.UP.angle(),
+				0.2 / _factory.simulation_controller.speed_scale,
+				Tween.TRANS_SINE,
+				Tween.EASE_OUT
+			)
+			tween.start()
 
 		# Check to see if there are more movements in the queue
 		var next_movement = _movement_queue.pop_front()
@@ -145,7 +160,7 @@ func drop_payload(at_location):
 		var prev_global_pos = payload_node.global_position  # Get global position
 		remove_child(payload_node)  # Remove from bot
 		payload_node.rotation = 0  # Reset rotation
-		owner.widgets.add_child(payload_node)  # Add back to widget pool
+		_factory.widgets.add_child(payload_node)  # Add back to widget pool
 		payload_node.global_position = prev_global_pos  # Set position (get's messed up after parenting)
 		if bot_type:  # Reset PalletBot
 			collision_shape.shape.extents = Vector2(24, 24)
@@ -163,8 +178,8 @@ func _animate_rotation():
 		"rotation",
 		rotation,
 		(movement_path[0] - position).angle(),
-		0.2 / owner.simulation_controller.speed_scale,
-		Tween.TRANS_LINEAR,
-		Tween.EASE_OUT_IN
+		0.2 / _factory.simulation_controller.speed_scale,
+		Tween.TRANS_SINE,
+		Tween.EASE_IN_OUT
 	)
 	tween.start()

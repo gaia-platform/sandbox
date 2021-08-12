@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_regular.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Objects/Factory/FactoryComponents/area.tscn" type="PackedScene" id=2]
@@ -7,13 +7,37 @@
 [ext_resource path="res://Assets/Factory/StyleBoxes/simulation_controller_flat.tres" type="StyleBox" id=5]
 [ext_resource path="res://Objects/Factory/FactoryComponents/waypoint.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Objects/Factory/FactoryComponents/floor_path.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Scripts/Factory/Factories/farobot_3_tasks.gd" type="Script" id=8]
+[ext_resource path="res://Scripts/Factory/Navigation/path_navigation_controller.gd" type="Script" id=9]
+[ext_resource path="res://Objects/Factory/Movables/widgetbot.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Objects/Factory/Movables/palletbot.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Objects/Factory/Movables/widget.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Objects/Factory/Movables/pallet.tscn" type="PackedScene" id=13]
 
 [node name="FARobot3Tasks" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+inbound_area_path = NodePath("VBoxContainer/GridContainer/InboundArea")
+charging_station_path = NodePath("VBoxContainer/GridContainer/ChargingStation")
+buffer_area_path = NodePath("VBoxContainer/GridContainer/BufferArea")
+pl_start_path = NodePath("VBoxContainer/GridContainer/PLStartArea")
+production_line_path = NodePath("VBoxContainer/GridContainer/PLArea")
+pl_end_path = NodePath("VBoxContainer/GridContainer/PLEndArea")
+outbound_area_path = NodePath("VBoxContainer/GridContainer/OutboundArea")
+widgets_path = NodePath("Widgets")
+widget_bot_scene = ExtResource( 10 )
+pallet_bot_scene = ExtResource( 11 )
+widget_scene = ExtResource( 12 )
+pallet_scene = ExtResource( 13 )
+bots_path = NodePath("Bots")
+pallets_path = NodePath("Pallets")
+simulation_controller_path = NodePath("VBoxContainer/SimulationController")
+widget_bot_counter_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer/WidgetBotCounter")
+pallet_bot_counter_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer2/PalletBotCounter")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
@@ -33,6 +57,7 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 910.0
 margin_bottom = 63.0
+speed_scale = 1.5
 
 [node name="MarginContainer" parent="VBoxContainer/SimulationController" index="0"]
 margin_right = 905.0
@@ -94,6 +119,7 @@ columns = 4
 [node name="PLStartArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 2 )]
 margin_right = 220.0
 margin_bottom = 201.0
+associated_waypoint_paths = [ NodePath("../Waypoint") ]
 
 [node name="AreaConnector" parent="VBoxContainer/GridContainer/PLStartArea" index="0"]
 visible = true
@@ -131,6 +157,7 @@ visible = false
 margin_right = 190.0
 
 [node name="PalletSpace" parent="VBoxContainer/GridContainer/PLStartArea/MarginContainer/VBoxContainer" index="1"]
+visible = false
 margin_top = 0.0
 margin_right = 190.0
 margin_bottom = 132.0
@@ -140,6 +167,18 @@ margin_left = 42.0
 margin_top = 13.0
 margin_right = 147.0
 margin_bottom = 118.0
+
+[node name="WidgetSpace" parent="VBoxContainer/GridContainer/PLStartArea/MarginContainer/VBoxContainer" index="2"]
+visible = true
+margin_top = 0.0
+margin_right = 190.0
+margin_bottom = 132.0
+
+[node name="WidgetGrid" parent="VBoxContainer/GridContainer/PLStartArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
+margin_left = 95.0
+margin_top = 66.0
+margin_right = 95.0
+margin_bottom = 66.0
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/PLStartArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 142.0
@@ -195,6 +234,7 @@ visible = false
 margin_right = 190.0
 
 [node name="PalletSpace" parent="VBoxContainer/GridContainer/PLArea/MarginContainer/VBoxContainer" index="1"]
+visible = false
 margin_top = 0.0
 margin_right = 190.0
 margin_bottom = 132.0
@@ -204,6 +244,18 @@ margin_left = 42.0
 margin_top = 13.0
 margin_right = 147.0
 margin_bottom = 118.0
+
+[node name="WidgetSpace" parent="VBoxContainer/GridContainer/PLArea/MarginContainer/VBoxContainer" index="2"]
+visible = true
+margin_top = 0.0
+margin_right = 190.0
+margin_bottom = 132.0
+
+[node name="WidgetGrid" parent="VBoxContainer/GridContainer/PLArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
+margin_left = 95.0
+margin_top = 66.0
+margin_right = 95.0
+margin_bottom = 66.0
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/PLArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 142.0
@@ -226,6 +278,7 @@ visible = false
 margin_left = 460.0
 margin_right = 680.0
 margin_bottom = 201.0
+associated_waypoint_paths = [ NodePath("../Waypoint2") ]
 
 [node name="AreaConnector" parent="VBoxContainer/GridContainer/PLEndArea" index="0"]
 visible = true
@@ -263,6 +316,7 @@ visible = false
 margin_right = 190.0
 
 [node name="PalletSpace" parent="VBoxContainer/GridContainer/PLEndArea/MarginContainer/VBoxContainer" index="1"]
+visible = false
 margin_top = 0.0
 margin_right = 190.0
 margin_bottom = 132.0
@@ -272,6 +326,18 @@ margin_left = 42.0
 margin_top = 13.0
 margin_right = 147.0
 margin_bottom = 118.0
+
+[node name="WidgetSpace" parent="VBoxContainer/GridContainer/PLEndArea/MarginContainer/VBoxContainer" index="2"]
+visible = true
+margin_top = 0.0
+margin_right = 190.0
+margin_bottom = 132.0
+
+[node name="WidgetGrid" parent="VBoxContainer/GridContainer/PLEndArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
+margin_left = 95.0
+margin_top = 66.0
+margin_right = 95.0
+margin_bottom = 66.0
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/PLEndArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 142.0
@@ -283,6 +349,7 @@ text = "PL End"
 margin_left = 690.0
 margin_right = 910.0
 margin_bottom = 201.0
+associated_waypoint_paths = [ NodePath("../Waypoint3") ]
 
 [node name="AreaConnector" parent="VBoxContainer/GridContainer/OutboundArea" index="0"]
 margin_right = 215.0
@@ -416,6 +483,7 @@ margin_bottom = 532.0
 margin_top = 542.0
 margin_right = 220.0
 margin_bottom = 743.0
+associated_waypoint_paths = [ NodePath("../Waypoint4") ]
 
 [node name="AreaConnector" parent="VBoxContainer/GridContainer/BufferArea" index="0"]
 margin_right = 215.0
@@ -457,6 +525,17 @@ margin_top = 13.0
 margin_right = 147.0
 margin_bottom = 118.0
 
+[node name="WidgetSpace" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer/VBoxContainer" index="2"]
+margin_top = 0.0
+margin_right = 190.0
+margin_bottom = 132.0
+
+[node name="WidgetGrid" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
+margin_left = 95.0
+margin_top = 66.0
+margin_right = 95.0
+margin_bottom = 66.0
+
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 142.0
 margin_right = 190.0
@@ -470,57 +549,71 @@ margin_right = 532.0
 [node name="ActionButton" parent="VBoxContainer/GridContainer/BufferArea/CanvasLayer/Popup/CenterContainer/VBoxContainer" index="0"]
 text = "   UNPACK!   "
 
-[node name="ChargingArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 2 )]
+[node name="ChargingStation" parent="VBoxContainer/GridContainer" instance=ExtResource( 2 )]
 margin_left = 230.0
 margin_top = 542.0
 margin_right = 450.0
 margin_bottom = 743.0
-count_label_path = NodePath("../PLStartArea/MarginContainer/VBoxContainer/CountLabel")
-pallet_space_path = NodePath("../PLStartArea/MarginContainer/VBoxContainer/PalletSpace")
-widget_space_path = NodePath("../PLStartArea/MarginContainer/VBoxContainer/WidgetSpace")
-popup_path = NodePath("../PLStartArea/CanvasLayer/Popup")
+associated_waypoint_paths = [ NodePath("../Waypoint5") ]
 
-[node name="AreaConnector" parent="VBoxContainer/GridContainer/ChargingArea" index="0"]
-margin_right = 215.0
-
-[node name="HBoxContainer" parent="VBoxContainer/GridContainer/ChargingArea/AreaConnector" index="0"]
-margin_right = 220.0
-
-[node name="ConnectorLeft" parent="VBoxContainer/GridContainer/ChargingArea/AreaConnector/HBoxContainer" index="0"]
-margin_right = 74.0
-
-[node name="Control" parent="VBoxContainer/GridContainer/ChargingArea/AreaConnector/HBoxContainer" index="1"]
-margin_left = 78.0
-margin_right = 152.0
-
-[node name="ConnectorRight" parent="VBoxContainer/GridContainer/ChargingArea/AreaConnector/HBoxContainer" index="2"]
-margin_left = 156.0
-margin_right = 230.0
-
-[node name="MarginContainer" parent="VBoxContainer/GridContainer/ChargingArea" index="1"]
+[node name="AreaConnector" parent="VBoxContainer/GridContainer/ChargingStation" index="0"]
 margin_right = 215.0
 margin_bottom = 196.0
 
-[node name="VBoxContainer" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer" index="0"]
+[node name="HBoxContainer" parent="VBoxContainer/GridContainer/ChargingStation/AreaConnector" index="0"]
+margin_right = 220.0
+margin_bottom = 171.0
+
+[node name="ConnectorLeft" parent="VBoxContainer/GridContainer/ChargingStation/AreaConnector/HBoxContainer" index="0"]
+margin_right = 74.0
+margin_bottom = 151.0
+
+[node name="Control" parent="VBoxContainer/GridContainer/ChargingStation/AreaConnector/HBoxContainer" index="1"]
+margin_left = 78.0
+margin_right = 152.0
+margin_bottom = 151.0
+
+[node name="ConnectorRight" parent="VBoxContainer/GridContainer/ChargingStation/AreaConnector/HBoxContainer" index="2"]
+margin_left = 156.0
+margin_right = 230.0
+margin_bottom = 151.0
+
+[node name="MarginContainer" parent="VBoxContainer/GridContainer/ChargingStation" index="1"]
+margin_right = 215.0
+margin_bottom = 196.0
+
+[node name="VBoxContainer" parent="VBoxContainer/GridContainer/ChargingStation/MarginContainer" index="0"]
 margin_right = 200.0
 margin_bottom = 181.0
 
-[node name="CountLabel" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="0"]
+[node name="CountLabel" parent="VBoxContainer/GridContainer/ChargingStation/MarginContainer/VBoxContainer" index="0"]
 visible = false
 margin_right = 190.0
 
-[node name="PalletSpace" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="1"]
+[node name="PalletSpace" parent="VBoxContainer/GridContainer/ChargingStation/MarginContainer/VBoxContainer" index="1"]
+visible = false
+margin_top = 0.0
+margin_right = 190.0
+margin_bottom = 105.0
+
+[node name="Control" parent="VBoxContainer/GridContainer/ChargingStation/MarginContainer/VBoxContainer/PalletSpace" index="0"]
+margin_left = 42.0
+margin_right = 147.0
+
+[node name="WidgetSpace" parent="VBoxContainer/GridContainer/ChargingStation/MarginContainer/VBoxContainer" index="2"]
+visible = true
 margin_top = 0.0
 margin_right = 190.0
 margin_bottom = 132.0
 
-[node name="Control" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer/PalletSpace" index="0"]
-margin_left = 42.0
-margin_top = 13.0
-margin_right = 147.0
-margin_bottom = 118.0
+[node name="WidgetGrid" parent="VBoxContainer/GridContainer/ChargingStation/MarginContainer/VBoxContainer/WidgetSpace" index="0"]
+margin_left = 95.0
+margin_top = 66.0
+margin_right = 95.0
+margin_bottom = 66.0
+for_widgets = false
 
-[node name="AreaLabel" parent="VBoxContainer/GridContainer/ChargingArea/MarginContainer/VBoxContainer" index="3"]
+[node name="AreaLabel" parent="VBoxContainer/GridContainer/ChargingStation/MarginContainer/VBoxContainer" index="3"]
 margin_top = 142.0
 margin_right = 190.0
 margin_bottom = 171.0
@@ -531,6 +624,7 @@ margin_left = 460.0
 margin_top = 542.0
 margin_right = 680.0
 margin_bottom = 743.0
+associated_waypoint_paths = [ NodePath("../Waypoint6") ]
 
 [node name="AreaConnector" parent="VBoxContainer/GridContainer/InboundArea" index="0"]
 margin_right = 215.0
@@ -578,14 +672,14 @@ margin_right = 190.0
 margin_bottom = 171.0
 text = "Inbound"
 
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/GridContainer"]
+[node name="SimulationController2" type="PanelContainer" parent="VBoxContainer/GridContainer"]
 margin_left = 690.0
 margin_top = 542.0
 margin_right = 910.0
 margin_bottom = 743.0
 custom_styles/panel = ExtResource( 5 )
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/GridContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/GridContainer/SimulationController2"]
 margin_left = 5.0
 margin_top = 5.0
 margin_right = 215.0
@@ -595,17 +689,17 @@ custom_constants/margin_top = 10
 custom_constants/margin_left = 10
 custom_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/GridContainer/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer"]
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 200.0
 margin_bottom = 181.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/GridContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer"]
 margin_right = 190.0
 margin_bottom = 24.0
 
-[node name="WidgetBotCountLabel" type="Label" parent="VBoxContainer/GridContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="WidgetBotCountLabel" type="Label" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer"]
 margin_top = 1.0
 margin_right = 112.0
 margin_bottom = 23.0
@@ -613,7 +707,7 @@ size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 text = "Widget Bots: "
 
-[node name="WidgetBotCountSpin" type="SpinBox" parent="VBoxContainer/GridContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="WidgetBotCounter" type="SpinBox" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer"]
 margin_left = 116.0
 margin_right = 190.0
 margin_bottom = 24.0
@@ -621,12 +715,12 @@ min_value = 1.0
 max_value = 5.0
 value = 1.0
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/GridContainer/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer"]
 margin_top = 28.0
 margin_right = 190.0
 margin_bottom = 52.0
 
-[node name="PalletBotCountLabel" type="Label" parent="VBoxContainer/GridContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+[node name="PalletBotCountLabel" type="Label" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer2"]
 margin_top = 1.0
 margin_right = 112.0
 margin_bottom = 23.0
@@ -634,7 +728,7 @@ size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 1 )
 text = "Pallet Bots: "
 
-[node name="PalletBotCountSpin" type="SpinBox" parent="VBoxContainer/GridContainer/PanelContainer/MarginContainer/VBoxContainer/HBoxContainer2"]
+[node name="PalletBotCounter" type="SpinBox" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer2"]
 margin_left = 116.0
 margin_right = 190.0
 margin_bottom = 24.0
@@ -642,19 +736,30 @@ min_value = 1.0
 max_value = 4.0
 value = 1.0
 
-[node name="StartSimulation" parent="VBoxContainer/GridContainer/PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
+[node name="StartSimulation" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 56.0
 margin_right = 190.0
 margin_bottom = 134.0
 size_flags_vertical = 3
 text = "Start Simulation"
 
-[node name="ReceiveOrder" parent="VBoxContainer/GridContainer/PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
+[node name="ReceiveOrder" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 138.0
 margin_right = 190.0
 margin_bottom = 171.0
 focus_mode = 2
 text = "Receive Order"
+
+[node name="Widgets" type="Node" parent="."]
+
+[node name="Bots" type="Node" parent="."]
+
+[node name="Pallets" type="Node" parent="."]
+
+[node name="NavigationController" type="Node" parent="."]
+script = ExtResource( 9 )
+nav_node_paths = [ NodePath("../VBoxContainer/GridContainer/Waypoint"), NodePath("../VBoxContainer/GridContainer/Waypoint2"), NodePath("../VBoxContainer/GridContainer/Waypoint3"), NodePath("../VBoxContainer/GridContainer/Waypoint4"), NodePath("../VBoxContainer/GridContainer/Waypoint5"), NodePath("../VBoxContainer/GridContainer/Waypoint6"), NodePath("../VBoxContainer/GridContainer/FloorPath"), NodePath("../VBoxContainer/GridContainer/FloorPath2"), NodePath("../VBoxContainer/GridContainer/FloorPath3"), NodePath("../VBoxContainer/GridContainer/FloorPath4") ]
+bots_node_path = NodePath("../Bots")
 
 [editable path="VBoxContainer/SimulationController"]
 [editable path="VBoxContainer/GridContainer/PLStartArea"]
@@ -662,5 +767,5 @@ text = "Receive Order"
 [editable path="VBoxContainer/GridContainer/PLEndArea"]
 [editable path="VBoxContainer/GridContainer/OutboundArea"]
 [editable path="VBoxContainer/GridContainer/BufferArea"]
-[editable path="VBoxContainer/GridContainer/ChargingArea"]
+[editable path="VBoxContainer/GridContainer/ChargingStation"]
 [editable path="VBoxContainer/GridContainer/InboundArea"]

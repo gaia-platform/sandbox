@@ -6,10 +6,10 @@ export (Array, NodePath) var nav_node_paths
 var nav_nodes: Array
 
 export (NodePath) var test_widget_path
-onready var test_widget = get_node(test_widget_path)
+# onready var test_widget = get_node(test_widget_path)
 
 export (NodePath) var test_pallet_path
-onready var test_pallet = get_node(test_pallet_path)
+# onready var test_pallet = get_node(test_pallet_path)
 
 # Bots
 export (NodePath) var bots_node_path
@@ -23,6 +23,7 @@ onready var astar = AStar2D.new()
 var _location_index: int
 var id_to_bot: Dictionary  # Map bot IDs to bot nodes
 var _screen_size = Vector2(930, 830)  # Set to default size at first
+onready var _factory = get_tree().get_current_scene()
 
 
 func _ready():
@@ -42,59 +43,59 @@ func _ready():
 	)
 
 	# Generate connections
-	while owner.number_of_waypoints == -1:  # Wait until number of waypoints is calculated
+	while _factory.number_of_waypoints == -1:  # Wait until number of waypoints is calculated
 		yield(get_tree(), "idle_frame")
 	create_connections()
 
 	# Setup Demo
-	_location_index = 3  # Test bot starts in charging area
-	for bot in bots:
-		bot.goal_location = _location_index
-		owner.charging_area.add_node(bot)
-		yield(get_tree(), "idle_frame")  # Important to add this to prevent data collision
+	# _location_index = 3  # Test bot starts in charging area
+	# for bot in bots:
+	# 	bot.goal_location = _location_index
+	# 	_factory.charging_area.add_node(bot)
+	# 	yield(get_tree(), "idle_frame")  # Important to add this to prevent data collision
 
-	owner.buffer_area.add_node(test_widget)
-	owner.inbound_area.add_pallet(test_pallet)
-	test_pallet.add_widget(owner.widgets.get_children()[1])
+	# _factory.buffer_area.add_node(test_widget)
+	# _factory.inbound_area.add_pallet(test_pallet)
+	# test_pallet.add_widget(_factory.widgets.get_children()[1])
 
 
 func _input(event):
 	if event.is_action_pressed("ui_accept"):
 		_location_index += 1
-		if _location_index == owner.number_of_waypoints:
+		if _location_index == _factory.number_of_waypoints:
 			_location_index = 0
 		_update_navigation_path(bots[0], _location_index)
-	elif event is InputEventKey and event.pressed:
-		match event.scancode:
-			KEY_1:  # Move PalletBot to Inbound Area
-				_move_location(id_to_bot.keys()[1], 4)
-				test_widget.show_processing(2)
-				test_widget.tween.connect(
-					"tween_all_completed", test_widget, "paint", [], CONNECT_ONESHOT
-				)
-			KEY_2:  # PalletBot pickup pallet
-				bots[1].pickup_payload(test_pallet)
-			KEY_3:
-				_move_location(id_to_bot.keys()[1], 5)
-			KEY_4:
-				bots[1].drop_payload(owner.packing_area)
-			KEY_5:
-				_move_location(id_to_bot.keys()[1], 3)
-			KEY_6:
-				owner.charging_area.add_node(bots[1])
-			KEY_7:
-				_move_location(id_to_bot.keys()[0], 6)
-			KEY_8:
-				bots[0].pickup_payload(test_widget)
-			KEY_9:
-				_move_location(id_to_bot.keys()[0], 2)
-			KEY_0:
-				bots[0].drop_payload(owner.painting_area)
+	# elif event is InputEventKey and event.pressed:
+	# 	match event.scancode:
+	# 		KEY_1:  # Move PalletBot to Inbound Area
+	# 			_move_location(id_to_bot.keys()[1], 4)
+	# 			test_widget.show_processing(2)
+	# 			test_widget.tween.connect(
+	# 				"tween_all_completed", test_widget, "paint", [], CONNECT_ONESHOT
+	# 			)
+	# 		KEY_2:  # PalletBot pickup pallet
+	# 			bots[1].pickup_payload(test_pallet)
+	# 		KEY_3:
+	# 			_move_location(id_to_bot.keys()[1], 5)
+	# 		KEY_4:
+	# 			bots[1].drop_payload(_factory.packing_area)
+	# 		KEY_5:
+	# 			_move_location(id_to_bot.keys()[1], 3)
+	# 		KEY_6:
+	# 			_factory.charging_area.add_node(bots[1])
+	# 		KEY_7:
+	# 			_move_location(id_to_bot.keys()[0], 6)
+	# 		KEY_8:
+	# 			bots[0].pickup_payload(test_widget)
+	# 		KEY_9:
+	# 			_move_location(id_to_bot.keys()[0], 2)
+	# 		KEY_0:
+	# 			bots[0].drop_payload(_factory.painting_area)
 
 
 ### Signal functions
 func _move_location(bot_id: String, location: int):
-	if location >= 0 && location < owner.number_of_waypoints:
+	if location >= 0 && location < _factory.number_of_waypoints:
 		_update_navigation_path(id_to_bot[bot_id], location)
 
 
@@ -112,8 +113,8 @@ func _on_FloorPath_resized():
 	# Recalculate bot positions
 	for bot in bots:
 		var bot_position_fraction = bot.position / _screen_size
-		bot.position = owner.rect_size * bot_position_fraction
-	_screen_size = owner.rect_size
+		bot.position = _factory.rect_size * bot_position_fraction
+	_screen_size = _factory.rect_size
 
 
 ### Public Functions
@@ -127,7 +128,7 @@ func create_connections():
 		astar.add_point(nav_nodes.find(nav_node), nav_node.get_location())
 
 	# Connect points. Only need to use path which will cover for waypoints
-	for path_id in range(owner.number_of_waypoints, nav_nodes.size()):
+	for path_id in range(_factory.number_of_waypoints, nav_nodes.size()):
 		for node in nav_nodes[path_id].connected_nodes:
 			astar.connect_points(path_id, nav_nodes.find(node))
 
