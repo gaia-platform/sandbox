@@ -173,11 +173,6 @@ capacity_limit = 1
 margin_right = 175.0
 text = "Labeling Area"
 
-[node name="ActionButton" parent="VBoxContainer/GridContainer/LabelingArea/CanvasLayer/Popup/CenterContainer" index="0"]
-margin_left = 411.0
-margin_right = 519.0
-text = "   LABEL!   "
-
 [node name="PaintingArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
 margin_left = 430.0
 margin_right = 635.0
@@ -219,11 +214,6 @@ capacity_limit = 1
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/PaintingArea/MarginContainer/VBoxContainer" index="3"]
 margin_right = 175.0
 text = "Painting Area"
-
-[node name="ActionButton" parent="VBoxContainer/GridContainer/PaintingArea/CanvasLayer/Popup/CenterContainer" index="0"]
-margin_left = 410.0
-margin_right = 519.0
-text = "   PAINT!   "
 
 [node name="Control" type="Control" parent="VBoxContainer/GridContainer"]
 margin_left = 645.0
@@ -447,11 +437,6 @@ margin_bottom = 121.0
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/PackingArea/MarginContainer/VBoxContainer" index="3"]
 margin_right = 175.0
 text = "Packing Area"
-
-[node name="ActionButton" parent="VBoxContainer/GridContainer/PackingArea/CanvasLayer/Popup/CenterContainer" index="0"]
-margin_left = 397.0
-margin_right = 532.0
-text = "   UNPACK!   "
 
 [node name="BufferArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 3 )]
 margin_left = 430.0

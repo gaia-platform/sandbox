@@ -20,6 +20,7 @@ export (bool) var is_inside_area = false
 ### Nodes
 onready var collision_shape = $CollisionShape2D
 onready var tween = $Tween
+onready var _factory = get_tree().get_current_scene()
 
 ### Navigation
 var movement_path = []
@@ -145,7 +146,7 @@ func drop_payload(at_location):
 		var prev_global_pos = payload_node.global_position  # Get global position
 		remove_child(payload_node)  # Remove from bot
 		payload_node.rotation = 0  # Reset rotation
-		owner.widgets.add_child(payload_node)  # Add back to widget pool
+		_factory.widgets.add_child(payload_node)  # Add back to widget pool
 		payload_node.global_position = prev_global_pos  # Set position (get's messed up after parenting)
 		if bot_type:  # Reset PalletBot
 			collision_shape.shape.extents = Vector2(24, 24)
@@ -163,7 +164,7 @@ func _animate_rotation():
 		"rotation",
 		rotation,
 		(movement_path[0] - position).angle(),
-		0.2 / owner.simulation_controller.speed_scale,
+		0.2 / _factory.simulation_controller.speed_scale,
 		Tween.TRANS_LINEAR,
 		Tween.EASE_OUT_IN
 	)
