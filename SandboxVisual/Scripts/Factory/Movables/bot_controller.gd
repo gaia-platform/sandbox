@@ -67,6 +67,20 @@ func _physics_process(delta):
 		if collision_shape.disabled and not is_inside_area:
 			collision_shape.disabled = false
 
+		# Straighten bot if inside area (probabbly means charging)
+		if is_inside_area:
+			tween.remove_all()
+		tween.interpolate_property(
+			self,
+			"rotation",
+			rotation,
+			Vector2.UP.angle(),
+			0.2 / _factory.simulation_controller.speed_scale,
+			Tween.TRANS_LINEAR,
+			Tween.EASE_OUT_IN
+		)
+		tween.start()
+
 		# Check to see if there are more movements in the queue
 		var next_movement = _movement_queue.pop_front()
 		if next_movement:

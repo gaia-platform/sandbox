@@ -610,6 +610,7 @@ margin_left = 95.0
 margin_top = 66.0
 margin_right = 95.0
 margin_bottom = 66.0
+for_widgets = false
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/ChargingStation/MarginContainer/VBoxContainer" index="3"]
 margin_top = 142.0

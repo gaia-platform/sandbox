@@ -66,9 +66,11 @@ func _generate_bots():
 	for wb in widget_bot_counter.value:
 		var wb_instance = widget_bot_scene.instance()
 		bots.add_child(wb_instance)
+		wb_instance.global_position = charging_station.associated_waypoints[0].get_location()
 		charging_station.add_node(wb_instance)
 
 	for pb in pallet_bot_counter.value:
 		var pb_instance = pallet_bot_scene.instance()
 		bots.add_child(pb_instance)
+		pb_instance.global_position = charging_station.associated_waypoints[0].get_location()
 		charging_station.add_node(pb_instance)
