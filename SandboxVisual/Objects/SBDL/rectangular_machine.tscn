@@ -1,7 +1,15 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Scripts/SBDL/Machines/rectangular_machine_controller.gd" type="Script" id=1]
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 300, 125 )
+
+[sub_resource type="RectangleShape2D" id=5]
+extents = Vector2( 250, 104 )
+
+[sub_resource type="RectangleShape2D" id=6]
+extents = Vector2( 200, 82 )
 
 [sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0, 1, 0, 0.392157 )
@@ -13,14 +21,29 @@ bg_color = Color( 1, 1, 0, 0.470588 )
 bg_color = Color( 1, 0, 0, 0.54902 )
 
 [node name="RectangularMachine" type="KinematicBody2D"]
+collision_layer = 2
+script = ExtResource( 1 )
 
 [node name="MachineCollisionShape" type="CollisionPolygon2D" parent="."]
 polygon = PoolVector2Array( -150, 62, -75, 62, -75, 31, 150, 31, 150, -62, -150, -62 )
 
-[node name="ROIArea" type="Area2D" parent="."]
+[node name="GreenROI" type="Area2D" parent="."]
+collision_layer = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ROIArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GreenROI"]
 shape = SubResource( 1 )
+
+[node name="YellowROI" type="Area2D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="YellowROI"]
+shape = SubResource( 5 )
+
+[node name="RedROI" type="Area2D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RedROI"]
+shape = SubResource( 6 )
 
 [node name="Control" type="Control" parent="."]
 anchor_left = 0.5
