@@ -98,11 +98,7 @@ func publish_to_topic(topic: String, payload):
 
 func publish_project_action(action, payload):
 	publish_to_topic(
-		(
-			"sandbox_coordinator/%s/project/%s"
-			% [read_variable("sandboxUuid"), action]
-		),
-		payload
+		"sandbox_coordinator/%s/project/%s" % [read_variable("sandboxUuid"), action], payload
 	)
 
 

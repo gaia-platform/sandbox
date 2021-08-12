@@ -33,11 +33,13 @@ widget_bot_scene = ExtResource( 10 )
 pallet_bot_scene = ExtResource( 11 )
 widget_scene = ExtResource( 12 )
 pallet_scene = ExtResource( 13 )
-bots_path = NodePath("Bots")
+navigation_controller_path = NodePath("NavigationController")
 pallets_path = NodePath("Pallets")
 simulation_controller_path = NodePath("VBoxContainer/SimulationController")
 widget_bot_counter_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer/WidgetBotCounter")
 pallet_bot_counter_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer2/PalletBotCounter")
+start_stop_button_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/StartStopSimulation")
+receive_order_button_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrder")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
@@ -711,9 +713,11 @@ text = "Widget Bots: "
 margin_left = 116.0
 margin_right = 190.0
 margin_bottom = 24.0
+hint_tooltip = "End the simulation to change"
 min_value = 1.0
 max_value = 5.0
 value = 1.0
+editable = false
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer"]
 margin_top = 28.0
@@ -732,22 +736,26 @@ text = "Pallet Bots: "
 margin_left = 116.0
 margin_right = 190.0
 margin_bottom = 24.0
+hint_tooltip = "End the simulation to change"
 min_value = 1.0
 max_value = 4.0
 value = 1.0
+editable = false
 
-[node name="StartSimulation" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
+[node name="StartStopSimulation" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 56.0
 margin_right = 190.0
-margin_bottom = 134.0
+margin_bottom = 96.0
 size_flags_vertical = 3
-text = "Start Simulation"
+text = "End Simulation"
 
 [node name="ReceiveOrder" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 138.0
+margin_top = 100.0
 margin_right = 190.0
 margin_bottom = 171.0
 focus_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.75
 text = "Receive Order"
 
 [node name="Widgets" type="Node" parent="."]
@@ -759,7 +767,9 @@ text = "Receive Order"
 [node name="NavigationController" type="Node" parent="."]
 script = ExtResource( 9 )
 nav_node_paths = [ NodePath("../VBoxContainer/GridContainer/Waypoint"), NodePath("../VBoxContainer/GridContainer/Waypoint2"), NodePath("../VBoxContainer/GridContainer/Waypoint3"), NodePath("../VBoxContainer/GridContainer/Waypoint4"), NodePath("../VBoxContainer/GridContainer/Waypoint5"), NodePath("../VBoxContainer/GridContainer/Waypoint6"), NodePath("../VBoxContainer/GridContainer/FloorPath"), NodePath("../VBoxContainer/GridContainer/FloorPath2"), NodePath("../VBoxContainer/GridContainer/FloorPath3"), NodePath("../VBoxContainer/GridContainer/FloorPath4") ]
-bots_node_path = NodePath("../Bots")
+bots_path = NodePath("../Bots")
+
+[connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/StartStopSimulation" to="." method="_on_StartSimulation_pressed"]
 
 [editable path="VBoxContainer/SimulationController"]
 [editable path="VBoxContainer/GridContainer/PLStartArea"]

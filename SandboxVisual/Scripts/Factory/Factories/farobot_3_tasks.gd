@@ -33,21 +33,28 @@ export (PackedScene) var pallet_bot_scene
 export (PackedScene) var widget_scene
 export (PackedScene) var pallet_scene
 
-# Bots
-export (NodePath) var bots_path
-onready var bots = get_node(bots_path)
+# Navigation Controller
+export (NodePath) var navigation_controller_path
+onready var navigation_controller = get_node(navigation_controller_path)
 
 #Pallets
 export (NodePath) var pallets_path
 onready var pallets = get_node(pallets_path)
 
-# Properties
+# Simulation controllers and properties
 export (NodePath) var simulation_controller_path
 export (NodePath) var widget_bot_counter_path
 export (NodePath) var pallet_bot_counter_path
+export (NodePath) var start_stop_button_path
+export (NodePath) var receive_order_button_path
 onready var simulation_controller = get_node(simulation_controller_path)
 onready var widget_bot_counter = get_node(widget_bot_counter_path)
 onready var pallet_bot_counter = get_node(pallet_bot_counter_path)
+onready var start_stop_button = get_node(start_stop_button_path)
+onready var receive_order_button = get_node(receive_order_button_path)
+
+### Signals
+signal end_simulation
 
 
 func _ready():
@@ -58,8 +65,33 @@ func _ready():
 		number_of_waypoints += area.associated_waypoints.size()
 
 	# Populate bots
-	# print(get_tree().get_current_scene().simulation_controller.speed_scale)
 	_generate_bots()
+
+
+### Signals
+# Start Stop Button
+func _on_StartSimulation_pressed():
+	var editable_state = widget_bot_counter.editable
+	widget_bot_counter.editable = not editable_state
+	pallet_bot_counter.editable = not editable_state
+
+	if editable_state:  # If it was originally enabled (meaning the simulation was not running)
+		start_stop_button.text = "End Simulation"
+		_generate_bots()
+	else:
+		start_stop_button.text = "Start Simulation"
+
+		# Remove everything from the simulation
+		emit_signal("end_simulation")
+		yield(get_tree(), "idle_frame")  # Wait for all processing to complete before deleting everything else
+		for widget in widgets.get_children():
+			widget.queue_free()
+		for pallet in pallets.get_children():
+			pallet.queue_free()
+		for bot in navigation_controller.bots.get_children():
+			bot.queue_free()
+
+		# TODO: #77 send reset signal to Gaia
 
 
 ### Private methods
@@ -67,12 +99,12 @@ func _ready():
 func _generate_bots():
 	for wb in widget_bot_counter.value:
 		var wb_instance = widget_bot_scene.instance()
-		bots.add_child(wb_instance)
+		navigation_controller.bots.add_child(wb_instance)
 		wb_instance.global_position = charging_station.associated_waypoints[0].get_location()
 		charging_station.add_node(wb_instance)
 
 	for pb in pallet_bot_counter.value:
 		var pb_instance = pallet_bot_scene.instance()
-		bots.add_child(pb_instance)
+		navigation_controller.bots.add_child(pb_instance)
 		pb_instance.global_position = charging_station.associated_waypoints[0].get_location()
 		charging_station.add_node(pb_instance)

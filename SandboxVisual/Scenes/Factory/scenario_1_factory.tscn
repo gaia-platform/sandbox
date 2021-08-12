@@ -506,7 +506,7 @@ script = ExtResource( 2 )
 nav_node_paths = [ NodePath("../VBoxContainer/GridContainer/Waypoint"), NodePath("../VBoxContainer/GridContainer/Waypoint2"), NodePath("../VBoxContainer/GridContainer/Waypoint3"), NodePath("../VBoxContainer/GridContainer/Waypoint4"), NodePath("../VBoxContainer/GridContainer/Waypoint5"), NodePath("../VBoxContainer/GridContainer/Waypoint6"), NodePath("../VBoxContainer/GridContainer/Waypoint7"), NodePath("../VBoxContainer/GridContainer/FloorPath"), NodePath("../VBoxContainer/GridContainer/FloorPath2"), NodePath("../VBoxContainer/GridContainer/FloorPath3") ]
 test_widget_path = NodePath("../Widgets/Widget")
 test_pallet_path = NodePath("../Pallets/Pallet")
-bots_node_path = NodePath("../Bots")
+bots_path = NodePath("../Bots")
 
 [node name="Bots" type="Node" parent="."]
 
