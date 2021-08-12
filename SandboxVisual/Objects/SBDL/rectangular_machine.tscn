@@ -3,14 +3,14 @@
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 300, 125 )
 
-[sub_resource type="StyleBoxFlat" id=3]
-bg_color = Color( 0, 1, 0, 0.333333 )
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0, 1, 0, 0.392157 )
 
-[sub_resource type="StyleBoxFlat" id=4]
+[sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 1, 1, 0, 0.470588 )
 
-[sub_resource type="StyleBoxFlat" id=2]
-bg_color = Color( 1, 0, 0, 0.607843 )
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 1, 0, 0, 0.54902 )
 
 [node name="RectangularMachine" type="KinematicBody2D"]
 
@@ -44,7 +44,7 @@ margin_left = -300.0
 margin_top = -125.0
 margin_right = 300.0
 margin_bottom = 125.0
-custom_styles/panel = SubResource( 3 )
+custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -58,7 +58,7 @@ margin_left = -250.0
 margin_top = -104.0
 margin_right = 250.0
 margin_bottom = 104.0
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -72,7 +72,7 @@ margin_left = -200.0
 margin_top = -82.0
 margin_right = 200.0
 margin_bottom = 82.0
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
