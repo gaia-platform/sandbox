@@ -12,9 +12,8 @@ export (NodePath) var test_pallet_path
 # onready var test_pallet = get_node(test_pallet_path)
 
 # Bots
-export (NodePath) var bots_node_path
-onready var bots_node = get_node(bots_node_path)
-onready var bots = bots_node.get_children()
+export (NodePath) var bots_path
+onready var bots = get_node(bots_path)
 
 # Create astar navigator
 onready var astar = AStar2D.new()
@@ -31,7 +30,7 @@ func _ready():
 	for nav_item_path in nav_node_paths:
 		nav_nodes.append(get_node(nav_item_path))
 	# Link bots to IDs
-	for bot in bots:
+	for bot in bots.get_children():
 		id_to_bot[bot.bot_id] = bot
 
 	# Connect to MQTT Signals
