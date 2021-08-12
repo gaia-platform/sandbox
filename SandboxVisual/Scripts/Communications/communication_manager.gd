@@ -96,6 +96,16 @@ func publish_to_topic(topic: String, payload):
 		print(payload)
 
 
+func publish_project_action(action, payload):
+	publish_to_topic(
+		(
+			"sandbox_coordinator/%s/project/%s"
+			% [read_variable("sandboxUuid"), action]
+		),
+		payload
+	)
+
+
 func cleanup():
 	if is_working:
 		JavaScript.eval("parent.mqttCleanup();")

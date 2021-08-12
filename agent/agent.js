@@ -17,6 +17,8 @@ var awsConfig = {
 var agentId = process.env.AGENT_ID;
 var sessionId = process.env.SESSION_ID;
 
+const keepAliveInterval = 15;  // in minutes
+
 //// Setup AWS and MQTT
 AWS.config.region = awsConfig.region;
 
@@ -68,6 +70,11 @@ function publishToCoordinator(action, payload) {
    mqttClient.publish("sandbox_coordinator/" + agentId + "/agent/" + action, payload);
 }
 
+function sendKeepAlive() {
+   publishToCoordinator('connected', agentId);
+   setTimeout(sendKeepAlive, keepAliveInterval * 60 * 1000);
+}
+
 //// MQTT functions
 function mqttClientConnectHandler() { // Connection handler
    console.log('connect, clientId: ' + agentId);
@@ -76,7 +83,7 @@ function mqttClientConnectHandler() { // Connection handler
    // Subscribe to our current topic.
    //
    mqttClient.subscribe(agentId + '/#');
-   publishToCoordinator('connect', agentId);
+   sendKeepAlive();
 }
 
 function mqttClientReconnectHandler() { // Reconnection handler

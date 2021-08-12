@@ -24,6 +24,9 @@ func _on_ExitButton_pressed():
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
 
+	# Does this really belong here? Doesn't seem to fire
+	CommunicationManager.publish_project_action("exit", "simulation")
+
 
 func _on_PauseButton_pressed():
 	get_tree().paused = not get_tree().paused

@@ -18,7 +18,7 @@ using namespace gaia::coordinator;
 string get_uuid();
 void publish_message(const string &topic, const string &payload);
 
-const uint64_t c_session_timeout = 12000;
+const uint64_t c_session_timeout = 1200;
 
 void manage_gaia_container(const string &action,
                            const string &session_id,
@@ -72,9 +72,9 @@ ruleset coordinator_ruleset
     }
 
     {
-        if (string(@activity.type) == "agent" && string(@activity.action) == "connect")
+        if (string(@activity.type) == "agent" && string(activity.action) == "connected")
         {
-            gaia_log::app().info("{} action: {}", activity.type, activity.action);
+            gaia_log::app().info("{} {} action: {}", activity.type, activity.payload, activity.action);
 
             if (string(activity.payload) != session.agent_id)
             {
