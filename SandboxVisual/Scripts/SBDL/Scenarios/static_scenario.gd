@@ -21,6 +21,7 @@ func _center_machine_on_screen():
 func _physics_process(_delta):
 	test_object.position = get_viewport().get_mouse_position()
 
+
 func _on_ExitButton_pressed():
 #	_project_action("exit", "simulation")
 	var change_scene_status = get_tree().change_scene(scene_picker_scene)
