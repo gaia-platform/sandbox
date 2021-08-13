@@ -136,3 +136,6 @@ func _generate_new_inbound_pallet():
 	# Move into place
 	inbound_area.pallet_node = new_pallet
 	inbound_area.add_pallet(new_pallet)
+	CommunicationManager.publish_to_topic(
+		"%s/factory_3_tasks/order_arrived" % CommunicationManager.read_variable("sandboxUuid"), true
+	)
