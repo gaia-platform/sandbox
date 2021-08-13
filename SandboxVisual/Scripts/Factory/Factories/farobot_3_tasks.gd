@@ -94,6 +94,16 @@ func _on_StartSimulation_pressed():
 		# TODO: #77 send reset signal to Gaia
 
 
+# Add new pallet to inbound
+func _on_ReceiveOrder_pressed():
+	if inbound_area.pallet_node == null:
+		receive_order_button.disabled = true
+		inbound_area.run_popup_progress_bar(2)
+		inbound_area.tween.connect(
+			"tween_all_completed", self, "_generate_new_inbound_pallet", [], CONNECT_ONESHOT
+		)
+
+
 ### Private methods
 # Populate bots
 func _generate_bots():
@@ -108,3 +118,21 @@ func _generate_bots():
 		navigation_controller.bots.add_child(pb_instance)
 		pb_instance.global_position = charging_station.associated_waypoints[0].get_location()
 		charging_station.add_node(pb_instance)
+
+
+func _generate_new_inbound_pallet():
+	# Pallet
+	var new_pallet = pallet_scene.instance()
+	pallets.add_child(new_pallet)
+	new_pallet.global_position = inbound_area.pallet_location.get_location() + Vector2(0, 200)  # Start it somewhere off screen below
+
+	# Widgets
+	for w in 4:
+		var widget_instance = widget_scene.instance()
+		widgets.add_child(widget_instance)
+		widget_instance.global_position = new_pallet.global_position
+		new_pallet.add_widget(widget_instance, false)
+
+	# Move into place
+	inbound_area.pallet_node = new_pallet
+	inbound_area.add_pallet(new_pallet)
