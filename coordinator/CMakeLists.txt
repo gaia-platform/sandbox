@@ -42,6 +42,7 @@ add_library(gaia SHARED IMPORTED GLOBAL)
 set_target_properties(gaia PROPERTIES IMPORTED_LOCATION ${GAIA_LIB})
 
 add_executable(coordinator
+  src/enums.cpp
   src/coordinator.cpp
   ${PROJECT_BINARY_DIR}/coordinator_ruleset.cpp
 )

@@ -22,8 +22,8 @@ create table if not exists session (
 );
 
 create table if not exists activity (
-      type string,
-      action string,
+      type uint8,
+      action uint8,
       payload string,
       timestamp uint64,
       references session,

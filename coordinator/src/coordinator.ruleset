@@ -10,15 +10,18 @@
 #include "gaia/logger.hpp"
 #include "gaia_coordinator.h"
 #include "json.hpp"
+#include "enums.hpp"
 
 using json = nlohmann::json;
 using namespace std;
 using namespace gaia::coordinator;
+using namespace enums;
 
 string get_uuid();
 void publish_message(const string &topic, const string &payload);
 
-const uint64_t c_session_timeout = 1200;
+//const uint64_t c_session_timeout = 1200;
+const uint64_t c_session_timeout = 120000;
 
 void manage_gaia_container(const string &action,
                            const string &session_id,
@@ -48,8 +51,9 @@ void send_message(const string &id,
 
 ruleset coordinator_ruleset
 {
+    OnInsert(activity)
     {
-        if (string(@activity.type) == "browser")
+        if (activity.type == activity_type::e_activity_type::browser)
         {
             gaia_log::app().info("{} action: {}", activity.type, activity.action);
 
@@ -71,8 +75,10 @@ ruleset coordinator_ruleset
         }
     }
 
+    OnInsert(activity)
     {
-        if (string(@activity.type) == "agent" && string(activity.action) == "connected")
+        if (activity.type == activity_type::e_activity_type::agent
+            && activity.action == action::e_action::connected)
         {
             gaia_log::app().info("{} {} action: {}", activity.type, activity.payload, activity.action);
 
@@ -93,8 +99,10 @@ ruleset coordinator_ruleset
         }
     }
 
+    OnInsert(activity)
     {
-        if (string(@activity.type) == "project" && string(activity.action) == "select")
+        if (activity.type == activity_type::e_activity_type::project
+            && activity.action == action::e_action::select)
         {
             gaia_log::app().info("{} action: {}", activity.type, activity.action);
 

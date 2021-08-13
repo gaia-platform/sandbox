@@ -29,6 +29,7 @@
 
 #include "gaia_coordinator.h"
 #include "json.hpp"
+#include "enums.hpp"
 
 using json = nlohmann::json;
 using namespace Aws::Crt;
@@ -40,6 +41,8 @@ using namespace gaia::db::triggers;
 using namespace gaia::direct_access;
 using namespace gaia::coordinator;
 using namespace gaia::rules;
+
+using namespace enums;
 
 std::shared_ptr<Aws::Crt::Mqtt::MqttConnection> connection;
 
@@ -93,15 +96,48 @@ session_t get_session(const string &id)
     return *session_iter;
 }
 
-activity_t new_activity()
+activity_t new_activity(activity_type::e_activity_type type,
+                        action::e_action action,
+                        const string &payload)
 {
     printf("New activity\n");
     activity_writer w;
-    w.type = "unknown";
-    w.action = "unknown";
-    w.payload = "empty";
+    w.type = type;
+    w.action = action;
+    w.payload = payload;
     w.timestamp = (uint64_t)time(nullptr);
     return activity_t::get(w.insert_row());
+}
+
+void log_activity(const string &id,
+                  activity_type::e_activity_type type,
+                  action::e_action action,
+                  const string &payload)
+{
+    begin_transaction();
+
+    session_t session = get_session(id);
+    activity_t activity = new_activity(type, action, payload);
+    session.activity_list().insert(activity);
+    if (type == activity_type::e_activity_type::project
+        && action == action::e_action::select)
+    {
+        project_t project;
+        if (get_project(id, payload, project))
+        {
+            project.activity_list().insert(activity);
+        }
+    }
+
+/*
+    auto w = activity.writer();
+    w.type = type;
+    w.action = action;
+    w.payload = payload;
+    w.update_row();
+*/
+
+    commit_transaction();
 }
 
 void dump_db()
@@ -114,39 +150,11 @@ void dump_db()
         printf("session:            %s\n", s.session_id());
         printf("agent:              %s\n", s.agent_id());
         printf("is_active:          %s\n", s.is_active() ? "YES" : "NO");
-        printf("last_session_timestamp: %lu\n", s.last_session_timestamp());        
-        printf("last_agent_timestamp: %lu\n", s.last_agent_timestamp());        
-        printf("created_timestamp: %lu\n", s.created_timestamp());        
+        printf("last_session_timestamp: %lu\n", s.last_session_timestamp());
+        printf("last_agent_timestamp: %lu\n", s.last_agent_timestamp());
+        printf("created_timestamp: %lu\n", s.created_timestamp());
     }
     printf("--------------------------------------------------------\n");
-    commit_transaction();
-}
-
-void log_activity(const string &id,
-                  const string &type,
-                  const string &action,
-                  const string &payload)
-{
-    begin_transaction();
-
-    session_t session = get_session(id);
-    activity_t activity = new_activity();
-    session.activity_list().insert(activity);
-    if (type == "project" && action == "select")
-    {
-        project_t project;
-        if (get_project(id, payload, project))
-        {
-            project.activity_list().insert(activity);
-        }
-    }
-
-    auto w = activity.writer();
-    w.type = type;
-    w.action = action;
-    w.payload = payload;
-    w.update_row();
-
     commit_transaction();
 }
 
@@ -188,8 +196,8 @@ void on_message(Mqtt::MqttConnection &, const String &topic, const ByteBuf &payl
         fprintf(stdout, "Unexpected topic");
         return;
     }
-    log_activity(topic_vector[1], topic_vector[2],
-                 topic_vector.size() >= 4 ? topic_vector[3] : topic_vector[1],
+    log_activity(topic_vector[1], activity_type::to_activity_type(topic_vector[2]),
+                 action::to_action(topic_vector.size() >= 4 ? topic_vector[3] : topic_vector[1]),
                  (char *)payload.buffer);
 }
 
