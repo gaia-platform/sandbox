@@ -1,5 +1,6 @@
 extends PanelContainer
 
+### Nodes
 export (NodePath) var count_label_path
 export (NodePath) var pallet_space_path
 export (NodePath) var widget_space_path
@@ -15,8 +16,13 @@ onready var widget_space = get_node(widget_space_path)
 onready var widget_grid = widget_space.get_child(0)
 onready var popup = get_node(popup_path)
 onready var popup_action_button = get_node(popup_action_button_path)
-onready var popup_action_progress = get_node(popup_action_button_path)
+onready var popup_action_progress = get_node(popup_action_progress_path)
+
+onready var tween = $Tween
+
+### Properties
 var associated_waypoints: Array
+var pallet_node = null
 
 
 func _ready():
@@ -39,14 +45,51 @@ func add_pallet(pallet):
 		pallet.move_to(location)
 
 
-func show_popup(show = true, button_text = ""):
+func show_popup_button(show = true, button_text = "", hide_delay = 0):
 	if show and not popup.visible:
 		popup.rect_global_position = rect_global_position
 		popup.rect_size = rect_size
 		popup_action_button.text = button_text
 		popup.show()
 	elif not show and popup.visible:
+		if hide_delay > 0:
+			yield(
+				get_tree().create_timer(
+					hide_delay / get_tree().get_current_scene().simulation_controller.speed_scale
+				),
+				"timeout"
+			)
 		popup.hide()
+
+
+func run_popup_progress_bar(duration: float, button_text = ""):
+	if not popup.visible:
+		# Set popup position and size
+		popup.rect_global_position = rect_global_position
+		popup.rect_size = rect_size
+		popup.show()
+
+		# Setup popup button
+		if button_text != "":
+			popup_action_button.text = button_text
+
+		# Run progress bar
+		popup_action_progress.rect_size = popup_action_button.rect_size
+		popup_action_progress.show()
+		tween.remove_all()
+		tween.interpolate_property(
+			popup_action_progress,
+			"value",
+			0,
+			100,
+			duration / get_tree().get_current_scene().simulation_controller.speed_scale,
+			Tween.TRANS_SINE,
+			Tween.EASE_IN_OUT
+		)
+		tween.connect(
+			"tween_all_completed", self, "show_popup_button", [false, "", 1], CONNECT_ONESHOT
+		)
+		tween.start()
 
 
 func _on_ActionButton_pressed():

@@ -1,4 +1,4 @@
-extends Panel
+extends Control
 
 
 # Return center point

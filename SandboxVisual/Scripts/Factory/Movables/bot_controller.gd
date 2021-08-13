@@ -73,7 +73,7 @@ func _physics_process(delta):
 			tween.interpolate_property(
 				self,
 				"rotation",
-				rotation,
+				null,
 				Vector2.UP.angle(),
 				0.2 / _factory.simulation_controller.speed_scale,
 				Tween.TRANS_SINE,
@@ -176,7 +176,7 @@ func _animate_rotation():
 	tween.interpolate_property(
 		self,
 		"rotation",
-		rotation,
+		null,
 		(movement_path[0] - position).angle(),
 		0.2 / _factory.simulation_controller.speed_scale,
 		Tween.TRANS_SINE,

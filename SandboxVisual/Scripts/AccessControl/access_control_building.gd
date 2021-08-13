@@ -71,7 +71,7 @@ func _init_setup(setup_data):
 
 
 func _on_ExitButton_pressed():
-	_project_action("exit", "simulation")
+#	_project_action("exit", "simulation")
 	var change_scene_status = get_tree().change_scene(scene_picker_scene)
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)

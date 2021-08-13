@@ -33,7 +33,7 @@ func move_to(location: Vector2, _leaving = null):
 	tween.start()
 
 
-func add_widget(widget):
+func add_widget(widget, animate = true):
 	# Find empty space
 	var first_empty = widgets.find(null)
 	if first_empty > -1:  # There's an open space on the pallet
@@ -48,16 +48,15 @@ func add_widget(widget):
 
 		# Calculate position of space
 		var space = widget_spaces[first_empty]
-		var half_size = space.rect_size.x / 2
-		var location = Vector2(
-			space.rect_global_position.x + half_size, space.rect_global_position.y + half_size
-		)
-		var local_loc = to_local(location)
+		var local_loc = to_local(space.get_location())
 
 		# Move the node to this location
 		widget.set("is_inside_area", true)
 		widget.connect("leaving_area", self, "remove_widget", [widget])
-		widget.move_to(local_loc)
+		if animate:
+			widget.move_to(local_loc)
+		else:
+			widget.position = local_loc
 
 
 func remove_widget(widget):
