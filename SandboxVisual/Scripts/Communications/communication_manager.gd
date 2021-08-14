@@ -55,7 +55,7 @@ func _physics_process(_delta):
 							emit_signal("ac_init", payload)
 						"alert":  # Error message
 							emit_signal("ac_error", payload)
-						"move_to_building":  # Moves buildlings
+						"move_to_building":  # Moves buildings
 							emit_signal("ac_move_to_building", topic_extract[-2], payload)
 						"move_to_room":  # Moves rooms
 							var data_split = payload.split(",")  # Divides into building_ID and room_ID
