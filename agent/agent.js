@@ -91,28 +91,20 @@ function mqttClientReconnectHandler() { // Reconnection handler
 }
 
 function sendFiles(projectName) {
-   switch (projectName) {
-      case 'access_control_template':
-         fs.readFile('templates/' + projectName + '/src/access_control.ruleset', 'utf8' , (err, data) => {
-            if (err) {
-              console.error(err);
-              return;
-            }
-            publishToEditor('ruleset', data);
-         });
-         fs.readFile('templates/' + projectName + '/src/access_control.ddl', 'utf8' , (err, data) => {
-            if (err) {
-              console.error(err);
-              return;
-            }
-            publishToEditor('ddl', data);
-         });
-
-      break;
-
-      default:
-         break;
-   }
+   fs.readFile('templates/' + projectName + '/src/' + projectName.replace('_template', '') + '.ddl', 'utf8' , (err, data) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      publishToEditor('ddl', data);
+   });
+   fs.readFile('templates/' + projectName + '/src/' + projectName.replace('_template', '') + '.ruleset', 'utf8' , (err, data) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+      publishToEditor('ruleset', data);
+   });
 }
 
 function mqttClientMessageHandler(topic, payload) { // Message handler

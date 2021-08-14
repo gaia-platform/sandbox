@@ -55,8 +55,7 @@
     }
     data[fileName].model = monaco.editor.createModel(payload, (fileName == 'ruleset' ? 'cpp' : 'sql'));
     data[fileName].state = null;
-    editor.setModel(data[fileName].model);
-    editor.restoreViewState(data[fileName].state);
+    setTab(fileName);
   }
 
   function load() {

@@ -20,6 +20,8 @@ func _on_FARobot3TasksButton_pressed():
 	var change_scene_status = get_tree().change_scene(farobot_3_tasks_scene)
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
+	else:
+		CommunicationManager.publish_project_action("select", "amr_swarm_template")
 
 
 func _on_AccessControlButton_pressed():

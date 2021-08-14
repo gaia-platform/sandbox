@@ -21,7 +21,7 @@ string get_uuid();
 void publish_message(const string &topic, const string &payload);
 
 //const uint64_t c_session_timeout = 1200;
-const uint64_t c_session_timeout = 120000;
+const uint64_t c_session_timeout = 1200000;
 
 void manage_gaia_container(const string &action,
                            const string &session_id,

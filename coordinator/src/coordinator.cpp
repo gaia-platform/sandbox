@@ -129,14 +129,6 @@ void log_activity(const string &id,
         }
     }
 
-/*
-    auto w = activity.writer();
-    w.type = type;
-    w.action = action;
-    w.payload = payload;
-    w.update_row();
-*/
-
     commit_transaction();
 }
 
