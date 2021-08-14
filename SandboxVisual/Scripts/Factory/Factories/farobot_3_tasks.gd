@@ -101,14 +101,14 @@ func _on_StartSimulation_pressed():
 func _on_ReceiveOrder_pressed():
 	if inbound_area.pallet_node == null:
 		receive_order_button.disabled = true
-		inbound_area.run_popup_progress_bar(2)
+		inbound_area.run_popup_progress_bar(0)
 		inbound_area.tween.connect(
 			"tween_all_completed", self, "_generate_new_inbound_pallet", [], CONNECT_ONESHOT
 		)
 
 
 func _on_BufferActionButton_pressed():
-	buffer_area.run_popup_progress_bar(1)
+	buffer_area.run_popup_progress_bar(0)
 
 	buffer_area.pallet_space.hide()
 	buffer_area.widget_space.show()
@@ -117,7 +117,10 @@ func _on_BufferActionButton_pressed():
 	while buffer_area.pallet_node.widgets.size():
 		var next_widget = buffer_area.pallet_node.widgets[0]
 		buffer_area.pallet_node.remove_widget(next_widget)
-		buffer_area.add_node(next_widget)
+		if buffer_area.pallet_node.widgets.size():
+			buffer_area.add_node(next_widget)
+		else:
+			pl_start.add_node(next_widget)
 
 	buffer_area.pallet_node.queue_free()
 	buffer_area.pallet_node = null
@@ -156,7 +159,7 @@ func _generate_new_inbound_pallet():
 		new_pallet.add_widget(widget_instance, false)
 
 	# Move into place
-	inbound_area.add_pallet(new_pallet)
+	buffer_area.add_pallet(new_pallet)
 	CommunicationManager.publish_to_topic("factory_3_tasks/order_arrived", true)
 
 
