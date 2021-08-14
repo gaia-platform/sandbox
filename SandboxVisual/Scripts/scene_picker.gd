@@ -36,5 +36,3 @@ func _on_ScenarioBasedDataLogging_pressed():
 	var change_scene_status = get_tree().change_scene(sbdl_scene)
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
-	else:
-		CommunicationManager.publish_project_action("select", "access_control_template")

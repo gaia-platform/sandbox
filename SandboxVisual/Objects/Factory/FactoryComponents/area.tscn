@@ -174,5 +174,3 @@ size_flags_vertical = 3
 custom_fonts/font = ExtResource( 1 )
 
 [node name="Tween" type="Tween" parent="."]
-
-[connection signal="pressed" from="CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_ActionButton_pressed"]

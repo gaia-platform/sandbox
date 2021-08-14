@@ -53,6 +53,11 @@ onready var pallet_bot_counter = get_node(pallet_bot_counter_path)
 onready var start_stop_button = get_node(start_stop_button_path)
 onready var receive_order_button = get_node(receive_order_button_path)
 
+### Properties
+var _widget_in_pl_start = null
+var _widget_in_production_line = null
+var _widget_in_pl_end = null
+
 ### Signals
 signal end_simulation
 
@@ -63,6 +68,11 @@ func _ready():
 	number_of_waypoints = 0
 	for area in areas:
 		number_of_waypoints += area.associated_waypoints.size()
+
+	# Connect signals
+	buffer_area.connect("new_pallet_added", self, "_show_unpack_buffer_ui")
+	pl_start.connect("new_node_added", self, "_show_start_production_ui")
+	production_line.connect("new_node_added", self, "_prep_process_widget_in_production_line")
 
 	# Populate bots
 	_generate_bots()
@@ -99,9 +109,51 @@ func _on_ReceiveOrder_pressed():
 	if inbound_area.pallet_node == null:
 		receive_order_button.disabled = true
 		inbound_area.run_popup_progress_bar(2)
+		# inbound_area.run_popup_progress_bar(0)
 		inbound_area.tween.connect(
 			"tween_all_completed", self, "_generate_new_inbound_pallet", [], CONNECT_ONESHOT
 		)
+
+
+func _on_BufferActionButton_pressed():
+	buffer_area.run_popup_progress_bar(1)
+	# buffer_area.run_popup_progress_bar(0)
+
+	buffer_area.pallet_space.hide()
+	buffer_area.widget_space.show()
+	buffer_area.pallet_node.hide()
+
+	while buffer_area.pallet_node.widgets.size():
+		var next_widget = buffer_area.pallet_node.widgets[0]
+		buffer_area.pallet_node.remove_widget(next_widget)
+		buffer_area.add_node(next_widget)
+		# if buffer_area.pallet_node.widgets.size():
+		# 	buffer_area.add_node(next_widget)
+		# else:
+		# 	pl_start.add_node(next_widget)
+
+	buffer_area.pallet_node.queue_free()
+	buffer_area.pallet_node = null
+
+	CommunicationManager.publish_to_topic("factory_3_tasks/unpacked_pallet", true)
+
+
+func _on_PLStartActionButton_pressed():
+	if not _widget_in_production_line:
+		pl_start.widget_grid.remove_node(_widget_in_pl_start)
+		production_line.add_node(_widget_in_pl_start)
+		_widget_in_pl_start = null
+		pl_start.show_popup_button(false)
+
+
+func _on_ProductionLineActionButton_pressed():
+	if not _widget_in_pl_end:
+		production_line.widget_grid.remove_node(_widget_in_production_line)
+		pl_end.add_node(_widget_in_production_line)
+		_widget_in_production_line = null
+		production_line.show_popup_button(false)
+
+		CommunicationManager.publish_to_topic("factory_3_tasks/processed_widget", true)
 
 
 ### Private methods
@@ -120,6 +172,7 @@ func _generate_bots():
 		charging_station.add_node(pb_instance)
 
 
+# Generate pallet on new order
 func _generate_new_inbound_pallet():
 	# Pallet
 	var new_pallet = pallet_scene.instance()
@@ -134,8 +187,45 @@ func _generate_new_inbound_pallet():
 		new_pallet.add_widget(widget_instance, false)
 
 	# Move into place
-	inbound_area.pallet_node = new_pallet
 	inbound_area.add_pallet(new_pallet)
-	CommunicationManager.publish_to_topic(
-		"%s/factory_3_tasks/order_arrived" % CommunicationManager.read_variable("sandboxUuid"), true
+	# buffer_area.add_pallet(new_pallet)
+	CommunicationManager.publish_to_topic("factory_3_tasks/order_arrived", true)
+
+
+# Show unpack buffer
+func _show_unpack_buffer_ui():
+	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")
+	buffer_area.show_popup_button()
+
+
+# Show start production UI
+func _show_start_production_ui(widget):
+	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")
+	pl_start.show_popup_button()
+	_widget_in_pl_start = widget
+
+
+# Process widget in production line
+func _prep_process_widget_in_production_line(widget):
+	_widget_in_production_line = widget
+	widget.tween.connect(
+		"tween_all_completed", self, "_process_widget_in_production_line", [], CONNECT_ONESHOT
 	)
+
+
+func _process_widget_in_production_line():
+	_widget_in_production_line.show_processing(2)
+	# _widget_in_production_line.show_processing(0)
+	_widget_in_production_line.tween.connect(
+		"tween_all_completed",
+		self,
+		"_show_complete_production_ui",
+		[_widget_in_production_line],
+		CONNECT_ONESHOT
+	)
+
+
+func _show_complete_production_ui(widget):
+	widget.paint()
+	widget.label()
+	production_line.show_popup_button()
