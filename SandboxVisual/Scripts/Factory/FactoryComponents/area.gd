@@ -44,6 +44,7 @@ func add_pallet(pallet):
 	if pallet_space.visible and not pallet_node:
 		pallet.move_to(pallet_location.get_location())
 		pallet_node = pallet
+		pallet.connect("leaving_area", self, "_cleanup_pallet", [], CONNECT_ONESHOT)
 		emit_signal("new_pallet_added")
 
 
@@ -85,3 +86,8 @@ func run_popup_progress_bar(duration: float):
 	)
 	tween.connect("tween_all_completed", self, "show_popup_button", [false, 1], CONNECT_ONESHOT)
 	tween.start()
+
+
+### Private methods
+func _cleanup_pallet():
+	pallet_node = null
