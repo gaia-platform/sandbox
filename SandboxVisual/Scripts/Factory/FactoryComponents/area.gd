@@ -24,6 +24,9 @@ onready var tween = $Tween
 var associated_waypoints: Array
 var pallet_node = null
 
+### Signals
+signal new_pallet_added
+
 
 func _ready():
 	for associated_waypoint_path in associated_waypoint_paths:
@@ -36,20 +39,18 @@ func add_node(node):
 
 
 func add_pallet(pallet):
-	if pallet_space.visible:
-		var half_size = pallet_location.rect_size.x / 2
-		var location = Vector2(
-			pallet_location.rect_global_position.x + half_size,
-			pallet_location.rect_global_position.y + half_size
-		)
-		pallet.move_to(location)
+	if pallet_space.visible and not pallet_node:
+		pallet.move_to(pallet_location.get_location())
+		pallet_node = pallet
+		emit_signal("new_pallet_added")
 
 
 func show_popup_button(show = true, button_text = "", hide_delay = 0):
 	if show and not popup.visible:
 		popup.rect_global_position = rect_global_position
 		popup.rect_size = rect_size
-		popup_action_button.text = button_text
+		if button_text != "":
+			popup_action_button.text = button_text
 		popup.show()
 	elif not show and popup.visible:
 		if hide_delay > 0:
@@ -62,35 +63,25 @@ func show_popup_button(show = true, button_text = "", hide_delay = 0):
 		popup.hide()
 
 
-func run_popup_progress_bar(duration: float, button_text = ""):
+func run_popup_progress_bar(duration: float):
 	if not popup.visible:
 		# Set popup position and size
 		popup.rect_global_position = rect_global_position
 		popup.rect_size = rect_size
+		popup_action_button.hide()
 		popup.show()
 
-		# Setup popup button
-		if button_text != "":
-			popup_action_button.text = button_text
-
-		# Run progress bar
-		popup_action_progress.rect_size = popup_action_button.rect_size
-		popup_action_progress.show()
-		tween.remove_all()
-		tween.interpolate_property(
-			popup_action_progress,
-			"value",
-			0,
-			100,
-			duration / get_tree().get_current_scene().simulation_controller.speed_scale,
-			Tween.TRANS_SINE,
-			Tween.EASE_IN_OUT
-		)
-		tween.connect(
-			"tween_all_completed", self, "show_popup_button", [false, "", 1], CONNECT_ONESHOT
-		)
-		tween.start()
-
-
-func _on_ActionButton_pressed():
-	popup.hide()
+	# Run progress bar
+	popup_action_progress.show()
+	tween.remove_all()
+	tween.interpolate_property(
+		popup_action_progress,
+		"value",
+		0,
+		100,
+		duration / get_tree().get_current_scene().simulation_controller.speed_scale,
+		Tween.TRANS_SINE,
+		Tween.EASE_IN_OUT
+	)
+	tween.connect("tween_all_completed", self, "show_popup_button", [false, "", 1], CONNECT_ONESHOT)
+	tween.start()

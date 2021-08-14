@@ -64,6 +64,9 @@ func _ready():
 	for area in areas:
 		number_of_waypoints += area.associated_waypoints.size()
 
+	# Connect signals
+	buffer_area.connect("new_pallet_added", self, "_show_unpack_buffer_ui")
+
 	# Populate bots
 	_generate_bots()
 
@@ -104,6 +107,24 @@ func _on_ReceiveOrder_pressed():
 		)
 
 
+func _on_BufferActionButton_pressed():
+	buffer_area.run_popup_progress_bar(1)
+
+	buffer_area.pallet_space.hide()
+	buffer_area.widget_space.show()
+	buffer_area.pallet_node.hide()
+
+	while buffer_area.pallet_node.widgets.size():
+		var next_widget = buffer_area.pallet_node.widgets[0]
+		buffer_area.pallet_node.remove_widget(next_widget)
+		buffer_area.add_node(next_widget)
+
+	buffer_area.pallet_node.queue_free()
+	buffer_area.pallet_node = null
+
+	CommunicationManager.publish_to_topic("factory_3_tasks/unpacked_pallet", true)
+
+
 ### Private methods
 # Populate bots
 func _generate_bots():
@@ -120,6 +141,7 @@ func _generate_bots():
 		charging_station.add_node(pb_instance)
 
 
+# Generate pallet on new order
 func _generate_new_inbound_pallet():
 	# Pallet
 	var new_pallet = pallet_scene.instance()
@@ -134,8 +156,11 @@ func _generate_new_inbound_pallet():
 		new_pallet.add_widget(widget_instance, false)
 
 	# Move into place
-	inbound_area.pallet_node = new_pallet
 	inbound_area.add_pallet(new_pallet)
-	CommunicationManager.publish_to_topic(
-		"%s/factory_3_tasks/order_arrived" % CommunicationManager.read_variable("sandboxUuid"), true
-	)
+	CommunicationManager.publish_to_topic("factory_3_tasks/order_arrived", true)
+
+
+# Show unpack buffer
+func _show_unpack_buffer_ui():
+	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")
+	buffer_area.show_popup_button()
