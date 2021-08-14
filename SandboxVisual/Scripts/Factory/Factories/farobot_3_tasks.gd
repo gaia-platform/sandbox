@@ -55,6 +55,8 @@ onready var receive_order_button = get_node(receive_order_button_path)
 
 ### Properties
 var _widget_in_pl_start = null
+var _widget_in_production_line = null
+var _widget_in_pl_end = null
 
 ### Signals
 signal end_simulation
@@ -70,7 +72,7 @@ func _ready():
 	# Connect signals
 	buffer_area.connect("new_pallet_added", self, "_show_unpack_buffer_ui")
 	pl_start.connect("new_node_added", self, "_show_start_production_ui")
-	production_line.connect("new_node_added", self, "_process_widget_in_production_line")
+	production_line.connect("new_node_added", self, "_prep_process_widget_in_production_line")
 
 	# Populate bots
 	_generate_bots()
@@ -134,10 +136,19 @@ func _on_BufferActionButton_pressed():
 
 
 func _on_PLStartActionButton_pressed():
-	pl_start.widget_grid.remove_node(_widget_in_pl_start)
-	production_line.add_node(_widget_in_pl_start)
-	_widget_in_pl_start = null
-	pl_start.show_popup_button(false)
+	if not _widget_in_production_line:
+		pl_start.widget_grid.remove_node(_widget_in_pl_start)
+		production_line.add_node(_widget_in_pl_start)
+		_widget_in_pl_start = null
+		pl_start.show_popup_button(false)
+
+
+func _on_ProductionLineActionButton_pressed():
+	if not _widget_in_pl_end:
+		production_line.widget_grid.remove_node(_widget_in_production_line)
+		pl_end.add_node(_widget_in_production_line)
+		_widget_in_production_line = null
+		production_line.show_popup_button(false)
 
 
 ### Private methods
@@ -189,5 +200,25 @@ func _show_start_production_ui(widget):
 
 
 # Process widget in production line
-func _process_widget_in_production_line(widget):
-	pass
+func _prep_process_widget_in_production_line(widget):
+	_widget_in_production_line = widget
+	widget.tween.connect(
+		"tween_all_completed", self, "_process_widget_in_production_line", [], CONNECT_ONESHOT
+	)
+
+
+func _process_widget_in_production_line():
+	_widget_in_production_line.show_processing(2)
+	_widget_in_production_line.tween.connect(
+		"tween_all_completed",
+		self,
+		"_show_complete_production_ui",
+		[_widget_in_production_line],
+		CONNECT_ONESHOT
+	)
+
+
+func _show_complete_production_ui(widget):
+	widget.paint()
+	widget.label()
+	production_line.show_popup_button()

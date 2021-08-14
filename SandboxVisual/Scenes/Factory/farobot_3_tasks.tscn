@@ -526,6 +526,9 @@ margin_right = 190.0
 margin_bottom = 171.0
 text = "Buffer"
 
+[node name="ActionButton" parent="VBoxContainer/GridContainer/BufferArea/CanvasLayer/Popup/MarginContainer" index="0"]
+text = "   UNPACK!   "
+
 [node name="ChargingStation" parent="VBoxContainer/GridContainer" instance=ExtResource( 2 )]
 margin_left = 230.0
 margin_top = 542.0
@@ -745,6 +748,7 @@ nav_node_paths = [ NodePath("../VBoxContainer/GridContainer/Waypoint"), NodePath
 bots_path = NodePath("../Bots")
 
 [connection signal="pressed" from="VBoxContainer/GridContainer/PLStartArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_PLStartActionButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/GridContainer/PLArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_ProductionLineActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/BufferArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_BufferActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/StartStopSimulation" to="." method="_on_StartSimulation_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrder" to="." method="_on_ReceiveOrder_pressed"]
