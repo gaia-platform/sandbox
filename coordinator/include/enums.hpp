@@ -21,7 +21,8 @@ namespace enums
         {
             undefined,
             connected,
-            select
+            select,
+            exit
         };
 
         e_action to_action(const std::string &action);

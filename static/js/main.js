@@ -42,6 +42,17 @@
     }
   };
 
+  function fileFormat(fileName) {
+    switch (fileName) {
+      case 'ruleset':   return 'cpp';
+      case 'ddl':       return 'sql';
+
+      default:
+        break;
+    }
+    return 'text';
+  }
+
   window.editorMessageHandler = function (topic, payload) {
     let topicLevels = topic.split('/');
 
@@ -50,10 +61,15 @@
     }
 
     let fileName = topicLevels[2];
-    if (fileName != 'ruleset' && fileName != 'ddl') {
+    if (fileName != 'ruleset' && fileName != 'ddl' && 'output') {
       return;
     }
-    data[fileName].model = monaco.editor.createModel(payload, (fileName == 'ruleset' ? 'cpp' : 'sql'));
+
+    if (topicLevels[3] == 'append') {
+      // append text to appropriate window
+    }
+
+    data[fileName].model = monaco.editor.createModel(payload, fileFormat(fileName));
     data[fileName].state = null;
     setTab(fileName);
   }

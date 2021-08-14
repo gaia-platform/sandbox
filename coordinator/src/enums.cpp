@@ -45,6 +45,10 @@ namespace enums
             {
                 return e_action::select;
             }
+            else if (action == "exit")
+            {
+                return e_action::exit;
+            }
 
             return e_action::undefined;
         }

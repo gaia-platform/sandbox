@@ -53,10 +53,13 @@ ruleset coordinator_ruleset
 {
     OnInsert(activity)
     {
+        gaia_log::app().info("{} action: {}", activity.type, activity.action);
+    }
+
+    OnInsert(activity)
+    {
         if (activity.type == activity_type::e_activity_type::browser)
         {
-            gaia_log::app().info("{} action: {}", activity.type, activity.action);
-
             session.last_session_timestamp = activity.timestamp;
             if (session.is_active &&
                 session.last_agent_timestamp + c_session_timeout < activity.timestamp)
@@ -80,8 +83,6 @@ ruleset coordinator_ruleset
         if (activity.type == activity_type::e_activity_type::agent
             && activity.action == action::e_action::connected)
         {
-            gaia_log::app().info("{} {} action: {}", activity.type, activity.payload, activity.action);
-
             if (string(activity.payload) != session.agent_id)
             {
                 manage_gaia_container("stop", session.session_id, activity.payload);
@@ -104,8 +105,6 @@ ruleset coordinator_ruleset
         if (activity.type == activity_type::e_activity_type::project
             && activity.action == action::e_action::select)
         {
-            gaia_log::app().info("{} action: {}", activity.type, activity.action);
-
             auto activity_row = activity_t::get(activity.gaia_id());
             if (activity_row.project())
             {
@@ -118,6 +117,17 @@ ruleset coordinator_ruleset
             {
                 send_message(session.agent_id, activity.payload, "get", "files");
             }
+        }
+    }
+
+    OnInsert(activity)
+    {
+        if (activity.type == activity_type::e_activity_type::project
+            && activity.action == action::e_action::exit)
+        {
+            send_message(session.session_id, "editor", "ddl", "no ddl file loaded");
+            send_message(session.session_id, "editor", "output", "no output yet");
+            send_message(session.session_id, "editor", "ruleset", "no ruleset file loaded");
         }
     }
 }
