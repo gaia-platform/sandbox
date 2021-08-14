@@ -133,11 +133,11 @@ func _on_BufferActionButton_pressed():
 	buffer_area.widget_space.show()
 	buffer_area.pallet_node.hide()
 
-	while buffer_area.pallet_node.widgets.size():
-		var next_widget = buffer_area.pallet_node.widgets[0]
+	for wi in 4:
+		var next_widget = buffer_area.pallet_node.widgets[wi]
 		buffer_area.pallet_node.remove_widget(next_widget)
 		# buffer_area.add_node(next_widget)
-		if buffer_area.pallet_node.widgets.size():
+		if wi < 3:
 			buffer_area.add_node(next_widget)
 		else:
 			pl_start.add_node(next_widget)
@@ -248,7 +248,10 @@ func _handle_widget_in_pl_end(widget):
 	)
 
 
+# Handle outbound packing
 func _move_to_outbound(widget):
+	if outbound_area.pallet_node.widgets:
+		pass
 	pl_end.widget_grid.remove_node(widget)
 	outbound_area.pallet_node.add_widget(widget)
 	_widget_in_pl_end = null

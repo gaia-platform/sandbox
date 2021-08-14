@@ -67,7 +67,7 @@ func add_widget(widget, animate = true):
 func remove_widget(widget):
 	var index_of_widget = widgets.find(widget)
 	if index_of_widget > -1:
-		widgets.remove(index_of_widget)
+		widgets[index_of_widget] = null
 
 		# Reparent
 		var widget_glob_pos = widget.global_position
