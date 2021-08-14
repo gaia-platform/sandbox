@@ -77,12 +77,14 @@ func _ready():
 
 	# Create outbound pallet
 	var outbound_pallet = pallet_scene.instance()
-	outbound_pallet.global_position = (
-		outbound_area.pallet_location.get_location()
-		+ Vector2(0, -200)
-	)
+	outbound_pallet.global_position = outbound_area.pallet_location.get_location()
 	pallets.add_child(outbound_pallet)
 	outbound_area.add_pallet(outbound_pallet)
+	for w in 3:
+		var outbound_wiget = widget_scene.instance()
+		outbound_wiget.global_position = outbound_pallet.global_position
+		widgets.add_child(outbound_wiget)
+		outbound_pallet.add_widget(outbound_wiget)
 
 	# Populate bots
 	_generate_bots()
@@ -118,16 +120,16 @@ func _on_StartSimulation_pressed():
 func _on_ReceiveOrder_pressed():
 	if inbound_area.pallet_node == null:
 		receive_order_button.disabled = true
-		# inbound_area.run_popup_progress_bar(2)
-		inbound_area.run_popup_progress_bar(0)
+		inbound_area.run_popup_progress_bar(2)
+		# inbound_area.run_popup_progress_bar(0)
 		inbound_area.tween.connect(
 			"tween_all_completed", self, "_generate_new_inbound_pallet", [], CONNECT_ONESHOT
 		)
 
 
 func _on_BufferActionButton_pressed():
-	# buffer_area.run_popup_progress_bar(1)
-	buffer_area.run_popup_progress_bar(0)
+	buffer_area.run_popup_progress_bar(1)
+	# buffer_area.run_popup_progress_bar(0)
 
 	buffer_area.pallet_space.hide()
 	buffer_area.widget_space.show()
@@ -163,6 +165,11 @@ func _on_ProductionLineActionButton_pressed():
 		_widget_in_pl_end = _widget_in_production_line
 		_widget_in_production_line = null
 		production_line.show_popup_button(false)
+
+
+func _on_OutboundActionButton_pressed():
+	outbound_area.run_popup_progress_bar(1)
+	outbound_area.tween.connect("tween_all_completed", self, "_do_shipment", [], CONNECT_ONESHOT)
 
 
 ### Private methods
@@ -205,6 +212,7 @@ func _generate_new_inbound_pallet():
 func _show_unpack_buffer_ui():
 	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")
 	buffer_area.show_popup_button()
+	receive_order_button.disabled = false
 
 
 # Show start production UI
@@ -223,8 +231,8 @@ func _prep_process_widget_in_production_line(widget):
 
 
 func _process_widget_in_production_line():
-	# _widget_in_production_line.show_processing(2)
-	_widget_in_production_line.show_processing(0)
+	_widget_in_production_line.show_processing(2)
+	# _widget_in_production_line.show_processing(0)
 	_widget_in_production_line.tween.connect(
 		"tween_all_completed",
 		self,
@@ -250,8 +258,28 @@ func _handle_widget_in_pl_end(widget):
 
 # Handle outbound packing
 func _move_to_outbound(widget):
-	if outbound_area.pallet_node.widgets:
-		pass
-	pl_end.widget_grid.remove_node(widget)
-	outbound_area.pallet_node.add_widget(widget)
-	_widget_in_pl_end = null
+	var next_open_space = outbound_area.pallet_node.widgets.find(null)
+	if next_open_space != -1:
+		pl_end.widget_grid.remove_node(widget)
+		outbound_area.pallet_node.add_widget(widget)
+		_widget_in_pl_end = null
+
+		# If this was the last space, show shipping button
+		if next_open_space == 3:
+			outbound_area.show_popup_button()
+
+
+func _do_shipment():
+	outbound_area.pallet_node.move_to(outbound_area.pallet_node.position + Vector2(200, 0), true)
+	outbound_area.pallet_node.tween.connect(
+		"tween_all_completed", self, "_complete_shipment", [], CONNECT_ONESHOT
+	)
+
+
+func _complete_shipment():
+	outbound_area.pallet_node.queue_free()
+	outbound_area.pallet_node = null
+	var outbound_pallet = pallet_scene.instance()
+	outbound_pallet.global_position = outbound_area.pallet_location.get_location() + Vector2(200, 0)
+	pallets.add_child(outbound_pallet)
+	outbound_area.add_pallet(outbound_pallet)
