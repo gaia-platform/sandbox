@@ -84,12 +84,16 @@ func subscribe_to_topic(topic: String):
 		JavaScript.eval("parent.subscribeToTopic('%s');" % topic)
 
 
-func publish_to_topic(topic: String, payload):
+func publish_to_topic(topic: String, payload, prepend_uuid = true):
 	if is_working:
 		JavaScript.eval(
 			(
-				"parent.publishData('%s', '%s');"
-				% [topic, payload if typeof(payload) == TYPE_STRING else String(payload)]
+				"parent.publishData('%s%s', '%s');"
+				% [
+					read_variable("sandboxUuid") + "/" if prepend_uuid else "",
+					topic,
+					payload if typeof(payload) == TYPE_STRING else String(payload)
+				]
 			)
 		)
 	else:
@@ -98,7 +102,7 @@ func publish_to_topic(topic: String, payload):
 
 func publish_project_action(action, payload):
 	publish_to_topic(
-		"sandbox_coordinator/%s/project/%s" % [read_variable("sandboxUuid"), action], payload
+		"sandbox_coordinator/%s/project/%s" % [read_variable("sandboxUuid"), action], payload, false
 	)
 
 

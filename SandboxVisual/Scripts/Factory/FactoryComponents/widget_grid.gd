@@ -67,8 +67,6 @@ func _recalculate_node_locations():
 		var space = node_to_spaces[node]
 		var half_size = space.rect_size.x / 2
 
-		if not node.is_inside_area:
-			node.is_inside_area = true
 		node.move_to(
 			Vector2(
 				space.rect_global_position.x + half_size, space.rect_global_position.y + half_size

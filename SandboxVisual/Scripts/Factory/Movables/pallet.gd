@@ -17,8 +17,10 @@ var widgets = [null, null, null, null]
 # Get factory
 onready var _factory = get_tree().get_current_scene()
 
+signal leaving_area
 
-func move_to(location: Vector2, _leaving = null):
+
+func move_to(location: Vector2, leaving = false):
 	tween.remove_all()  # Reset all
 	# Linearly move to location in 0.5 seconds
 	tween.interpolate_property(
@@ -31,6 +33,9 @@ func move_to(location: Vector2, _leaving = null):
 		Tween.EASE_IN_OUT
 	)
 	tween.start()
+
+	if leaving:
+		emit_signal("leaving_area")
 
 
 func add_widget(widget, animate = true):
@@ -66,7 +71,7 @@ func remove_widget(widget):
 
 		# Reparent
 		var widget_glob_pos = widget.global_position
-		remove_child(widget_glob_pos)
+		remove_child(widget)
 		_factory.widgets.add_child(widget)
 		widget.global_position = widget_glob_pos
 
