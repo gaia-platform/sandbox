@@ -73,6 +73,16 @@ func _ready():
 	buffer_area.connect("new_pallet_added", self, "_show_unpack_buffer_ui")
 	pl_start.connect("new_node_added", self, "_show_start_production_ui")
 	production_line.connect("new_node_added", self, "_prep_process_widget_in_production_line")
+	pl_end.connect("new_node_added", self, "_handle_widget_in_pl_end")
+
+	# Create outbound pallet
+	var outbound_pallet = pallet_scene.instance()
+	outbound_pallet.global_position = (
+		outbound_area.pallet_location.get_location()
+		+ Vector2(0, -200)
+	)
+	pallets.add_child(outbound_pallet)
+	outbound_area.add_pallet(outbound_pallet)
 
 	# Populate bots
 	_generate_bots()
@@ -108,16 +118,16 @@ func _on_StartSimulation_pressed():
 func _on_ReceiveOrder_pressed():
 	if inbound_area.pallet_node == null:
 		receive_order_button.disabled = true
-		inbound_area.run_popup_progress_bar(2)
-		# inbound_area.run_popup_progress_bar(0)
+		# inbound_area.run_popup_progress_bar(2)
+		inbound_area.run_popup_progress_bar(0)
 		inbound_area.tween.connect(
 			"tween_all_completed", self, "_generate_new_inbound_pallet", [], CONNECT_ONESHOT
 		)
 
 
 func _on_BufferActionButton_pressed():
-	buffer_area.run_popup_progress_bar(1)
-	# buffer_area.run_popup_progress_bar(0)
+	# buffer_area.run_popup_progress_bar(1)
+	buffer_area.run_popup_progress_bar(0)
 
 	buffer_area.pallet_space.hide()
 	buffer_area.widget_space.show()
@@ -126,11 +136,11 @@ func _on_BufferActionButton_pressed():
 	while buffer_area.pallet_node.widgets.size():
 		var next_widget = buffer_area.pallet_node.widgets[0]
 		buffer_area.pallet_node.remove_widget(next_widget)
-		buffer_area.add_node(next_widget)
-		# if buffer_area.pallet_node.widgets.size():
-		# 	buffer_area.add_node(next_widget)
-		# else:
-		# 	pl_start.add_node(next_widget)
+		# buffer_area.add_node(next_widget)
+		if buffer_area.pallet_node.widgets.size():
+			buffer_area.add_node(next_widget)
+		else:
+			pl_start.add_node(next_widget)
 
 	buffer_area.pallet_node.queue_free()
 	buffer_area.pallet_node = null
@@ -150,10 +160,9 @@ func _on_ProductionLineActionButton_pressed():
 	if not _widget_in_pl_end:
 		production_line.widget_grid.remove_node(_widget_in_production_line)
 		pl_end.add_node(_widget_in_production_line)
+		_widget_in_pl_end = _widget_in_production_line
 		_widget_in_production_line = null
 		production_line.show_popup_button(false)
-
-		CommunicationManager.publish_to_topic("factory_3_tasks/processed_widget", true)
 
 
 ### Private methods
@@ -187,8 +196,8 @@ func _generate_new_inbound_pallet():
 		new_pallet.add_widget(widget_instance, false)
 
 	# Move into place
-	inbound_area.add_pallet(new_pallet)
-	# buffer_area.add_pallet(new_pallet)
+	# inbound_area.add_pallet(new_pallet)
+	buffer_area.add_pallet(new_pallet)
 	CommunicationManager.publish_to_topic("factory_3_tasks/order_arrived", true)
 
 
@@ -214,8 +223,8 @@ func _prep_process_widget_in_production_line(widget):
 
 
 func _process_widget_in_production_line():
-	_widget_in_production_line.show_processing(2)
-	# _widget_in_production_line.show_processing(0)
+	# _widget_in_production_line.show_processing(2)
+	_widget_in_production_line.show_processing(0)
 	_widget_in_production_line.tween.connect(
 		"tween_all_completed",
 		self,
@@ -229,3 +238,17 @@ func _show_complete_production_ui(widget):
 	widget.paint()
 	widget.label()
 	production_line.show_popup_button()
+
+
+# Handle when widget enters PL End
+func _handle_widget_in_pl_end(widget):
+	CommunicationManager.publish_to_topic("factory_3_tasks/processed_widget", true)
+	widget.tween.connect(
+		"tween_all_completed", self, "_move_to_outbound", [widget], CONNECT_ONESHOT
+	)
+
+
+func _move_to_outbound(widget):
+	pl_end.widget_grid.remove_node(widget)
+	outbound_area.pallet_node.add_widget(widget)
+	_widget_in_pl_end = null
