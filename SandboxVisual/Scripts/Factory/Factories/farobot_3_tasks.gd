@@ -57,6 +57,7 @@ export (PackedScene) var pallet_scene
 var _widget_in_pl_start = null
 var _widget_in_production_line = null
 var _widget_in_pl_end = null
+var _screen_size = Vector2(930, 830)  # Set to default size at first
 
 ### Signals
 signal end_simulation
@@ -93,7 +94,29 @@ func _ready():
 	_generate_bots()
 
 
-### Signals and Factory flow
+### Signals
+# Use screen location proportions to approximate screen size adjusted position for nodes
+func _on_FloorPath_resized():
+	# Recalculate bot positions
+	for bot in navigation_controller.bots.get_children():
+		var bot_position_fraction = bot.position / _screen_size
+		bot.position = rect_size * bot_position_fraction
+
+	# Recalculate pallet positions
+	for pallet in pallets.get_children():
+		var pallet_position_fraction = pallet.position / _screen_size
+		pallet.position = rect_size * pallet_position_fraction
+
+	# Recalculate widget positions
+	for widget in widgets.get_children():
+		var widget_position_fraction = widget.position / _screen_size
+		widget.position = rect_size * widget_position_fraction
+
+	# Update screen size variable to new size
+	_screen_size = rect_size
+
+
+### Factory flow
 ## Start-Stop factory
 # Button pressed to stop factory or start and spawn new bots
 func _on_StartSimulation_pressed():

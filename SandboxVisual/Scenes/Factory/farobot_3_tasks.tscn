@@ -753,6 +753,8 @@ bots_path = NodePath("../Bots")
 [connection signal="pressed" from="VBoxContainer/GridContainer/PLStartArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_PLStartActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/PLArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_ProductionLineActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/OutboundArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_OutboundActionButton_pressed"]
+[connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="." method="_on_FloorPath_resized"]
+[connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="NavigationController" method="_on_FloorPath_resized"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/BufferArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_BufferActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/StartStopSimulation" to="." method="_on_StartSimulation_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrder" to="." method="_on_ReceiveOrder_pressed"]
