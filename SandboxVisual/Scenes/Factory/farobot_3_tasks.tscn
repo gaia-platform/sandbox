@@ -29,10 +29,6 @@ production_line_path = NodePath("VBoxContainer/GridContainer/PLArea")
 pl_end_path = NodePath("VBoxContainer/GridContainer/PLEndArea")
 outbound_area_path = NodePath("VBoxContainer/GridContainer/OutboundArea")
 widgets_path = NodePath("Widgets")
-widget_bot_scene = ExtResource( 10 )
-pallet_bot_scene = ExtResource( 11 )
-widget_scene = ExtResource( 12 )
-pallet_scene = ExtResource( 13 )
 navigation_controller_path = NodePath("NavigationController")
 pallets_path = NodePath("Pallets")
 simulation_controller_path = NodePath("VBoxContainer/SimulationController")
@@ -40,6 +36,10 @@ widget_bot_counter_path = NodePath("VBoxContainer/GridContainer/SimulationContro
 pallet_bot_counter_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer2/PalletBotCounter")
 start_stop_button_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/StartStopSimulation")
 receive_order_button_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrder")
+widget_bot_scene = ExtResource( 10 )
+pallet_bot_scene = ExtResource( 11 )
+widget_scene = ExtResource( 12 )
+pallet_scene = ExtResource( 13 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0
@@ -386,6 +386,9 @@ margin_top = 142.0
 margin_right = 190.0
 margin_bottom = 171.0
 text = "Outbound"
+
+[node name="ActionButton" parent="VBoxContainer/GridContainer/OutboundArea/CanvasLayer/Popup/MarginContainer" index="0"]
+text = "   SHIP!   "
 
 [node name="Waypoint" parent="VBoxContainer/GridContainer" instance=ExtResource( 6 )]
 margin_left = 85.0
@@ -749,6 +752,7 @@ bots_path = NodePath("../Bots")
 
 [connection signal="pressed" from="VBoxContainer/GridContainer/PLStartArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_PLStartActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/PLArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_ProductionLineActionButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/GridContainer/OutboundArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_OutboundActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/BufferArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_BufferActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/StartStopSimulation" to="." method="_on_StartSimulation_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrder" to="." method="_on_ReceiveOrder_pressed"]

@@ -41,7 +41,7 @@ func move_to(location: Vector2, leaving = false):
 func add_widget(widget, animate = true):
 	# Find empty space
 	var first_empty = widgets.find(null)
-	if first_empty > -1:  # There's an open space on the pallet
+	if first_empty != -1:  # There's an open space on the pallet
 		# Add to next open location
 		widgets[first_empty] = widget
 
@@ -66,8 +66,8 @@ func add_widget(widget, animate = true):
 
 func remove_widget(widget):
 	var index_of_widget = widgets.find(widget)
-	if index_of_widget > -1:
-		widgets.remove(index_of_widget)
+	if index_of_widget != -1:
+		widgets[index_of_widget] = null
 
 		# Reparent
 		var widget_glob_pos = widget.global_position
