@@ -29,10 +29,6 @@ production_line_path = NodePath("VBoxContainer/GridContainer/PLArea")
 pl_end_path = NodePath("VBoxContainer/GridContainer/PLEndArea")
 outbound_area_path = NodePath("VBoxContainer/GridContainer/OutboundArea")
 widgets_path = NodePath("Widgets")
-widget_bot_scene = ExtResource( 10 )
-pallet_bot_scene = ExtResource( 11 )
-widget_scene = ExtResource( 12 )
-pallet_scene = ExtResource( 13 )
 navigation_controller_path = NodePath("NavigationController")
 pallets_path = NodePath("Pallets")
 simulation_controller_path = NodePath("VBoxContainer/SimulationController")
@@ -40,6 +36,10 @@ widget_bot_counter_path = NodePath("VBoxContainer/GridContainer/SimulationContro
 pallet_bot_counter_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer2/PalletBotCounter")
 start_stop_button_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/StartStopSimulation")
 receive_order_button_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrder")
+widget_bot_scene = ExtResource( 10 )
+pallet_bot_scene = ExtResource( 11 )
+widget_scene = ExtResource( 12 )
+pallet_scene = ExtResource( 13 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchor_right = 1.0

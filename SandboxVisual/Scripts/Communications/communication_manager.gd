@@ -97,7 +97,7 @@ func publish_to_topic(topic: String, payload, prepend_uuid = true):
 			)
 		)
 	else:
-		print(payload)
+		print("%s: %s" % [topic, payload])
 
 
 func publish_project_action(action, payload):
