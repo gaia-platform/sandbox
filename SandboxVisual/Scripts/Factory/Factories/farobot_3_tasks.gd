@@ -53,6 +53,9 @@ onready var pallet_bot_counter = get_node(pallet_bot_counter_path)
 onready var start_stop_button = get_node(start_stop_button_path)
 onready var receive_order_button = get_node(receive_order_button_path)
 
+### Properties
+var _widget_in_pl_start = null
+
 ### Signals
 signal end_simulation
 
@@ -66,6 +69,8 @@ func _ready():
 
 	# Connect signals
 	buffer_area.connect("new_pallet_added", self, "_show_unpack_buffer_ui")
+	pl_start.connect("new_node_added", self, "_show_start_production_ui")
+	production_line.connect("new_node_added", self, "_process_widget_in_production_line")
 
 	# Populate bots
 	_generate_bots()
@@ -128,6 +133,13 @@ func _on_BufferActionButton_pressed():
 	CommunicationManager.publish_to_topic("factory_3_tasks/unpacked_pallet", true)
 
 
+func _on_PLStartActionButton_pressed():
+	pl_start.widget_grid.remove_node(_widget_in_pl_start)
+	production_line.add_node(_widget_in_pl_start)
+	_widget_in_pl_start = null
+	pl_start.show_popup_button(false)
+
+
 ### Private methods
 # Populate bots
 func _generate_bots():
@@ -167,3 +179,15 @@ func _generate_new_inbound_pallet():
 func _show_unpack_buffer_ui():
 	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")
 	buffer_area.show_popup_button()
+
+
+# Show start production UI
+func _show_start_production_ui(widget):
+	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")
+	pl_start.show_popup_button()
+	_widget_in_pl_start = widget
+
+
+# Process widget in production line
+func _process_widget_in_production_line(widget):
+	pass

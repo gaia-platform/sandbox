@@ -181,12 +181,16 @@ margin_left = 95.0
 margin_top = 66.0
 margin_right = 95.0
 margin_bottom = 66.0
+capacity_limit = 1
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/PLStartArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 142.0
 margin_right = 190.0
 margin_bottom = 171.0
 text = "PL Start"
+
+[node name="ActionButton" parent="VBoxContainer/GridContainer/PLStartArea/CanvasLayer/Popup/MarginContainer" index="0"]
+text = "   PROCESS!   "
 
 [node name="PLArea" parent="VBoxContainer/GridContainer" instance=ExtResource( 2 )]
 margin_left = 230.0
@@ -251,6 +255,7 @@ margin_left = 95.0
 margin_top = 66.0
 margin_right = 95.0
 margin_bottom = 66.0
+capacity_limit = 1
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/PLArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 142.0
@@ -322,6 +327,7 @@ margin_left = 95.0
 margin_top = 66.0
 margin_right = 95.0
 margin_bottom = 66.0
+capacity_limit = 1
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/PLEndArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 142.0
@@ -512,6 +518,7 @@ margin_left = 95.0
 margin_top = 66.0
 margin_right = 95.0
 margin_bottom = 66.0
+capacity_limit = 4
 
 [node name="AreaLabel" parent="VBoxContainer/GridContainer/BufferArea/MarginContainer/VBoxContainer" index="3"]
 margin_top = 142.0
@@ -737,6 +744,7 @@ script = ExtResource( 9 )
 nav_node_paths = [ NodePath("../VBoxContainer/GridContainer/Waypoint"), NodePath("../VBoxContainer/GridContainer/Waypoint2"), NodePath("../VBoxContainer/GridContainer/Waypoint3"), NodePath("../VBoxContainer/GridContainer/Waypoint4"), NodePath("../VBoxContainer/GridContainer/Waypoint5"), NodePath("../VBoxContainer/GridContainer/Waypoint6"), NodePath("../VBoxContainer/GridContainer/FloorPath"), NodePath("../VBoxContainer/GridContainer/FloorPath2"), NodePath("../VBoxContainer/GridContainer/FloorPath3"), NodePath("../VBoxContainer/GridContainer/FloorPath4") ]
 bots_path = NodePath("../Bots")
 
+[connection signal="pressed" from="VBoxContainer/GridContainer/PLStartArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_PLStartActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/BufferArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_BufferActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/StartStopSimulation" to="." method="_on_StartSimulation_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrder" to="." method="_on_ReceiveOrder_pressed"]

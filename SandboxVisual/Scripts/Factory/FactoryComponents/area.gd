@@ -26,6 +26,7 @@ var pallet_node = null
 
 ### Signals
 signal new_pallet_added
+signal new_node_added(node)
 
 
 func _ready():
@@ -36,6 +37,7 @@ func _ready():
 func add_node(node):
 	if widget_space.visible:
 		widget_grid.add_node(node)
+		emit_signal("new_node_added", node)
 
 
 func add_pallet(pallet):
@@ -45,12 +47,10 @@ func add_pallet(pallet):
 		emit_signal("new_pallet_added")
 
 
-func show_popup_button(show = true, button_text = "", hide_delay = 0):
+func show_popup_button(show = true, hide_delay = 0):
 	if show and not popup.visible:
 		popup.rect_global_position = rect_global_position
 		popup.rect_size = rect_size
-		if button_text != "":
-			popup_action_button.text = button_text
 		popup.show()
 	elif not show and popup.visible:
 		if hide_delay > 0:
@@ -83,5 +83,5 @@ func run_popup_progress_bar(duration: float):
 		Tween.TRANS_SINE,
 		Tween.EASE_IN_OUT
 	)
-	tween.connect("tween_all_completed", self, "show_popup_button", [false, "", 1], CONNECT_ONESHOT)
+	tween.connect("tween_all_completed", self, "show_popup_button", [false, 1], CONNECT_ONESHOT)
 	tween.start()
