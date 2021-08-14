@@ -166,8 +166,8 @@ func _generate_new_inbound_pallet():
 		new_pallet.add_widget(widget_instance, false)
 
 	# Move into place
-	# inbound_area.add_pallet(new_pallet)
-	buffer_area.add_pallet(new_pallet)
+	inbound_area.add_pallet(new_pallet)
+	# buffer_area.add_pallet(new_pallet)
 
 	# Tell Gaia a new order has arrived
 	CommunicationManager.publish_to_topic("factory_3_tasks/order_arrived", true)
@@ -197,13 +197,13 @@ func _on_BufferActionButton_pressed():
 	for wi in 4:
 		var next_widget = buffer_area.pallet_node.widgets[wi]  # Get reference to widget
 		buffer_area.pallet_node.remove_widget(next_widget)  # Remove it from the pallet
-		# buffer_area.add_node(next_widget) # Add it to the buffer area
+		buffer_area.add_node(next_widget)  # Add it to the buffer area
 
 		# For testing, add one to PL Start to start production line
-		if wi < 3:
-			buffer_area.add_node(next_widget)
-		else:
-			pl_start.add_node(next_widget)
+		# if wi < 3:
+		# 	buffer_area.add_node(next_widget)
+		# else:
+		# 	pl_start.add_node(next_widget)
 
 		# Make sure to check if this is the last widget
 		next_widget.connect(
@@ -295,9 +295,9 @@ func _handle_widget_in_pl_end(widget):
 	CommunicationManager.publish_to_topic("factory_3_tasks/processed_widget", true)
 
 	# Test method to automatically move widget to outbound
-	widget.tween.connect(
-		"tween_all_completed", self, "_move_to_outbound", [widget], CONNECT_ONESHOT
-	)
+	# widget.tween.connect(
+	# 	"tween_all_completed", self, "_move_to_outbound", [widget], CONNECT_ONESHOT
+	# )
 
 
 # Test method to handle moving to outbound
