@@ -163,6 +163,8 @@ func _generate_bots():
 		id_number += 1
 		# Set goal location to be the charging station (where they spawn)
 		wb_instance.goal_location = 4
+		# Disable success reporting
+		wb_instance.report_success = false
 		# Register in navigation controller
 		navigation_controller.id_to_bot[wb_instance.bot_id] = wb_instance
 
@@ -178,6 +180,8 @@ func _generate_bots():
 		id_number += 1
 
 		pb_instance.goal_location = 4
+
+		pb_instance.report_success = false
 
 		navigation_controller.id_to_bot[pb_instance.bot_id] = pb_instance
 
@@ -218,7 +222,7 @@ func _generate_new_inbound_pallet():
 	# buffer_area.add_pallet(new_pallet)
 
 	# Tell Gaia a new order has arrived
-	CommunicationManager.publish_to_topic("order_arrived", true)
+	CommunicationManager.publish_to_app("factory/order_arrived", true)
 
 
 ## Handle unpacking pallets in Buffer
@@ -263,7 +267,7 @@ func _on_BufferActionButton_pressed():
 	buffer_area.pallet_node = null
 
 	# Tell Gaia there are new unpacked widgets
-	CommunicationManager.publish_to_topic("unpacked_pallet", true)
+	CommunicationManager.publish_to_app("factory/unpacked_pallet", true)
 
 
 # For each widget that leaves the area, check if the buffer is empty and is ready for next pallet
@@ -338,7 +342,7 @@ func _on_ProductionLineActionButton_pressed():
 # Handle when widget enters PL End
 func _handle_widget_in_pl_end(_widget):
 	# Tell Gaia a widget has arrived
-	CommunicationManager.publish_to_topic("processed_widget", true)
+	CommunicationManager.publish_to_app("factory/processed_widget", true)
 
 	# Test method to automatically move widget to outbound
 	# widget.tween.connect(

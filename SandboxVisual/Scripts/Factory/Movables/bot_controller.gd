@@ -13,9 +13,8 @@ export (int) var charge_time
 export (int) var goal_location
 export (float) var cur_speed_squared
 export (float) var charge_level = 100
-export (bool) var is_charging = false
-export (bool) var is_broken = false
-export (bool) var is_inside_area = false
+export (bool) var is_charging: bool
+export (bool) var is_inside_area: bool
 
 ### Nodes
 onready var collision_shape = $CollisionShape2D
@@ -29,6 +28,8 @@ var _movement_queue = []
 ### Properties
 var payload_node = null
 var is_pallet: bool
+var bot_collision: KinematicCollision2D
+var report_success = true
 
 signal leaving_area
 
@@ -42,7 +43,7 @@ func _ready():
 
 
 func _physics_process(delta):
-	if not is_broken and movement_path.size():  # There is still a goal coordinate to reach
+	if movement_path.size():  # There is still a goal coordinate to reach
 		var cur_dir = (movement_path[0] - position).normalized()  # Vector pointing towards next goal point
 		var movement_step = cur_dir * max_speed * delta  # Movement increment
 		var post_movement_dir = movement_path[0] - (position + movement_step)  # Vector pointing towards goal point, but after step
@@ -58,14 +59,16 @@ func _physics_process(delta):
 			cur_speed_squared = movement_step.length_squared()  # Update speed
 
 			# Move and check for collisions
-			var bot_collision = move_and_collide(movement_step)
-			if bot_collision != null:
-				is_broken = true
-	elif not is_broken and not movement_path.size():  # Stop at final position
+			bot_collision = move_and_collide(movement_step)
+	elif not movement_path.size():  # Stop at final position
 		# Stop if needed
 		if cur_speed_squared != 0:
 			cur_speed_squared = 0
 			var _stop_movement = move_and_collide(Vector2.ZERO)
+			if report_success:
+				CommunicationManager.publish_to_app("factory/%s/did_command" % bot_id, true)
+			else:
+				report_success = true
 
 		if collision_shape.disabled and not is_inside_area:
 			collision_shape.disabled = false
@@ -89,10 +92,14 @@ func _physics_process(delta):
 		if next_movement:
 			movement_path = next_movement
 			_animate_rotation()
-	elif is_broken:
+	elif bot_collision:
 		if modulate != Color.red:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
 			modulate = Color.red  # Modulate to red
+			if report_success:
+				CommunicationManager.publish_to_app("factory/%s/did_command" % bot_id, false)
+			else:
+				report_success = true
 
 
 ## Signal methods
@@ -114,12 +121,10 @@ func publish_status_item(item: String):
 			payload = charge_level
 		"speed_squared":
 			payload = cur_speed_squared
-		"is_broken":
-			payload = is_broken
 		_:
 			print("Unknown status item request")
 
-	CommunicationManager.publish_to_app("factory/%s/%s" % [bot_id, item], payload)
+	CommunicationManager.publish_to_app("factory/%s/info/%s" % [bot_id, item], payload)
 
 
 func move_to(location: Vector2):
@@ -141,7 +146,8 @@ func travel(path: PoolVector2Array):
 
 
 func pickup_payload(payload):
-	if not payload_node:  # If there isn't already a payload registered
+	var succeed: bool
+	if not payload_node and payload:  # If there isn't already a payload registered
 		var prev_global_pos = payload.global_position  # Get current global position
 		payload.get_parent().remove_child(payload)  # Orphan
 		add_child(payload)  # Add to this bot
@@ -157,9 +163,14 @@ func pickup_payload(payload):
 		payload.move_to(payload_destination, true)  # Attach to payload
 		payload_node = payload  # Register payload
 
+		succeed = true
+
+	CommunicationManager.publish_to_app("factory/%s/did_command" % bot_id, succeed)
+
 
 func drop_payload(at_location):
-	if payload_node:  # If there is a registered payload
+	var succeed: bool
+	if payload_node and at_location:  # If there is a registered payload
 		var prev_global_pos = payload_node.global_position  # Get global position
 		remove_child(payload_node)  # Remove from bot
 		payload_node.rotation = 0  # Reset rotation
@@ -174,6 +185,10 @@ func drop_payload(at_location):
 			payload_node.global_position = prev_global_pos
 			at_location.add_node(payload_node)  # Adds a widget to location
 		payload_node = null  # Unregister payload
+
+		succeed = true
+
+	CommunicationManager.publish_to_app("factory/%s/did_command" % bot_id, succeed)
 
 
 func _animate_rotation():

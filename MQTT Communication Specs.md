@@ -1,13 +1,23 @@
 # MQTT Communication Specification Doc
 
-MQTT topic template: `[sandbox-UUID]/[demo-name]/[topic]`
-
 ## Table of contents
 
 | `[demo-name]`    | Links to simulation section                |
 | ---------------- | ------------------------------------------ |
 | `factory`        | [AMR Simulations](#factory)                |
 | `access_control` | [Building Access Control](#access_control) |
+
+## General Info
+
+MQTT topic template: `[UUID]/[demo-name]/[topic]`
+
+| When...                               | Use prefix                          |
+| ------------------------------------- | ----------------------------------- |
+| Subscribing                           | `[sandboxUUID]`                     |
+| Publishing to a Gaia app              | `[appUUID]`                         |
+| Publishing to the Sandbox Coordinator | `sandbox_coordinator/[sandboxUUID]` |
+
+---
 
 # AMR Simulations (`factory`) <a id="factory"></a>
 
@@ -24,14 +34,12 @@ MQTT topic template: `[sandbox-UUID]/[demo-name]/[topic]`
 
 ## Sandbox publishes
 
-| Topic name                | Example Payload | Description                                    |
-| ------------------------- | --------------- | ---------------------------------------------- |
-| `order_arrived`           | `true`          | When a new pallet arrives in Inbound           |
-| `unpacked_pallet`         | `true`          | When a pallet is unpacked into the buffer area |
-| `processed_widget`        | `true`          | When a widget makes it to PL End               |
-| `[bot_id]/move_location`  | `C`             | Complete (`C`) / Incomplete (`I`) feedback     |
-| `[bot_id]/pickup_payload` | `I`             | ^                                              |
-| `[bot_id]/drop_payload`   | `C`             | ^                                              |
+| Topic name             | Payload        | Description                                    |
+| ---------------------- | -------------- | ---------------------------------------------- |
+| `order_arrived`        | `true`         | When a new pallet arrives in Inbound           |
+| `unpacked_pallet`      | `true`         | When a pallet is unpacked into the buffer area |
+| `processed_widget`     | `true`         | When a widget makes it to PL End               |
+| `[bot_id]/did_command` | `true`/`false` | Complete/incomplete feedback on last command   |
 
  - `[robot-id]/info/[status_item]` (Robot status)
 
@@ -44,7 +52,6 @@ MQTT topic template: `[sandbox-UUID]/[demo-name]/[topic]`
 | `charge_level`                                            | `0.76`          |                                                              |
 | `is_charching`                                            | `false`         |                                                              |
 | `speed_squared`                                           | `0.64`          | Computationally less intensive to return the square magnitude of the velocity vector |
-| `is_broken`                                               | `false`         | When true, overrides speed_squared and goal_location. (assumed stopped and unmoving) |
 
 * `info/[factory_status_item]` (Factory status)
 
@@ -62,6 +69,8 @@ MQTT topic template: `[sandbox-UUID]/[demo-name]/[topic]`
 | --------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------ |
 | <span id="bot_type">`type`</span>                   | `0 = bumblebee`<br />`1 = stacker` | The two types of AMRs defined                                |
 | <span id="bot_goal_location">`goal_location`</span> | Dependent on factory layout        | Each location in a factory is assigned a number which corresponds to an in-game coordinate |
+
+---
 
 # Access Control (`access_control`) <a id="access_control"></a>
 
