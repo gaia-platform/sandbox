@@ -18,6 +18,7 @@ var widgets = [null, null, null, null]
 onready var _factory = get_tree().get_current_scene()
 
 signal leaving_area
+signal widget_added(space_left)
 
 
 func move_to(location: Vector2, leaving = false):
@@ -62,6 +63,9 @@ func add_widget(widget, animate = true):
 			widget.move_to(local_loc)
 		else:
 			widget.position = local_loc
+
+		# Widget added signal
+		emit_signal("widget_added", widgets.count(null))
 
 
 func remove_widget(widget):
