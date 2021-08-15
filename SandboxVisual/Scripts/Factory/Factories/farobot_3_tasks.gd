@@ -242,8 +242,8 @@ func _on_BufferActionButton_pressed():
 	buffer_area.widget_space.show()
 	buffer_area.pallet_node.hide()
 
-	# Unload widgets (4 of them)
-	for wi in 4:
+	# Unload widgets
+	for wi in 4 - buffer_area.pallet_node.widgets.count(null):
 		var next_widget = buffer_area.pallet_node.widgets[wi]  # Get reference to widget
 		buffer_area.pallet_node.remove_widget(next_widget)  # Remove it from the pallet
 		buffer_area.add_node(next_widget)  # Add it to the buffer area

@@ -90,7 +90,6 @@ func read_variable(variable_name):
 func subscribe_to_topic(topic: String):
 	if is_working:
 		JavaScript.eval("parent.subscribeToTopic('%s');" % topic)
-		print(topic)
 
 
 func publish_to_app(topic: String, payload):

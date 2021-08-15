@@ -104,10 +104,10 @@ func _bot_move_location(bot_id: String, location: int):
 
 
 func _bot_pickup_payload(bot_id: String, location: int):
-	var bot = id_to_bot[bot_id] if id_to_bot.size() else null
+	var bot = id_to_bot[bot_id] if id_to_bot.has(bot_id) else null
 	var next_payload = (
 		_factory.areas[location].get_next_payload()
-		if _factory.areas.size()
+		if location < _factory.areas.size()
 		else null
 	)
 	if bot and next_payload:
@@ -115,8 +115,8 @@ func _bot_pickup_payload(bot_id: String, location: int):
 
 
 func _bot_drop_payload(bot_id: String, location: int):
-	var bot = id_to_bot[bot_id] if id_to_bot.size() else null
-	var area = _factory.areas[location] if _factory.areas.size() else null
+	var bot = id_to_bot[bot_id] if id_to_bot.has(bot_id) else null
+	var area = _factory.areas[location] if location < _factory.areas.size() else null
 	if bot and area and bot.payload_node:
 		bot.drop_payload(area)
 

@@ -91,8 +91,8 @@ func run_popup_progress_bar(duration: float):
 func get_next_payload():
 	if pallet_node:
 		return pallet_node
-	if not widget_grid.nodes_to_spaces.size():
-		return widget_grid.nodes_to_spaces.keys()[0]
+	if widget_grid.node_to_spaces.size():
+		return widget_grid.node_to_spaces.keys()[0]
 	return null
 
 
