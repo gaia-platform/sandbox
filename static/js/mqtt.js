@@ -86,7 +86,7 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
       window.unreadMessages = true;
    }
 
-   window.editorMessageHandler(topic.toString(), payload.toString());
+   window.mainMessageHandler(topic.toString(), payload.toString());
 }
 
 // Install handlers
@@ -108,6 +108,18 @@ window.subscribeToTopic = function (topic) {
 // Sending data out
 window.publishData = function (topic, payload) { // Topic publish handler
    mqttClient.publish(topic, payload);
+}
+
+// Sending data to sandbox_coordinator
+window.publishToCoordinator = function (topic, payload) {
+   mqttClient.publish("sandbox_coordinator/" + window.sandboxUuid + "/" + topic, payload);
+}
+
+// Sending data to application
+window.publishToApp = function (topic, payload) {
+   if (window.appUUID) {
+      mqttClient.publish(window.appUUID + "/" + topic, payload);
+   }
 }
 
 // Sending data to Godot

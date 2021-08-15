@@ -25,7 +25,7 @@ func _on_ExitButton_pressed():
 		print("Error changing scene: %d" % change_scene_status)
 
 	# Does this really belong here? Doesn't seem to fire
-	CommunicationManager.publish_project_action("exit", "simulation")
+	CommunicationManager.publish_to_coordinator("project/exit", "simulation")
 
 
 func _on_PauseButton_pressed():

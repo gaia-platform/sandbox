@@ -20,10 +20,13 @@
       // Show privacy message (since the cookie is new)
       $("#privacy-modal").show();
     }
-    window.sandboxUuid = storedUuid
+    window.sandboxUuid = storedUuid;
+    // window.appUUID = null;
+    window.appUUID = 'testAppUUID';
     console.log("Sandbox UUID: " + window.sandboxUuid);
-    window.publishData("sandbox_coordinator/" + window.sandboxUuid + "/browser", "refresh");
+    window.publishToCoordinator("browser", "refresh");
     window.subscribeToTopic("editor/#");
+    window.subscribeToTopic("appUUID");
   });
 
   var editor = null;
@@ -42,18 +45,39 @@
     }
   };
 
-  window.editorMessageHandler = function (topic, payload) {
+  function fileFormat(fileName) {
+    switch (fileName) {
+      case 'ruleset':   return 'cpp';
+      case 'ddl':       return 'sql';
+
+      default:
+        break;
+    }
+    return 'text';
+  }
+
+  window.mainMessageHandler = function (topic, payload) {
     let topicLevels = topic.split('/');
+
+    if (topicLevels[1] == 'appUUID') {
+      //appUUID = topicLevels[1];
+      return;
+    }
 
     if (topicLevels[1] != 'editor') {
       return;
     }
 
     let fileName = topicLevels[2];
-    if (fileName != 'ruleset' && fileName != 'ddl') {
+    if (fileName != 'ruleset' && fileName != 'ddl' && 'output') {
       return;
     }
-    data[fileName].model = monaco.editor.createModel(payload, (fileName == 'ruleset' ? 'cpp' : 'sql'));
+
+    if (topicLevels[3] == 'append') {
+      // append text to appropriate window
+    }
+
+    data[fileName].model = monaco.editor.createModel(payload, fileFormat(fileName));
     data[fileName].state = null;
     setTab(fileName);
   }
@@ -121,7 +145,7 @@
   });
 
   $("#run-button").click(function () {
-    // Run code
+    // window.publishToCoordinator("editor/ddl", data.ddl.model.getValue());
   })
 
   $("#reset-button").click(function () {
