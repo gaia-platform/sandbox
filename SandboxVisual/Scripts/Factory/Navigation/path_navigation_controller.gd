@@ -179,6 +179,7 @@ func get_directions(from_node, to_node):
 ## Navigation functions
 func _update_navigation_path(bot, loc_index):
 	var movement_path = get_directions(nav_nodes[bot.goal_location], nav_nodes[loc_index])
+	print(movement_path)
 
 	# Set bot movement path and properties
 	if bot.position == movement_path[0]:

@@ -423,6 +423,7 @@ margin_top = 271.0
 margin_right = 220.0
 margin_bottom = 472.0
 path_shape = 5
+connected_node_paths = [ NodePath("../Waypoint"), NodePath("../Waypoint4"), NodePath("../FloorPath2") ]
 
 [node name="FloorPath2" parent="VBoxContainer/GridContainer" instance=ExtResource( 7 )]
 margin_left = 230.0
@@ -430,6 +431,7 @@ margin_top = 271.0
 margin_right = 450.0
 margin_bottom = 472.0
 path_shape = 3
+connected_node_paths = [ NodePath("../FloorPath"), NodePath("../FloorPath3"), NodePath("../Waypoint5") ]
 
 [node name="FloorPath3" parent="VBoxContainer/GridContainer" instance=ExtResource( 7 )]
 margin_left = 460.0
@@ -437,6 +439,7 @@ margin_top = 271.0
 margin_right = 680.0
 margin_bottom = 472.0
 path_shape = 2
+connected_node_paths = [ NodePath("../FloorPath2"), NodePath("../FloorPath4"), NodePath("../Waypoint2"), NodePath("../Waypoint6") ]
 
 [node name="FloorPath4" parent="VBoxContainer/GridContainer" instance=ExtResource( 7 )]
 margin_left = 690.0
@@ -444,6 +447,7 @@ margin_top = 271.0
 margin_right = 910.0
 margin_bottom = 472.0
 path_shape = 8
+connected_node_paths = [ NodePath("../FloorPath3"), NodePath("../Waypoint3") ]
 
 [node name="Waypoint4" parent="VBoxContainer/GridContainer" instance=ExtResource( 6 )]
 margin_left = 85.0

@@ -154,16 +154,35 @@ func _on_CancelButton_pressed():
 
 # Function to populate factory with new bots
 func _generate_bots():
+	var id_number = 0
 	for wb in widget_bot_counter.value:  # For the number of widget bots requested
 		var wb_instance = widget_bot_scene.instance()  # Create instance
-		navigation_controller.bots.add_child(wb_instance)  # Add to navigation controller bots
+
 		wb_instance.global_position = charging_station.associated_waypoints[0].get_location()  # Set position to be the charging station waypoint
+		# Set bot_id
+		wb_instance.bot_id = String(id_number)
+		id_number += 1
+		# Set goal location to be the charging station (where they spawn)
+		wb_instance.goal_location = 4
+		# Register in navigation controller
+		navigation_controller.id_to_bot[wb_instance.bot_id] = wb_instance
+
+		navigation_controller.bots.add_child(wb_instance)  # Add to navigation controller bots
 		charging_station.add_node(wb_instance)  # Add to charging station
 
 	for pb in pallet_bot_counter.value:  # For number of pallet bots requested
 		var pb_instance = pallet_bot_scene.instance()
-		navigation_controller.bots.add_child(pb_instance)
+
 		pb_instance.global_position = charging_station.associated_waypoints[0].get_location()
+
+		pb_instance.bot_id = String(id_number)
+		id_number += 1
+
+		pb_instance.goal_location = 4
+
+		navigation_controller.id_to_bot[pb_instance.bot_id] = pb_instance
+
+		navigation_controller.bots.add_child(pb_instance)
 		charging_station.add_node(pb_instance)
 
 
