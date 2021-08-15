@@ -53,8 +53,13 @@ func add_pallet(pallet):
 
 func show_popup_button(show = true, hide_delay = 0):
 	if show and not popup.visible:
+		# Set dimensions
 		popup.rect_global_position = rect_global_position
 		popup.rect_size = rect_size
+		# Force set button and progress visibility state
+		popup_action_button.show()
+		popup_action_progress.hide()
+		# Show popup
 		popup.show()
 	elif not show and popup.visible:
 		if hide_delay > 0:
