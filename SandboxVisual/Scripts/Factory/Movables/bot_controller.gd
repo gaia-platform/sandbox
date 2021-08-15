@@ -30,6 +30,7 @@ var payload_node = null
 var is_pallet: bool
 var bot_collision: KinematicCollision2D
 var report_success = true
+var _disabled_point = -1
 
 signal leaving_area
 
@@ -64,10 +65,21 @@ func _physics_process(delta):
 			# Move and check for collisions
 			bot_collision = move_and_collide(movement_step)
 	elif not movement_path.size() and not bot_collision:  # Stop at final position
+		# Get reference to navigation; will use later
+		var navigation_astar = get_tree().get_current_scene().navigation_controller.astar
+
 		# Stop if needed
 		if cur_speed_squared != 0:
 			cur_speed_squared = 0
 			var _stop_movement = move_and_collide(Vector2.ZERO)
+
+			# Disable the navigation at this location (only if at waypoint)
+			if not is_inside_area:
+				_disabled_point = navigation_astar.get_closest_point(position)
+				print("Disabled point %d" % _disabled_point)
+				navigation_astar.set_point_disabled(_disabled_point)
+
+			# Report success
 			if report_success:
 				CommunicationManager.publish_to_app("factory/%s/did_command" % bot_id, true)
 			else:
@@ -92,9 +104,18 @@ func _physics_process(delta):
 
 		# Check to see if there are more movements in the queue
 		var next_movement = _movement_queue.pop_front()
-		if next_movement:
+		if next_movement:  # If there is another movement path in the queue
+			# Set it as the new movement
 			movement_path = next_movement
 			_animate_rotation()
+
+			# Re-enable the disabled point in navigation
+			if not is_inside_area:
+				if _disabled_point != -1:
+					print("Enabled point %d" % _disabled_point)
+					navigation_astar.set_point_disabled(_disabled_point, false)
+					_disabled_point = -1
+
 	elif bot_collision:
 		if modulate != Color.red:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
