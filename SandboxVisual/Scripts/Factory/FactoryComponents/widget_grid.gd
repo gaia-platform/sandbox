@@ -27,7 +27,7 @@ func add_node(node):
 		add_child(space)
 		_resize_grid()
 		yield(get_tree(), "idle_frame")  # Wait for grid to actually resize
-		_recalculate_node_locations()  # Rearrange exsisting nodes
+		_recalculate_node_locations()  # Rearrange existing nodes
 
 		node_to_spaces[node] = space  # Register this new node and its new space
 
@@ -50,13 +50,13 @@ func remove_node(node):
 		var _erase = node_to_spaces.erase(node)  # Remove from map
 		_resize_grid()
 		yield(get_tree(), "idle_frame")  # Wait for grid to actually resize
-		_recalculate_node_locations()  # Rearrange exsisting nodes
+		_recalculate_node_locations()  # Rearrange existing nodes
 
 
 # Try to make the grid a square
 func _resize_grid():
 	var target_columns = 1
-	while target_columns * target_columns < get_child_count():  # Continue to add columns until its square can accomodate all children
+	while target_columns * target_columns < get_child_count():  # Continue to add columns until its square can accommodate all children
 		target_columns += 1
 	columns = target_columns
 

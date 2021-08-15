@@ -6,6 +6,8 @@ var _is_still_processing = false
 ### Signals
 ## AMR
 signal factory_move_location(bot_id, location)
+signal factory_pickup_payload(bot_id, location)
+signal factory_drop_payload(bot_id, location)
 signal factory_status_request(bot_id, status_item)
 
 ## Access Control
@@ -38,6 +40,8 @@ func _physics_process(_delta):
 			var topic = message_decoded.result.topic
 			var payload = message_decoded.result.payload
 
+			print("%s: %s" % [topic, payload])
+
 			## Detect who to send to
 			var topic_extract = topic.split("/")
 			match topic_extract[1]:
@@ -45,6 +49,10 @@ func _physics_process(_delta):
 					match topic_extract[-1]:  # Look at last item in topic path
 						"move_location":  # Set destination location of a bot
 							emit_signal("factory_move_location", topic_extract[-2], int(payload))  # Send bot_ID and payload
+						"pickup_payload":  # Pickup payload at location
+							emit_signal("factory_pickup_payload", topic_extract[-2], int(payload))
+						"drop_payload":  # Drop payload at location
+							emit_signal("factory_drop_payload", topic_extract[-2], int(payload))
 						"status_request":  # Get info about a bot
 							emit_signal("factory_status_request", topic_extract[-2], payload)
 						_:
@@ -89,10 +97,7 @@ func publish_to_app(topic: String, payload):
 		JavaScript.eval(
 			(
 				"parent.publishToApp('%s', '%s');"
-				% [
-					topic,
-					payload if typeof(payload) == TYPE_STRING else String(payload)
-				]
+				% [topic, payload if typeof(payload) == TYPE_STRING else String(payload)]
 			)
 		)
 	else:
@@ -104,10 +109,7 @@ func publish_to_coordinator(topic, payload):
 		JavaScript.eval(
 			(
 				"parent.publishToCoordinator('%s', '%s');"
-				% [
-					topic,
-					payload if typeof(payload) == TYPE_STRING else String(payload)
-				]
+				% [topic, payload if typeof(payload) == TYPE_STRING else String(payload)]
 			)
 		)
 	else:

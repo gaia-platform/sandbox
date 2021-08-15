@@ -34,7 +34,10 @@ signal leaving_area
 
 
 func _ready():
+	yield(get_tree(), "idle_frame")  # Wait for any external init to complete
 	CommunicationManager.subscribe_to_topic("factory/%s/move_location" % bot_id)
+	CommunicationManager.subscribe_to_topic("factory/%s/pickup_payload" % bot_id)
+	CommunicationManager.subscribe_to_topic("factory/%s/drop_payload" % bot_id)
 	CommunicationManager.subscribe_to_topic("factory/%s/status_request" % bot_id)
 
 
@@ -67,7 +70,7 @@ func _physics_process(delta):
 		if collision_shape.disabled and not is_inside_area:
 			collision_shape.disabled = false
 
-		# Straighten bot if inside area (probabbly means charging)
+		# Straighten bot if inside area (probably means charging)
 		if is_inside_area:
 			tween.remove_all()
 			tween.interpolate_property(
@@ -142,10 +145,10 @@ func pickup_payload(payload):
 		var prev_global_pos = payload.global_position  # Get current global position
 		payload.get_parent().remove_child(payload)  # Orphan
 		add_child(payload)  # Add to this bot
-		payload.global_position = prev_global_pos  # Reset position (get's messed up after parenting)
+		payload.global_position = prev_global_pos  # Reset position (gets messed up after parenting)
 		payload.rotation = -rotation  # Also counter bot's rotation
 
-		var payload_destination = Vector2.ZERO  # Send to center of widgit if it's a pallet
+		var payload_destination = Vector2.ZERO  # Send to center of widget if it's a pallet
 		if bot_type:  # Updates for PalletBot
 			collision_shape.shape.extents = Vector2(53, 64)
 			collision_shape.position = Vector2(40.5, 0)
@@ -160,13 +163,15 @@ func drop_payload(at_location):
 		var prev_global_pos = payload_node.global_position  # Get global position
 		remove_child(payload_node)  # Remove from bot
 		payload_node.rotation = 0  # Reset rotation
-		_factory.widgets.add_child(payload_node)  # Add back to widget pool
-		payload_node.global_position = prev_global_pos  # Set position (get's messed up after parenting)
-		if bot_type:  # Reset PalletBot
+		if bot_type:  # PalletBot specific stuff
 			collision_shape.shape.extents = Vector2(24, 24)
 			collision_shape.position = Vector2.ZERO
+			_factory.pallets.add_child(payload_node)
+			payload_node.global_position = prev_global_pos  # Set position (gets messed up after parenting)
 			at_location.add_pallet(payload_node)  # Adds a pallet to location
 		else:
+			_factory.widgets.add_child(payload_node)  # Add back to widget pool
+			payload_node.global_position = prev_global_pos
 			at_location.add_node(payload_node)  # Adds a widget to location
 		payload_node = null  # Unregister payload
 

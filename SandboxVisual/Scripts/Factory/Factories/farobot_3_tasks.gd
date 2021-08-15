@@ -62,7 +62,6 @@ export (PackedScene) var pallet_scene
 ### Properties
 var _widget_in_pl_start = null
 var _widget_in_production_line = null
-var _widget_in_pl_end = null
 var _screen_size = Vector2(930, 830)  # Set to default size at first
 
 ### Signals
@@ -154,16 +153,35 @@ func _on_CancelButton_pressed():
 
 # Function to populate factory with new bots
 func _generate_bots():
+	var id_number = 0
 	for wb in widget_bot_counter.value:  # For the number of widget bots requested
 		var wb_instance = widget_bot_scene.instance()  # Create instance
-		navigation_controller.bots.add_child(wb_instance)  # Add to navigation controller bots
+
 		wb_instance.global_position = charging_station.associated_waypoints[0].get_location()  # Set position to be the charging station waypoint
+		# Set bot_id
+		wb_instance.bot_id = String(id_number)
+		id_number += 1
+		# Set goal location to be the charging station (where they spawn)
+		wb_instance.goal_location = 4
+		# Register in navigation controller
+		navigation_controller.id_to_bot[wb_instance.bot_id] = wb_instance
+
+		navigation_controller.bots.add_child(wb_instance)  # Add to navigation controller bots
 		charging_station.add_node(wb_instance)  # Add to charging station
 
 	for pb in pallet_bot_counter.value:  # For number of pallet bots requested
 		var pb_instance = pallet_bot_scene.instance()
-		navigation_controller.bots.add_child(pb_instance)
+
 		pb_instance.global_position = charging_station.associated_waypoints[0].get_location()
+
+		pb_instance.bot_id = String(id_number)
+		id_number += 1
+
+		pb_instance.goal_location = 4
+
+		navigation_controller.id_to_bot[pb_instance.bot_id] = pb_instance
+
+		navigation_controller.bots.add_child(pb_instance)
 		charging_station.add_node(pb_instance)
 
 
@@ -200,7 +218,7 @@ func _generate_new_inbound_pallet():
 	# buffer_area.add_pallet(new_pallet)
 
 	# Tell Gaia a new order has arrived
-	CommunicationManager.publish_to_app("order_arrived", true)
+	CommunicationManager.publish_to_topic("order_arrived", true)
 
 
 ## Handle unpacking pallets in Buffer
@@ -223,8 +241,8 @@ func _on_BufferActionButton_pressed():
 	buffer_area.widget_space.show()
 	buffer_area.pallet_node.hide()
 
-	# Unload widgets (4 of them)
-	for wi in 4:
+	# Unload widgets
+	for wi in 4 - buffer_area.pallet_node.widgets.count(null):
 		var next_widget = buffer_area.pallet_node.widgets[wi]  # Get reference to widget
 		buffer_area.pallet_node.remove_widget(next_widget)  # Remove it from the pallet
 		buffer_area.add_node(next_widget)  # Add it to the buffer area
@@ -245,7 +263,7 @@ func _on_BufferActionButton_pressed():
 	buffer_area.pallet_node = null
 
 	# Tell Gaia there are new unpacked widgets
-	CommunicationManager.publish_to_app("unpacked_pallet", true)
+	CommunicationManager.publish_to_topic("unpacked_pallet", true)
 
 
 # For each widget that leaves the area, check if the buffer is empty and is ready for next pallet
@@ -309,7 +327,7 @@ func _show_complete_production_ui(widget):
 
 # Complete production button pressed
 func _on_ProductionLineActionButton_pressed():
-	if not _widget_in_pl_end:  # If there is no widget in PL End
+	if not pl_end.widget_grid.node_to_spaces.size():  # If there is no widget in PL End
 		production_line.widget_grid.remove_node(_widget_in_production_line)  # Remove widget from production line
 		pl_end.add_node(_widget_in_production_line)  # Move to PL End
 		_widget_in_production_line = null
@@ -318,11 +336,9 @@ func _on_ProductionLineActionButton_pressed():
 
 ## Widget arrives at PL End
 # Handle when widget enters PL End
-func _handle_widget_in_pl_end(widget):
-	_widget_in_pl_end = widget  # Set widget reference
-
+func _handle_widget_in_pl_end(_widget):
 	# Tell Gaia a widget has arrived
-	CommunicationManager.publish_to_app("processed_widget", true)
+	CommunicationManager.publish_to_topic("processed_widget", true)
 
 	# Test method to automatically move widget to outbound
 	# widget.tween.connect(
@@ -336,9 +352,9 @@ func _move_to_outbound(widget):
 	if next_open_space != -1:
 		pl_end.widget_grid.remove_node(widget)
 		outbound_area.pallet_node.add_widget(widget)
-		_widget_in_pl_end = null
 
 
+## Widget is added to the outbound pallet
 # Method to check if outbound pallet is ready for shipment
 func _check_if_ready_to_ship(space_left):
 	if space_left == 0:  # Show "ship" button if there is no space left
