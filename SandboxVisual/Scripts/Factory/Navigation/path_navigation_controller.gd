@@ -21,7 +21,6 @@ onready var astar = AStar2D.new()
 ### Member variables
 var _location_index: int
 var id_to_bot: Dictionary  # Map bot IDs to bot nodes
-var _screen_size = Vector2(930, 830)  # Set to default size at first
 onready var _factory = get_tree().get_current_scene()
 
 
@@ -109,12 +108,6 @@ func _on_FloorPath_resized():
 	yield(get_tree(), "idle_frame")  # Wait for resizing
 	create_connections()
 
-	# Recalculate bot positions
-	for bot in bots:
-		var bot_position_fraction = bot.position / _screen_size
-		bot.position = _factory.rect_size * bot_position_fraction
-	_screen_size = _factory.rect_size
-
 
 ### Public Functions
 ## Generate astar map
@@ -163,7 +156,7 @@ func get_directions(from_node, to_node):
 func _update_navigation_path(bot, loc_index):
 	var movement_path = get_directions(nav_nodes[bot.goal_location], nav_nodes[loc_index])
 
-	# Set bot's movement path and properties
+	# Set bot movement path and properties
 	if bot.position == movement_path[0]:
 		movement_path.remove(0)
 	bot.goal_location = loc_index

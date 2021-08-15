@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_regular.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Objects/Factory/FactoryComponents/area.tscn" type="PackedScene" id=2]
@@ -13,6 +13,7 @@
 [ext_resource path="res://Objects/Factory/Movables/palletbot.tscn" type="PackedScene" id=11]
 [ext_resource path="res://Objects/Factory/Movables/widget.tscn" type="PackedScene" id=12]
 [ext_resource path="res://Objects/Factory/Movables/pallet.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=14]
 
 [node name="FARobot3Tasks" type="Control"]
 anchor_right = 1.0
@@ -32,10 +33,13 @@ widgets_path = NodePath("Widgets")
 navigation_controller_path = NodePath("NavigationController")
 pallets_path = NodePath("Pallets")
 simulation_controller_path = NodePath("VBoxContainer/SimulationController")
-widget_bot_counter_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer/WidgetBotCounter")
-pallet_bot_counter_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer2/PalletBotCounter")
-start_stop_button_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/StartStopSimulation")
-receive_order_button_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrder")
+widget_bot_counter_path = NodePath("CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/HBoxContainer/WidgetBotCounter")
+pallet_bot_counter_path = NodePath("CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/HBoxContainer2/PalletBotCounter")
+change_bots_button_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ChangeBotsButton")
+receive_order_button_path = NodePath("VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrderButton")
+change_bots_panel_path = NodePath("CanvasLayer/ChangeSimulationBotsBg")
+apply_changed_bots_button_path = NodePath("CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/ApplyButton")
+cancel_changed_bots_button_path = NodePath("CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/CancelButton")
 widget_bot_scene = ExtResource( 10 )
 pallet_bot_scene = ExtResource( 11 )
 widget_scene = ExtResource( 12 )
@@ -677,66 +681,21 @@ margin_left = 10.0
 margin_top = 10.0
 margin_right = 200.0
 margin_bottom = 181.0
+custom_constants/separation = 10
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer"]
+[node name="ChangeBotsButton" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_right = 190.0
-margin_bottom = 24.0
-
-[node name="WidgetBotCountLabel" type="Label" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer"]
-margin_top = 1.0
-margin_right = 112.0
-margin_bottom = 23.0
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-text = "Widget Bots: "
-
-[node name="WidgetBotCounter" type="SpinBox" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer"]
-margin_left = 116.0
-margin_right = 190.0
-margin_bottom = 24.0
-hint_tooltip = "End the simulation to change"
-min_value = 1.0
-max_value = 5.0
-value = 1.0
-editable = false
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer"]
-margin_top = 28.0
-margin_right = 190.0
-margin_bottom = 52.0
-
-[node name="PalletBotCountLabel" type="Label" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer2"]
-margin_top = 1.0
-margin_right = 112.0
-margin_bottom = 23.0
-size_flags_horizontal = 3
-custom_fonts/font = ExtResource( 1 )
-text = "Pallet Bots: "
-
-[node name="PalletBotCounter" type="SpinBox" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/HBoxContainer2"]
-margin_left = 116.0
-margin_right = 190.0
-margin_bottom = 24.0
-hint_tooltip = "End the simulation to change"
-min_value = 1.0
-max_value = 4.0
-value = 1.0
-editable = false
-
-[node name="StartStopSimulation" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 56.0
-margin_right = 190.0
-margin_bottom = 96.0
+margin_bottom = 53.0
 size_flags_vertical = 3
-text = "End Simulation"
+text = "Change Bots"
 
-[node name="ReceiveOrder" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 100.0
+[node name="ReceiveOrderButton" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_top = 63.0
 margin_right = 190.0
 margin_bottom = 171.0
 focus_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 1.75
+size_flags_stretch_ratio = 2.0
 text = "Receive Order"
 
 [node name="Widgets" type="Node" parent="."]
@@ -750,12 +709,159 @@ script = ExtResource( 9 )
 nav_node_paths = [ NodePath("../VBoxContainer/GridContainer/Waypoint"), NodePath("../VBoxContainer/GridContainer/Waypoint2"), NodePath("../VBoxContainer/GridContainer/Waypoint3"), NodePath("../VBoxContainer/GridContainer/Waypoint4"), NodePath("../VBoxContainer/GridContainer/Waypoint5"), NodePath("../VBoxContainer/GridContainer/Waypoint6"), NodePath("../VBoxContainer/GridContainer/FloorPath"), NodePath("../VBoxContainer/GridContainer/FloorPath2"), NodePath("../VBoxContainer/GridContainer/FloorPath3"), NodePath("../VBoxContainer/GridContainer/FloorPath4") ]
 bots_path = NodePath("../Bots")
 
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ChangeSimulationBotsBg" type="ColorRect" parent="CanvasLayer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 0.529412 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CenterContainer" type="CenterContainer" parent="CanvasLayer/ChangeSimulationBotsBg"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ChangeSimulationBotsPanel" type="PanelContainer" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer"]
+margin_left = 460.0
+margin_top = 410.0
+margin_right = 470.0
+margin_bottom = 420.0
+custom_styles/panel = ExtResource( 5 )
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel"]
+margin_left = 5.0
+margin_top = 5.0
+margin_right = 388.0
+margin_bottom = 274.0
+custom_constants/margin_right = 10
+custom_constants/margin_top = 10
+custom_constants/margin_left = 10
+custom_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 373.0
+margin_bottom = 259.0
+custom_constants/separation = 10
+
+[node name="ChangeSimulationBotsLabel" type="Label" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer"]
+margin_right = 363.0
+margin_bottom = 29.0
+custom_fonts/font = ExtResource( 14 )
+text = "Change Simulation Bots"
+align = 1
+
+[node name="Control" type="Control" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer"]
+margin_top = 39.0
+margin_right = 363.0
+margin_bottom = 39.0
+
+[node name="Control2" type="Control" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer"]
+margin_top = 49.0
+margin_right = 363.0
+margin_bottom = 49.0
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer"]
+margin_top = 59.0
+margin_right = 363.0
+margin_bottom = 91.0
+size_flags_horizontal = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WidgetBotCountLabel" type="Label" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+margin_right = 179.0
+margin_bottom = 32.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 1 )
+text = "Widget Bots: "
+valign = 1
+
+[node name="WidgetBotCounter" type="SpinBox" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+margin_left = 183.0
+margin_right = 363.0
+margin_bottom = 32.0
+hint_tooltip = "End the simulation to change"
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 5.0
+value = 1.0
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer"]
+margin_top = 101.0
+margin_right = 363.0
+margin_bottom = 133.0
+size_flags_horizontal = 3
+
+[node name="PalletBotCountLabel" type="Label" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/HBoxContainer2"]
+margin_right = 179.0
+margin_bottom = 32.0
+size_flags_horizontal = 3
+size_flags_vertical = 1
+custom_fonts/font = ExtResource( 1 )
+text = "Pallet Bots: "
+valign = 1
+
+[node name="PalletBotCounter" type="SpinBox" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/HBoxContainer2"]
+margin_left = 183.0
+margin_right = 363.0
+margin_bottom = 32.0
+hint_tooltip = "End the simulation to change"
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 4.0
+value = 1.0
+
+[node name="Control3" type="Control" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer"]
+margin_top = 143.0
+margin_right = 363.0
+margin_bottom = 143.0
+
+[node name="Control4" type="Control" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer"]
+margin_top = 153.0
+margin_right = 363.0
+margin_bottom = 153.0
+size_flags_vertical = 3
+
+[node name="Control5" type="Control" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer"]
+margin_top = 163.0
+margin_right = 363.0
+margin_bottom = 163.0
+size_flags_vertical = 3
+
+[node name="ApplyButton" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_top = 173.0
+margin_right = 363.0
+margin_bottom = 206.0
+focus_mode = 2
+text = "   Reset Simulation and Change Bots   "
+
+[node name="CancelButton" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_top = 216.0
+margin_right = 363.0
+margin_bottom = 249.0
+text = "Cancel"
+
 [connection signal="pressed" from="VBoxContainer/GridContainer/PLStartArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_PLStartActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/PLArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_ProductionLineActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/OutboundArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_OutboundActionButton_pressed"]
+[connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="NavigationController" method="_on_FloorPath_resized"]
+[connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="." method="_on_FloorPath_resized"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/BufferArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_BufferActionButton_pressed"]
-[connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/StartStopSimulation" to="." method="_on_StartSimulation_pressed"]
-[connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrder" to="." method="_on_ReceiveOrder_pressed"]
+[connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ChangeBotsButton" to="." method="_on_ChangeBotsButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrderButton" to="." method="_on_ReceiveOrderButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/ApplyButton" to="." method="_on_ApplyButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/CancelButton" to="." method="_on_CancelButton_pressed"]
 
 [editable path="VBoxContainer/SimulationController"]
 [editable path="VBoxContainer/GridContainer/PLStartArea"]

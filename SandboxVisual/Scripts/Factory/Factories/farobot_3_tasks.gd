@@ -39,13 +39,19 @@ onready var pallets = get_node(pallets_path)
 export (NodePath) var simulation_controller_path
 export (NodePath) var widget_bot_counter_path
 export (NodePath) var pallet_bot_counter_path
-export (NodePath) var start_stop_button_path
+export (NodePath) var change_bots_button_path
 export (NodePath) var receive_order_button_path
+export (NodePath) var change_bots_panel_path
+export (NodePath) var apply_changed_bots_button_path
+export (NodePath) var cancel_changed_bots_button_path
 onready var simulation_controller = get_node(simulation_controller_path)
 onready var widget_bot_counter = get_node(widget_bot_counter_path)
 onready var pallet_bot_counter = get_node(pallet_bot_counter_path)
-onready var start_stop_button = get_node(start_stop_button_path)
+onready var change_bots_button = get_node(change_bots_button_path)
 onready var receive_order_button = get_node(receive_order_button_path)
+onready var change_bots_panel = get_node(change_bots_panel_path)
+onready var apply_changed_bots_button = get_node(apply_changed_bots_button_path)
+onready var cancel_changed_bots_button = get_node(cancel_changed_bots_button_path)
 
 ### To be spawned
 export (PackedScene) var widget_bot_scene
@@ -57,6 +63,7 @@ export (PackedScene) var pallet_scene
 var _widget_in_pl_start = null
 var _widget_in_production_line = null
 var _widget_in_pl_end = null
+var _screen_size = Vector2(930, 830)  # Set to default size at first
 
 ### Signals
 signal end_simulation
@@ -93,33 +100,56 @@ func _ready():
 	_generate_bots()
 
 
-### Signals and Factory flow
-## Start-Stop factory
-# Button pressed to stop factory or start and spawn new bots
-func _on_StartSimulation_pressed():
-	var editable_state = widget_bot_counter.editable
+### Signals
+# Use screen location proportions to approximate screen size adjusted position for nodes
+func _on_FloorPath_resized():
+	# Recalculate bot positions
+	for bot in navigation_controller.bots.get_children():
+		var bot_position_fraction = bot.position / _screen_size
+		bot.position = rect_size * bot_position_fraction
 
-	# Toggle counter editability
-	widget_bot_counter.editable = not editable_state
-	pallet_bot_counter.editable = not editable_state
+	# Recalculate pallet positions
+	for pallet in pallets.get_children():
+		var pallet_position_fraction = pallet.position / _screen_size
+		pallet.position = rect_size * pallet_position_fraction
 
-	if editable_state:  # If it was originally enabled (meaning the simulation was not running)
-		start_stop_button.text = "End Simulation"
-		_generate_bots()
-	else:
-		start_stop_button.text = "Start Simulation"
+	# Recalculate widget positions
+	for widget in widgets.get_children():
+		var widget_position_fraction = widget.position / _screen_size
+		widget.position = rect_size * widget_position_fraction
 
-		# Remove everything from the simulation
-		emit_signal("end_simulation")
-		yield(get_tree(), "idle_frame")  # Wait for all processing to complete before deleting everything else
-		for widget in widgets.get_children():  # Delete all remaining widgets
-			widget.queue_free()
-		for pallet in pallets.get_children():  # All remaining pallets
-			pallet.queue_free()
-		for bot in navigation_controller.bots.get_children():  # All remaining bots
-			bot.queue_free()
+	# Update screen size variable to new size
+	_screen_size = rect_size
 
-		# TODO: #77 send reset signal to Gaia
+
+### Factory flow
+## Change factory bots
+# Button pressed to open change bots window
+func _on_ChangeBotsButton_pressed():
+	change_bots_panel.show()
+
+
+func _on_ApplyButton_pressed():
+	change_bots_panel.hide()
+
+	# Remove everything from the simulation
+	emit_signal("end_simulation")
+	yield(get_tree(), "idle_frame")  # Wait for all processing to complete before deleting everything else
+	for widget in widgets.get_children():  # Delete all remaining widgets
+		widget.queue_free()
+	for pallet in pallets.get_children():  # All remaining pallets
+		pallet.queue_free()
+	for bot in navigation_controller.bots.get_children():  # All remaining bots
+		bot.queue_free()
+
+	# TODO: #77 send reset signal to Gaia
+
+	# Generate new bots
+	_generate_bots()
+
+
+func _on_CancelButton_pressed():
+	change_bots_panel.hide()
 
 
 # Function to populate factory with new bots
@@ -139,7 +169,7 @@ func _generate_bots():
 
 ## Bringing pallets to inbound
 # Button pressed to start the process to get a new pallet in inbound
-func _on_ReceiveOrder_pressed():
+func _on_ReceiveOrderButton_pressed():
 	if inbound_area.pallet_node == null:  # If there isn't already something there
 		receive_order_button.disabled = true  # Disable the button
 		inbound_area.run_popup_progress_bar(2)  # Show 2 second loading bar for inbound pallets
