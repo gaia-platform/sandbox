@@ -20,10 +20,13 @@
       // Show privacy message (since the cookie is new)
       $("#privacy-modal").show();
     }
-    window.sandboxUuid = storedUuid
+    window.sandboxUuid = storedUuid;
+    // window.appUUID = null;
+    window.appUUID = 'testAppUUID';
     console.log("Sandbox UUID: " + window.sandboxUuid);
-    window.publishData("sandbox_coordinator/" + window.sandboxUuid + "/browser", "refresh");
+    window.publishToCoordinator("browser", "refresh");
     window.subscribeToTopic("editor/#");
+    window.subscribeToTopic("appUUID");
   });
 
   var editor = null;
@@ -53,8 +56,13 @@
     return 'text';
   }
 
-  window.editorMessageHandler = function (topic, payload) {
+  window.mainMessageHandler = function (topic, payload) {
     let topicLevels = topic.split('/');
+
+    if (topicLevels[1] == 'appUUID') {
+      //appUUID = topicLevels[1];
+      return;
+    }
 
     if (topicLevels[1] != 'editor') {
       return;
@@ -137,7 +145,7 @@
   });
 
   $("#run-button").click(function () {
-    // Run code
+    // window.publishToCoordinator("editor/ddl", data.ddl.model.getValue());
   })
 
   $("#reset-button").click(function () {

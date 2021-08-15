@@ -164,7 +164,7 @@ func _generate_new_inbound_pallet():
 	# Move into place
 	inbound_area.add_pallet(new_pallet)
 	# buffer_area.add_pallet(new_pallet)
-	CommunicationManager.publish_to_topic("factory_3_tasks/order_arrived", true)
+	CommunicationManager.publish_to_app("order_arrived", true)
 
 func _on_BufferActionButton_pressed():
 	buffer_area.run_popup_progress_bar(1)  # Run 1 second loading
@@ -197,7 +197,7 @@ func _on_BufferActionButton_pressed():
 	buffer_area.pallet_node = null
 
 	# Tell Gaia there are new unpacked widgets
-	CommunicationManager.publish_to_topic("factory_3_tasks/unpacked_pallet", true)
+	CommunicationManager.publish_to_app("unpacked_pallet", true)
 
 
 # Start production button pressed
@@ -283,7 +283,7 @@ func _show_complete_production_ui(widget):
 
 # Handle when widget enters PL End
 func _handle_widget_in_pl_end(_widget):
-	CommunicationManager.publish_to_topic("factory_3_tasks/processed_widget", true)
+	CommunicationManager.publish_to_app("processed_widget", true)
 	# widget.tween.connect(
 	# 	"tween_all_completed", self, "_move_to_outbound", [widget], CONNECT_ONESHOT
 	# )

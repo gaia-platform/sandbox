@@ -75,7 +75,7 @@ func _on_ExitButton_pressed():
 	var change_scene_status = get_tree().change_scene(scene_picker_scene)
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
-	CommunicationManager.publish_project_action("exit", "simulation")
+	CommunicationManager.publish_to_coordinator("project/exit", "simulation")
 
 
 ### Methods

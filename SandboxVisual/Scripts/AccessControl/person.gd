@@ -52,7 +52,7 @@ func _person_option_selected(button: Button):
 		"building_id": building_id,
 		"room_id": room_id
 	}
-	CommunicationManager.publish_to_topic("access_control/scan", to_json(publish_dict))
+	CommunicationManager.publish_to_app("scan", to_json(publish_dict))
 
 
 func _process_person_option_state_change(p_id: int, scan_type: String):

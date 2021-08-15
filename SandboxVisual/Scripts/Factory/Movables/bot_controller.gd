@@ -116,7 +116,7 @@ func publish_status_item(item: String):
 		_:
 			print("Unknown status item request")
 
-	CommunicationManager.publish_to_topic("factory/%s/%s" % [bot_id, item], payload)
+	CommunicationManager.publish_to_app("factory/%s/%s" % [bot_id, item], payload)
 
 
 func move_to(location: Vector2):
