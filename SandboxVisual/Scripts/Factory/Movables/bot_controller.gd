@@ -76,7 +76,6 @@ func _physics_process(delta):
 			# Disable the navigation at this location (only if at waypoint)
 			if not is_inside_area:
 				_disabled_point = navigation_astar.get_closest_point(position)
-				print("Disabled point %d" % _disabled_point)
 				navigation_astar.set_point_disabled(_disabled_point)
 
 			# Report success
@@ -112,7 +111,6 @@ func _physics_process(delta):
 			# Re-enable the disabled point in navigation
 			if not is_inside_area:
 				if _disabled_point != -1:
-					print("Enabled point %d" % _disabled_point)
 					navigation_astar.set_point_disabled(_disabled_point, false)
 					_disabled_point = -1
 

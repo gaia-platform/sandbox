@@ -163,11 +163,9 @@ func _navigate_bot(bot, loc_index):
 
 	# Check if path is blocked
 	var id_path = astar.get_id_path(from_id, loc_index)
-	print(id_path)
 
 	var path_clear = true
 	for id in id_path:
-		print("Is %d disabled? %s" % [id, astar.is_point_disabled(id)])
 		if astar.is_point_disabled(id):
 			path_clear = false
 			break
