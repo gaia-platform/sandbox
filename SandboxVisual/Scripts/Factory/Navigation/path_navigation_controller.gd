@@ -68,7 +68,7 @@ func _input(event):
 		_location_index += 1
 		if _location_index == _factory.number_of_waypoints:
 			_location_index = 0
-		_update_navigation_path(bots[0], _location_index)
+		_navigate_bot(bots[0], _location_index)
 	# elif event is InputEventKey and event.pressed:
 	# 	match event.scancode:
 	# 		KEY_1:  # Move PalletBot to Inbound Area
@@ -100,7 +100,9 @@ func _input(event):
 ### Signal functions
 func _bot_move_location(bot_id: String, location: int):
 	if location >= 0 && location < _factory.number_of_waypoints:
-		_update_navigation_path(id_to_bot[bot_id], location)
+		var bot = id_to_bot[bot_id]
+		bot.bot_collision = null
+		_navigate_bot(bot, location)
 
 
 func _bot_pickup_payload(bot_id: String, location: int):
@@ -149,14 +151,30 @@ func create_connections():
 			astar.connect_points(path_id, nav_nodes.find(node))
 
 
-## Generate array of locations to travel
-func get_directions(from_node, to_node):
-	# Convert nodes to ID
-	var from_id = nav_nodes.find(from_node)
-	var to_id = nav_nodes.find(to_node)
+### Private functions
+## Generate navigation path for bot to location
+func _navigate_bot(bot, loc_index):
+	# Configure start point
+	var from_id: int
+	if bot.is_inside_area:
+		from_id = astar.get_closest_point(bot.position, true)  # Start with closest navigation point
+	else:
+		from_id = astar.get_closest_point(bot.position)
 
-	# Get raw points
-	var point_path = astar.get_point_path(from_id, to_id)
+	# Check if path is blocked
+	var id_path = astar.get_id_path(from_id, loc_index)
+
+	var path_clear = true
+	for id in id_path:
+		if astar.is_point_disabled(id):
+			path_clear = false
+			break
+	if not id_path.size() or not path_clear:
+		CommunicationManager.publish_to_app("factory/%s/did_command" % bot.bot_id, false)
+		return
+
+	# If all clear, get raw path
+	var point_path = astar.get_point_path(from_id, loc_index)
 
 	# Optimize path
 	var path_index = 0  # Base index
@@ -172,16 +190,8 @@ func get_directions(from_node, to_node):
 				break
 		path_index += 1  # Move onto next point
 
-	return point_path
-
-
-### Private functions
-## Navigation functions
-func _update_navigation_path(bot, loc_index):
-	var movement_path = get_directions(nav_nodes[bot.goal_location], nav_nodes[loc_index])
-
 	# Set bot movement path and properties
-	if bot.position == movement_path[0]:
-		movement_path.remove(0)
+	if bot.position == point_path[0]:
+		point_path.remove(0)
 	bot.goal_location = loc_index
-	bot.travel(movement_path)
+	bot.travel(point_path)

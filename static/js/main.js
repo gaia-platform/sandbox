@@ -20,10 +20,11 @@
       // Show privacy message (since the cookie is new)
       $("#privacy-modal").show();
     }
-    window.sandboxUuid = storedUuid;
+    window.sandboxUUID = storedUuid;
     // window.appUUID = null;
     window.appUUID = 'testAppUUID';
-    console.log("Sandbox UUID: " + window.sandboxUuid);
+    console.log("Sandbox UUID: " + window.sandboxUUID);
+    console.log("App UUID: "+window.appUUID);
     window.publishToCoordinator("browser", "refresh");
     window.subscribeToTopic("editor/#");
     window.subscribeToTopic("appUUID");
