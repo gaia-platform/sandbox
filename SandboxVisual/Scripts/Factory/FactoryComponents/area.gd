@@ -38,6 +38,9 @@ func add_node(node):
 	if widget_space.visible:
 		widget_grid.add_node(node)
 		emit_signal("new_node_added", node)
+	else:
+		if pallet_node != null:
+			pallet_node.add_widget(node)
 
 
 func add_pallet(pallet):

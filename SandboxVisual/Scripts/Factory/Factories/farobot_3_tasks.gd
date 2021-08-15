@@ -62,7 +62,6 @@ export (PackedScene) var pallet_scene
 ### Properties
 var _widget_in_pl_start = null
 var _widget_in_production_line = null
-var _widget_in_pl_end = null
 var _screen_size = Vector2(930, 830)  # Set to default size at first
 
 ### Signals
@@ -219,7 +218,7 @@ func _generate_new_inbound_pallet():
 	# buffer_area.add_pallet(new_pallet)
 
 	# Tell Gaia a new order has arrived
-	CommunicationManager.publish_to_app("order_arrived", true)
+	CommunicationManager.publish_to_topic("order_arrived", true)
 
 
 ## Handle unpacking pallets in Buffer
@@ -264,7 +263,7 @@ func _on_BufferActionButton_pressed():
 	buffer_area.pallet_node = null
 
 	# Tell Gaia there are new unpacked widgets
-	CommunicationManager.publish_to_app("unpacked_pallet", true)
+	CommunicationManager.publish_to_topic("unpacked_pallet", true)
 
 
 # For each widget that leaves the area, check if the buffer is empty and is ready for next pallet
@@ -328,7 +327,7 @@ func _show_complete_production_ui(widget):
 
 # Complete production button pressed
 func _on_ProductionLineActionButton_pressed():
-	if not _widget_in_pl_end:  # If there is no widget in PL End
+	if not pl_end.widget_grid.node_to_spaces.size():  # If there is no widget in PL End
 		production_line.widget_grid.remove_node(_widget_in_production_line)  # Remove widget from production line
 		pl_end.add_node(_widget_in_production_line)  # Move to PL End
 		_widget_in_production_line = null
@@ -337,11 +336,9 @@ func _on_ProductionLineActionButton_pressed():
 
 ## Widget arrives at PL End
 # Handle when widget enters PL End
-func _handle_widget_in_pl_end(widget):
-	_widget_in_pl_end = widget  # Set widget reference
-
+func _handle_widget_in_pl_end(_widget):
 	# Tell Gaia a widget has arrived
-	CommunicationManager.publish_to_app("processed_widget", true)
+	CommunicationManager.publish_to_topic("processed_widget", true)
 
 	# Test method to automatically move widget to outbound
 	# widget.tween.connect(
@@ -355,9 +352,9 @@ func _move_to_outbound(widget):
 	if next_open_space != -1:
 		pl_end.widget_grid.remove_node(widget)
 		outbound_area.pallet_node.add_widget(widget)
-		_widget_in_pl_end = null
 
 
+## Widget is added to the outbound pallet
 # Method to check if outbound pallet is ready for shipment
 func _check_if_ready_to_ship(space_left):
 	if space_left == 0:  # Show "ship" button if there is no space left

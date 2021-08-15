@@ -163,13 +163,15 @@ func drop_payload(at_location):
 		var prev_global_pos = payload_node.global_position  # Get global position
 		remove_child(payload_node)  # Remove from bot
 		payload_node.rotation = 0  # Reset rotation
-		_factory.widgets.add_child(payload_node)  # Add back to widget pool
-		payload_node.global_position = prev_global_pos  # Set position (gets messed up after parenting)
-		if bot_type:  # Reset PalletBot
+		if bot_type:  # PalletBot specific stuff
 			collision_shape.shape.extents = Vector2(24, 24)
 			collision_shape.position = Vector2.ZERO
+			_factory.pallets.add_child(payload_node)
+			payload_node.global_position = prev_global_pos  # Set position (gets messed up after parenting)
 			at_location.add_pallet(payload_node)  # Adds a pallet to location
 		else:
+			_factory.widgets.add_child(payload_node)  # Add back to widget pool
+			payload_node.global_position = prev_global_pos
 			at_location.add_node(payload_node)  # Adds a widget to location
 		payload_node = null  # Unregister payload
 
