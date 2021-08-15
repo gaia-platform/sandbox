@@ -6,6 +6,8 @@ var _is_still_processing = false
 ### Signals
 ## AMR
 signal factory_move_location(bot_id, location)
+signal factory_pickup_payload(bot_id, location)
+signal factory_drop_payload(bot_id, location)
 signal factory_status_request(bot_id, status_item)
 
 ## Access Control
@@ -40,34 +42,37 @@ func _physics_process(_delta):
 
 			## Detect who to send to
 			var topic_extract = topic.split("/")
-			match topic_extract[1]:
-				"factory":
-					match topic_extract[-1]:  # Look at last item in topic path
-						"move_location":  # Set destination location of a bot
-							emit_signal("factory_move_location", topic_extract[-2], int(payload))  # Send bot_ID and payload
-						"status_request":  # Get info about a bot
-							emit_signal("factory_status_request", topic_extract[-2], payload)
-						_:
-							print("Unknown factory topic")
-				"access_control":
-					match topic_extract[-1]:
-						"init":  # Verbose database output for setting up
-							emit_signal("ac_init", payload)
-						"alert":  # Error message
-							emit_signal("ac_error", payload)
-						"move_to_building":  # Moves buildings
-							emit_signal("ac_move_to_building", topic_extract[-2], payload)
-						"move_to_room":  # Moves rooms
-							var data_split = payload.split(",")  # Divides into building_ID and room_ID
-							emit_signal(
-								"ac_move_to_room", topic_extract[-2], data_split[0], data_split[1]
-							)
-						"scan":  # Person option state change
-							emit_signal("ac_option", int(topic_extract[-2]), payload)
-						_:
-							print("Unknown factory topic")
-				_:
-					print("Unknown Demo")
+			if topic_extract[1] == "factory_scenario_1" or topic_extract[1] == "factory_3_tasks":
+				match topic_extract[-1]:  # Look at last item in topic path
+					"move_location":  # Set destination location of a bot
+						emit_signal("factory_move_location", topic_extract[-2], int(payload))  # Send bot_ID and payload
+					"pickup_payload":  # Pickup payload at location
+						emit_signal("factory_pickup_payload", topic_extract[-2], int(payload))
+					"drop_payload":  # Drop payload at location
+						emit_signal("factory_drop_payload", topic_extract[-2], int(payload))
+					"status_request":  # Get info about a bot
+						emit_signal("factory_status_request", topic_extract[-2], payload)
+					_:
+						print("Unknown factory topic")
+			elif topic_extract[1] == "access_control":
+				match topic_extract[-1]:
+					"init":  # Verbose database output for setting up
+						emit_signal("ac_init", payload)
+					"alert":  # Error message
+						emit_signal("ac_error", payload)
+					"move_to_building":  # Moves buildings
+						emit_signal("ac_move_to_building", topic_extract[-2], payload)
+					"move_to_room":  # Moves rooms
+						var data_split = payload.split(",")  # Divides into building_ID and room_ID
+						emit_signal(
+							"ac_move_to_room", topic_extract[-2], data_split[0], data_split[1]
+						)
+					"scan":  # Person option state change
+						emit_signal("ac_option", int(topic_extract[-2]), payload)
+					_:
+						print("Unknown factory topic")
+			else:
+				print("Unknown Demo")
 
 		if _is_still_processing:
 			_is_still_processing = false

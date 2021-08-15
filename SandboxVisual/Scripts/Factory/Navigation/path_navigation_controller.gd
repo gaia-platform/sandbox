@@ -34,7 +34,13 @@ func _ready():
 
 	# Connect to MQTT Signals
 	var _connect_to_signal = CommunicationManager.connect(
-		"factory_move_location", self, "_move_location"
+		"factory_move_location", self, "_bot_move_location"
+	)
+	_connect_to_signal = CommunicationManager.connect(
+		"factory_pickup_payload", self, "_bot_pickup_payload"
+	)
+	_connect_to_signal = CommunicationManager.connect(
+		"factory_drop_payload", self, "_bot_drop_payload"
 	)
 	_connect_to_signal = CommunicationManager.connect(
 		"factory_status_request", self, "_bot_status_request"
@@ -92,9 +98,27 @@ func _input(event):
 
 
 ### Signal functions
-func _move_location(bot_id: String, location: int):
+func _bot_move_location(bot_id: String, location: int):
 	if location >= 0 && location < _factory.number_of_waypoints:
 		_update_navigation_path(id_to_bot[bot_id], location)
+
+
+func _bot_pickup_payload(bot_id: String, location: int):
+	var bot = id_to_bot[bot_id] if id_to_bot.size() else null
+	var next_payload = (
+		_factory.areas[location].get_next_payload()
+		if _factory.areas.size()
+		else null
+	)
+	if bot and next_payload:
+		bot.pickup_payload(next_payload)
+
+
+func _bot_drop_payload(bot_id: String, location: int):
+	var bot = id_to_bot[bot_id] if id_to_bot.size() else null
+	var area = _factory.areas[location] if _factory.areas.size() else null
+	if bot and area and bot.payload_node:
+		bot.drop_payload(area)
 
 
 func _bot_status_request(bot_id: String, status_item: String):

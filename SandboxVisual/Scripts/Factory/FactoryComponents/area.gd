@@ -88,6 +88,14 @@ func run_popup_progress_bar(duration: float):
 	tween.start()
 
 
+func get_next_payload():
+	if pallet_node:
+		return pallet_node
+	if not widget_grid.nodes_to_spaces.size():
+		return widget_grid.nodes_to_spaces.keys()[0]
+	return null
+
+
 ### Private methods
 func _cleanup_pallet():
 	pallet_node = null
