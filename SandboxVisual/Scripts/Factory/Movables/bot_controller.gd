@@ -96,10 +96,7 @@ func _physics_process(delta):
 		if modulate != Color.red:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
 			modulate = Color.red  # Modulate to red
-			if report_success:
-				CommunicationManager.publish_to_app("factory/%s/did_command" % bot_id, false)
-			else:
-				report_success = true
+			CommunicationManager.publish_to_app("factory/%s/did_command" % bot_id, false)
 
 
 ## Signal methods
@@ -137,6 +134,7 @@ func move_to(location: Vector2):
 func travel(path: PoolVector2Array):
 	if is_inside_area:
 		raise()
+		report_success = false
 		move_to(path[0])  # Move to area waypoint
 		path.remove(0)
 		yield(get_tree(), "idle_frame")  # Wait for movement to start
