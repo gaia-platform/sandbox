@@ -100,7 +100,9 @@ func _input(event):
 ### Signal functions
 func _bot_move_location(bot_id: String, location: int):
 	if location >= 0 && location < _factory.number_of_waypoints:
-		_update_navigation_path(id_to_bot[bot_id], location)
+		var bot = id_to_bot[bot_id]
+		bot.bot_collision = null
+		_update_navigation_path(bot, location)
 
 
 func _bot_pickup_payload(bot_id: String, location: int):

@@ -43,7 +43,7 @@ func _ready():
 
 
 func _physics_process(delta):
-	if movement_path.size():  # There is still a goal coordinate to reach
+	if movement_path.size() and not bot_collision:  # There is still a goal coordinate to reach
 		var cur_dir = (movement_path[0] - position).normalized()  # Vector pointing towards next goal point
 		var movement_step = cur_dir * max_speed * delta  # Movement increment
 		var post_movement_dir = movement_path[0] - (position + movement_step)  # Vector pointing towards goal point, but after step
@@ -57,10 +57,13 @@ func _physics_process(delta):
 				_animate_rotation()
 		else:  # Otherwise, continue moving
 			cur_speed_squared = movement_step.length_squared()  # Update speed
+			# Unmodulate the color if it was previously changed (from collision)
+			if modulate == Color.red:
+				modulate = Color.white
 
 			# Move and check for collisions
 			bot_collision = move_and_collide(movement_step)
-	elif not movement_path.size():  # Stop at final position
+	elif not movement_path.size() and not bot_collision:  # Stop at final position
 		# Stop if needed
 		if cur_speed_squared != 0:
 			cur_speed_squared = 0
