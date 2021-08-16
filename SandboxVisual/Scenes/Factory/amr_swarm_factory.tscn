@@ -7,7 +7,7 @@
 [ext_resource path="res://Assets/Factory/StyleBoxes/simulation_controller_flat.tres" type="StyleBox" id=5]
 [ext_resource path="res://Objects/Factory/FactoryComponents/waypoint.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Objects/Factory/FactoryComponents/floor_path.tscn" type="PackedScene" id=7]
-[ext_resource path="res://Scripts/Factory/Factories/farobot_3_tasks.gd" type="Script" id=8]
+[ext_resource path="res://Scripts/Factory/Factories/amr_swarm_factory.gd" type="Script" id=8]
 [ext_resource path="res://Scripts/Factory/Navigation/path_navigation_controller.gd" type="Script" id=9]
 [ext_resource path="res://Objects/Factory/Movables/widgetbot.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Objects/Factory/Movables/palletbot.tscn" type="PackedScene" id=11]
@@ -15,7 +15,7 @@
 [ext_resource path="res://Objects/Factory/Movables/pallet.tscn" type="PackedScene" id=13]
 [ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=14]
 
-[node name="FARobot3Tasks" type="Control"]
+[node name="AMRSwarmFactory" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 8 )
@@ -76,7 +76,7 @@ margin_bottom = 43.0
 [node name="LevelNameLabel" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="0"]
 margin_right = 198.0
 margin_bottom = 33.0
-text = "FARobot 3 Tasks"
+text = "AMR Swarm Factory"
 
 [node name="PauseButton" parent="VBoxContainer/SimulationController/MarginContainer/HBoxContainer" index="1"]
 margin_left = 208.0

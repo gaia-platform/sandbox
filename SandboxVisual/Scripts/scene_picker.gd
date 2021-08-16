@@ -1,6 +1,6 @@
 extends Control
 
-export (String, FILE) var farobot_3_tasks_scene
+export (String, FILE) var amr_swarm_factory_scene
 export (String, FILE) var amr_scenario_1_scene
 export (String, FILE) var sbdl_scene
 export (String, FILE) var access_control_scene
@@ -16,8 +16,8 @@ func _on_Scenario1Button_pressed():
 		print("Error changing scene: %d" % change_scene_status)
 
 
-func _on_FARobot3TasksButton_pressed():
-	var change_scene_status = get_tree().change_scene(farobot_3_tasks_scene)
+func _on_AMRSwarmFactoryButton_pressed():
+	var change_scene_status = get_tree().change_scene(amr_swarm_factory_scene)
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
 	else:
