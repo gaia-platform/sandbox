@@ -211,12 +211,17 @@ func _on_ReceiveOrderButton_pressed():
 # Generate pallet once loading animation finishes
 func _generate_new_inbound_pallet():
 	# Pallet
+	var pallet_data = {
+		"id": CommunicationManager.generate_uuid(),
+		"widgets": []
+	}
 	var new_pallet = pallet_scene.instance()
 	pallets.add_child(new_pallet)
 	new_pallet.global_position = inbound_area.pallet_location.get_location() + Vector2(0, 200)  # Start it somewhere off screen below
 
 	# Widgets
 	for w in 4:
+		pallet_data["widgets"].append({ "id": CommunicationManager.generate_uuid() })
 		var widget_instance = widget_scene.instance()
 		widgets.add_child(widget_instance)
 		widget_instance.global_position = new_pallet.global_position
@@ -227,7 +232,7 @@ func _generate_new_inbound_pallet():
 	# buffer_area.add_pallet(new_pallet)
 
 	# Tell Gaia a new order has arrived
-	CommunicationManager.publish_to_app("order_arrived", true)
+	CommunicationManager.publish_to_app("inbound", to_json(pallet_data))
 
 
 ## Handle unpacking pallets in Buffer

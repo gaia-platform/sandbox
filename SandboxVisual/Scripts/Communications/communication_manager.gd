@@ -82,6 +82,11 @@ func _physics_process(_delta):
 
 
 ### Methods
+func generate_uuid():
+	if is_working:
+		return JavaScript.eval("parent.generateUUID();")
+
+
 func read_variable(variable_name):
 	if is_working:
 		return JavaScript.eval("parent." + variable_name + ";")

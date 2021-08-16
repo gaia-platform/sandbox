@@ -14,7 +14,7 @@
     if (storedUuid === "") {
       const expDate = new Date();
       expDate.setFullYear(expDate.getFullYear() + 10); // 10 year expiration time
-      storedUuid = "asdf"; // generateUUID();
+      storedUuid = "asdf"; // window.generateUUID();
       document.cookie = "sandboxUUID=" + storedUuid + ";expires=" + expDate.toUTCString() + ";path=/";
 
       // Show privacy message (since the cookie is new)
@@ -107,7 +107,7 @@
     editor.focus();
   }
 
-  const generateUUID = () => { // By Briguy37
+  window.generateUUID = function() { // By Briguy37
     let
       d = new Date().getTime(),
       d2 = (performance && performance.now && (performance.now() * 1000)) || 0;
@@ -122,7 +122,7 @@
       }
       return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
     });
-  };
+  }
 
   function getCookie() {
     let name = "sandboxUUID=";
