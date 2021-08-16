@@ -141,7 +141,12 @@ func _on_ApplyButton_pressed():
 	for bot in navigation_controller.bots.get_children():  # All remaining bots
 		bot.queue_free()
 
-	# TODO: #77 send reset signal to Gaia
+	# Create message
+	var reset_data = {
+		"widget_bot_count": widget_bot_counter.value,
+		"pallet_bot_count": pallet_bot_counter.value
+	}
+	CommunicationManager.publish_to_app("reset", to_json(reset_data))
 
 	# Generate new bots
 	_generate_bots()
