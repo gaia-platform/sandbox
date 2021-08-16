@@ -17,7 +17,7 @@ func _on_FastForwardButton_pressed():
 	minutes += 30
 	_display_time_label()
 
-	CommunicationManager.publish_to_app("time", minutes)
+	CommunicationManager.publish_to_app("access_control/time", minutes)
 
 
 func _display_time_label():

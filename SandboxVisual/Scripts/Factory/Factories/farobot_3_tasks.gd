@@ -163,6 +163,8 @@ func _generate_bots():
 		id_number += 1
 		# Set goal location to be the charging station (where they spawn)
 		wb_instance.goal_location = 4
+		# Disable success reporting
+		wb_instance.report_success = false
 		# Register in navigation controller
 		navigation_controller.id_to_bot[wb_instance.bot_id] = wb_instance
 
@@ -178,6 +180,8 @@ func _generate_bots():
 		id_number += 1
 
 		pb_instance.goal_location = 4
+
+		pb_instance.report_success = false
 
 		navigation_controller.id_to_bot[pb_instance.bot_id] = pb_instance
 

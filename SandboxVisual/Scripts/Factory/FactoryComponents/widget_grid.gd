@@ -67,6 +67,7 @@ func _recalculate_node_locations():
 		var space = node_to_spaces[node]
 		var half_size = space.rect_size.x / 2
 
+		node.set("report_success", false)  # Disable success report for bots on grid resize
 		node.move_to(
 			Vector2(
 				space.rect_global_position.x + half_size, space.rect_global_position.y + half_size
