@@ -218,7 +218,7 @@ func _generate_new_inbound_pallet():
 	# buffer_area.add_pallet(new_pallet)
 
 	# Tell Gaia a new order has arrived
-	CommunicationManager.publish_to_topic("order_arrived", true)
+	CommunicationManager.publish_to_app("order_arrived", true)
 
 
 ## Handle unpacking pallets in Buffer
@@ -263,7 +263,7 @@ func _on_BufferActionButton_pressed():
 	buffer_area.pallet_node = null
 
 	# Tell Gaia there are new unpacked widgets
-	CommunicationManager.publish_to_topic("unpacked_pallet", true)
+	CommunicationManager.publish_to_app("unpacked_pallet", true)
 
 
 # For each widget that leaves the area, check if the buffer is empty and is ready for next pallet
@@ -338,7 +338,7 @@ func _on_ProductionLineActionButton_pressed():
 # Handle when widget enters PL End
 func _handle_widget_in_pl_end(_widget):
 	# Tell Gaia a widget has arrived
-	CommunicationManager.publish_to_topic("processed_widget", true)
+	CommunicationManager.publish_to_app("processed_widget", true)
 
 	# Test method to automatically move widget to outbound
 	# widget.tween.connect(
