@@ -37,10 +37,10 @@ signal leaving_area
 
 func _ready():
 	yield(get_tree(), "idle_frame")  # Wait for any external init to complete
-	CommunicationManager.subscribe_to_topic("factory/%s/move_location" % bot_id)
-	CommunicationManager.subscribe_to_topic("factory/%s/pickup_payload" % bot_id)
-	CommunicationManager.subscribe_to_topic("factory/%s/drop_payload" % bot_id)
-	CommunicationManager.subscribe_to_topic("factory/%s/status_request" % bot_id)
+	CommunicationManager.subscribe_to_topic("bot/%s/move_location" % bot_id)
+	CommunicationManager.subscribe_to_topic("bot/%s/pickup_payload" % bot_id)
+	CommunicationManager.subscribe_to_topic("bot/%s/drop_payload" % bot_id)
+	CommunicationManager.subscribe_to_topic("bot/%s/status_request" % bot_id)
 
 
 func _physics_process(delta):

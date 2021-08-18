@@ -43,9 +43,12 @@ func _physics_process(_delta):
 			print("%s: %s" % [topic, payload])
 
 			## Detect who to send to
+			# is this check actually necessary?
+			if not get_tree().get_current_scene():
+				continue
 			var topic_extract = topic.split("/")
-			match topic_extract[1]:
-				"factory":
+			match get_tree().get_current_scene().get_name():
+				"AMRSwarmFactory":
 					match topic_extract[-1]:  # Look at last item in topic path
 						"move_location":  # Set destination location of a bot
 							emit_signal("factory_move_location", topic_extract[-2], int(payload))  # Send bot_ID and payload
@@ -57,7 +60,7 @@ func _physics_process(_delta):
 							emit_signal("factory_status_request", topic_extract[-2], payload)
 						_:
 							print("Unknown factory topic")
-				"access_control":
+				"AccessControlBuilding":
 					match topic_extract[-1]:
 						"init":  # Verbose database output for setting up
 							emit_signal("ac_init", payload)

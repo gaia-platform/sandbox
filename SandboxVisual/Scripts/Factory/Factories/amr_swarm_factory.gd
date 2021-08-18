@@ -98,6 +98,8 @@ func _ready():
 	# Populate bots
 	_generate_bots()
 
+	CommunicationManager.publish_to_coordinator("project/select", "amr_swarm_template")
+
 
 ### Signals
 # Use screen location proportions to approximate screen size adjusted position for nodes
@@ -119,8 +121,6 @@ func _on_FloorPath_resized():
 
 	# Update screen size variable to new size
 	_screen_size = rect_size
-
-	CommunicationManager.publish_to_coordinator("project/select", "amr_swarm_template")
 
 ### Factory flow
 ## Change factory bots
