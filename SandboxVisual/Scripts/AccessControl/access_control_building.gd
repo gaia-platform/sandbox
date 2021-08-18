@@ -37,6 +37,7 @@ func _ready():
 	# Temp setup data
 	_init_setup(CommunicationManager.get_setup_data())
 
+	CommunicationManager.publish_to_coordinator("project/select", "access_control_template")
 
 ### Signal methods
 ## Set initial properties

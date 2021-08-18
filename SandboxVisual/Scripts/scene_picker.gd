@@ -20,16 +20,12 @@ func _on_AMRSwarmFactoryButton_pressed():
 	var change_scene_status = get_tree().change_scene(amr_swarm_factory_scene)
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
-	else:
-		CommunicationManager.publish_to_coordinator("project/select", "amr_swarm_template")
 
 
 func _on_AccessControlButton_pressed():
 	var change_scene_status = get_tree().change_scene(access_control_scene)
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
-	else:
-		CommunicationManager.publish_to_coordinator("project/select", "access_control_template")
 
 
 func _on_ScenarioBasedDataLogging_pressed():
