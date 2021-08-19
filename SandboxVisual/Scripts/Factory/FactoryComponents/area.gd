@@ -23,6 +23,8 @@ onready var tween = $Tween
 ### Properties
 var associated_waypoints: Array
 var pallet_node = null
+export (String) var id
+export (String) var area_type
 
 ### Signals
 signal new_pallet_added

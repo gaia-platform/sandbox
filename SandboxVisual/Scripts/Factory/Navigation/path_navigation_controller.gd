@@ -97,18 +97,29 @@ func _input(event):
 	# 			bots[0].drop_payload(_factory.painting_area)
 
 
+func _location_index(location: String):
+	var result: int = 0;
+	for area in _factory.areas:
+		if area.id == location:
+			return result
+		result += 1
+	return -1
+
+
 ### Signal functions
-func _bot_move_location(bot_id: String, location: int):
-	if location >= 0 && location < _factory.number_of_waypoints:
+func _bot_move_location(bot_id: String, location: String):
+	var location_index = _location_index(location)
+	if location_index >= 0 && location_index < _factory.number_of_waypoints:
 		var bot = id_to_bot[bot_id]
 		bot.bot_collision = null
-		_navigate_bot(bot, location)
+		_navigate_bot(bot, location_index)
 
 
-func _bot_pickup_payload(bot_id: String, location: int):
+func _bot_pickup_payload(bot_id: String, location: String):
+	var location_index = _location_index(location)
 	var bot = id_to_bot[bot_id] if id_to_bot.has(bot_id) else null
 	var next_payload = (
-		_factory.areas[location].get_next_payload()
+		_factory.areas[location_index].get_next_payload()
 		if location < _factory.areas.size()
 		else null
 	)
@@ -116,9 +127,10 @@ func _bot_pickup_payload(bot_id: String, location: int):
 		bot.pickup_payload(next_payload)
 
 
-func _bot_drop_payload(bot_id: String, location: int):
+func _bot_drop_payload(bot_id: String, location: String):
+	var location_index = _location_index(location)
 	var bot = id_to_bot[bot_id] if id_to_bot.has(bot_id) else null
-	var area = _factory.areas[location] if location < _factory.areas.size() else null
+	var area = _factory.areas[location_index] if location_index >= 0 else null
 	if bot and area and bot.payload_node:
 		bot.drop_payload(area)
 

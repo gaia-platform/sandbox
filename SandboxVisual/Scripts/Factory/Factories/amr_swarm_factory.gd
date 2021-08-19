@@ -19,8 +19,11 @@ onready var pl_end = get_node(pl_end_path)
 onready var outbound_area = get_node(outbound_area_path)
 
 onready var areas = [
-	inbound_area, charging_station, buffer_area, pl_start, production_line, pl_end, outbound_area
+	pl_start, pl_end, outbound_area, buffer_area, charging_station, inbound_area, production_line
 ]
+
+var pallet_bots = []
+var widget_bots = []
 var number_of_waypoints = -1
 
 # Widgets
@@ -71,6 +74,10 @@ signal end_simulation
 func _ready():
 	# Wait for everything to load in, then count number of waypoints
 	yield(get_tree(), "idle_frame")
+	CommunicationManager.subscribe_to_topic("running")
+	CommunicationManager.publish_to_coordinator("project/select", "amr_swarm_template")
+	CommunicationManager.connect("factory_running", self, "_init_app")
+
 	number_of_waypoints = 0
 	for area in areas:
 		number_of_waypoints += area.associated_waypoints.size()
@@ -98,10 +105,58 @@ func _ready():
 	# Populate bots
 	_generate_bots()
 
-	CommunicationManager.publish_to_coordinator("project/select", "amr_swarm_template")
+	CommunicationManager.publish_to_app("ping", "running")
 
 
 ### Signals
+func _init_app():
+	var robot_types = [
+		{
+			"id": "pallet_bot",
+			"pallet_capacity": 1,
+			"widget_capacity": 0
+		},
+		{
+			"id": "widget_bot",
+			"pallet_capacity": 0,
+			"widget_capacity": 1
+		}
+	]
+	var areas_by_type = {
+		"pallet_area": {
+			"id": "pallet_area",
+			"pallet_capacity": 1,
+			"widget_capacity": 0,
+			"robot_capacity": 1,
+			"areas":[]
+		},
+		"widget_area": {
+			"id": "widget_area",
+			"pallet_capacity": 0,
+			"widget_capacity": 4,
+			"robot_capacity": 1,
+			"areas":[]
+		},
+		"charging_station": { 
+			"id": "charging_station",
+			"pallet_capacity": 0,
+			"widget_capacity": 0,
+			"robot_capacity": 9,
+			"areas":[]
+		}
+	}
+	for area in areas:
+		var new_area = { "id": area.id, "bots": {} }
+		if area.id == "charging":
+			new_area["bots"] = { "pallet_bot": pallet_bots, "widget_bot": widget_bots }
+		areas_by_type[area.area_type]["areas"].append(new_area)
+
+	CommunicationManager.publish_to_app("factory_data", to_json( {
+		"robot_types": robot_types,
+		"areas_by_type": areas_by_type
+	}))
+
+
 # Use screen location proportions to approximate screen size adjusted position for nodes
 func _on_FloorPath_resized():
 	# Recalculate bot positions
@@ -142,15 +197,10 @@ func _on_ApplyButton_pressed():
 	for bot in navigation_controller.bots.get_children():  # All remaining bots
 		bot.queue_free()
 
-	# Create message
-	var reset_data = {
-		"widget_bot_count": widget_bot_counter.value,
-		"pallet_bot_count": pallet_bot_counter.value
-	}
-	CommunicationManager.publish_to_app("reset", to_json(reset_data))
-
 	# Generate new bots
 	_generate_bots()
+
+	CommunicationManager.publish_to_app("ping", "running")
 
 
 func _on_CancelButton_pressed():
@@ -160,6 +210,8 @@ func _on_CancelButton_pressed():
 # Function to populate factory with new bots
 func _generate_bots():
 	var id_number = 0
+	pallet_bots = []
+	widget_bots = []
 	for wb in widget_bot_counter.value:  # For the number of widget bots requested
 		var wb_instance = widget_bot_scene.instance()  # Create instance
 
@@ -176,6 +228,7 @@ func _generate_bots():
 
 		navigation_controller.bots.add_child(wb_instance)  # Add to navigation controller bots
 		charging_station.add_node(wb_instance)  # Add to charging station
+		widget_bots.append({ "id": wb_instance.bot_id })
 
 	for pb in pallet_bot_counter.value:  # For number of pallet bots requested
 		var pb_instance = pallet_bot_scene.instance()
@@ -193,6 +246,7 @@ func _generate_bots():
 
 		navigation_controller.bots.add_child(pb_instance)
 		charging_station.add_node(pb_instance)
+		pallet_bots.append({ "id": pb_instance.bot_id })
 
 
 ## Bringing pallets to inbound

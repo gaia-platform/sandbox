@@ -5,6 +5,7 @@ var _is_still_processing = false
 
 ### Signals
 ## AMR
+signal factory_running()
 signal factory_move_location(bot_id, location)
 signal factory_pickup_payload(bot_id, location)
 signal factory_drop_payload(bot_id, location)
@@ -43,19 +44,18 @@ func _physics_process(_delta):
 			print("%s: %s" % [topic, payload])
 
 			## Detect who to send to
-			# is this check actually necessary?
-			if not get_tree().get_current_scene():
-				continue
 			var topic_extract = topic.split("/")
 			match get_tree().get_current_scene().get_name():
 				"AMRSwarmFactory":
 					match topic_extract[-1]:  # Look at last item in topic path
+						"running":  # AMR factory running, ready for initialization
+							emit_signal("factory_running")
 						"move_location":  # Set destination location of a bot
-							emit_signal("factory_move_location", topic_extract[-2], int(payload))  # Send bot_ID and payload
+							emit_signal("factory_move_location", topic_extract[-2], payload)  # Send bot_ID and payload
 						"pickup_payload":  # Pickup payload at location
-							emit_signal("factory_pickup_payload", topic_extract[-2], int(payload))
+							emit_signal("factory_pickup_payload", topic_extract[-2], payload)
 						"drop_payload":  # Drop payload at location
-							emit_signal("factory_drop_payload", topic_extract[-2], int(payload))
+							emit_signal("factory_drop_payload", topic_extract[-2], payload)
 						"status_request":  # Get info about a bot
 							emit_signal("factory_status_request", topic_extract[-2], payload)
 						_:
@@ -76,7 +76,7 @@ func _physics_process(_delta):
 						"scan":  # Person option state change
 							emit_signal("ac_option", int(topic_extract[-2]), payload)
 						_:
-							print("Unknown factory topic")
+							print("Unknown access control topic")
 				_:
 					print("Unknown Demo")
 
