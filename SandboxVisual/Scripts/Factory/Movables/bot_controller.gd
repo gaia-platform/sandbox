@@ -80,7 +80,7 @@ func _physics_process(delta):
 
 			# Report success
 			if report_success:
-				CommunicationManager.publish_to_app("factory/%s/did_command" % bot_id, true)
+				CommunicationManager.publish_to_app("bot/%s/arrived" % bot_id, get_tree().get_current_scene().navigation_controller.location_id(goal_location))
 			else:
 				report_success = true
 
@@ -143,7 +143,7 @@ func publish_status_item(item: String):
 		_:
 			print("Unknown status item request")
 
-	CommunicationManager.publish_to_app("factory/%s/info/%s" % [bot_id, item], payload)
+	CommunicationManager.publish_to_app("bot/%s/info/%s" % [bot_id, item], payload)
 
 
 func move_to(location: Vector2):
