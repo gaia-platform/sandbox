@@ -185,7 +185,11 @@ func pickup_payload(payload):
 
 		succeed = true
 
-	CommunicationManager.publish_to_app("factory/%s/did_command" % bot_id, succeed)
+	# UNDONE: report payload id
+	if succeed:
+		CommunicationManager.publish_to_app("bot/%s/loaded" % bot_id, "payload_id")
+	else:
+		CommunicationManager.publish_to_app("bot/%s/load_failed" % bot_id, "Unable to load payload")
 
 
 func drop_payload(at_location):
@@ -212,6 +216,8 @@ func drop_payload(at_location):
 
 
 func _animate_rotation():
+	rotation = (movement_path[0] - position).angle()
+	return
 	tween.remove_all()
 	tween.interpolate_property(
 		self,
