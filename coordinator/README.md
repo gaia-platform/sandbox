@@ -19,7 +19,7 @@ cd {where_you_cloned_the_sandbox_repo}
 git clone --recursive https://github.com/aws/aws-iot-device-sdk-cpp-v2.git
 mkdir aws-iot-device-sdk-cpp-v2-build
 cd aws-iot-device-sdk-cpp-v2-build
-cmake -DCMAKE_INSTALL_PREFIX="<absolute path to where_you_cloned_the_sandbox_repo>" ../aws-iot-device-sdk-cpp-v2
+cmake -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_INSTALL_PREFIX="<absolute path to where_you_cloned_the_sandbox_repo>" ../aws-iot-device-sdk-cpp-v2
 cmake --build . --target install
 ```
 
