@@ -51,12 +51,12 @@ void send_message(const string &id,
 
 ruleset coordinator_ruleset
 {
-    OnInsert(activity)
+    on_insert(activity)
     {
         gaia_log::app().info("{} action: {}", activity.type, activity.action);
     }
 
-    OnInsert(activity)
+    on_insert(activity)
     {
         if (activity.type == activity_type::e_activity_type::browser)
         {
@@ -78,7 +78,7 @@ ruleset coordinator_ruleset
         }
     }
 
-    OnInsert(activity)
+    on_insert(activity)
     {
         if (activity.type == activity_type::e_activity_type::agent
             && activity.action == action::e_action::connected)
@@ -100,27 +100,75 @@ ruleset coordinator_ruleset
         }
     }
 
-    OnInsert(activity)
+    on_insert(activity)
     {
         if (activity.type == activity_type::e_activity_type::project
             && activity.action == action::e_action::select)
         {
+            /*
             auto activity_row = activity_t::get(activity.gaia_id());
-            if (activity_row.project())
+            if (activity_row.session())
             {
-                auto session_row = session_t::get(activity_row.session().gaia_id());
-                activity_row.project().session_list().insert(session_row);
-                send_message(session.agent_id, project.name, "ddl", project.ddl_file);
-                send_message(session.agent_id, project.name, "ruleset", project.ruleset_file);
+                if (activity_row.session().project())
+                {
+                    activity_row.session().project().session_list().clear();
+                }
+                project_t project;
+                auto project_iter = project_t::list().
+                        where(project_t::expr::session_id == activity_row.session().session_id()
+                              && project_t::expr::name == activity.payload).begin();
+                if (project_iter == project_t::list().end())
+                {
+                    project_writer w;
+                    w.session_id = activity_row.session().session_id();
+                    w.name = activity.payload;
+                    w.ddl_file = "default";
+                    w.ruleset_file = "default";
+                    project = project_t::get(w.insert_row());
+                }
+                else
+                {
+                    project = *project_iter;
+                }
+                project.session_list().insert(activity_row.session().gaia_id());
+                send_message(activity_row.session().agent_id(), project.name(), "get", "files");
+                // send_message(activity_row.session().agent_id(), project.name(), "ddl", project.ddl_file());
+                // send_message(activity_row.session().agent_id(), project.name(), "ruleset", project.ruleset_file());
             }
-            else
-            {
-                send_message(session.agent_id, activity.payload, "get", "files");
-            }
+            */
         }
     }
 
-    OnInsert(activity)
+    on_insert(activity)
+    {
+        if (activity.type == activity_type::e_activity_type::editor)
+        {
+            /*
+            auto activity_row = activity_t::get(activity.gaia_id());
+            if (activity_row.session() && activity_row.session().project())
+            {
+                project_writer w = activity_row.session().project().writer();
+                if (activity.action == action::e_action::ddl_file)
+                {
+                    w.ddl_file = activity_row.payload();
+                    send_message(activity_row.session().agent_id(),
+                            activity_row.session().project().name(),
+                            "ddl", activity_row.payload());
+                }
+                else if (activity.action == action::e_action::ruleset_file)
+                {
+                    w.ruleset_file = activity_row.payload();
+                    send_message(activity_row.session().agent_id(),
+                            activity_row.session().project().name(),
+                            "ruleset", activity_row.payload());
+                }
+                w.update_row();
+            }
+            */
+        }
+    }
+
+    on_insert(activity)
     {
         if (activity.type == activity_type::e_activity_type::project
             && activity.action == action::e_action::exit)

@@ -51,7 +51,8 @@ string get_uuid()
     return Aws::Crt::UUID().ToString().c_str();
 }
 
-auto onPublishComplete = [](Mqtt::MqttConnection &, uint16_t packetId, int errorCode) {
+auto onPublishComplete = [](Mqtt::MqttConnection &, uint16_t packetId, int errorCode)
+{
     if (packetId)
     {
         fprintf(stdout, "Operation on packetId %d Succeeded\n", packetId);
@@ -62,6 +63,7 @@ auto onPublishComplete = [](Mqtt::MqttConnection &, uint16_t packetId, int error
     }
 };
 
+/*
 bool get_project(const string &session_id, const string &name, project_t& project)
 {
     auto project_iter = project_t::list().
@@ -75,11 +77,13 @@ bool get_project(const string &session_id, const string &name, project_t& projec
     project = *project_iter;
     return true;
 }
+*/
 
 session_t get_session(const string &id)
 {
     auto session_iter = session_t::list()
-            .where(session_t::expr::session_id == id || session_t::expr::agent_id == id).begin();
+                            .where(session_t::expr::session_id == id || session_t::expr::agent_id == id)
+                            .begin();
     if (session_iter == session_t::list().end())
     {
         printf("Creating new session\n");
@@ -118,16 +122,7 @@ void log_activity(const string &id,
 
     session_t session = get_session(id);
     activity_t activity = new_activity(type, action, payload);
-    session.activity_list().insert(activity);
-    if (type == activity_type::e_activity_type::project
-        && action == action::e_action::select)
-    {
-        project_t project;
-        if (get_project(id, payload, project))
-        {
-            project.activity_list().insert(activity);
-        }
-    }
+    session.activities().insert(activity);
 
     commit_transaction();
 }
@@ -136,7 +131,9 @@ void dump_db()
 {
     printf("\n");
     begin_transaction();
-    for (const auto& s : session_t::list())
+    printf("--------------------------------------------------------\n");
+    printf("Sessions:\n");
+    for (const auto &s : session_t::list())
     {
         printf("--------------------------------------------------------\n");
         printf("session:            %s\n", s.session_id());
@@ -145,6 +142,16 @@ void dump_db()
         printf("last_session_timestamp: %lu\n", s.last_session_timestamp());
         printf("last_agent_timestamp: %lu\n", s.last_agent_timestamp());
         printf("created_timestamp: %lu\n", s.created_timestamp());
+    }
+    printf("--------------------------------------------------------\n");
+    printf("Projects:\n");
+    for (const auto &p : project_t::list())
+    {
+        printf("--------------------------------------------------------\n");
+        printf("session:            %s\n", p.session().session_id());
+        printf("name:               %s\n", p.name());
+        printf("ddl_file:           %s\n", p.ddl_file());
+        printf("ruleset_file:       %s\n", p.ruleset_file());
     }
     printf("--------------------------------------------------------\n");
     commit_transaction();
@@ -261,7 +268,8 @@ int main()
     std::promise<bool> connectionCompletedPromise;
     std::promise<void> connectionClosedPromise;
 
-    auto onConnectionCompleted = [&](Mqtt::MqttConnection &, int errorCode, Mqtt::ReturnCode returnCode, bool) {
+    auto onConnectionCompleted = [&](Mqtt::MqttConnection &, int errorCode, Mqtt::ReturnCode returnCode, bool)
+    {
         if (errorCode)
         {
             fprintf(stdout, "Connection failed with error %s\n", ErrorDebugString(errorCode));
@@ -288,9 +296,11 @@ int main()
         fprintf(stdout, "Connection interrupted with error %s\n", ErrorDebugString(error));
     };
 
-    auto onResumed = [&](Mqtt::MqttConnection &, Mqtt::ReturnCode, bool) { fprintf(stdout, "Connection resumed\n"); };
+    auto onResumed = [&](Mqtt::MqttConnection &, Mqtt::ReturnCode, bool)
+    { fprintf(stdout, "Connection resumed\n"); };
 
-    auto onDisconnect = [&](Mqtt::MqttConnection &) {
+    auto onDisconnect = [&](Mqtt::MqttConnection &)
+    {
         {
             fprintf(stdout, "Disconnect completed\n");
             gaia::system::shutdown();
@@ -315,26 +325,26 @@ int main()
         std::promise<void> subscribeFinishedPromise;
         auto onSubAck =
             [&](Mqtt::MqttConnection &, uint16_t packetId, const String &topic, Mqtt::QOS QoS, int errorCode)
+        {
+            if (errorCode)
             {
-                if (errorCode)
+                fprintf(stderr, "Subscribe failed with error %s\n", aws_error_debug_str(errorCode));
+                exit(-1);
+            }
+            else
+            {
+                if (!packetId || QoS == AWS_MQTT_QOS_FAILURE)
                 {
-                    fprintf(stderr, "Subscribe failed with error %s\n", aws_error_debug_str(errorCode));
+                    fprintf(stderr, "Subscribe rejected by the broker.");
                     exit(-1);
                 }
                 else
                 {
-                    if (!packetId || QoS == AWS_MQTT_QOS_FAILURE)
-                    {
-                        fprintf(stderr, "Subscribe rejected by the broker.");
-                        exit(-1);
-                    }
-                    else
-                    {
-                        fprintf(stdout, "Subscribe on topic %s on packetId %d Succeeded\n", topic.c_str(), packetId);
-                    }
+                    fprintf(stdout, "Subscribe on topic %s on packetId %d Succeeded\n", topic.c_str(), packetId);
                 }
-                subscribeFinishedPromise.set_value();
-            };
+            }
+            subscribeFinishedPromise.set_value();
+        };
 
         connection->Subscribe("sandbox_coordinator/#", AWS_MQTT_QOS_AT_LEAST_ONCE, on_message, onSubAck);
         subscribeFinishedPromise.get_future().wait();
@@ -345,7 +355,8 @@ int main()
 
         std::promise<void> unsubscribeFinishedPromise;
         connection->Unsubscribe(
-            "#", [&](Mqtt::MqttConnection &, uint16_t, int) { unsubscribeFinishedPromise.set_value(); });
+            "#", [&](Mqtt::MqttConnection &, uint16_t, int)
+            { unsubscribeFinishedPromise.set_value(); });
         unsubscribeFinishedPromise.get_future().wait();
     }
 

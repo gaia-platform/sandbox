@@ -9,7 +9,8 @@ namespace enums
             undefined,
             browser,
             agent,
-            project
+            project,
+            editor
         };
 
         e_activity_type to_activity_type(const std::string &activity_type);
@@ -22,6 +23,8 @@ namespace enums
             undefined,
             connected,
             select,
+            ddl_file,
+            ruleset_file,
             exit
         };
 
