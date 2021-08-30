@@ -10,7 +10,7 @@ You'll need to
 ### Installing Flask
 [Download and install](https://www.python.org/downloads/) the latest version of Python 3 (which should come with Pip). Next, clone the repository and run the following:
 ```bash
-cd {where_you_cloned_the_repo}/Website
+cd {where_you_cloned_the_repo}
 pip install -r requirements.txt
 ```
 This will install Flask if you don't already have it installed. You are now ready to launch the Flask server with `./start_sandbox.sh`. All HTML/website sources are contained under the `Website` directory. If you intend to make changes to the JavaScript code, you'll need to install dependencies.
@@ -18,7 +18,7 @@ This will install Flask if you don't already have it installed. You are now read
 ### Installing other dependencies
 [Install](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) the latest Node.js and npm. Then run the following:
 ```bash
-cd {where_you_cloned_the_repo}/Website
+cd {where_you_cloned_the_repo}
 npm i
 ```
 Once all dependencies are installed, you can make changes to the code and recompile them with `npm run build` (do this in the `Website` directory).

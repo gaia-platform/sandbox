@@ -1,14 +1,15 @@
 # Gaia Sandbox Coordinator
 A Gaia application to coordinate launching of and interacting with containerized Gaia template applications launched through AWS ECS and communicating using MQTT.
+
 # Sandbox Coordinator development setup
 ## Prerequisites
 You'll need to
 
-* Install March release of Gaia (UNDONE: Port to Preview release)
+* Install Gaia
 * Install aws-iot-device-sdk-cpp
 
 ### Installing Gaia
-Follow instructions [here](https://gaia-platform.github.io/gaia-platform-docs.io/articles/getting-started-with-gaia.html) to install Gaia March release.
+Follow instructions [here](https://gaia-platform.github.io/gaia-platform-docs.io/articles/getting-started-with-gaia.html) to install Gaia.
 
 ### Installing aws-iot-device-sdk-cpp
 From inside the root sandbox directory clone the [aws-iot-device-sdk-cpp](https://github.com/aws/aws-iot-device-sdk-cpp-v2) and build using clang. May also work with gcc but so far only tested with clang.
@@ -19,7 +20,7 @@ cd {where_you_cloned_the_sandbox_repo}
 git clone --recursive https://github.com/aws/aws-iot-device-sdk-cpp-v2.git
 mkdir aws-iot-device-sdk-cpp-v2-build
 cd aws-iot-device-sdk-cpp-v2-build
-cmake -DCMAKE_INSTALL_PREFIX="<absolute path to where_you_cloned_the_sandbox_repo>" ../aws-iot-device-sdk-cpp-v2
+cmake -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_INSTALL_PREFIX="<absolute path to where_you_cloned_the_sandbox_repo>" ../aws-iot-device-sdk-cpp-v2
 cmake --build . --target install
 ```
 
@@ -39,4 +40,3 @@ make
 * Create a new folder named certs in your sandbox repo directory and copy the downloaded files there.
 * Rename the certificate and private key respectively to: coordinator-certificate.pem.crt and coordinator-private.pem.key
 * Leave the Amazon root certificate name unchanged, namely: AmazonRootCA1.pem
-

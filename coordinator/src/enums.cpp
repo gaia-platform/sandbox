@@ -28,6 +28,10 @@ namespace enums
             {
                 return e_activity_type::project;
             }
+            else if (activity_type == "editor")
+            {
+                return e_activity_type::editor;
+            }
 
             return e_activity_type::undefined;
         }
@@ -48,6 +52,14 @@ namespace enums
             else if (action == "exit")
             {
                 return e_action::exit;
+            }
+            else if (action == "ddl")
+            {
+                return e_action::ddl_file;
+            }
+            else if (action == "ruleset")
+            {
+                return e_action::ruleset_file;
             }
 
             return e_action::undefined;

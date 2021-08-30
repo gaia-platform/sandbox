@@ -96,19 +96,9 @@ func _input(event):
 	# 		KEY_0:
 	# 			bots[0].drop_payload(_factory.painting_area)
 
-
-func _location_index(location: String):
-	var result: int = 0;
-	for area in _factory.areas:
-		if area.id == location:
-			return result
-		result += 1
-	return -1
-
-
 ### Signal functions
 func _bot_move_location(bot_id: String, location: String):
-	var location_index = _location_index(location)
+	var location_index = location_index(location)
 	if location_index >= 0 && location_index < _factory.number_of_waypoints:
 		var bot = id_to_bot[bot_id]
 		bot.bot_collision = null
@@ -116,11 +106,11 @@ func _bot_move_location(bot_id: String, location: String):
 
 
 func _bot_pickup_payload(bot_id: String, location: String):
-	var location_index = _location_index(location)
+	var location_index = location_index(location)
 	var bot = id_to_bot[bot_id] if id_to_bot.has(bot_id) else null
 	var next_payload = (
 		_factory.areas[location_index].get_next_payload()
-		if location < _factory.areas.size()
+		if location_index < _factory.areas.size()
 		else null
 	)
 	if bot and next_payload:
@@ -128,7 +118,7 @@ func _bot_pickup_payload(bot_id: String, location: String):
 
 
 func _bot_drop_payload(bot_id: String, location: String):
-	var location_index = _location_index(location)
+	var location_index = location_index(location)
 	var bot = id_to_bot[bot_id] if id_to_bot.has(bot_id) else null
 	var area = _factory.areas[location_index] if location_index >= 0 else null
 	if bot and area and bot.payload_node:
@@ -148,6 +138,20 @@ func _on_FloorPath_resized():
 
 
 ### Public Functions
+func location_index(location: String):
+	var result: int = 0;
+	for area in _factory.areas:
+		if area.id == location:
+			return result
+		result += 1
+	return -1
+
+
+func location_id(location: int):
+	if location < _factory.areas.size():
+		return _factory.areas[location].id
+	return null
+
 ## Generate astar map
 func create_connections():
 	# Reset astar

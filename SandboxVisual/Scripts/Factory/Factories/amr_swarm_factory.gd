@@ -287,7 +287,7 @@ func _generate_new_inbound_pallet():
 	# buffer_area.add_pallet(new_pallet)
 
 	# Tell Gaia a new order has arrived
-	CommunicationManager.publish_to_app("inbound", to_json(pallet_data))
+	CommunicationManager.publish_to_app("station/inbound/pallet", to_json(pallet_data))
 
 
 ## Handle unpacking pallets in Buffer
