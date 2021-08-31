@@ -14,7 +14,7 @@
     if (storedUuid === "") {
       const expDate = new Date();
       expDate.setFullYear(expDate.getFullYear() + 10); // 10 year expiration time
-      storedUuid = "asdf"; // window.generateUUID();
+      storedUuid = window.generateUUID();
       document.cookie = "sandboxUUID=" + storedUuid + ";expires=" + expDate.toUTCString() + ";path=/";
 
       // Show privacy message (since the cookie is new)
