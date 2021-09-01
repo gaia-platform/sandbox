@@ -22,8 +22,6 @@
     }
     window.sandboxUUID = storedUuid;
     window.appUUID = null;
-    console.log("Sandbox UUID: " + window.sandboxUUID);
-    console.log("App UUID: " + window.appUUID);
     window.publishToCoordinator("browser", "refresh");
     window.subscribeToTopic("editor/#");
     window.subscribeToTopic("appUUID");
@@ -61,7 +59,7 @@
 
     if (topicLevels[1] == 'appUUID') {
       window.appUUID = payload;
-      window.publishToApp("ping", "running");
+      setTimeout(function(){ window.publishToApp("ping", "running"); }, 1000);
       return;
     }
 
