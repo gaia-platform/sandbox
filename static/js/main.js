@@ -21,8 +21,7 @@
       $("#privacy-modal").show();
     }
     window.sandboxUUID = storedUuid;
-    // window.appUUID = null;
-    window.appUUID = 'testAppUUID';
+    window.appUUID = null;
     console.log("Sandbox UUID: " + window.sandboxUUID);
     console.log("App UUID: " + window.appUUID);
     window.publishToCoordinator("browser", "refresh");
@@ -61,7 +60,8 @@
     let topicLevels = topic.split('/');
 
     if (topicLevels[1] == 'appUUID') {
-      //appUUID = topicLevels[1];
+      window.appUUID = payload;
+      window.publishToApp("ping", "running");
       return;
     }
 
@@ -151,6 +151,10 @@
 
   $("#reset-button").click(function () {
     // Reset Current simulation
+  });
+
+  $("#test-button").click(function () {
+    alert("export REMOTE_CLIENT_ID=" + window.sandboxUUID);
   });
 
   $("#privacy-button").click(function () {
