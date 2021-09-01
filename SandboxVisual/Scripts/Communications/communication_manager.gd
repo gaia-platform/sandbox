@@ -5,7 +5,7 @@ var _is_still_processing = false
 
 ### Signals
 ## AMR
-signal factory_running()
+signal factory_running
 signal factory_move_location(bot_id, location)
 signal factory_pickup_payload(bot_id, location)
 signal factory_drop_payload(bot_id, location)

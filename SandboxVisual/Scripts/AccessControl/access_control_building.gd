@@ -39,6 +39,7 @@ func _ready():
 
 	CommunicationManager.publish_to_coordinator("project/select", "access_control_template")
 
+
 ### Signal methods
 ## Set initial properties
 func _init_setup(setup_data):

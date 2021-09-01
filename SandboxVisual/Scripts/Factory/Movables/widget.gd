@@ -2,6 +2,7 @@ extends Sprite
 
 ### Properties
 export (int, "Raw", "Painted", "Labeled") var state
+var payload_id: String
 
 ### Elements
 onready var widget_label = $WidgetLabel

@@ -80,7 +80,10 @@ func _physics_process(delta):
 
 			# Report success
 			if report_success:
-				CommunicationManager.publish_to_app("bot/%s/arrived" % bot_id, get_tree().get_current_scene().navigation_controller.location_id(goal_location))
+				CommunicationManager.publish_to_app(
+					"bot/%s/arrived" % bot_id,
+					get_tree().get_current_scene().navigation_controller.location_id(goal_location)
+				)
 			else:
 				report_success = true
 
@@ -118,7 +121,10 @@ func _physics_process(delta):
 		if modulate != Color.red:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
 			modulate = Color.red  # Modulate to red
-			CommunicationManager.publish_to_app("factory/%s/did_command" % bot_id, false)
+			CommunicationManager.publish_to_app(
+				"bot/%s/crashed" % bot_id,
+				get_tree().get_current_scene().navigation_controller.location_id(goal_location)
+			)
 
 
 ## Signal methods
@@ -186,10 +192,9 @@ func pickup_payload(payload):
 		succeed = true
 
 	# UNDONE: report payload id
-	if succeed:
-		CommunicationManager.publish_to_app("bot/%s/loaded" % bot_id, "payload_id")
-	else:
-		CommunicationManager.publish_to_app("bot/%s/load_failed" % bot_id, "Unable to load payload")
+	CommunicationManager.publish_to_app(
+		"bot/%s/payload_picked_up" % bot_id, payload.payload_id if succeed else false
+	)
 
 
 func drop_payload(at_location):
@@ -212,20 +217,27 @@ func drop_payload(at_location):
 
 		succeed = true
 
-	CommunicationManager.publish_to_app("factory/%s/did_command" % bot_id, succeed)
+	CommunicationManager.publish_to_app(
+		"bot/%s/payload_dropped" % bot_id,
+		(
+			get_tree().get_current_scene().navigation_controller.location_index(at_location)
+			if succeed
+			else false
+		)
+	)
 
 
 func _animate_rotation():
 	rotation = (movement_path[0] - position).angle()
 	return
-	tween.remove_all()
-	tween.interpolate_property(
-		self,
-		"rotation",
-		null,
-		(movement_path[0] - position).angle(),
-		0.2 / _factory.simulation_controller.speed_scale,
-		Tween.TRANS_SINE,
-		Tween.EASE_IN_OUT
-	)
-	tween.start()
+	# tween.remove_all()
+	# tween.interpolate_property(
+	# 	self,
+	# 	"rotation",
+	# 	null,
+	# 	(movement_path[0] - position).angle(),
+	# 	0.2 / _factory.simulation_controller.speed_scale,
+	# 	Tween.TRANS_SINE,
+	# 	Tween.EASE_IN_OUT
+	# )
+	# tween.start()

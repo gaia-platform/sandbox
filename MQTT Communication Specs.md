@@ -34,12 +34,14 @@ MQTT topic template: `[UUID]/[demo-name]/[topic]`
 
 ## Sandbox publishes
 
-| Topic name             | Payload        | Description                                    |
-| ---------------------- | -------------- | ---------------------------------------------- |
-| `order_arrived`        | `true`         | When a new pallet arrives in Inbound           |
-| `unpacked_pallet`      | `true`         | When a pallet is unpacked into the buffer area |
-| `processed_widget`     | `true`         | When a widget makes it to PL End               |
-| `[bot_id]/did_command` | `true`/`false` | Complete/incomplete feedback on last command   |
+| Topic name                    | Payload        | Description                                                  |
+| ----------------------------- | -------------- | ------------------------------------------------------------ |
+| `order_arrived`               | `true`         | When a new pallet arrives in Inbound                         |
+| `unpacked_pallet`             | `true`         | When a pallet is unpacked into the buffer area               |
+| `processed_widget`            | `true`         | When a widget makes it to PL End                             |
+| `[bot_id]/did_command`        | `true`/`false` | Complete/incomplete feedback on last command                 |
+| `bots/[bot_id]/crashed`       | `"buffer"`     | Reports a bot with ID crashed while going to goal location `payload` |
+| `bots/[bot_id]/cant_navigate` | `"buffer"`     | Response from bot when it can't complete a navigation because either the path couldn't be generated or if the end location was blocked |
 
  - `[robot-id]/info/[status_item]` (Robot status)
 
@@ -109,3 +111,4 @@ MQTT topic template: `[UUID]/[demo-name]/[topic]`
 | <span id="ac_scan_type">`scan_type`</span> | `"badge"`<br />`"face"`<br />`"leaving"`<br />`"vehicle_departing"`<br />`"vehicle_entering"`<br />`"leaving_wifi"`<br />`"joining_wifi"` |       |
 |                                            |                                                              |       |
 
+##### 

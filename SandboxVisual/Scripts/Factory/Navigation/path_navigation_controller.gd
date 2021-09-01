@@ -96,6 +96,7 @@ func _input(event):
 	# 		KEY_0:
 	# 			bots[0].drop_payload(_factory.painting_area)
 
+
 ### Signal functions
 func _bot_move_location(bot_id: String, location: String):
 	var location_index = location_index(location)
@@ -139,7 +140,7 @@ func _on_FloorPath_resized():
 
 ### Public Functions
 func location_index(location: String):
-	var result: int = 0;
+	var result: int = 0
 	for area in _factory.areas:
 		if area.id == location:
 			return result
@@ -151,6 +152,7 @@ func location_id(location: int):
 	if location < _factory.areas.size():
 		return _factory.areas[location].id
 	return null
+
 
 ## Generate astar map
 func create_connections():
@@ -186,7 +188,9 @@ func _navigate_bot(bot, loc_index):
 			path_clear = false
 			break
 	if not id_path.size() or not path_clear:
-		CommunicationManager.publish_to_app("factory/%s/did_command" % bot.bot_id, false)
+		CommunicationManager.publish_to_app(
+			"bots/%s/cant_navigate" % bot.bot_id, location_id(loc_index)
+		)
 		return
 
 	# If all clear, get raw path
