@@ -7,7 +7,8 @@ var _is_still_processing = false
 ## AMR
 signal factory_running
 signal factory_move_location(bot_id, location)
-signal factory_pickup_payload(bot_id, location)
+signal factory_charge_bot(bot_id)
+signal factory_pickup_payload(bot_id, payload)
 signal factory_drop_payload(bot_id, location)
 signal factory_status_request(bot_id, status_item)
 
@@ -52,6 +53,8 @@ func _physics_process(_delta):
 							emit_signal("factory_running")
 						"move_location":  # Set destination location of a bot
 							emit_signal("factory_move_location", topic_extract[-2], payload)  # Send bot_ID and payload
+						"charge":  # Tell bot to charge
+							emit_signal("factory_charge_bot", topic_extract[-2])
 						"pickup_payload":  # Pickup payload at location
 							emit_signal("factory_pickup_payload", topic_extract[-2], payload)
 						"drop_payload":  # Drop payload at location

@@ -23,25 +23,26 @@ MQTT topic template: `[UUID]/[demo-name]/[topic]`
 
 ## Sandbox subscribes to
 
-| Topic name                | Example Payload                             | Description                                                  |
-| ------------------------- | ------------------------------------------- | ------------------------------------------------------------ |
-| `[bot_id]/move_location`  | `2`                                         | Instruct `[bot_id]` to move to given `nav_node`              |
-| `[bot_id]/pickup_payload` | `3`                                         | Pickup next payload (could be widget or pallet) from given `area` index |
-| `[bot_id]/drop_payload`   | `5`                                         | Drop payload at given `area` index                           |
-| `[bot_id]/status_request` | [`[status_item]`](#factory_bot_status_item) | Request for bot status                                       |
+| Topic name                    | Example Payload                             | Description                                                  |
+| ----------------------------- | ------------------------------------------- | ------------------------------------------------------------ |
+| `bot/[bot_id]/move_location`  | `2`                                         | Instruct `[bot_id]` to move to given `nav_node`              |
+| `bot/[bot_id]/pickup_payload` | `3`                                         | Pickup next payload (could be widget or pallet) from given `area` index |
+| `bot/[bot_id]/drop_payload`   | `5`                                         | Drop payload at given `area` index                           |
+| `bot/[bot_id]/status_request` | [`[status_item]`](#factory_bot_status_item) | Request for bot status                                       |
 
 
 
 ## Sandbox publishes
 
-| Topic name                    | Payload        | Description                                                  |
-| ----------------------------- | -------------- | ------------------------------------------------------------ |
-| `order_arrived`               | `true`         | When a new pallet arrives in Inbound                         |
-| `unpacked_pallet`             | `true`         | When a pallet is unpacked into the buffer area               |
-| `processed_widget`            | `true`         | When a widget makes it to PL End                             |
-| `[bot_id]/did_command`        | `true`/`false` | Complete/incomplete feedback on last command                 |
-| `bots/[bot_id]/crashed`       | `"buffer"`     | Reports a bot with ID crashed while going to goal location `payload` |
-| `bots/[bot_id]/cant_navigate` | `"buffer"`     | Response from bot when it can't complete a navigation because either the path couldn't be generated or if the end location was blocked |
+| Topic name                       | Payload        | Description                                                  |
+| -------------------------------- | -------------- | ------------------------------------------------------------ |
+| `order_arrived`                  | `true`         | When a new pallet arrives in Inbound                         |
+| `unpacked_pallet`                | `true`         | When a pallet is unpacked into the buffer area               |
+| `processed_widget`               | `true`         | When a widget makes it to PL End                             |
+| `bot/[bot_id]/crashed`           | `"buffer"`     | Reports a bot with ID crashed while going to goal location `payload` |
+| `bot/[bot_id]/cant_navigate`     | `"buffer"`     | Response from bot when it can't complete a navigation because either the path couldn't be generated or if the end location was blocked |
+| `bot/[bot_id]/payload_picked_up` | `[payload_id]` | Report back if payload `[payload_id]` was picked up, false if not |
+| `bot/[bot_id]/payload_dropped`   | ^              | ^ same but for dropping payload                              |
 
  - `[robot-id]/info/[status_item]` (Robot status)
 

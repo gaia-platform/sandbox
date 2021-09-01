@@ -36,6 +36,7 @@ func _ready():
 	var _connect_to_signal = CommunicationManager.connect(
 		"factory_move_location", self, "_bot_move_location"
 	)
+	_connect_to_signal = CommunicationManager.connect("factory_charge_bot", self, "_bot_charge")
 	_connect_to_signal = CommunicationManager.connect(
 		"factory_pickup_payload", self, "_bot_pickup_payload"
 	)
@@ -104,6 +105,15 @@ func _bot_move_location(bot_id: String, location: String):
 		var bot = id_to_bot[bot_id]
 		bot.bot_collision = null
 		_navigate_bot(bot, location_index)
+
+
+func _bot_charge(bot_id: String):
+	var bot = id_to_bot[bot_id]  # Get the bot
+	var success: bool
+	if bot.goal_location == 4 and not bot.is_inside_area:  # TEMP SOLUTION: Check if bot is at charging station waypoint, then add to charging station
+		get_tree().get_current_scene().charging_station.add_node(bot)
+		success = true
+	CommunicationManager.publish_to_app("bot/%s/charging" % bot_id, success)
 
 
 func _bot_pickup_payload(bot_id: String, location: String):
@@ -189,7 +199,7 @@ func _navigate_bot(bot, loc_index):
 			break
 	if not id_path.size() or not path_clear:
 		CommunicationManager.publish_to_app(
-			"bots/%s/cant_navigate" % bot.bot_id, location_id(loc_index)
+			"bot/%s/cant_navigate" % bot.bot_id, location_id(loc_index)
 		)
 		return
 
