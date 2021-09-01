@@ -29,6 +29,7 @@ MQTT topic template: `[UUID]/[demo-name]/[topic]`
 | `bot/[bot_id]/pickup_payload` | `3`                                         | Pickup next payload (could be widget or pallet) from given `area` index |
 | `bot/[bot_id]/drop_payload`   | `5`                                         | Drop payload at given `area` index                           |
 | `bot/[bot_id]/status_request` | [`[status_item]`](#factory_bot_status_item) | Request for bot status                                       |
+| `bot/[bot_id]/charge`         | NA                                          | Instruct `[bot_id]` to move into the charging station. Only works when at the charging station waypoint. Payload doesn't matter |
 
 
 
@@ -43,6 +44,7 @@ MQTT topic template: `[UUID]/[demo-name]/[topic]`
 | `bot/[bot_id]/cant_navigate`     | `"buffer"`     | Response from bot when it can't complete a navigation because either the path couldn't be generated or if the end location was blocked |
 | `bot/[bot_id]/payload_picked_up` | `[payload_id]` | Report back if payload `[payload_id]` was picked up, false if not |
 | `bot/[bot_id]/payload_dropped`   | ^              | ^ same but for dropping payload                              |
+| `bot/[bot_id]/charging`          | `true`         | Response from bot when it moves into the charging station    |
 
  - `[robot-id]/info/[status_item]` (Robot status)
 
