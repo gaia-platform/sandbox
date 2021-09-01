@@ -10,18 +10,17 @@
     });
 
     // Generate UUID and store in cookie
-    let storedUuid = getCookie();
-    if (storedUuid === "") {
-      const expDate = new Date();
-      expDate.setFullYear(expDate.getFullYear() + 10); // 10 year expiration time
+    let storedUuid = getCookie("sandboxUUID");
+    if (!storedUuid) {
       storedUuid = window.generateUUID();
-      document.cookie = "sandboxUUID=" + storedUuid + ";expires=" + expDate.toUTCString() + ";path=/";
+      setCookie("sandboxUUID", storedUuid);
 
       // Show privacy message (since the cookie is new)
       $("#privacy-modal").show();
     }
+
     window.sandboxUUID = storedUuid;
-    window.appUUID = null;
+    window.appUUID = getCookie("appUUID");
     window.publishToCoordinator("browser", "refresh");
     window.subscribeToTopic("editor/#");
     window.subscribeToTopic("appUUID");
@@ -59,7 +58,8 @@
 
     if (topicLevels[1] == 'appUUID') {
       window.appUUID = payload;
-      setTimeout(function(){ window.publishToApp("ping", "running"); }, 1000);
+      setCookie("appUUID", window.appUUID);
+      window.publishToApp("ping", "running");
       return;
     }
 
@@ -122,8 +122,14 @@
     });
   }
 
-  function getCookie() {
-    let name = "sandboxUUID=";
+  function setCookie(cookieName, value) {
+    const expDate = new Date();
+    expDate.setFullYear(expDate.getFullYear() + 10); // 10 year expiration time
+    document.cookie = cookieName + "=" + value + ";expires=" + expDate.toUTCString() + ";path=/";
+  }
+
+  function getCookie(cookieName) {
+    let name = cookieName + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
     let ca = decodedCookie.split(';');
     for (let i = 0; i < ca.length; i++) {
@@ -135,7 +141,7 @@
         return c.substring(name.length, c.length);
       }
     }
-    return "";
+    return null;
   }
 
   // Button functions
