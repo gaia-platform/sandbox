@@ -29,7 +29,6 @@
 
     window.sandboxUUID = storedSandboxUuid;
     window.appUUID = storedAppUUID;
-    console.log("App ID: " + window.appUUID);
     window.publishToCoordinator("browser", "refresh");
     window.subscribeToTopic("editor/#");
     window.subscribeToTopic("appUUID");

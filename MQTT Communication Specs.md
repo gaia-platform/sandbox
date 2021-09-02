@@ -9,9 +9,9 @@
 
 ## General Info
 
-MQTT topic template: `[UUID]/[demo-name]/[topic]`
+MQTT topic template: `[UUID]/[topic]`
 
-| When...                               | Use prefix                          |
+| When...                               | `[UUID]` is...                      |
 | ------------------------------------- | ----------------------------------- |
 | Subscribing                           | `[sandboxUUID]`                     |
 | Publishing to a Gaia app              | `[appUUID]`                         |
@@ -19,7 +19,7 @@ MQTT topic template: `[UUID]/[demo-name]/[topic]`
 
 ---
 
-# AMR Simulations (`factory`) <a id="factory"></a>
+# AMR Simulations <a id="factory"></a>
 
 ## Sandbox subscribes to
 
@@ -35,16 +35,20 @@ MQTT topic template: `[UUID]/[demo-name]/[topic]`
 
 ## Sandbox publishes
 
-| Topic name                       | Payload        | Description                                                  |
-| -------------------------------- | -------------- | ------------------------------------------------------------ |
-| `order_arrived`                  | `true`         | When a new pallet arrives in Inbound                         |
-| `unpacked_pallet`                | `true`         | When a pallet is unpacked into the buffer area               |
-| `processed_widget`               | `true`         | When a widget makes it to PL End                             |
-| `bot/[bot_id]/crashed`           | `"buffer"`     | Reports a bot with ID crashed while going to goal location `payload` |
-| `bot/[bot_id]/cant_navigate`     | `"buffer"`     | Response from bot when it can't complete a navigation because either the path couldn't be generated or if the end location was blocked |
-| `bot/[bot_id]/payload_picked_up` | `[payload_id]` | Report back if payload `[payload_id]` was picked up, false if not |
-| `bot/[bot_id]/payload_dropped`   | ^              | ^ same but for dropping payload                              |
-| `bot/[bot_id]/charging`          | `true`         | Response from bot when it moves into the charging station    |
+| Topic name                       | Payload          | Description                                                  |
+| -------------------------------- | ---------------- | ------------------------------------------------------------ |
+| `ping`                           | `"running"`      | Updated Gaia that a simulation is running                    |
+| `factory_data`                   | JSON             | Description of factory layout for Gaia to read               |
+| `station/inbound/pallet`         | JSON pallet data | Telling Gaia a new order has arrived                         |
+| `order_arrived`                  | `true`           | When a new pallet arrives in Inbound                         |
+| `unpacked_pallet`                | `true`           | When a pallet is unpacked into the buffer area               |
+| `processed_widget`               | `true`           | When a widget makes it to PL End                             |
+| `bot/[bot_id]/arrived`           | `"buffer"`       | Response from bot when it arrives at a location              |
+| `bot/[bot_id]/crashed`           | `"buffer"`       | Reports a bot with ID crashed while going to goal location `payload` |
+| `bot/[bot_id]/cant_navigate`     | `"buffer"`       | Response from bot when it can't complete a navigation because either the path couldn't be generated or if the end location was blocked |
+| `bot/[bot_id]/payload_picked_up` | `[payload_id]`   | Report back if payload `[payload_id]` was picked up, false if not |
+| `bot/[bot_id]/payload_dropped`   | ^                | ^ same but for dropping payload                              |
+| `bot/[bot_id]/charging`          | `true`           | Response from bot when it moves into the charging station    |
 
  - `[robot-id]/info/[status_item]` (Robot status)
 
