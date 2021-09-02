@@ -176,7 +176,7 @@ func travel(path: PoolVector2Array):
 
 func pickup_payload(payload):
 	var succeed: bool
-	if not payload_node and payload:  # If there isn't already a payload registered
+	if not payload_node and payload and payload.is_pallet == (bot_type == 1):  # If there isn't already a payload registered and the type matches bot
 		var prev_global_pos = payload.global_position  # Get current global position
 		payload.get_parent().remove_child(payload)  # Orphan
 		add_child(payload)  # Add to this bot
