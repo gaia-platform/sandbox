@@ -13,7 +13,7 @@ onready var widget_holder = $WidgetHolder
 
 # Properties
 var widgets = [null, null, null, null]
-var payload_id = " "
+var payload_id: String
 var is_pallet = true
 
 # Get factory

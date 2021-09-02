@@ -92,6 +92,7 @@ func _ready():
 
 	# Create outbound pallet
 	var outbound_pallet = pallet_scene.instance()
+	outbound_pallet.payload_id = CommunicationManager.generate_uuid()
 	outbound_pallet.connect("widget_added", self, "_check_if_ready_to_ship")  # Connect to signal to check if ready to ship
 	outbound_pallet.global_position = outbound_area.pallet_location.get_location()
 	pallets.add_child(outbound_pallet)
@@ -100,6 +101,7 @@ func _ready():
 	# For testing: Auto-populate it with 3 widgets
 	for w in 3:
 		var outbound_widget = widget_scene.instance()
+		outbound_widget.payload_id = CommunicationManager.generate_uuid()
 		outbound_widget.global_position = outbound_pallet.global_position
 		widgets.add_child(outbound_widget)
 		outbound_pallet.add_widget(outbound_widget)
@@ -269,13 +271,15 @@ func _generate_new_inbound_pallet():
 	# Pallet
 	var pallet_data = {"id": CommunicationManager.generate_uuid(), "widgets": []}
 	var new_pallet = pallet_scene.instance()
+	new_pallet.payload_id = pallet_data["id"]
 	pallets.add_child(new_pallet)
 	new_pallet.global_position = inbound_area.pallet_location.get_location() + Vector2(0, 200)  # Start it somewhere off screen below
 
 	# Widgets
 	for w in 4:
-		pallet_data["widgets"].append({"id": CommunicationManager.generate_uuid()})
 		var widget_instance = widget_scene.instance()
+		widget_instance.payload_id = CommunicationManager.generate_uuid()
+		pallet_data["widgets"].append({"id": widget_instance.payload_id})
 		widgets.add_child(widget_instance)
 		widget_instance.global_position = new_pallet.global_position
 		new_pallet.add_widget(widget_instance, false)
@@ -322,12 +326,12 @@ func _on_BufferActionButton_pressed():
 			"leaving_area", self, "_check_to_reset_buffer_area", [], CONNECT_ONESHOT
 		)
 
+	# Tell Gaia there are new unpacked widgets
+	CommunicationManager.publish_to_app("unpacked_pallet", buffer_area.pallet_node.payload_id)
+
 	# Remove pallet after unloading
 	buffer_area.pallet_node.queue_free()
 	buffer_area.pallet_node = null
-
-	# Tell Gaia there are new unpacked widgets
-	CommunicationManager.publish_to_app("unpacked_pallet", true)
 
 
 # For each widget that leaves the area, check if the buffer is empty and is ready for next pallet
