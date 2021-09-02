@@ -23,10 +23,18 @@ npm i
 ```
 Once all dependencies are installed, you can make changes to the code and recompile them with `npm run build` (do this in the `Website` directory).
 
-**You may stop here if you don't intend to develop the simulations.**
+**You may stop here if you just want to develop website UI and don't want to interact with MQTT or the sandbox simulations.**
+
+## MQTT topic listing and debugging
+
+If you find that you need to listen to MQTT topics or directly publish to topics, please read this section.
+
+All of the MQTT topics used in the sandbox are in the file [MQTT Communication Specifications Doc](https://github.com/gaia-platform/sandbox/blob/main/MQTT%20Communication%20Specs.md). There you can see the topic structure as well as which topics are published/subscribed to by the sandbox and simulation.
+
+To interact with MQTT directly, please download `mqtt-explorer.zip` located at the root of this repo, unzip it, and open `index.html`. This is a simple, pre-authenticated, applet which will let you communicate directly with the MQTT broker. Prefix your MQTT topics with `[UUID]/` and replace `[UUID]` with either your `REMOTE_CLIENT_ID` for publishing or your `appUUID` for subscribing. You can view your UUIDs by clicking the "Show UUIDs" button in the top right of the sandbox.
 
 ## Sandbox visual development
-note: This is only necessary for doing Godot development
+Note: This is only necessary for simulation development
 
 You'll need to
 
