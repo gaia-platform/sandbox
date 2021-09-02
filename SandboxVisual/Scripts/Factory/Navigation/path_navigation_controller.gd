@@ -114,8 +114,6 @@ func _bot_charge(bot_id: String):
 		get_tree().get_current_scene().charging_station.add_node(bot)
 		success = true
 		bot.is_charging = true
-	else:
-		success = false
 	CommunicationManager.publish_to_app("bot/%s/charging" % bot_id, success)
 
 
@@ -202,14 +200,10 @@ func _navigate_bot(bot, loc_index):
 			break
 
 	if not id_path.size():
-		CommunicationManager.publish_to_app(
-			"bot/%s/cant_navigate" % bot.bot_id, "cant_find_path"
-		)
+		CommunicationManager.publish_to_app("bot/%s/cant_navigate" % bot.bot_id, "cant_find_path")
 		return
 	if not path_clear:
-		CommunicationManager.publish_to_app(
-			"bot/%s/cant_navigate" % bot.bot_id, "path_not_clear"
-		)
+		CommunicationManager.publish_to_app("bot/%s/cant_navigate" % bot.bot_id, "path_not_clear")
 		return
 
 	# If all clear, get raw path
