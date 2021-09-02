@@ -80,7 +80,9 @@ func _physics_process(delta):
 				navigation_astar.set_point_disabled(_disabled_point)
 
 			# Report success
-			if report_success:
+			# Note: do not publish the event if the robot is_charging because
+			# it was already published when the robot arrived at the viewpoint.
+			if report_success and not is_charging:
 				CommunicationManager.publish_to_app(
 					"bot/%s/arrived" % bot_id,
 					get_tree().get_current_scene().navigation_controller.location_id(goal_location)
