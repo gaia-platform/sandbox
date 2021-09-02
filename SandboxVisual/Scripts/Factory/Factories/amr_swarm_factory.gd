@@ -197,6 +197,9 @@ func _on_ApplyButton_pressed():
 	# Generate new bots
 	_generate_bots()
 
+	# Reset inbound area button
+	receive_order_button.disabled = false
+
 	CommunicationManager.publish_to_app("ping", "running")
 
 
@@ -289,9 +292,6 @@ func _generate_new_inbound_pallet():
 func _show_unpack_buffer_ui():
 	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")  # Slight delay for animation effect
 	buffer_area.show_popup_button()
-
-	# Cleanup inbound
-	receive_order_button.disabled = false
 
 
 # Unpack button pressed
