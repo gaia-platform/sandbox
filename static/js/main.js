@@ -162,7 +162,7 @@
   })
 
   $("#reset-button").click(function () {
-    prompt("Remote client ID (aka sandboxUUID)", "export REMOTE_CLIENT_ID="+window.sandboxUUID);
+    prompt("Remote client ID (aka sandboxUUID)", "export REMOTE_CLIENT_ID=" + window.sandboxUUID);
   });
 
   $("#test-button").click(function () {
