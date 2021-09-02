@@ -13,7 +13,7 @@ onready var widget_holder = $WidgetHolder
 
 # Properties
 var widgets = [null, null, null, null]
-var payload_id: String
+var payload_id = " "
 
 # Get factory
 onready var _factory = get_tree().get_current_scene()
