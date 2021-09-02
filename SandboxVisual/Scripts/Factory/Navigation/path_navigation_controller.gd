@@ -115,6 +115,7 @@ func _bot_charge(bot_id: String):
 		astar.set_point_disabled(bot.disabled_point, false)
 		bot.disabled_point = -1
 		success = true
+		bot.is_charging = true
 	CommunicationManager.publish_to_app("bot/%s/charging" % bot_id, success)
 
 
@@ -199,10 +200,12 @@ func _navigate_bot(bot, loc_index):
 		if astar.is_point_disabled(id):
 			path_clear = false
 			break
-	if not id_path.size() or not path_clear:
-		CommunicationManager.publish_to_app(
-			"bot/%s/cant_navigate" % bot.bot_id, location_id(loc_index)
-		)
+
+	if not id_path.size():
+		CommunicationManager.publish_to_app("bot/%s/cant_navigate" % bot.bot_id, "cant_find_path")
+		return
+	if not path_clear:
+		CommunicationManager.publish_to_app("bot/%s/cant_navigate" % bot.bot_id, "path_not_clear")
 		return
 
 	# If all clear, get raw path
@@ -226,4 +229,5 @@ func _navigate_bot(bot, loc_index):
 	if bot.position == point_path[0]:
 		point_path.remove(0)
 	bot.goal_location = loc_index
+	bot.is_charging = false
 	bot.travel(point_path)

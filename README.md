@@ -26,6 +26,8 @@ Once all dependencies are installed, you can make changes to the code and recomp
 **You may stop here if you don't intend to develop the simulations.**
 
 ## Sandbox visual development
+note: This is only necessary for doing Godot development
+
 You'll need to
 
 * Install Godot 3.3.2 or later
