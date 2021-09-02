@@ -194,7 +194,9 @@ func pickup_payload(payload):
 
 		succeed = true
 
-	# UNDONE: report payload id
+		if goal_location == 5:  # If at inbound area, re-enable receive order button
+			get_tree().get_current_scene().receive_order_button.disabled = false
+
 	CommunicationManager.publish_to_app(
 		"bot/%s/payload_picked_up" % bot_id, payload.payload_id if succeed else false
 	)

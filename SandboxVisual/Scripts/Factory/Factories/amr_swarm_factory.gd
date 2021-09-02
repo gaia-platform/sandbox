@@ -197,6 +197,9 @@ func _on_ApplyButton_pressed():
 	# Generate new bots
 	_generate_bots()
 
+	# Reset inbound area button
+	receive_order_button.disabled = false
+
 	CommunicationManager.publish_to_app("ping", "running")
 
 
