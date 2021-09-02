@@ -10,17 +10,26 @@
     });
 
     // Generate UUID and store in cookie
-    let storedUuid = getCookie("sandboxUUID");
-    if (!storedUuid) {
-      storedUuid = window.generateUUID();
-      setCookie("sandboxUUID", storedUuid);
+    let storedSandboxUuid = getCookie("sandboxUUID");
+    if (!storedSandboxUuid) {
+      storedSandboxUuid = window.generateUUID();
+      setCookie("sandboxUUID", storedSandboxUuid);
+
+      // Show privacy message (since the cookie is new)
+      $("#privacy-modal").show();
+    }
+    let storedAppUUID = getCookie("appUUID");
+    if (!storedAppUUID) {
+      storedAppUUID = window.generateUUID();
+      setCookie("appUUID", storedAppUUID);
 
       // Show privacy message (since the cookie is new)
       $("#privacy-modal").show();
     }
 
-    window.sandboxUUID = storedUuid;
-    window.appUUID = getCookie("appUUID");
+    window.sandboxUUID = storedSandboxUuid;
+    window.appUUID = storedAppUUID;
+    console.log("App ID: " + window.appUUID);
     window.publishToCoordinator("browser", "refresh");
     window.subscribeToTopic("editor/#");
     window.subscribeToTopic("appUUID");
@@ -44,8 +53,8 @@
 
   function fileFormat(fileName) {
     switch (fileName) {
-      case 'ruleset':   return 'cpp';
-      case 'ddl':       return 'sql';
+      case 'ruleset': return 'cpp';
+      case 'ddl': return 'sql';
 
       default:
         break;
@@ -105,7 +114,7 @@
     editor.focus();
   }
 
-  window.generateUUID = function() { // By Briguy37
+  window.generateUUID = function () { // By Briguy37
     let
       d = new Date().getTime(),
       d2 = (performance && performance.now && (performance.now() * 1000)) || 0;

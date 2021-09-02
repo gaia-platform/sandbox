@@ -196,6 +196,7 @@ func pickup_payload(payload):
 	CommunicationManager.publish_to_app(
 		"bot/%s/payload_picked_up" % bot_id, payload.payload_id if succeed else false
 	)
+	print("Picked up payload with id %s" % payload.payload_id)
 
 
 func drop_payload(at_location):
