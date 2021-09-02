@@ -162,11 +162,11 @@
   })
 
   $("#reset-button").click(function () {
-    // Reset Current simulation
+    prompt("Remote client ID (aka sandboxUUID)", "export REMOTE_CLIENT_ID="+window.sandboxUUID);
   });
 
   $("#test-button").click(function () {
-    alert("export REMOTE_CLIENT_ID=" + window.sandboxUUID + "\n\nSubscribe to MQTT topics with this UUID:\n" + window.appUUID);
+    prompt("Subscribe to MQTT topics with this UUID:", window.appUUID);
   });
 
   $("#privacy-button").click(function () {

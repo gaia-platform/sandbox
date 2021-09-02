@@ -2,7 +2,7 @@ extends Sprite
 
 ### Properties
 export (int, "Raw", "Painted", "Labeled") var state
-var payload_id = " "
+var payload_id: String
 var is_pallet = false
 
 ### Elements
