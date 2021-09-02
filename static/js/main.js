@@ -166,7 +166,7 @@
   });
 
   $("#test-button").click(function () {
-    alert("export REMOTE_CLIENT_ID=" + window.sandboxUUID);
+    alert("export REMOTE_CLIENT_ID=" + window.sandboxUUID + "\n\nSubscribe to MQTT topics with this UUID:\n" + window.appUUID);
   });
 
   $("#privacy-button").click(function () {
