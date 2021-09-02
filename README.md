@@ -22,6 +22,9 @@ cd {where_you_cloned_the_repo}
 npm i
 ```
 Once all dependencies are installed, you can make changes to the code and recompile them with `npm run build` (do this in the `Website` directory).
+
+**You may stop here if you don't intend to develop the simulations.**
+
 ## Sandbox visual development
 You'll need to
 
