@@ -30,7 +30,7 @@ var payload_node = null
 var is_pallet: bool
 var bot_collision: KinematicCollision2D
 var report_success = true
-var _disabled_point = -1
+var disabled_point = -1
 
 signal leaving_area
 
@@ -76,8 +76,8 @@ func _physics_process(delta):
 
 			# Disable the navigation at this location (only if at waypoint)
 			if not is_inside_area:
-				_disabled_point = navigation_astar.get_closest_point(position)
-				navigation_astar.set_point_disabled(_disabled_point)
+				disabled_point = navigation_astar.get_closest_point(position)
+				navigation_astar.set_point_disabled(disabled_point)
 
 			# Report success
 			if report_success:
@@ -114,9 +114,9 @@ func _physics_process(delta):
 
 			# Re-enable the disabled point in navigation
 			if not is_inside_area:
-				if _disabled_point != -1:
-					navigation_astar.set_point_disabled(_disabled_point, false)
-					_disabled_point = -1
+				if disabled_point != -1:
+					navigation_astar.set_point_disabled(disabled_point, false)
+					disabled_point = -1
 
 	elif bot_collision:
 		if modulate != Color.red:
