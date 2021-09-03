@@ -82,9 +82,7 @@ func _ready():
 	CommunicationManager.subscribe_to_topic("ship")
 
 	CommunicationManager.publish_to_coordinator("project/select", "amr_swarm_template")
-	var _connect_to_signal = CommunicationManager.connect(
-		"factory_running", self, "_init_app"
-	)
+	var _connect_to_signal = CommunicationManager.connect("factory_running", self, "_init_app")
 
 	number_of_waypoints = 0
 	for area in areas:
@@ -96,8 +94,12 @@ func _ready():
 	production_line.connect("new_node_added", self, "_prep_process_widget_in_production_line")
 	pl_end.connect("new_node_added", self, "_handle_widget_in_pl_end")
 
-	_connect_to_signal = CommunicationManager.connect("factory_unpack_pallet", self, "_auto_unpack_buffer")
-	_connect_to_signal = CommunicationManager.connect("factory_start_production", self, "_auto_start_production")
+	_connect_to_signal = CommunicationManager.connect(
+		"factory_unpack_pallet", self, "_auto_unpack_buffer"
+	)
+	_connect_to_signal = CommunicationManager.connect(
+		"factory_start_production", self, "_auto_start_production"
+	)
 	_connect_to_signal = CommunicationManager.connect("factory_unload_pl", self, "_auto_unload_pl")
 	_connect_to_signal = CommunicationManager.connect("factory_ship", self, "_auto_ship")
 
@@ -309,6 +311,8 @@ func _show_unpack_buffer_ui():
 	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")  # Slight delay for animation effect
 	buffer_area.show_popup_button()
 
+
+# MQTT driven signal to press button
 func _auto_unpack_buffer():
 	buffer_area.popup_action_button.emit_signal("pressed")
 
@@ -355,6 +359,8 @@ func _check_to_reset_buffer_area():
 		buffer_area.pallet_space.show()
 		buffer_area.widget_space.hide()
 
+
+# MQTT driven signal to press button
 func _auto_start_production():
 	pl_start.popup_action_buttono.emit_signal("pressed")
 
@@ -409,8 +415,11 @@ func _show_complete_production_ui(widget):
 	# Display button
 	production_line.show_popup_button()
 
+
+# MQTT driven signal to press button
 func _auto_unload_pl():
 	production_line.popup_action_button.emit_signal("pressed")
+
 
 # Complete production button pressed
 func _on_ProductionLineActionButton_pressed():
@@ -446,10 +455,12 @@ func _move_to_outbound(widget):
 func _check_if_ready_to_ship(space_left):
 	if space_left == 0:  # Show "ship" button if there is no space left
 		outbound_area.show_popup_button()
-		
 
+
+# MQTT driven signal to press button
 func _auto_ship():
 	outbound_area.popup_action_button.emit_signal("pressed")
+
 
 # When the shipping button is pressed
 func _on_OutboundActionButton_pressed():
