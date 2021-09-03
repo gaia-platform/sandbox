@@ -79,6 +79,7 @@ func _ready():
 	CommunicationManager.subscribe_to_topic("unpack_pallet")
 	CommunicationManager.subscribe_to_topic("start_production")
 	CommunicationManager.subscribe_to_topic("unload_pl")
+	CommunicationManager.subscribe_to_topic("ship")
 
 	CommunicationManager.publish_to_coordinator("project/select", "amr_swarm_template")
 	var _connect_to_signal = CommunicationManager.connect(
@@ -98,7 +99,7 @@ func _ready():
 	_connect_to_signal = CommunicationManager.connect("factory_unpack_pallet", self, "_auto_unpack_buffer")
 	_connect_to_signal = CommunicationManager.connect("factory_start_production", self, "_auto_start_production")
 	_connect_to_signal = CommunicationManager.connect("factory_unload_pl", self, "_auto_unload_pl")
-
+	_connect_to_signal = CommunicationManager.connect("factory_ship", self, "_auto_ship")
 
 	# Create outbound pallet
 	var outbound_pallet = pallet_scene.instance()
