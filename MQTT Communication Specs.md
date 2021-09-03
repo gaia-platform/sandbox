@@ -49,6 +49,7 @@ MQTT topic template: `[UUID]/[topic]`
 | `bot/[bot_id]/payload_picked_up` | `[payload_id]`   | Report back if payload `[payload_id]` was picked up, false if not |
 | `bot/[bot_id]/payload_dropped`   | ^                | ^ same but for dropping payload                              |
 | `bot/[bot_id]/charging`          | `true`           | Response from bot when it moves into the charging station    |
+| `bot/[bot_id]/moving_to`         | `"buffer"`       | Response when bot start traveling to a new location (payload) |
 
 Gaia signals to automate manual interaction inside factory
 
