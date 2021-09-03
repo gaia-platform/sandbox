@@ -30,7 +30,7 @@ var payload_node = null
 var is_pallet: bool
 var bot_collision: KinematicCollision2D
 var report_success = true
-var disabled_point = -1
+# var disabled_point = -1
 
 signal leaving_area
 
@@ -74,10 +74,10 @@ func _physics_process(delta):
 			cur_speed_squared = 0
 			var _stop_movement = move_and_collide(Vector2.ZERO)
 
-			# Disable the navigation at this location (only if at waypoint)
-			if not is_inside_area:
-				disabled_point = navigation_astar.get_closest_point(position)
-				navigation_astar.set_point_disabled(disabled_point)
+			# # Disable the navigation at this location (only if at waypoint)
+			# if not is_inside_area:
+			# 	disabled_point = navigation_astar.get_closest_point(position)
+			# 	navigation_astar.set_point_disabled(disabled_point)
 
 			# Report success
 			# Note: do not publish the event if the robot is_charging because
@@ -114,16 +114,20 @@ func _physics_process(delta):
 			movement_path = next_movement
 			_animate_rotation()
 
-			# Re-enable the disabled point in navigation
-			if not is_inside_area:
-				if disabled_point != -1:
-					navigation_astar.set_point_disabled(disabled_point, false)
-					disabled_point = -1
+			# # Re-enable the disabled point in navigation
+			# if not is_inside_area:
+			# 	if disabled_point != -1:
+			# 		navigation_astar.set_point_disabled(disabled_point, false)
+			# 		disabled_point = -1
 
 	elif bot_collision:
 		if modulate != Color.red:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
 			modulate = Color.red  # Modulate to red
+			movement_path.resize(0)
+			_movement_queue.clear()
+			# get_tree().get_current_scene().navigation_controller.astar.set_point_disabled(disabled_point, false)
+			# disabled_point = -1
 			CommunicationManager.publish_to_app(
 				"bot/%s/crashed" % bot_id,
 				get_tree().get_current_scene().navigation_controller.location_id(goal_location)
