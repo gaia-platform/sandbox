@@ -11,6 +11,10 @@ signal factory_charge_bot(bot_id)
 signal factory_pickup_payload(bot_id, payload)
 signal factory_drop_payload(bot_id, location)
 signal factory_status_request(bot_id, status_item)
+signal factory_unpack_pallet
+signal factory_start_production
+signal factory_unload_pl
+signal factory_ship
 
 ## Access Control
 signal ac_init(init_data)
@@ -61,6 +65,14 @@ func _physics_process(_delta):
 							emit_signal("factory_drop_payload", topic_extract[-2], payload)
 						"status_request":  # Get info about a bot
 							emit_signal("factory_status_request", topic_extract[-2], payload)
+						"unpack_pallet":
+							emit_signal("factory_unpack_pallet")
+						"start_production":
+							emit_signal("factory_start_production")
+						"unload_pl":
+							emit_signal("factory_unload_pl")
+						"ship":
+							emit_signal("factory_ship")
 						_:
 							print("Unknown factory topic")
 				"AccessControlBuilding":

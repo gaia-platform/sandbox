@@ -75,10 +75,14 @@ func _ready():
 	# Wait for everything to load in, then count number of waypoints
 	yield(get_tree(), "idle_frame")
 	CommunicationManager.subscribe_to_topic("running")
+
+	CommunicationManager.subscribe_to_topic("unpack_pallet")
+	CommunicationManager.subscribe_to_topic("start_production")
+	CommunicationManager.subscribe_to_topic("unload_pl")
+	CommunicationManager.subscribe_to_topic("ship")
+
 	CommunicationManager.publish_to_coordinator("project/select", "amr_swarm_template")
-	var _connect_to_factory_running = CommunicationManager.connect(
-		"factory_running", self, "_init_app"
-	)
+	var _connect_to_signal = CommunicationManager.connect("factory_running", self, "_init_app")
 
 	number_of_waypoints = 0
 	for area in areas:
@@ -89,6 +93,15 @@ func _ready():
 	pl_start.connect("new_node_added", self, "_show_start_production_ui")
 	production_line.connect("new_node_added", self, "_prep_process_widget_in_production_line")
 	pl_end.connect("new_node_added", self, "_handle_widget_in_pl_end")
+
+	_connect_to_signal = CommunicationManager.connect(
+		"factory_unpack_pallet", self, "_auto_unpack_buffer"
+	)
+	_connect_to_signal = CommunicationManager.connect(
+		"factory_start_production", self, "_auto_start_production"
+	)
+	_connect_to_signal = CommunicationManager.connect("factory_unload_pl", self, "_auto_unload_pl")
+	_connect_to_signal = CommunicationManager.connect("factory_ship", self, "_auto_ship")
 
 	# Create outbound pallet
 	var outbound_pallet = pallet_scene.instance()
@@ -299,6 +312,11 @@ func _show_unpack_buffer_ui():
 	buffer_area.show_popup_button()
 
 
+# MQTT driven signal to press button
+func _auto_unpack_buffer():
+	buffer_area.popup_action_button.emit_signal("pressed")
+
+
 # Unpack button pressed
 func _on_BufferActionButton_pressed():
 	buffer_area.run_popup_progress_bar(1)  # Run 1 second loading
@@ -340,6 +358,11 @@ func _check_to_reset_buffer_area():
 	if not buffer_area.widget_grid.node_to_spaces.size():
 		buffer_area.pallet_space.show()
 		buffer_area.widget_space.hide()
+
+
+# MQTT driven signal to press button
+func _auto_start_production():
+	pl_start.popup_action_buttono.emit_signal("pressed")
 
 
 ## Widgets arrive at PL Start
@@ -393,6 +416,11 @@ func _show_complete_production_ui(widget):
 	production_line.show_popup_button()
 
 
+# MQTT driven signal to press button
+func _auto_unload_pl():
+	production_line.popup_action_button.emit_signal("pressed")
+
+
 # Complete production button pressed
 func _on_ProductionLineActionButton_pressed():
 	if not pl_end.widget_grid.node_to_spaces.size():  # If there is no widget in PL End
@@ -427,6 +455,11 @@ func _move_to_outbound(widget):
 func _check_if_ready_to_ship(space_left):
 	if space_left == 0:  # Show "ship" button if there is no space left
 		outbound_area.show_popup_button()
+
+
+# MQTT driven signal to press button
+func _auto_ship():
+	outbound_area.popup_action_button.emit_signal("pressed")
 
 
 # When the shipping button is pressed
