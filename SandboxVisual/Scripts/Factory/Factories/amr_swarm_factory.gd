@@ -446,7 +446,10 @@ func _move_to_outbound(widget):
 func _check_if_ready_to_ship(space_left):
 	if space_left == 0:  # Show "ship" button if there is no space left
 		outbound_area.show_popup_button()
+		
 
+func _auto_ship():
+	outbound_area.popup_action_button.emit_signal("pressed")
 
 # When the shipping button is pressed
 func _on_OutboundActionButton_pressed():
