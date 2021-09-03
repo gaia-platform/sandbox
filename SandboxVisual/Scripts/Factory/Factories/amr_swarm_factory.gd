@@ -75,8 +75,13 @@ func _ready():
 	# Wait for everything to load in, then count number of waypoints
 	yield(get_tree(), "idle_frame")
 	CommunicationManager.subscribe_to_topic("running")
+
+	CommunicationManager.subscribe_to_topic("unpack_pallet")
+	CommunicationManager.subscribe_to_topic("start_production")
+	CommunicationManager.subscribe_to_topic("unload_pl")
+
 	CommunicationManager.publish_to_coordinator("project/select", "amr_swarm_template")
-	var _connect_to_factory_running = CommunicationManager.connect(
+	var _connect_to_signal = CommunicationManager.connect(
 		"factory_running", self, "_init_app"
 	)
 
@@ -89,6 +94,11 @@ func _ready():
 	pl_start.connect("new_node_added", self, "_show_start_production_ui")
 	production_line.connect("new_node_added", self, "_prep_process_widget_in_production_line")
 	pl_end.connect("new_node_added", self, "_handle_widget_in_pl_end")
+
+	_connect_to_signal = CommunicationManager.connect("factory_unpack_pallet", self, "_auto_unpack_buffer")
+	_connect_to_signal = CommunicationManager.connect("factory_start_production", self, "_auto_start_production")
+	_connect_to_signal = CommunicationManager.connect("factory_unload_pl", self, "_auto_unload_pl")
+
 
 	# Create outbound pallet
 	var outbound_pallet = pallet_scene.instance()
@@ -298,6 +308,9 @@ func _show_unpack_buffer_ui():
 	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")  # Slight delay for animation effect
 	buffer_area.show_popup_button()
 
+func _auto_unpack_buffer():
+	buffer_area.popup_action_button.emit_signal("pressed")
+
 
 # Unpack button pressed
 func _on_BufferActionButton_pressed():
@@ -340,6 +353,9 @@ func _check_to_reset_buffer_area():
 	if not buffer_area.widget_grid.node_to_spaces.size():
 		buffer_area.pallet_space.show()
 		buffer_area.widget_space.hide()
+
+func _auto_start_production():
+	pl_start.popup_action_buttono.emit_signal("pressed")
 
 
 ## Widgets arrive at PL Start
@@ -392,6 +408,8 @@ func _show_complete_production_ui(widget):
 	# Display button
 	production_line.show_popup_button()
 
+func _auto_unload_pl():
+	production_line.popup_action_button.emit_signal("pressed")
 
 # Complete production button pressed
 func _on_ProductionLineActionButton_pressed():

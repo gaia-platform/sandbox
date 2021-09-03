@@ -50,6 +50,15 @@ MQTT topic template: `[UUID]/[topic]`
 | `bot/[bot_id]/payload_dropped`   | ^                | ^ same but for dropping payload                              |
 | `bot/[bot_id]/charging`          | `true`           | Response from bot when it moves into the charging station    |
 
+Gaia signals to automate manual interaction inside factory
+
+| **Topic name**     | Description                        |
+| ------------------ | ---------------------------------- |
+| `unpack_pallet`    | Clicks "UNPACK" in buffer          |
+| `start_production` | Clicks "PROCESS" in PL Start       |
+| `unload_pl`        | Clicks "UNLOAD" in production line |
+| `ship`             | Clicks "SHIP" in outbound          |
+
  - `[robot-id]/info/[status_item]` (Robot status)
 
 | <span id="factory_bot_status_item">`[status_item]`</span> | Example Payload | Notes                                                        |
