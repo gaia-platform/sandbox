@@ -113,8 +113,9 @@ func _bot_charge(bot_id: String):
 	var success: bool
 	if bot.goal_location == 4 and not bot.is_inside_area:  # TEMP SOLUTION: Check if bot is at charging station waypoint, then add to charging station
 		get_tree().get_current_scene().charging_station.add_node(bot)
-		astar.set_point_disabled(bot.disabled_point, false)
-		bot.disabled_point = -1
+		if bot.disabled_point != -1:
+			astar.set_point_disabled(bot.disabled_point, false)
+			bot.disabled_point = -1
 		success = true
 		bot.is_charging = true
 	CommunicationManager.publish_to_app("bot/%s/charging" % bot_id, success)
@@ -226,9 +227,18 @@ func _navigate_bot(bot, loc_index):
 				break
 		path_index += 1  # Move onto next point
 
+	# For a bot collision, adjust for closest point between first and second points
+	if bot.modulate == Color.red:
+		var tempAstar = AStar2D.new()
+		tempAstar.add_point(0, point_path[0])
+		tempAstar.add_point(1, point_path[1])
+		tempAstar.connect_points(0, 1)
+		point_path[0] = tempAstar.get_closest_position_in_segment(bot.position)
+
 	# Set bot movement path and properties
 	if bot.position == point_path[0]:
 		point_path.remove(0)
+
 	bot.goal_location = loc_index
 	bot.is_charging = false
 	bot.travel(point_path)

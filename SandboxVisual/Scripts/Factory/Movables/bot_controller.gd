@@ -124,6 +124,11 @@ func _physics_process(delta):
 		if modulate != Color.red:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
 			modulate = Color.red  # Modulate to red
+			movement_path.resize(0)
+			_movement_queue.clear()
+			if disabled_point != -1:
+				get_tree().get_current_scene().navigation_controller.astar.set_point_disabled(disabled_point, false)
+				disabled_point = -1
 			CommunicationManager.publish_to_app(
 				"bot/%s/crashed" % bot_id,
 				get_tree().get_current_scene().navigation_controller.location_id(goal_location)
