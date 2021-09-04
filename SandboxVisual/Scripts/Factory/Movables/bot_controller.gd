@@ -227,13 +227,17 @@ func drop_payload(at_location):
 
 		succeed = true
 
+	# Running this in debug this happens (in Release it is converted to Null):
+	# bot_controller.gdc:231:drop_payload() - Invalid type in function 'location_index' 
+	# in base 'Node (path_navigation_controller.gd)'. 
+	# Cannot convert argument 1 from Object to String.
 	CommunicationManager.publish_to_app(
-		"bot/%s/payload_dropped" % bot_id,
-		(
-			get_tree().get_current_scene().navigation_controller.location_index(at_location)
-			if succeed
-			else false
-		)
+		"bot/%s/payload_dropped" % bot_id, false
+		#(
+		#	get_tree().get_current_scene().navigation_controller.location_index(at_location)
+		#	if succeed
+		#	else false
+		#)
 	)
 
 
