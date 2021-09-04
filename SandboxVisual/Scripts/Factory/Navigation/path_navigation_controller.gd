@@ -113,8 +113,9 @@ func _bot_charge(bot_id: String):
 	var success: bool
 	if bot.goal_location == 4 and not bot.is_inside_area:  # TEMP SOLUTION: Check if bot is at charging station waypoint, then add to charging station
 		get_tree().get_current_scene().charging_station.add_node(bot)
-		# astar.set_point_disabled(bot.disabled_point, false)
-		# bot.disabled_point = -1
+		if bot.disabled_point != -1:
+			astar.set_point_disabled(bot.disabled_point, false)
+			bot.disabled_point = -1
 		success = true
 		bot.is_charging = true
 	CommunicationManager.publish_to_app("bot/%s/charging" % bot_id, success)
