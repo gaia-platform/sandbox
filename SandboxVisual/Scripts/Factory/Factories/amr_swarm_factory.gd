@@ -362,7 +362,7 @@ func _check_to_reset_buffer_area():
 
 # MQTT driven signal to press button
 func _auto_start_production():
-	pl_start.popup_action_buttono.emit_signal("pressed")
+	pl_start.popup_action_button.emit_signal("pressed")
 
 
 ## Widgets arrive at PL Start
