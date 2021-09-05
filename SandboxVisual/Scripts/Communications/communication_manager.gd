@@ -46,7 +46,10 @@ func _physics_process(_delta):
 			var topic = message_decoded.result.topic
 			var payload = message_decoded.result.payload
 
-			print("%s: %s" % [topic, payload])
+			var time_in_ms = OS.get_system_time_msecs();
+			var time_in_s = String(time_in_ms % 60000); 
+			print("[%s.%s] Message received topic:%s payload:%s" % 
+				[time_in_s.substr(0, 2), time_in_s.substr(2), topic, payload])
 
 			## Detect who to send to
 			var topic_extract = topic.split("/")
@@ -117,6 +120,10 @@ func subscribe_to_topic(topic: String):
 
 func publish_to_app(topic: String, payload):
 	if is_working:
+		var time_in_ms = OS.get_system_time_msecs();
+		var time_in_s = String(time_in_ms % 60000); 
+		print("[%s.%s] Message published topic:%s payload:%s" % 
+			[time_in_s.substr(0, 2), time_in_s.substr(2), topic, payload])
 		JavaScript.eval(
 			(
 				"parent.publishToApp('%s', '%s');"
