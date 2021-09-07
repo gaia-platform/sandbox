@@ -103,21 +103,30 @@ func _ready():
 	_connect_to_signal = CommunicationManager.connect("factory_unload_pl", self, "_auto_unload_pl")
 	_connect_to_signal = CommunicationManager.connect("factory_ship", self, "_auto_ship")
 
-	# Create outbound pallet
+	## Create outbound pallet with 3 widgets inside for testing
+	# Create a new one outside the frame and move it in
+	var pallet_data = {"id": CommunicationManager.generate_uuid(), "widgets": []}
 	var outbound_pallet = pallet_scene.instance()
-	outbound_pallet.payload_id = CommunicationManager.generate_uuid()
-	outbound_pallet.connect("widget_added", self, "_check_if_ready_to_ship")  # Connect to signal to check if ready to ship
+	outbound_pallet.payload_id = pallet_data["id"]
 	outbound_pallet.global_position = outbound_area.pallet_location.get_location()
 	pallets.add_child(outbound_pallet)
+
+	# Move into place
 	outbound_area.add_pallet(outbound_pallet)
 
 	# For testing: Auto-populate it with 3 widgets
 	for w in 3:
 		var outbound_widget = widget_scene.instance()
 		outbound_widget.payload_id = CommunicationManager.generate_uuid()
+		pallet_data["widgets"].append({"id": outbound_widget.payload_id})
 		outbound_widget.global_position = outbound_pallet.global_position
 		widgets.add_child(outbound_widget)
 		outbound_pallet.add_widget(outbound_widget)
+
+	outbound_pallet.connect("widget_added", self, "_check_if_ready_to_ship")  # Connect to signal to check if ready to ship
+
+	# Tell Gaia a new pallet is in outbound
+	CommunicationManager.publish_to_app("station/outbound/pallet", to_json(pallet_data))
 
 	# Populate bots
 	_generate_bots()
@@ -415,7 +424,9 @@ func _show_complete_production_ui(widget):
 
 	# Display button
 	production_line.show_popup_button()
-	CommunicationManager.publish_to_app("production_finished", _widget_in_production_line.payload_id)
+	CommunicationManager.publish_to_app(
+		"production_finished", _widget_in_production_line.payload_id
+	)
 
 
 # MQTT driven signal to press button
@@ -490,8 +501,15 @@ func _complete_shipment(old_outbound_pallet):
 	old_outbound_pallet.queue_free()
 
 	# Create a new one outside the frame and move it in
+	var pallet_data = {"id": CommunicationManager.generate_uuid(), "widgets": []}
 	var outbound_pallet = pallet_scene.instance()
+	outbound_pallet.payload_id = pallet_data["id"]
 	outbound_pallet.connect("widget_added", self, "_check_if_ready_to_ship")  # Connect to signal to check if ready to ship
 	outbound_pallet.global_position = outbound_area.pallet_location.get_location() + Vector2(200, 0)
 	pallets.add_child(outbound_pallet)
+
+	# Move into place
 	outbound_area.add_pallet(outbound_pallet)
+
+	# Tell Gaia a new pallet is in outbound
+	CommunicationManager.publish_to_app("station/outbound/pallet", to_json(pallet_data))
