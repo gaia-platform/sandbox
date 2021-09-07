@@ -25,9 +25,9 @@ MQTT topic template: `[UUID]/[topic]`
 
 | Topic name                    | Example Payload                             | Description                                                  |
 | ----------------------------- | ------------------------------------------- | ------------------------------------------------------------ |
-| `bot/[bot_id]/move_location`  | `2`                                         | Instruct `[bot_id]` to move to given `nav_node`              |
-| `bot/[bot_id]/pickup_payload` | `3`                                         | Pickup next payload (could be widget or pallet) from given `area` index |
-| `bot/[bot_id]/drop_payload`   | `5`                                         | Drop payload at given `area` index                           |
+| `bot/[bot_id]/move_location`  | `buffer`                                    | Instruct `[bot_id]` to move to given `nav_node`              |
+| `bot/[bot_id]/pickup_payload` | `inbound`                                   | Pickup next payload (could be widget or pallet) from given `area` index |
+| `bot/[bot_id]/drop_payload`   | `buffer`                                    | Drop payload at given `area` index                           |
 | `bot/[bot_id]/status_request` | [`[status_item]`](#factory_bot_status_item) | Request for bot status                                       |
 | `bot/[bot_id]/charge`         | NA                                          | Instruct `[bot_id]` to move into the charging station. Only works when at the charging station waypoint. Payload doesn't matter |
 
@@ -35,21 +35,23 @@ MQTT topic template: `[UUID]/[topic]`
 
 ## Sandbox publishes
 
-| Topic name                       | Payload          | Description                                                  |
-| -------------------------------- | ---------------- | ------------------------------------------------------------ |
-| `ping`                           | `"running"`      | Updated Gaia that a simulation is running                    |
-| `factory_data`                   | JSON             | Description of factory layout for Gaia to read               |
-| `station/inbound/pallet`         | JSON pallet data | Telling Gaia a new order has arrived                         |
-| `order_arrived`                  | `true`           | When a new pallet arrives in Inbound                         |
-| `unpacked_pallet`                | `true`           | When a pallet is unpacked into the buffer area               |
-| `processed_widget`               | `true`           | When a widget makes it to PL End                             |
-| `bot/[bot_id]/arrived`           | `"buffer"`       | Response from bot when it arrives at a location              |
-| `bot/[bot_id]/crashed`           | `"buffer"`       | Reports a bot with ID crashed while going to goal location `payload` |
-| `bot/[bot_id]/cant_navigate`     | `"buffer"`       | Response from bot when it can't complete a navigation because either the path couldn't be generated or if the end location was blocked |
-| `bot/[bot_id]/payload_picked_up` | `[payload_id]`   | Report back if payload `[payload_id]` was picked up, false if not |
-| `bot/[bot_id]/payload_dropped`   | ^                | ^ same but for dropping payload                              |
-| `bot/[bot_id]/charging`          | `true`           | Response from bot when it moves into the charging station    |
-| `bot/[bot_id]/moving_to`         | `"buffer"`       | Response when bot start traveling to a new location (payload) |
+| Topic name                       | Example Payload       | Description                                                  |
+| -------------------------------- | --------------------- | ------------------------------------------------------------ |
+| `ping`                           | `"running"`           | Updated Gaia that a simulation is running                    |
+| `factory_data`                   | JSON                  | Description of factory layout for Gaia to read               |
+| `station/inbound/pallet`         | JSON pallet data      | Telling Gaia a new order has arrived                         |
+| `order_arrived`                  | `true`                | When a new pallet arrives in Inbound                         |
+| `unpacked_pallet`                | `true`                | When a pallet is unpacked into the buffer area               |
+| `processed_widget`               | `true`                | When a widget makes it to PL End                             |
+| `bot/[bot_id]/arrived`           | `"buffer"`            | Response from bot when it arrives at a location              |
+| `bot/[bot_id]/crashed`           | `"buffer"`            | Reports a bot with ID crashed while going to goal location `payload` |
+| `bot/[bot_id]/cant_navigate`     | `"buffer"`            | Response from bot when it can't complete a navigation because either the path couldn't be generated or if the end location was blocked |
+| `bot/[bot_id]/payload_picked_up` | `[payload_id]`        | Report back if payload `[payload_id]` was picked up, false if not |
+| `bot/[bot_id]/payload_dropped`   | "bufer"               | ^ same but for dropping payload                              |
+| `bot/[bot_id]/charging`          | `true`                | Response from bot when it moves into the charging station    |
+| `bot/[bot_id]/moving_to`         | `"buffer"`            | Response when bot start traveling to a new location (payload) |
+| `production_start_ready`         | `[widget.payload_id]` | Response when a widget sent to PL_start is ready for production |
+| `production_finished`            | `[widget.payload_id]` | Response when a widget finishes production                   |
 
 Gaia signals to automate manual interaction inside factory
 
