@@ -40,6 +40,7 @@ MQTT topic template: `[UUID]/[topic]`
 | `ping`                           | `"running"`           | Updated Gaia that a simulation is running                    |
 | `factory_data`                   | JSON                  | Description of factory layout for Gaia to read               |
 | `station/inbound/pallet`         | JSON pallet data      | Telling Gaia a new order has arrived                         |
+| `station/outbound/pallet`        | JSON pallet data      | Telling Gaia a new pallet is in outbound (for Gaia to create a record for it) |
 | `order_arrived`                  | `true`                | When a new pallet arrives in Inbound                         |
 | `unpacked_pallet`                | `true`                | When a pallet is unpacked into the buffer area               |
 | `processed_widget`               | `true`                | When a widget makes it to PL End                             |
