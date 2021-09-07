@@ -405,7 +405,6 @@ func _process_widget_in_production_line():
 		[_widget_in_production_line],
 		CONNECT_ONESHOT
 	)
-	CommunicationManager.publish_to_app("production_finished", _widget_in_production_line.payload_id)
 
 
 # Show complete production button and "processed" widget
@@ -416,6 +415,7 @@ func _show_complete_production_ui(widget):
 
 	# Display button
 	production_line.show_popup_button()
+	CommunicationManager.publish_to_app("production_finished", _widget_in_production_line.payload_id)
 
 
 # MQTT driven signal to press button
