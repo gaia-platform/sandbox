@@ -371,6 +371,7 @@ func _show_start_production_ui(widget):
 	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")
 	pl_start.show_popup_button()
 	_widget_in_pl_start = widget  # Assign to pl_start widget reference on arrival
+	CommunicationManager.publish_to_app("prodution_start_ready", widget.payload_id)
 
 
 # Start production button pressed
@@ -404,6 +405,7 @@ func _process_widget_in_production_line():
 		[_widget_in_production_line],
 		CONNECT_ONESHOT
 	)
+	CommunicationManager.publish_to_app("prodution_finished", _widget_in_production_line.payload_id)
 
 
 # Show complete production button and "processed" widget
