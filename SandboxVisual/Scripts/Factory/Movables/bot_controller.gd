@@ -127,7 +127,9 @@ func _physics_process(delta):
 			movement_path.resize(0)
 			_movement_queue.clear()
 			if disabled_point != -1:
-				get_tree().get_current_scene().navigation_controller.astar.set_point_disabled(disabled_point, false)
+				get_tree().get_current_scene().navigation_controller.astar.set_point_disabled(
+					disabled_point, false
+				)
 				disabled_point = -1
 			CommunicationManager.publish_to_app(
 				"bot/%s/crashed" % bot_id,
@@ -207,9 +209,9 @@ func pickup_payload(payload):
 	)
 
 
-func drop_payload(at_location):
+func drop_payload(area):
 	var succeed: bool
-	if payload_node and at_location:  # If there is a registered payload
+	if payload_node and area:  # If there is a registered payload
 		var prev_global_pos = payload_node.global_position  # Get global position
 		remove_child(payload_node)  # Remove from bot
 		payload_node.rotation = 0  # Reset rotation
@@ -218,26 +220,16 @@ func drop_payload(at_location):
 			collision_shape.position = Vector2.ZERO
 			_factory.pallets.add_child(payload_node)
 			payload_node.global_position = prev_global_pos  # Set position (gets messed up after parenting)
-			at_location.add_pallet(payload_node)  # Adds a pallet to location
+			area.add_pallet(payload_node)  # Adds a pallet to location
 		else:
 			_factory.widgets.add_child(payload_node)  # Add back to widget pool
 			payload_node.global_position = prev_global_pos
-			at_location.add_node(payload_node)  # Adds a widget to location
+			area.add_node(payload_node)  # Adds a widget to location
 		payload_node = null  # Unregister payload
 
 		succeed = true
-
-	# Running this in debug this happens (in Release it is converted to Null):
-	# bot_controller.gdc:231:drop_payload() - Invalid type in function 'location_index' 
-	# in base 'Node (path_navigation_controller.gd)'. 
-	# Cannot convert argument 1 from Object to String.
 	CommunicationManager.publish_to_app(
-		"bot/%s/payload_dropped" % bot_id, false
-		#(
-		#	get_tree().get_current_scene().navigation_controller.location_index(at_location)
-		#	if succeed
-		#	else false
-		#)
+		"bot/%s/payload_dropped" % bot_id, area.id if succeed else false
 	)
 
 
