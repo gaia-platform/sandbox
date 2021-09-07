@@ -20,11 +20,8 @@
     }
     let storedAppUUID = getCookie("appUUID");
     if (!storedAppUUID) {
-      storedAppUUID = window.generateUUID();
+      storedAppUUID = "not set yet";
       setCookie("appUUID", storedAppUUID);
-
-      // Show privacy message (since the cookie is new)
-      $("#privacy-modal").show();
     }
 
     window.sandboxUUID = storedSandboxUuid;
