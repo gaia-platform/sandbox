@@ -105,7 +105,6 @@ func _bot_move_location(bot_id: String, location: String):
 		var bot = id_to_bot[bot_id]
 		bot.bot_collision = null
 		_navigate_bot(bot, location_index)
-		CommunicationManager.publish_to_app("bot/%s/moving_to" % bot_id, location)  # Send signal to Gaia that bot started moving
 
 
 func _bot_charge(bot_id: String):
@@ -242,3 +241,4 @@ func _navigate_bot(bot, loc_index):
 	bot.goal_location = loc_index
 	bot.is_charging = false
 	bot.travel(point_path)
+	CommunicationManager.publish_to_app("bot/%s/moving_to" % bot.bot_id, location_id(loc_index))  # Send signal to Gaia that bot started moving
