@@ -151,6 +151,7 @@ func _init_app():
 		"factory_data", to_json({"robot_types": robot_types, "areas_by_type": areas_by_type})
 	)
 
+	yield(get_tree().create_timer(0.1), "timeout")  # Slight delay to wait for factory data to be processed
 
 	## Create outbound pallet with 3 widgets inside for testing
 	# Create a new one outside the frame and move it in
