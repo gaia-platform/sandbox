@@ -16,31 +16,30 @@ func _ready():
 
 # Move a node into the area
 func add_node(node):
-	if not capacity_limit or node_to_spaces.size() + 1 <= capacity_limit:  # If there's no capacity or if you're still under it once a new node is added
-		# Create new Control widget as a spacer; Set size accordingly
-		var space = Control.new()
-		if for_widgets:
-			space.rect_min_size = Vector2(32, 32)
-		else:
-			space.rect_min_size = Vector2(48, 48)
+	# Create new Control widget as a spacer; Set size accordingly
+	var space = Control.new()
+	if for_widgets:
+		space.rect_min_size = Vector2(32, 32)
+	else:
+		space.rect_min_size = Vector2(48, 48)
 
-		add_child(space)
-		_resize_grid()
-		yield(get_tree(), "idle_frame")  # Wait for grid to actually resize
-		_recalculate_node_locations()  # Rearrange existing nodes
+	add_child(space)
+	_resize_grid()
+	yield(get_tree(), "idle_frame")  # Wait for grid to actually resize
+	_recalculate_node_locations()  # Rearrange existing nodes
 
-		node_to_spaces[node] = space  # Register this new node and its new space
+	node_to_spaces[node] = space  # Register this new node and its new space
 
-		# Calculate position of space
-		var half_size = space.rect_size.x / 2
-		var location = Vector2(
-			space.rect_global_position.x + half_size, space.rect_global_position.y + half_size
-		)
+	# Calculate position of space
+	var half_size = space.rect_size.x / 2
+	var location = Vector2(
+		space.rect_global_position.x + half_size, space.rect_global_position.y + half_size
+	)
 
-		# Move the node to this location
-		node.set("is_inside_area", true)
-		node.connect("leaving_area", self, "remove_node", [node], CONNECT_ONESHOT)
-		node.move_to(location)
+	# Move the node to this location
+	node.set("is_inside_area", true)
+	node.connect("leaving_area", self, "remove_node", [node], CONNECT_ONESHOT)
+	node.move_to(location)
 
 
 # Remove node and space from grid

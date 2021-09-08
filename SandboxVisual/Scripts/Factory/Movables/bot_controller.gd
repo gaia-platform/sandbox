@@ -210,27 +210,23 @@ func pickup_payload(payload):
 
 
 func drop_payload(area):
-	var succeed: bool
-	if payload_node and area:  # If there is a registered payload
-		var prev_global_pos = payload_node.global_position  # Get global position
-		remove_child(payload_node)  # Remove from bot
-		payload_node.rotation = 0  # Reset rotation
-		if bot_type:  # PalletBot specific stuff
-			collision_shape.shape.extents = Vector2(24, 24)
-			collision_shape.position = Vector2.ZERO
-			_factory.pallets.add_child(payload_node)
-			payload_node.global_position = prev_global_pos  # Set position (gets messed up after parenting)
-			area.add_pallet(payload_node)  # Adds a pallet to location
-		else:
-			_factory.widgets.add_child(payload_node)  # Add back to widget pool
-			payload_node.global_position = prev_global_pos
-			area.add_node(payload_node)  # Adds a widget to location
-		payload_node = null  # Unregister payload
+	var prev_global_pos = payload_node.global_position  # Get global position
+	remove_child(payload_node)  # Remove from bot
+	payload_node.rotation = 0  # Reset rotation
+	if bot_type:  # PalletBot specific stuff
+		collision_shape.shape.extents = Vector2(24, 24)
+		collision_shape.position = Vector2.ZERO
+		_factory.pallets.add_child(payload_node)
+		payload_node.global_position = prev_global_pos  # Set position (gets messed up after parenting)
+		area.add_pallet(payload_node)  # Adds a pallet to location
+	else:
+		_factory.widgets.add_child(payload_node)  # Add back to widget pool
+		payload_node.global_position = prev_global_pos
+		area.add_node(payload_node)  # Adds a widget to location
+	payload_node = null  # Unregister payload
 
-		succeed = true
-	CommunicationManager.publish_to_app(
-		"bot/%s/payload_dropped" % bot_id, area.id if succeed else false
-	)
+	# Tell Gaia the payload as been moved
+	CommunicationManager.publish_to_app("bot/%s/payload_dropped" % bot_id, area.id)
 
 
 func _animate_rotation():
