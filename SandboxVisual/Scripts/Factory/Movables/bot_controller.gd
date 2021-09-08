@@ -192,8 +192,8 @@ func pickup_payload(payload):
 
 		var payload_destination = Vector2.ZERO  # Send to center of widget if it's a pallet
 		if bot_type:  # Updates for PalletBot
-			collision_shape.shape.extents = Vector2(53, 64)
-			collision_shape.position = Vector2(40.5, 0)
+			# collision_shape.shape.extents = Vector2(53, 64)
+			# collision_shape.position = Vector2(40.5, 0)
 			payload_destination = Vector2(52, 0)
 
 		payload.move_to(payload_destination, true)  # Attach to payload
@@ -214,8 +214,8 @@ func drop_payload(area):
 	remove_child(payload_node)  # Remove from bot
 	payload_node.rotation = 0  # Reset rotation
 	if bot_type:  # PalletBot specific stuff
-		collision_shape.shape.extents = Vector2(24, 24)
-		collision_shape.position = Vector2.ZERO
+		# collision_shape.shape.extents = Vector2(24, 24)
+		# collision_shape.position = Vector2.ZERO
 		_factory.pallets.add_child(payload_node)
 		payload_node.global_position = prev_global_pos  # Set position (gets messed up after parenting)
 		area.add_pallet(payload_node)  # Adds a pallet to location
