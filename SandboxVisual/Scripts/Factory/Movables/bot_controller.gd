@@ -192,8 +192,8 @@ func pickup_payload(payload):
 
 		var payload_destination = Vector2.ZERO  # Send to center of widget if it's a pallet
 		if bot_type:  # Updates for PalletBot
-			collision_shape.shape.extents = Vector2(53, 64)
-			collision_shape.position = Vector2(40.5, 0)
+			# collision_shape.shape.extents = Vector2(53, 64)
+			# collision_shape.position = Vector2(40.5, 0)
 			payload_destination = Vector2(52, 0)
 
 		payload.move_to(payload_destination, true)  # Attach to payload
