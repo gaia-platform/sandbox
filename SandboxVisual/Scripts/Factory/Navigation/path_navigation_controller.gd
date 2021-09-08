@@ -136,8 +136,13 @@ func _bot_drop_payload(bot_id: String, location: String):
 	var location_index = location_index(location)
 	var bot = id_to_bot[bot_id] if id_to_bot.has(bot_id) else null
 	var area = _factory.areas[location_index] if location_index >= 0 else null
-	if bot and area and bot.payload_node:
+	if (
+		bot and area and bot.payload_node and not area.widget_grid.capacity_limit
+		or area.widget_grid.node_to_spaces.size() != area.widget_grid.capacity_limit
+	):
 		bot.drop_payload(area)
+	else:
+		CommunicationManager.publish_to_app("bot/%s/payload_dropped" % bot_id, false)
 
 
 func _bot_status_request(bot_id: String, status_item: String):
