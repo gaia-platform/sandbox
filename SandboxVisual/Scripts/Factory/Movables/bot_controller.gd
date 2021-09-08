@@ -234,7 +234,7 @@ func _animate_rotation():
 	var goal_angle = (movement_path[0] - position).angle()
 	if goal_angle - rotation > PI:
 		goal_angle -= 2 * PI
-	
+
 	tween.remove_all()
 	tween.interpolate_property(
 		self,
