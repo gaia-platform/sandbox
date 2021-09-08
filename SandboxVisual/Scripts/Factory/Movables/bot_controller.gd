@@ -234,16 +234,19 @@ func drop_payload(area):
 
 
 func _animate_rotation():
-	rotation = (movement_path[0] - position).angle()
-	return
-	# tween.remove_all()
-	# tween.interpolate_property(
-	# 	self,
-	# 	"rotation",
-	# 	null,
-	# 	(movement_path[0] - position).angle(),
-	# 	0.2 / _factory.simulation_controller.speed_scale,
-	# 	Tween.TRANS_SINE,
-	# 	Tween.EASE_IN_OUT
-	# )
-	# tween.start()
+	# Calculate correct angle for turning
+	var goal_angle = (movement_path[0] - position).angle()
+	if goal_angle - rotation > PI:
+		goal_angle -= 2 * PI
+	
+	tween.remove_all()
+	tween.interpolate_property(
+		self,
+		"rotation",
+		null,
+		goal_angle,
+		0.2 / _factory.simulation_controller.speed_scale,
+		Tween.TRANS_SINE,
+		Tween.EASE_IN_OUT
+	)
+	tween.start()
