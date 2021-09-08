@@ -214,8 +214,8 @@ func drop_payload(area):
 	remove_child(payload_node)  # Remove from bot
 	payload_node.rotation = 0  # Reset rotation
 	if bot_type:  # PalletBot specific stuff
-		collision_shape.shape.extents = Vector2(24, 24)
-		collision_shape.position = Vector2.ZERO
+		# collision_shape.shape.extents = Vector2(24, 24)
+		# collision_shape.position = Vector2.ZERO
 		_factory.pallets.add_child(payload_node)
 		payload_node.global_position = prev_global_pos  # Set position (gets messed up after parenting)
 		area.add_pallet(payload_node)  # Adds a pallet to location
