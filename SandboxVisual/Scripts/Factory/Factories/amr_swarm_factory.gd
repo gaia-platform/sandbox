@@ -447,7 +447,7 @@ func _on_ProductionLineActionButton_pressed():
 # Handle when widget enters PL End
 func _handle_widget_in_pl_end(_widget):
 	# Tell Gaia a widget has arrived
-	CommunicationManager.publish_to_app("processed_widget", _widget_in_production_line.payload_id)
+	CommunicationManager.publish_to_app("processed_widget", _widget.payload_id)
 
 	# Test method to automatically move widget to outbound
 	# widget.tween.connect(
