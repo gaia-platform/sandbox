@@ -11,6 +11,7 @@ signal factory_charge_bot(bot_id)
 signal factory_pickup_payload(bot_id, payload)
 signal factory_drop_payload(bot_id, location)
 signal factory_status_request(bot_id, status_item)
+signal factory_receive_order
 signal factory_unpack_pallet
 signal factory_start_production
 signal factory_unload_pl
@@ -72,6 +73,8 @@ func _physics_process(_delta):
 							emit_signal("factory_drop_payload", topic_extract[-2], payload)
 						"status_request":  # Get info about a bot
 							emit_signal("factory_status_request", topic_extract[-2], payload)
+						"receive_order":
+							emit_signal("factory_receive_order")
 						"unpack_pallet":
 							emit_signal("factory_unpack_pallet")
 						"start_production":
