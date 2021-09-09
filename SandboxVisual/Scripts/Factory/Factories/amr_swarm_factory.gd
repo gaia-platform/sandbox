@@ -76,6 +76,7 @@ func _ready():
 	yield(get_tree(), "idle_frame")
 	CommunicationManager.subscribe_to_topic("running")
 
+	CommunicationManager.subscribe_to_topic("receive_order")
 	CommunicationManager.subscribe_to_topic("unpack_pallet")
 	CommunicationManager.subscribe_to_topic("start_production")
 	CommunicationManager.subscribe_to_topic("unload_pl")
@@ -94,6 +95,7 @@ func _ready():
 	production_line.connect("new_node_added", self, "_prep_process_widget_in_production_line")
 	pl_end.connect("new_node_added", self, "_handle_widget_in_pl_end")
 
+	_connect_to_signal = CommunicationManager.connect("factory_receive_order", self, "_auto_receive_order")
 	_connect_to_signal = CommunicationManager.connect(
 		"factory_unpack_pallet", self, "_auto_unpack_buffer"
 	)
@@ -290,6 +292,8 @@ func _on_ReceiveOrderButton_pressed():
 			"tween_all_completed", self, "_generate_new_inbound_pallet", [], CONNECT_ONESHOT
 		)
 
+func _auto_receive_order():
+	receive_order_button.emit_signal("pressed")
 
 # Generate pallet once loading animation finishes
 func _generate_new_inbound_pallet():

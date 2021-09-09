@@ -58,6 +58,7 @@ Gaia signals to automate manual interaction inside factory
 
 | **Topic name**     | Description                        |
 | ------------------ | ---------------------------------- |
+| `receive_order`    | Clicks "Receive Order"             |
 | `unpack_pallet`    | Clicks "UNPACK" in buffer          |
 | `start_production` | Clicks "PROCESS" in PL Start       |
 | `unload_pl`        | Clicks "UNLOAD" in production line |
