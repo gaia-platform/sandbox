@@ -243,7 +243,7 @@ func _animate_rotation():
 		"rotation",
 		null,
 		goal_angle,
-		0.2 / _factory.simulation_controller.speed_scale,
+		0.2,
 		Tween.TRANS_SINE,
 		Tween.EASE_IN_OUT
 	)
