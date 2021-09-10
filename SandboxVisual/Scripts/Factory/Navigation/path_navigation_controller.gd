@@ -201,14 +201,16 @@ func _navigate_bot(bot, loc_index):
 	if bot.is_inside_area:
 		from_id = astar.get_closest_point(bot.position, true)  # Start with closest navigation point
 	else:
-		from_id = astar.get_closest_point(bot.position)
+		from_id = bot.goal_location
 
 	# Check if path is blocked
 	var id_path = astar.get_id_path(from_id, loc_index)
 
 	var path_clear = true
 	for id in id_path:
-		if astar.is_point_disabled(id):
+		if id == from_id: # Skip the first id, since bot is already on it
+			continue
+		if astar.is_point_disabled(id): # Check through all other points
 			path_clear = false
 			break
 
