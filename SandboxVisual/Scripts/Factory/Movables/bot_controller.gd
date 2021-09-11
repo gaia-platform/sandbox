@@ -85,7 +85,9 @@ func _physics_process(delta):
 			if report_success and not is_charging:
 				CommunicationManager.publish_to_app(
 					"bot/%s/arrived" % bot_id,
-					get_tree().get_current_scene().navigation_controller.location_id(goal_location)
+					get_tree().get_current_scene().navigation_controller.location_id(
+						navigation_astar.get_closest_point(position, true)
+					)
 				)
 			else:
 				report_success = true
@@ -237,12 +239,6 @@ func _animate_rotation():
 
 	tween.remove_all()
 	tween.interpolate_property(
-		self,
-		"rotation",
-		null,
-		goal_angle,
-		0.2 / _factory.simulation_controller.speed_scale,
-		Tween.TRANS_SINE,
-		Tween.EASE_IN_OUT
+		self, "rotation", null, goal_angle, 0.2, Tween.TRANS_SINE, Tween.EASE_IN_OUT
 	)
 	tween.start()
