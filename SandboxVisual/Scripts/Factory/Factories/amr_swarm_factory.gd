@@ -95,7 +95,9 @@ func _ready():
 	production_line.connect("new_node_added", self, "_prep_process_widget_in_production_line")
 	pl_end.connect("new_node_added", self, "_handle_widget_in_pl_end")
 
-	_connect_to_signal = CommunicationManager.connect("factory_receive_order", self, "_auto_receive_order")
+	_connect_to_signal = CommunicationManager.connect(
+		"factory_receive_order", self, "_auto_receive_order"
+	)
 	_connect_to_signal = CommunicationManager.connect(
 		"factory_unpack_pallet", self, "_auto_unpack_buffer"
 	)
@@ -179,7 +181,6 @@ func _init_app():
 
 	# Tell Gaia a new pallet is in outbound
 	CommunicationManager.publish_to_app("station/outbound/pallet", to_json(pallet_data))
-
 
 
 # Use screen location proportions to approximate screen size adjusted position for nodes
@@ -292,8 +293,10 @@ func _on_ReceiveOrderButton_pressed():
 			"tween_all_completed", self, "_generate_new_inbound_pallet", [], CONNECT_ONESHOT
 		)
 
+
 func _auto_receive_order():
 	receive_order_button.emit_signal("pressed")
+
 
 # Generate pallet once loading animation finishes
 func _generate_new_inbound_pallet():
