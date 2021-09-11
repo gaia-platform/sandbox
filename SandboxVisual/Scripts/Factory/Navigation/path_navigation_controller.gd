@@ -208,9 +208,9 @@ func _navigate_bot(bot, loc_index):
 
 	var path_clear = true
 	for id in id_path:
-		if id == from_id: # Skip the first id, since bot is already on it
+		if id == from_id:  # Skip the first id, since bot is already on it
 			continue
-		if astar.is_point_disabled(id): # Check through all other points
+		if astar.is_point_disabled(id):  # Check through all other points
 			path_clear = false
 			break
 

@@ -239,12 +239,6 @@ func _animate_rotation():
 
 	tween.remove_all()
 	tween.interpolate_property(
-		self,
-		"rotation",
-		null,
-		goal_angle,
-		0.2,
-		Tween.TRANS_SINE,
-		Tween.EASE_IN_OUT
+		self, "rotation", null, goal_angle, 0.2, Tween.TRANS_SINE, Tween.EASE_IN_OUT
 	)
 	tween.start()
