@@ -6,13 +6,12 @@ export (String) var bot_id
 export (int, "WidgetBot", "PalletBot") var bot_type
 export (int) var max_payload_weight
 export (float) var max_speed
-export (int) var battery_time
-export (int) var charge_time
+export (int) var battery_time # In seconds
+export (int) var charge_time # In seconds
 
 ### State
 export (int) var goal_location
 export (float) var cur_speed_squared
-export (float) var charge_level = 100
 export (bool) var is_charging: bool
 export (bool) var is_inside_area: bool
 
@@ -31,6 +30,7 @@ var is_pallet: bool
 var bot_collision: KinematicCollision2D
 var report_success = true
 var disabled_point = -1
+var battery_used_time
 
 signal leaving_area
 
@@ -65,6 +65,9 @@ func _physics_process(delta):
 
 			# Move and check for collisions
 			bot_collision = move_and_collide(movement_step)
+
+			# Add to battery used time
+			battery_used_time += delta
 	elif not movement_path.size() and not bot_collision:  # Stop at final position
 		# Get reference to navigation; will use later
 		var navigation_astar = get_tree().get_current_scene().navigation_controller.astar
@@ -137,6 +140,11 @@ func _physics_process(delta):
 				"bot/%s/crashed" % bot_id,
 				get_tree().get_current_scene().navigation_controller.location_id(goal_location)
 			)
+	elif is_charging:
+		if battery_used_time > 0:
+			battery_used_time -= delta
+		elif battery_used_time < 0:
+			battery_used_time = 0
 
 
 ## Signal methods
@@ -153,9 +161,9 @@ func publish_status_item(item: String):
 		"world_location":
 			payload = position
 		"charge_level":
-			payload = charge_level
+			payload = 1 - battery_used_time / battery_time
 		"is_charging":
-			payload = charge_level
+			payload = is_charging
 		"speed_squared":
 			payload = cur_speed_squared
 		_:
