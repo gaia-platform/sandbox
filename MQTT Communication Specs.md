@@ -53,6 +53,7 @@ MQTT topic template: `[UUID]/[topic]`
 | `bot/[bot_id]/moving_to`         | `"buffer"`            | Response when bot start traveling to a new location (payload) |
 | `production_start_ready`         | `[widget.payload_id]` | Response when a widget sent to PL_start is ready for production |
 | `production_finished`            | `[widget.payload_id]` | Response when a widget finishes production                   |
+| `pallet_shipped`                 | `[pallet data]`       | Response when a pallet ships                                 |
 
 Gaia signals to automate manual interaction inside factory
 

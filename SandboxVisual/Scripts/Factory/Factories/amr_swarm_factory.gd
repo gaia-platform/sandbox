@@ -486,6 +486,14 @@ func _do_shipment(outbound_pallet):
 
 # Shipment pallet management
 func _complete_shipment(old_outbound_pallet):
+	# Send out pallet info
+	var pallet_data = {"id": old_outbound_pallet.payload_id, "widgets": []}
+	for widget in old_outbound_pallet.widgets:
+		pallet_data["widgets"].append({"id": widget.payload_id})
+
+	CommunicationManager.publish_to_app("pallet_shipped", pallet_data)
+	print(pallet_data)
+
 	# Remove the old pallet node
 	old_outbound_pallet.queue_free()
 
