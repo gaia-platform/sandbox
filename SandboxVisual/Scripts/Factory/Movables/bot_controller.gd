@@ -6,8 +6,8 @@ export (String) var bot_id
 export (int, "WidgetBot", "PalletBot") var bot_type
 export (int) var max_payload_weight
 export (float) var max_speed
-export (float) var battery_time # In seconds
-export (float) var charge_time # In seconds
+export (float) var battery_time  # In seconds
+export (float) var charge_time  # In seconds
 
 ### State
 export (int) var goal_location
@@ -70,7 +70,7 @@ func _physics_process(delta):
 			battery_used_time += delta
 	elif not movement_path.size() and not bot_collision:  # Stop at final position
 		# Get reference to navigation; will use later
-		var navigation_astar = get_tree().get_current_scene().navigation_controller.astar
+		var navigation_astar = _factory.navigation_controller.astar
 
 		# Stop if needed
 		if cur_speed_squared != 0:
@@ -88,7 +88,7 @@ func _physics_process(delta):
 			if report_success and not is_charging:
 				CommunicationManager.publish_to_app(
 					"bot/%s/arrived" % bot_id,
-					get_tree().get_current_scene().navigation_controller.location_id(
+					_factory.navigation_controller.location_id(
 						navigation_astar.get_closest_point(position, true)
 					)
 				)
@@ -132,15 +132,12 @@ func _physics_process(delta):
 			movement_path.resize(0)
 			_movement_queue.clear()
 			if disabled_point != -1:
-				get_tree().get_current_scene().navigation_controller.astar.set_point_disabled(
-					disabled_point, false
-				)
+				_factory.navigation_controller.astar.set_point_disabled(disabled_point, false)
 				disabled_point = -1
 			CommunicationManager.publish_to_app(
-				"bot/%s/crashed" % bot_id,
-				get_tree().get_current_scene().navigation_controller.location_id(goal_location)
+				"bot/%s/crashed" % bot_id, _factory.navigation_controller.location_id(goal_location)
 			)
-	elif is_charging:
+	elif is_charging and is_inside_area:
 		if battery_used_time > 0:
 			battery_used_time -= delta
 		elif battery_used_time < 0:
@@ -212,7 +209,7 @@ func pickup_payload(payload):
 		succeed = true
 
 		if goal_location == 5:  # If at inbound area, re-enable receive order button
-			get_tree().get_current_scene().receive_order_button.disabled = false
+			_factory.receive_order_button.disabled = false
 
 	CommunicationManager.publish_to_app(
 		"bot/%s/payload_picked_up" % bot_id, payload.payload_id if succeed else false

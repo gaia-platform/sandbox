@@ -110,8 +110,8 @@ func _bot_move_location(bot_id: String, location: String):
 func _bot_charge(bot_id: String):
 	var bot = id_to_bot[bot_id]  # Get the bot
 	var success: bool
-	if bot.goal_location == 4 and not bot.is_inside_area:  # TEMP SOLUTION: Check if bot is at charging station waypoint, then add to charging station
-		get_tree().get_current_scene().charging_station.add_node(bot)
+	if bot.goal_location == _factory.charging_area.id and not bot.is_inside_area:
+		_factory.charging_station.add_node(bot)
 		if bot.disabled_point != -1:
 			astar.set_point_disabled(bot.disabled_point, false)
 			bot.disabled_point = -1

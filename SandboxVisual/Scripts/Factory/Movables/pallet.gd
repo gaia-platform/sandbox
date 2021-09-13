@@ -16,7 +16,6 @@ var widgets = [null, null, null, null]
 var payload_id: String
 var is_pallet = true
 
-# Get factory
 onready var _factory = get_tree().get_current_scene()
 
 signal leaving_area

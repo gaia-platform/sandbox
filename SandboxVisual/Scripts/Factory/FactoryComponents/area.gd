@@ -26,6 +26,8 @@ var pallet_node = null
 export (String) var id
 export (String) var area_type
 
+onready var _factory = get_tree().get_current_scene()
+
 ### Signals
 signal new_pallet_added
 signal new_node_added(node)
@@ -66,9 +68,7 @@ func show_popup_button(show = true, hide_delay = 0):
 	elif not show and popup.visible:
 		if hide_delay > 0:
 			yield(
-				get_tree().create_timer(
-					hide_delay / get_tree().get_current_scene().simulation_controller.speed_scale
-				),
+				get_tree().create_timer(hide_delay / _factory.simulation_controller.speed_scale),
 				"timeout"
 			)
 		popup.hide()
@@ -90,7 +90,7 @@ func run_popup_progress_bar(duration: float):
 		"value",
 		0,
 		100,
-		duration / get_tree().get_current_scene().simulation_controller.speed_scale,
+		duration / _factory.simulation_controller.speed_scale,
 		Tween.TRANS_SINE,
 		Tween.EASE_IN_OUT
 	)
