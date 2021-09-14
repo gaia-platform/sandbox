@@ -60,7 +60,7 @@ func _physics_process(delta):
 		else:  # Otherwise, continue moving
 			cur_speed_squared = movement_step.length_squared()  # Update speed
 			# Unmodulate the color if it was previously changed (from collision)
-			if modulate == Color.red:
+			if modulate != Color.white:
 				modulate = Color.white
 
 			# Move and check for collisions
