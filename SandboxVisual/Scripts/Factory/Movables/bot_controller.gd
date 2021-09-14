@@ -31,6 +31,7 @@ var bot_collision: KinematicCollision2D
 var report_success = true
 var disabled_point = -1
 var battery_used_time = 0
+var reported_charged = false
 
 signal leaving_area
 
@@ -100,10 +101,14 @@ func _physics_process(delta):
 		# Handle charging
 		if is_charging and is_inside_area:
 			if battery_used_time > 0:
+				if reported_charged:
+					reported_charged = false
 				battery_used_time -= delta * battery_time / charge_time
-			elif battery_used_time < 0:
+			elif battery_used_time <= 0:
 				battery_used_time = 0
-				CommunicationManager.publish_to_app("bot/is_charged", bot_id)
+				if not reported_charged:
+					CommunicationManager.publish_to_app("bot/is_charged", bot_id)
+					reported_charged = true
 
 		# Check to make sure collision shape is properly set
 		if collision_shape.disabled and not is_inside_area:
