@@ -46,6 +46,7 @@ MQTT topic template: `[UUID]/[topic]`
 | `processed_widget`               | `true`                | When a widget makes it to PL End                             |
 | `bot/[bot_id]/arrived`           | `"buffer"`            | Response from bot when it arrives at a location              |
 | `bot/[bot_id]/crashed`           | `"buffer"`            | Reports a bot with ID crashed while going to goal location `payload` |
+| `bot/[bot_id]/out_of_battery`    | `"buffer"`            | Reports a bot with ID has ran out of battery while going to goal location `payload` |
 | `bot/[bot_id]/cant_navigate`     | `"buffer"`            | Response from bot when it can't complete a navigation because either the path couldn't be generated or if the end location was blocked |
 | `bot/[bot_id]/payload_picked_up` | `[payload_id]`        | Report back if payload `[payload_id]` was picked up, false if not |
 | `bot/[bot_id]/payload_dropped`   | "bufer"               | ^ same but for dropping payload                              |

@@ -45,7 +45,7 @@ func _ready():
 
 
 func _physics_process(delta):
-	if movement_path.size() and not bot_collision:  # There is still a goal coordinate to reach
+	if movement_path.size() and not bot_collision and battery_used_time != battery_time:  # There is still a goal coordinate to reach
 		var cur_dir = (movement_path[0] - position).normalized()  # Vector pointing towards next goal point
 		var movement_step = cur_dir * max_speed * delta  # Movement increment
 		var post_movement_dir = movement_path[0] - (position + movement_step)  # Vector pointing towards goal point, but after step
@@ -68,6 +68,9 @@ func _physics_process(delta):
 
 			# Add to battery used time
 			battery_used_time += delta
+			if battery_used_time > battery_time:
+				battery_used_time = battery_time
+
 	elif not movement_path.size() and not bot_collision:  # Stop at final position
 		# Get reference to navigation; will use later
 		var navigation_astar = _factory.navigation_controller.astar
@@ -125,18 +128,30 @@ func _physics_process(delta):
 					navigation_astar.set_point_disabled(disabled_point, false)
 					disabled_point = -1
 
-	elif bot_collision:
-		if modulate != Color.red:
+	elif bot_collision or battery_used_time == battery_time:
+		if modulate == Color.white:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
-			modulate = Color.red  # Modulate to red
 			movement_path.resize(0)
 			_movement_queue.clear()
 			if disabled_point != -1:
 				_factory.navigation_controller.astar.set_point_disabled(disabled_point, false)
 				disabled_point = -1
+		if bot_collision and modulate.g != 0:
+			# Modulate to red without changing alpha
+			modulate.r = 1
+			modulate.g = 0
+			modulate.b = 0
+
 			CommunicationManager.publish_to_app(
 				"bot/%s/crashed" % bot_id, _factory.navigation_controller.location_id(goal_location)
 			)
+		elif battery_used_time == battery_time and modulate.a != 0.3:
+			modulate.a = 0.3
+			CommunicationManager.publish_to_app(
+				"bot/%s/out_of_battery" % bot_id,
+				_factory.navigation_controller.location_id(goal_location)
+			)
+
 	elif is_charging and is_inside_area:
 		if battery_used_time > 0:
 			battery_used_time -= delta
