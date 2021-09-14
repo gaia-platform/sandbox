@@ -23,7 +23,7 @@ schedule_panel_path = NodePath("MarginContainer/VBoxContainer/MarginContainer/VB
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_right = 930.0
-margin_bottom = 227.0
+margin_bottom = 228.0
 custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
@@ -33,35 +33,37 @@ custom_constants/margin_bottom = 20
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 920.0
-margin_bottom = 207.0
+margin_bottom = 208.0
 
 [node name="PersonNameLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 margin_right = 910.0
 margin_bottom = 33.0
 custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Person Name"
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
 margin_top = 37.0
 margin_right = 910.0
-margin_bottom = 197.0
+margin_bottom = 198.0
 custom_constants/margin_right = 10
 custom_constants/margin_left = 10
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer"]
 margin_left = 10.0
 margin_right = 900.0
-margin_bottom = 160.0
+margin_bottom = 161.0
 custom_constants/separation = 10
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer"]
 margin_right = 890.0
-margin_bottom = 101.0
+margin_bottom = 102.0
 custom_constants/separation = 30
 
 [node name="PersonOptionsPanel" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 4 )]
 anchor_right = 0.0
 margin_right = 430.0
+margin_bottom = 102.0
 
 [node name="MarginContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel" index="0"]
 margin_right = 430.0
@@ -96,6 +98,7 @@ hint_tooltip = "Leave"
 anchor_right = 0.0
 margin_left = 460.0
 margin_right = 890.0
+margin_bottom = 102.0
 
 [node name="MarginContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2" index="0"]
 margin_right = 430.0
@@ -127,9 +130,9 @@ margin_left = 256.0
 margin_right = 316.0
 
 [node name="SchedulePanel" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer" instance=ExtResource( 3 )]
-margin_top = 111.0
+margin_top = 112.0
 margin_right = 890.0
-margin_bottom = 160.0
+margin_bottom = 161.0
 
 [editable path="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel"]
 [editable path="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2"]

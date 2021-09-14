@@ -158,14 +158,14 @@ margin_bottom = 54.0
 
 [node name="PeopleLabel" type="Label" parent="VBoxContainer/GridContainer/PeopleHeader/MarginContainer/HBoxContainer"]
 margin_top = 5.0
-margin_right = 282.0
+margin_right = 283.0
 margin_bottom = 38.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 13 )
 text = "People"
 
 [node name="ExitButton" parent="VBoxContainer/GridContainer/PeopleHeader/MarginContainer/HBoxContainer" instance=ExtResource( 7 )]
-margin_left = 286.0
+margin_left = 287.0
 margin_right = 420.0
 margin_bottom = 44.0
 text = "Exit to Menu"
