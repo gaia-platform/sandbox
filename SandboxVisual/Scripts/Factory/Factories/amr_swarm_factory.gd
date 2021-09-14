@@ -237,7 +237,7 @@ func _generate_bots():
 		navigation_controller.id_to_bot[wb_instance.bot_id] = wb_instance
 
 		navigation_controller.bots.add_child(wb_instance)  # Add to navigation controller bots
-		charging_station.add_node(wb_instance)  # Add to charging station
+		navigation_controller._bot_charge(wb_instance.bot_id)
 		widget_bots.append({"id": wb_instance.bot_id})
 
 	for pb in pallet_bot_counter.value:  # For number of pallet bots requested
@@ -255,7 +255,7 @@ func _generate_bots():
 		navigation_controller.id_to_bot[pb_instance.bot_id] = pb_instance
 
 		navigation_controller.bots.add_child(pb_instance)
-		charging_station.add_node(pb_instance)
+		navigation_controller._bot_charge(pb_instance.bot_id)
 		pallet_bots.append({"id": pb_instance.bot_id})
 
 
