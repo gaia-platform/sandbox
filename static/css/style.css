@@ -92,7 +92,8 @@
   height: auto;
   margin-right: auto;
   font-size: 40px;
-  margin-top: -0.58em;
+  margin-top: -0.515em;
+  color: #313450;
   margin-bottom: auto;
   font-family: "Roboto", sans-serif;
 }
@@ -128,7 +129,7 @@
   padding-left: 25px;
   padding-right: 25px;
   background-color: rgba(56, 152, 236, 0);
-  color: rgba(51, 51, 51, 1);
+  color: #313450;
   border-radius: 4px;
   text-align: center;
   cursor: pointer;
