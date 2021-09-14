@@ -166,7 +166,7 @@
   padding-bottom: 15px;
   padding-left: 25px;
   padding-right: 25px;
-  background-color: rgba(88, 59, 198, 1);
+  background-color: #583bc6;
   color: white;
   border-radius: 100px;
   text-align: center;
@@ -414,10 +414,14 @@
   padding-bottom: 15px;
   padding-left: 25px;
   padding-right: 25px;
-  background-color: rgba(88, 59, 198, 1);
+  background-color: #583bc6;
   color: white;
   border-radius: 100px;
   text-align: center;
   cursor: pointer;
   font-family: "Lato", sans-serif;
+}
+
+body {
+  background-color: #F4F6F8;
 }
