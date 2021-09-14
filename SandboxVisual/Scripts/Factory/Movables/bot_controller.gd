@@ -30,7 +30,7 @@ var is_pallet: bool
 var bot_collision: KinematicCollision2D
 var report_success = true
 var disabled_point = -1
-var battery_used_time
+var battery_used_time = 0
 
 signal leaving_area
 

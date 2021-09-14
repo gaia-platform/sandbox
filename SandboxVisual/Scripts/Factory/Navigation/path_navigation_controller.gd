@@ -110,7 +110,7 @@ func _bot_move_location(bot_id: String, location: String):
 func _bot_charge(bot_id: String):
 	var bot = id_to_bot[bot_id]  # Get the bot
 	var success: bool
-	if bot.goal_location == _factory.charging_area.id and not bot.is_inside_area:
+	if bot.goal_location == location_index("charging") and not bot.is_inside_area:
 		_factory.charging_station.add_node(bot)
 		if bot.disabled_point != -1:
 			astar.set_point_disabled(bot.disabled_point, false)
