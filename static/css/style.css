@@ -94,7 +94,7 @@
   font-size: 40px;
   margin-top: -0.58em;
   margin-bottom: auto;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .privacy-column {
@@ -134,7 +134,7 @@
   cursor: pointer;
   margin-top: auto;
   margin-bottom: auto;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
   text-decoration: none;
   transition: 0.3s;
 }
@@ -174,7 +174,7 @@
   margin-top: auto;
   margin-bottom: auto;
   margin-right: auto;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
   text-decoration: none;
 }
 
@@ -222,7 +222,7 @@
   color: white;
   text-align: center;
   cursor: pointer;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .selected-tab {
@@ -288,7 +288,7 @@
   border-radius: 100px;
   text-align: center;
   cursor: pointer;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .column-8 {
@@ -320,7 +320,7 @@
   border-radius: 100px;
   text-align: center;
   cursor: pointer;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .column-9 {
@@ -352,7 +352,7 @@
   border-radius: 100px;
   text-align: center;
   cursor: pointer;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .div-7 {
@@ -419,7 +419,7 @@
   border-radius: 100px;
   text-align: center;
   cursor: pointer;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 body {
