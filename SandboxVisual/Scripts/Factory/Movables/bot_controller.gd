@@ -2,18 +2,18 @@ extends KinematicBody2D
 
 #### Variables
 ### Properties
-export (String) var bot_id
-export (int, "WidgetBot", "PalletBot") var bot_type
-export (int) var max_payload_weight
-export (float) var max_speed
-export (float) var battery_time  # In seconds
-export (float) var charge_time  # In seconds
+export(String) var bot_id
+export(int, "WidgetBot", "PalletBot") var bot_type
+export(int) var max_payload_weight
+export(float) var max_speed
+export(float) var battery_time  # In seconds
+export(float) var charge_time  # In seconds
 
 ### State
-export (int) var goal_location
-export (float) var cur_speed_squared
-export (bool) var is_charging: bool
-export (bool) var is_inside_area: bool
+export(int) var goal_location
+export(float) var cur_speed_squared
+export(bool) var is_charging: bool
+export(bool) var is_inside_area: bool
 
 ### Nodes
 onready var collision_shape = $CollisionShape2D

@@ -1,7 +1,7 @@
 extends Sprite
 
 # Get Widget grid
-export (NodePath) var widget_grid_path
+export(NodePath) var widget_grid_path
 onready var widget_grid = get_node(widget_grid_path)
 onready var widget_spaces = widget_grid.get_children()
 

@@ -1,7 +1,7 @@
 extends Control
 
-export (int, "-", "|", "+", "T", "-|", "|-", "T-Up", "L", "_|", "r", "r-left") var path_shape
-export (Array, NodePath) var connected_node_paths
+export(int, "-", "|", "+", "T", "-|", "|-", "T-Up", "L", "_|", "r", "r-left") var path_shape
+export(Array, NodePath) var connected_node_paths
 
 var connected_nodes: Array
 

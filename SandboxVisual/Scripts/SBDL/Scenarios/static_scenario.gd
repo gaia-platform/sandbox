@@ -1,8 +1,8 @@
 extends Node2D
 
-export (NodePath) var machine_path
+export(NodePath) var machine_path
 onready var machine = get_node(machine_path)
-export (String, FILE) var scene_picker_scene
+export(String, FILE) var scene_picker_scene
 
 onready var test_object = $TestObject
 

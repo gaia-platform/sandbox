@@ -1,10 +1,10 @@
 extends PanelContainer
 
 # Node paths and room name
-export (NodePath) var room_name_label_path
-export (NodePath) var people_container_path
-export (NodePath) var schedule_panel_path
-export (PackedScene) var person_node
+export(NodePath) var room_name_label_path
+export(NodePath) var people_container_path
+export(NodePath) var schedule_panel_path
+export(PackedScene) var person_node
 
 # Get their nodes
 onready var room_name_label = get_node(room_name_label_path)

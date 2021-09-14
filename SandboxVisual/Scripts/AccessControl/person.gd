@@ -1,10 +1,10 @@
 extends PanelContainer
 
 # Element Paths
-export (NodePath) var name_label_path
-export (NodePath) var building_options_path
-export (NodePath) var other_options_path
-export (NodePath) var schedule_panel_path
+export(NodePath) var name_label_path
+export(NodePath) var building_options_path
+export(NodePath) var other_options_path
+export(NodePath) var schedule_panel_path
 
 # Get their nodes
 onready var name_label = get_node(name_label_path)
