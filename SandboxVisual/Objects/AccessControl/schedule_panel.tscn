@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Objects/AccessControl/event_label.tscn" type="PackedScene" id=1]
-[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Assets/Fonts/roboto_light_med.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Assets/AccessControl/StyleBoxes/schedule_panel_flat.tres" type="StyleBox" id=3]
 [ext_resource path="res://Scripts/AccessControl/UI/schedule_panel.gd" type="Script" id=4]
 

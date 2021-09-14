@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=2]
 
-[ext_resource path="res://Assets/Fonts/Roboto/roboto_regular.tres" type="DynamicFont" id=1]
+[ext_resource path="res://Assets/Fonts/roboto_regular.tres" type="DynamicFont" id=1]
 [ext_resource path="res://Objects/Factory/FactoryComponents/area.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Objects/Factory/FactoryComponents/simulation_controller.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Objects/UI/general_button.tscn" type="PackedScene" id=4]
@@ -13,7 +13,7 @@
 [ext_resource path="res://Objects/Factory/Movables/palletbot.tscn" type="PackedScene" id=11]
 [ext_resource path="res://Objects/Factory/Movables/widget.tscn" type="PackedScene" id=12]
 [ext_resource path="res://Objects/Factory/Movables/pallet.tscn" type="PackedScene" id=13]
-[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=14]
+[ext_resource path="res://Assets/Fonts/roboto_light_med.tres" type="DynamicFont" id=14]
 
 [node name="AMRSwarmFactory" type="Control"]
 anchor_right = 1.0
@@ -765,7 +765,7 @@ custom_constants/margin_bottom = 10
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer"]
 margin_left = 10.0
 margin_top = 10.0
-margin_right = 373.0
+margin_right = 386.0
 margin_bottom = 259.0
 custom_constants/separation = 10
 

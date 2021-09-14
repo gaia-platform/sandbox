@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Assets/AccessControl/StyleBoxes/person_panel_flat.tres" type="StyleBox" id=1]
-[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_big.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Assets/Fonts/roboto_light_big.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Objects/AccessControl/schedule_panel.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Objects/AccessControl/person_options_panel.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Assets/AccessControl/Icons/parking.svg" type="Texture" id=5]

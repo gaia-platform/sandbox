@@ -11,7 +11,7 @@
 [ext_resource path="res://Scripts/AccessControl/access_control_building.gd" type="Script" id=9]
 [ext_resource path="res://Objects/AccessControl/person.tscn" type="PackedScene" id=10]
 [ext_resource path="res://Objects/AccessControl/building.tscn" type="PackedScene" id=11]
-[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_big.tres" type="DynamicFont" id=13]
+[ext_resource path="res://Assets/Fonts/roboto_light_big.tres" type="DynamicFont" id=13]
 
 [node name="AccessControlBuilding" type="Control"]
 anchor_right = 1.0
