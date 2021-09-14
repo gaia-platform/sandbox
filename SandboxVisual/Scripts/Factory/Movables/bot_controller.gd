@@ -70,7 +70,6 @@ func _physics_process(delta):
 			battery_used_time += delta
 			if battery_used_time > battery_time:
 				battery_used_time = battery_time
-
 	elif not movement_path.size() and not bot_collision:  # Stop at final position
 		# Get reference to navigation; will use later
 		var navigation_astar = _factory.navigation_controller.astar
@@ -98,6 +97,15 @@ func _physics_process(delta):
 			else:
 				report_success = true
 
+		# Handle charging
+		if is_charging and is_inside_area:
+			if battery_used_time > 0:
+				battery_used_time -= delta * battery_time / charge_time
+			elif battery_used_time < 0:
+				battery_used_time = 0
+				CommunicationManager.publish_to_app("bot/is_charged", bot_id)
+
+		# Check to make sure collision shape is properly set
 		if collision_shape.disabled and not is_inside_area:
 			collision_shape.disabled = false
 
@@ -127,7 +135,6 @@ func _physics_process(delta):
 				if disabled_point != -1:
 					navigation_astar.set_point_disabled(disabled_point, false)
 					disabled_point = -1
-
 	elif bot_collision or battery_used_time == battery_time:
 		if modulate == Color.white:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
@@ -151,12 +158,6 @@ func _physics_process(delta):
 				"bot/%s/out_of_battery" % bot_id,
 				_factory.navigation_controller.location_id(goal_location)
 			)
-
-	elif is_charging and is_inside_area:
-		if battery_used_time > 0:
-			battery_used_time -= delta
-		elif battery_used_time < 0:
-			battery_used_time = 0
 
 
 ## Signal methods
