@@ -1,12 +1,12 @@
 extends PanelContainer
 # Handle and show simulation time
 
-# Settings
+# Settings and nodes
 export(String) var label_prefix = "Location at time: "
 export(int) var minutes = 480  # 8 am
+export(NodePath) var time_label_path
 
 # Time label node
-export(NodePath) var time_label_path
 onready var time_label = get_node(time_label_path)
 
 
