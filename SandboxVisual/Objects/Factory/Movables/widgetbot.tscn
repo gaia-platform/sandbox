@@ -21,8 +21,8 @@ corner_radius_bottom_left = 10
 script = ExtResource( 2 )
 max_payload_weight = 250
 max_speed = 500.0
-battery_time = 10
-charge_time = 2
+battery_time = 56.25
+charge_time = 11.25
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )

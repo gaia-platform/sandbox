@@ -1,11 +1,11 @@
 extends PanelContainer
 
 # Settings
-export (String) var label_prefix = "Location at time: "
-export (int) var minutes = 480  # 8 am
+export(String) var label_prefix = "Location at time: "
+export(int) var minutes = 480  # 8 am
 
 # Nodes
-export (NodePath) var time_label_path
+export(NodePath) var time_label_path
 onready var time_label = get_node(time_label_path)
 
 

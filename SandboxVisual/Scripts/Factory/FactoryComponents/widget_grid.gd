@@ -1,8 +1,8 @@
 extends GridContainer
 
 ### Properties
-export (bool) var for_widgets
-export (int) var capacity_limit
+export(bool) var for_widgets
+export(int) var capacity_limit
 
 # Map widgets or bots to their assigned spaces
 var node_to_spaces: Dictionary

@@ -1,13 +1,13 @@
 extends PanelContainer
 
 ### Nodes
-export (NodePath) var count_label_path
-export (NodePath) var pallet_space_path
-export (NodePath) var widget_space_path
-export (Array, NodePath) var associated_waypoint_paths
-export (NodePath) var popup_path
-export (NodePath) var popup_action_button_path
-export (NodePath) var popup_action_progress_path
+export(NodePath) var count_label_path
+export(NodePath) var pallet_space_path
+export(NodePath) var widget_space_path
+export(Array, NodePath) var associated_waypoint_paths
+export(NodePath) var popup_path
+export(NodePath) var popup_action_button_path
+export(NodePath) var popup_action_progress_path
 
 onready var count_label = get_node(count_label_path)
 onready var pallet_space = get_node(pallet_space_path)
@@ -23,8 +23,10 @@ onready var tween = $Tween
 ### Properties
 var associated_waypoints: Array
 var pallet_node = null
-export (String) var id
-export (String) var area_type
+export(String) var id
+export(String) var area_type
+
+onready var _factory = get_tree().get_current_scene()
 
 ### Signals
 signal new_pallet_added
@@ -66,9 +68,7 @@ func show_popup_button(show = true, hide_delay = 0):
 	elif not show and popup.visible:
 		if hide_delay > 0:
 			yield(
-				get_tree().create_timer(
-					hide_delay / get_tree().get_current_scene().simulation_controller.speed_scale
-				),
+				get_tree().create_timer(hide_delay / _factory.simulation_controller.speed_scale),
 				"timeout"
 			)
 		popup.hide()
@@ -90,7 +90,7 @@ func run_popup_progress_bar(duration: float):
 		"value",
 		0,
 		100,
-		duration / get_tree().get_current_scene().simulation_controller.speed_scale,
+		duration / _factory.simulation_controller.speed_scale,
 		Tween.TRANS_SINE,
 		Tween.EASE_IN_OUT
 	)

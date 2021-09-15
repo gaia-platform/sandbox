@@ -1,13 +1,13 @@
 extends Control
 
 # Node paths
-export (NodePath) var error_panel_path
-export (NodePath) var time_header_path
-export (NodePath) var place_container_path
-export (NodePath) var people_container_path
-export (PackedScene) var building_node
-export (PackedScene) var person_node
-export (String, FILE) var scene_picker_scene
+export(NodePath) var error_panel_path
+export(NodePath) var time_header_path
+export(NodePath) var place_container_path
+export(NodePath) var people_container_path
+export(PackedScene) var building_node
+export(PackedScene) var person_node
+export(String, FILE) var scene_picker_scene
 
 # Get their nodes
 onready var error_panel = get_node(error_panel_path)
