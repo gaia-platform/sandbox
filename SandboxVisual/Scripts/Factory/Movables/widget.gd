@@ -1,18 +1,21 @@
 extends Sprite
+# Widget controller
+# Handles movement and properties
 
-### Properties
+signal departed_area
+
+# Properties
 export(int, "Raw", "Painted", "Labeled") var state
+
 var payload_id: String
 var is_pallet = false
 
-### Elements
+# Elements
 onready var widget_label = $WidgetLabel
 onready var tween = $Tween
 onready var progress_circle = $Progress
 
 onready var _factory = get_tree().get_current_scene()
-
-signal leaving_area
 
 
 func move_to(location: Vector2, leaving = false):
@@ -29,7 +32,7 @@ func move_to(location: Vector2, leaving = false):
 	tween.start()
 
 	if leaving:
-		emit_signal("leaving_area")
+		emit_signal("departed_area")
 
 
 func paint(done = true):

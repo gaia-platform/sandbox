@@ -2,7 +2,7 @@ extends Control
 # AMR Swarm factory main controller
 # Handle init and factory work flow (through signals)
 
-signal end_simulation
+signal simulation_ended
 
 # Areas
 export(NodePath) var inbound_area_path
@@ -194,7 +194,7 @@ func _on_ApplyButton_pressed():
 	change_bots_panel.hide()
 
 	# Remove everything from the simulation
-	emit_signal("end_simulation")
+	emit_signal("simulation_ended")
 
 	# Wait for all processing to complete before deleting everything else
 	yield(get_tree(), "idle_frame")
@@ -345,7 +345,7 @@ func _on_BufferActionButton_pressed():
 
 		# Make sure to check if this is the last widget
 		next_widget.connect(
-			"leaving_area", self, "_check_to_reset_buffer_area", [], CONNECT_ONESHOT
+			"departed_area", self, "_check_to_reset_buffer_area", [], CONNECT_ONESHOT
 		)
 
 	# Tell Gaia there are new unpacked widgets

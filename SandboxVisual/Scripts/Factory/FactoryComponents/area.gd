@@ -54,7 +54,7 @@ func add_pallet(pallet):
 	if pallet_space.visible and not pallet_node:
 		pallet.move_to(pallet_location.get_location())
 		pallet_node = pallet
-		pallet.connect("leaving_area", self, "_cleanup_pallet", [], CONNECT_ONESHOT)
+		pallet.connect("departed_area", self, "_cleanup_pallet", [], CONNECT_ONESHOT)
 		emit_signal("new_pallet_added")
 
 

@@ -11,8 +11,8 @@ var node_to_spaces: Dictionary
 
 
 func _ready():
-	var _end_simulation_signal = get_tree().get_current_scene().connect(
-		"end_simulation", self, "_remove_all_nodes"
+	var _simulation_ended_signal = get_tree().get_current_scene().connect(
+		"simulation_ended", self, "_remove_all_nodes"
 	)
 
 
@@ -42,7 +42,7 @@ func add_node(node):
 
 	# Move the node to this location
 	node.set("is_inside_area", true)
-	node.connect("leaving_area", self, "remove_node", [node], CONNECT_ONESHOT)
+	node.connect("departed_area", self, "remove_node", [node], CONNECT_ONESHOT)
 	node.move_to(location)
 
 
