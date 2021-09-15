@@ -1,4 +1,6 @@
 extends PanelContainer
+# Simulation Control panel handler
+# Handles button presses and properties
 
 export(float) var speed_scale = 1
 export(String, FILE) var scene_picker_scene

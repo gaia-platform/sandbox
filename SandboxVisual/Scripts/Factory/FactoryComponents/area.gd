@@ -1,6 +1,11 @@
 extends PanelContainer
+# Area main controller
+# Handles interactions and definition
 
-### Nodes
+signal new_pallet_added
+signal new_node_added(node)
+
+# Nodes
 export(NodePath) var count_label_path
 export(NodePath) var pallet_space_path
 export(NodePath) var widget_space_path
@@ -8,6 +13,14 @@ export(Array, NodePath) var associated_waypoint_paths
 export(NodePath) var popup_path
 export(NodePath) var popup_action_button_path
 export(NodePath) var popup_action_progress_path
+
+# Properties
+export(String) var id
+export(String) var area_type
+
+# Properties
+var associated_waypoints: Array
+var pallet_node = null
 
 onready var count_label = get_node(count_label_path)
 onready var pallet_space = get_node(pallet_space_path)
@@ -20,17 +33,7 @@ onready var popup_action_progress = get_node(popup_action_progress_path)
 
 onready var tween = $Tween
 
-### Properties
-var associated_waypoints: Array
-var pallet_node = null
-export(String) var id
-export(String) var area_type
-
 onready var _factory = get_tree().get_current_scene()
-
-### Signals
-signal new_pallet_added
-signal new_node_added(node)
 
 
 func _ready():
@@ -106,6 +109,5 @@ func get_next_payload():
 	return null
 
 
-### Private methods
 func _cleanup_pallet():
 	pallet_node = null
