@@ -1,7 +1,7 @@
 extends Sprite
 
 # Get Widget grid
-export (NodePath) var widget_grid_path
+export(NodePath) var widget_grid_path
 onready var widget_grid = get_node(widget_grid_path)
 onready var widget_spaces = widget_grid.get_children()
 
@@ -16,7 +16,6 @@ var widgets = [null, null, null, null]
 var payload_id: String
 var is_pallet = true
 
-# Get factory
 onready var _factory = get_tree().get_current_scene()
 
 signal leaving_area

@@ -1,7 +1,7 @@
 extends KinematicBody2D
 
 # Nodes
-export (NodePath) var output_label_path
+export(NodePath) var output_label_path
 onready var output_label = get_node(output_label_path)
 
 onready var green_roi = $GreenROI

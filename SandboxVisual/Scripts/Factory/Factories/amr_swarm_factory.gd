@@ -2,13 +2,13 @@ extends Control
 
 ### Nodes
 # Areas
-export (NodePath) var inbound_area_path
-export (NodePath) var charging_station_path
-export (NodePath) var buffer_area_path
-export (NodePath) var pl_start_path
-export (NodePath) var production_line_path
-export (NodePath) var pl_end_path
-export (NodePath) var outbound_area_path
+export(NodePath) var inbound_area_path
+export(NodePath) var charging_station_path
+export(NodePath) var buffer_area_path
+export(NodePath) var pl_start_path
+export(NodePath) var production_line_path
+export(NodePath) var pl_end_path
+export(NodePath) var outbound_area_path
 
 onready var inbound_area = get_node(inbound_area_path)
 onready var charging_station = get_node(charging_station_path)
@@ -27,26 +27,26 @@ var widget_bots = []
 var number_of_waypoints = -1
 
 # Widgets
-export (NodePath) var widgets_path
+export(NodePath) var widgets_path
 onready var widgets = get_node(widgets_path)
 
 # Navigation Controller
-export (NodePath) var navigation_controller_path
+export(NodePath) var navigation_controller_path
 onready var navigation_controller = get_node(navigation_controller_path)
 
 #Pallets
-export (NodePath) var pallets_path
+export(NodePath) var pallets_path
 onready var pallets = get_node(pallets_path)
 
 # Simulation controllers and properties
-export (NodePath) var simulation_controller_path
-export (NodePath) var widget_bot_counter_path
-export (NodePath) var pallet_bot_counter_path
-export (NodePath) var change_bots_button_path
-export (NodePath) var receive_order_button_path
-export (NodePath) var change_bots_panel_path
-export (NodePath) var apply_changed_bots_button_path
-export (NodePath) var cancel_changed_bots_button_path
+export(NodePath) var simulation_controller_path
+export(NodePath) var widget_bot_counter_path
+export(NodePath) var pallet_bot_counter_path
+export(NodePath) var change_bots_button_path
+export(NodePath) var receive_order_button_path
+export(NodePath) var change_bots_panel_path
+export(NodePath) var apply_changed_bots_button_path
+export(NodePath) var cancel_changed_bots_button_path
 onready var simulation_controller = get_node(simulation_controller_path)
 onready var widget_bot_counter = get_node(widget_bot_counter_path)
 onready var pallet_bot_counter = get_node(pallet_bot_counter_path)
@@ -57,10 +57,10 @@ onready var apply_changed_bots_button = get_node(apply_changed_bots_button_path)
 onready var cancel_changed_bots_button = get_node(cancel_changed_bots_button_path)
 
 ### To be spawned
-export (PackedScene) var widget_bot_scene
-export (PackedScene) var pallet_bot_scene
-export (PackedScene) var widget_scene
-export (PackedScene) var pallet_scene
+export(PackedScene) var widget_bot_scene
+export(PackedScene) var pallet_bot_scene
+export(PackedScene) var widget_scene
+export(PackedScene) var pallet_scene
 
 ### Properties
 var _widget_in_pl_start = null
@@ -237,7 +237,7 @@ func _generate_bots():
 		navigation_controller.id_to_bot[wb_instance.bot_id] = wb_instance
 
 		navigation_controller.bots.add_child(wb_instance)  # Add to navigation controller bots
-		charging_station.add_node(wb_instance)  # Add to charging station
+		navigation_controller._bot_charge(wb_instance.bot_id)
 		widget_bots.append({"id": wb_instance.bot_id})
 
 	for pb in pallet_bot_counter.value:  # For number of pallet bots requested
@@ -255,7 +255,7 @@ func _generate_bots():
 		navigation_controller.id_to_bot[pb_instance.bot_id] = pb_instance
 
 		navigation_controller.bots.add_child(pb_instance)
-		charging_station.add_node(pb_instance)
+		navigation_controller._bot_charge(pb_instance.bot_id)
 		pallet_bots.append({"id": pb_instance.bot_id})
 
 

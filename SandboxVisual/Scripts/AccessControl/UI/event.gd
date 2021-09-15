@@ -1,13 +1,13 @@
 extends Label
 
 # Item properties
-export (int) var start_hour
-export (int) var start_minute
-export (bool) var start_is_am
-export (int) var end_hour
-export (int) var end_minute
-export (bool) var end_is_am
-export (String) var event_name
+export(int) var start_hour
+export(int) var start_minute
+export(bool) var start_is_am
+export(int) var end_hour
+export(int) var end_minute
+export(bool) var end_is_am
+export(String) var event_name
 
 
 func _ready():

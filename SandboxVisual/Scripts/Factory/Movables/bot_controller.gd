@@ -2,19 +2,18 @@ extends KinematicBody2D
 
 #### Variables
 ### Properties
-export (String) var bot_id
-export (int, "WidgetBot", "PalletBot") var bot_type
-export (int) var max_payload_weight
-export (float) var max_speed
-export (int) var battery_time
-export (int) var charge_time
+export(String) var bot_id
+export(int, "WidgetBot", "PalletBot") var bot_type
+export(int) var max_payload_weight
+export(float) var max_speed
+export(float) var battery_time  # In seconds
+export(float) var charge_time  # In seconds
 
 ### State
-export (int) var goal_location
-export (float) var cur_speed_squared
-export (float) var charge_level = 100
-export (bool) var is_charging: bool
-export (bool) var is_inside_area: bool
+export(int) var goal_location
+export(float) var cur_speed_squared
+export(bool) var is_charging: bool
+export(bool) var is_inside_area: bool
 
 ### Nodes
 onready var collision_shape = $CollisionShape2D
@@ -31,6 +30,8 @@ var is_pallet: bool
 var bot_collision: KinematicCollision2D
 var report_success = true
 var disabled_point = -1
+var battery_used_time = 0
+var reported_charged = false
 
 signal leaving_area
 
@@ -45,7 +46,7 @@ func _ready():
 
 
 func _physics_process(delta):
-	if movement_path.size() and not bot_collision:  # There is still a goal coordinate to reach
+	if movement_path.size() and not bot_collision and battery_used_time != battery_time:  # There is still a goal coordinate to reach
 		var cur_dir = (movement_path[0] - position).normalized()  # Vector pointing towards next goal point
 		var movement_step = cur_dir * max_speed * delta  # Movement increment
 		var post_movement_dir = movement_path[0] - (position + movement_step)  # Vector pointing towards goal point, but after step
@@ -60,14 +61,19 @@ func _physics_process(delta):
 		else:  # Otherwise, continue moving
 			cur_speed_squared = movement_step.length_squared()  # Update speed
 			# Unmodulate the color if it was previously changed (from collision)
-			if modulate == Color.red:
+			if modulate != Color.white:
 				modulate = Color.white
 
 			# Move and check for collisions
 			bot_collision = move_and_collide(movement_step)
+
+			# Add to battery used time
+			battery_used_time += delta
+			if battery_used_time > battery_time:
+				battery_used_time = battery_time
 	elif not movement_path.size() and not bot_collision:  # Stop at final position
 		# Get reference to navigation; will use later
-		var navigation_astar = get_tree().get_current_scene().navigation_controller.astar
+		var navigation_astar = _factory.navigation_controller.astar
 
 		# Stop if needed
 		if cur_speed_squared != 0:
@@ -85,13 +91,26 @@ func _physics_process(delta):
 			if report_success and not is_charging:
 				CommunicationManager.publish_to_app(
 					"bot/%s/arrived" % bot_id,
-					get_tree().get_current_scene().navigation_controller.location_id(
+					_factory.navigation_controller.location_id(
 						navigation_astar.get_closest_point(position, true)
 					)
 				)
 			else:
 				report_success = true
 
+		# Handle charging
+		if is_charging and is_inside_area:
+			if battery_used_time > 0:
+				if reported_charged:
+					reported_charged = false
+				battery_used_time -= delta * battery_time / charge_time
+			elif battery_used_time <= 0:
+				battery_used_time = 0
+				if not reported_charged:
+					CommunicationManager.publish_to_app("bot/is_charged", bot_id)
+					reported_charged = true
+
+		# Check to make sure collision shape is properly set
 		if collision_shape.disabled and not is_inside_area:
 			collision_shape.disabled = false
 
@@ -121,21 +140,28 @@ func _physics_process(delta):
 				if disabled_point != -1:
 					navigation_astar.set_point_disabled(disabled_point, false)
 					disabled_point = -1
-
-	elif bot_collision:
-		if modulate != Color.red:
+	elif bot_collision or battery_used_time == battery_time:
+		if modulate == Color.white:
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
-			modulate = Color.red  # Modulate to red
 			movement_path.resize(0)
 			_movement_queue.clear()
 			if disabled_point != -1:
-				get_tree().get_current_scene().navigation_controller.astar.set_point_disabled(
-					disabled_point, false
-				)
+				_factory.navigation_controller.astar.set_point_disabled(disabled_point, false)
 				disabled_point = -1
+		if bot_collision and modulate.g != 0:
+			# Modulate to red without changing alpha
+			modulate.r = 1
+			modulate.g = 0
+			modulate.b = 0
+
 			CommunicationManager.publish_to_app(
-				"bot/%s/crashed" % bot_id,
-				get_tree().get_current_scene().navigation_controller.location_id(goal_location)
+				"bot/%s/crashed" % bot_id, _factory.navigation_controller.location_id(goal_location)
+			)
+		elif battery_used_time == battery_time and modulate.a != 0.3:
+			modulate.a = 0.3
+			CommunicationManager.publish_to_app(
+				"bot/%s/out_of_battery" % bot_id,
+				_factory.navigation_controller.location_id(goal_location)
 			)
 
 
@@ -153,9 +179,9 @@ func publish_status_item(item: String):
 		"world_location":
 			payload = position
 		"charge_level":
-			payload = charge_level
+			payload = 1 - battery_used_time / battery_time
 		"is_charging":
-			payload = charge_level
+			payload = is_charging
 		"speed_squared":
 			payload = cur_speed_squared
 		_:
@@ -204,7 +230,7 @@ func pickup_payload(payload):
 		succeed = true
 
 		if goal_location == 5:  # If at inbound area, re-enable receive order button
-			get_tree().get_current_scene().receive_order_button.disabled = false
+			_factory.receive_order_button.disabled = false
 
 	CommunicationManager.publish_to_app(
 		"bot/%s/payload_picked_up" % bot_id, payload.payload_id if succeed else false

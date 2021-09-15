@@ -1,10 +1,10 @@
 extends PanelContainer
 
-export (float) var speed_scale = 1
-export (String, FILE) var scene_picker_scene
-export (NodePath) var level_name_label_path
-export (NodePath) var pause_button_path
-export (NodePath) var speed_scale_label_path
+export(float) var speed_scale = 1
+export(String, FILE) var scene_picker_scene
+export(NodePath) var level_name_label_path
+export(NodePath) var pause_button_path
+export(NodePath) var speed_scale_label_path
 
 onready var level_name_label = get_node(level_name_label_path)
 onready var pause_button = get_node(pause_button_path)

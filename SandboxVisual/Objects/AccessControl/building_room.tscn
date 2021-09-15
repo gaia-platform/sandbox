@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Assets/AccessControl/StyleBoxes/building_room_flat.tres" type="StyleBox" id=1]
-[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_big.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Assets/Fonts/roboto_light_big.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Objects/AccessControl/schedule_panel.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scripts/AccessControl/building_room.gd" type="Script" id=4]
 [ext_resource path="res://Objects/AccessControl/person.tscn" type="PackedScene" id=5]
@@ -20,7 +20,7 @@ person_node = ExtResource( 5 )
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_right = 930.0
-margin_bottom = 136.0
+margin_bottom = 126.0
 custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
@@ -30,7 +30,7 @@ custom_constants/margin_bottom = 10
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 920.0
-margin_bottom = 126.0
+margin_bottom = 116.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
