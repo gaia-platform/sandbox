@@ -36,7 +36,7 @@ func _ready():
 	var _connect_to_signal = CommunicationManager.connect(
 		"factory_move_location", self, "_bot_move_location"
 	)
-	_connect_to_signal = CommunicationManager.connect("factory_charge_bot", self, "_bot_charge")
+	_connect_to_signal = CommunicationManager.connect("factory_charge", self, "_bot_charge")
 	_connect_to_signal = CommunicationManager.connect(
 		"factory_pickup_payload", self, "_bot_pickup_payload"
 	)

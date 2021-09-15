@@ -1,13 +1,11 @@
 extends Node
+# MQTT Communication manager
+# Handles all in/out bound signals being sent through MQTT
 
-var is_working = true
-var _is_still_processing = false
-
-### Signals
-## AMR
+# AMR
 signal factory_running
 signal factory_move_location(bot_id, location)
-signal factory_charge_bot(bot_id)
+signal factory_charge(bot_id)
 signal factory_pickup_payload(bot_id, payload)
 signal factory_drop_payload(bot_id, location)
 signal factory_status_request(bot_id, status_item)
@@ -17,12 +15,16 @@ signal factory_start_production
 signal factory_unload_pl
 signal factory_ship
 
-## Access Control
+# Access Control
 signal ac_init(init_data)
 signal ac_error(error_message)
 signal ac_move_to_building(person_id, building_id)
 signal ac_move_to_room(person_id, building_id, room_id)
 signal ac_option(option_value)
+
+# States
+var is_working = true
+var _is_still_processing = false
 
 
 func _ready():
@@ -33,17 +35,21 @@ func _ready():
 		return
 
 
+# Poll for new MQTT messages
 func _physics_process(_delta):
 	if is_working && not _is_still_processing:
-		while JavaScript.eval("parent.unreadMessages;"):  # Read and process while there are unread
+		# Read and process while there are unread
+		while JavaScript.eval("parent.unreadMessages;"):
 			if not _is_still_processing:
 				_is_still_processing = true
 
 			# Read MQTT data
 			var message = JavaScript.eval("parent.readNextMessage();")
-			var message_decoded = JSON.parse(message)  # Parse
-			if message_decoded.error:  # Ignore this message if there was a parsing error
+			var message_decoded = JSON.parse(message)
+
+			if message_decoded.error:
 				continue
+
 			var topic = message_decoded.result.topic
 			var payload = message_decoded.result.payload
 
@@ -60,18 +66,18 @@ func _physics_process(_delta):
 			var topic_extract = topic.split("/")
 			match get_tree().get_current_scene().get_name():
 				"AMRSwarmFactory":
-					match topic_extract[-1]:  # Look at last item in topic path
-						"running":  # AMR factory running, ready for initialization
+					match topic_extract[-1]:
+						"running":
 							emit_signal("factory_running")
-						"move_location":  # Set destination location of a bot
-							emit_signal("factory_move_location", topic_extract[-2], payload)  # Send bot_ID and payload
-						"charge":  # Tell bot to charge
-							emit_signal("factory_charge_bot", topic_extract[-2])
-						"pickup_payload":  # Pickup payload at location
+						"move_location":
+							emit_signal("factory_move_location", topic_extract[-2], payload)
+						"charge":
+							emit_signal("factory_charge", topic_extract[-2])
+						"pickup_payload":
 							emit_signal("factory_pickup_payload", topic_extract[-2], payload)
-						"drop_payload":  # Drop payload at location
+						"drop_payload":
 							emit_signal("factory_drop_payload", topic_extract[-2], payload)
-						"status_request":  # Get info about a bot
+						"status_request":
 							emit_signal("factory_status_request", topic_extract[-2], payload)
 						"receive_order":
 							emit_signal("factory_receive_order")
@@ -87,18 +93,18 @@ func _physics_process(_delta):
 							print("Unknown factory topic")
 				"AccessControlBuilding":
 					match topic_extract[-1]:
-						"init":  # Verbose database output for setting up
+						"init":
 							emit_signal("ac_init", payload)
-						"alert":  # Error message
+						"alert":
 							emit_signal("ac_error", payload)
-						"move_to_building":  # Moves buildings
+						"move_to_building":
 							emit_signal("ac_move_to_building", topic_extract[-2], payload)
-						"move_to_room":  # Moves rooms
-							var data_split = payload.split(",")  # Divides into building_ID and room_ID
+						"move_to_room":
+							var data_split = payload.split(",")
 							emit_signal(
 								"ac_move_to_room", topic_extract[-2], data_split[0], data_split[1]
 							)
-						"scan":  # Person option state change
+						"scan":
 							emit_signal("ac_option", int(topic_extract[-2]), payload)
 						_:
 							print("Unknown access control topic")
@@ -109,7 +115,6 @@ func _physics_process(_delta):
 			_is_still_processing = false
 
 
-### Methods
 func generate_uuid():
 	if is_working:
 		return JavaScript.eval("parent.generateUUID();")
@@ -162,6 +167,7 @@ func cleanup():
 		JavaScript.eval("parent.mqttCleanup();")
 
 
+# Sample setup data for Access control
 func get_setup_data():
 	var sample_json_file = File.new()
 	sample_json_file.open("res://Labs/sample_json.tres", File.READ)
