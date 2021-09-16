@@ -1,17 +1,19 @@
 extends KinematicBody2D
+# Controller for machine which use circular ROIs
+# Handles properties, ROIs, and direction
 
-# Nodes
+enum roi { GREEN, YELLOW, RED }
+enum roi_angles { FRONT_RIGHT, SIDE_RIGHT, BACK_RIGHT, BACK_LEFT, SIDE_LEFT, FRONT_LEFT }
+
 export(NodePath) var output_label_path
+
+var is_hit: bool
+
 onready var output_label = get_node(output_label_path)
 
 onready var green_roi = $GreenROI
 onready var yellow_roi = $YellowROI
 onready var red_roi = $RedROI
-
-# States
-var is_hit: bool
-enum roi { GREEN, YELLOW, RED }
-enum roi_angles { FRONT_RIGHT, SIDE_RIGHT, BACK_RIGHT, BACK_LEFT, SIDE_LEFT, FRONT_LEFT }
 
 
 func _ready():

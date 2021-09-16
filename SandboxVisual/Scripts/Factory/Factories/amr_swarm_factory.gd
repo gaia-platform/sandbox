@@ -1,6 +1,9 @@
 extends Control
+# AMR Swarm factory main controller
+# Handle init and factory work flow (through signals)
 
-### Nodes
+signal simulation_ended
+
 # Areas
 export(NodePath) var inbound_area_path
 export(NodePath) var charging_station_path
@@ -9,34 +12,6 @@ export(NodePath) var pl_start_path
 export(NodePath) var production_line_path
 export(NodePath) var pl_end_path
 export(NodePath) var outbound_area_path
-
-onready var inbound_area = get_node(inbound_area_path)
-onready var charging_station = get_node(charging_station_path)
-onready var buffer_area = get_node(buffer_area_path)
-onready var pl_start = get_node(pl_start_path)
-onready var production_line = get_node(production_line_path)
-onready var pl_end = get_node(pl_end_path)
-onready var outbound_area = get_node(outbound_area_path)
-
-onready var areas = [
-	pl_start, pl_end, outbound_area, buffer_area, charging_station, inbound_area, production_line
-]
-
-var pallet_bots = []
-var widget_bots = []
-var number_of_waypoints = -1
-
-# Widgets
-export(NodePath) var widgets_path
-onready var widgets = get_node(widgets_path)
-
-# Navigation Controller
-export(NodePath) var navigation_controller_path
-onready var navigation_controller = get_node(navigation_controller_path)
-
-#Pallets
-export(NodePath) var pallets_path
-onready var pallets = get_node(pallets_path)
 
 # Simulation controllers and properties
 export(NodePath) var simulation_controller_path
@@ -47,6 +22,40 @@ export(NodePath) var receive_order_button_path
 export(NodePath) var change_bots_panel_path
 export(NodePath) var apply_changed_bots_button_path
 export(NodePath) var cancel_changed_bots_button_path
+
+# To be spawned
+export(PackedScene) var widget_bot_scene
+export(PackedScene) var pallet_bot_scene
+export(PackedScene) var widget_scene
+export(PackedScene) var pallet_scene
+
+# Object holders
+export(NodePath) var navigation_controller_path
+export(NodePath) var widgets_path
+export(NodePath) var pallets_path
+
+# Record of nodes
+var pallet_bots = []
+var widget_bots = []
+var number_of_waypoints = -1
+
+# Properties
+var _widget_in_pl_start = null
+var _widget_in_production_line = null
+var _screen_size = Vector2(930, 830)  # Set to default size at first
+
+# Get nodes
+onready var inbound_area = get_node(inbound_area_path)
+onready var charging_station = get_node(charging_station_path)
+onready var buffer_area = get_node(buffer_area_path)
+onready var pl_start = get_node(pl_start_path)
+onready var production_line = get_node(production_line_path)
+onready var pl_end = get_node(pl_end_path)
+onready var outbound_area = get_node(outbound_area_path)
+onready var areas = [
+	pl_start, pl_end, outbound_area, buffer_area, charging_station, inbound_area, production_line
+]
+
 onready var simulation_controller = get_node(simulation_controller_path)
 onready var widget_bot_counter = get_node(widget_bot_counter_path)
 onready var pallet_bot_counter = get_node(pallet_bot_counter_path)
@@ -56,19 +65,9 @@ onready var change_bots_panel = get_node(change_bots_panel_path)
 onready var apply_changed_bots_button = get_node(apply_changed_bots_button_path)
 onready var cancel_changed_bots_button = get_node(cancel_changed_bots_button_path)
 
-### To be spawned
-export(PackedScene) var widget_bot_scene
-export(PackedScene) var pallet_bot_scene
-export(PackedScene) var widget_scene
-export(PackedScene) var pallet_scene
-
-### Properties
-var _widget_in_pl_start = null
-var _widget_in_production_line = null
-var _screen_size = Vector2(930, 830)  # Set to default size at first
-
-### Signals
-signal end_simulation
+onready var navigation_controller = get_node(navigation_controller_path)
+onready var widgets = get_node(widgets_path)
+onready var pallets = get_node(pallets_path)
 
 
 func _ready():
@@ -113,7 +112,6 @@ func _ready():
 	CommunicationManager.publish_to_app("ping", "running")
 
 
-### Signals
 func _init_app():
 	var robot_types = [
 		{"id": "pallet_bot", "pallet_capacity": 1, "widget_capacity": 0},
@@ -155,7 +153,8 @@ func _init_app():
 		"factory_data", to_json({"robot_types": robot_types, "areas_by_type": areas_by_type})
 	)
 
-	yield(get_tree().create_timer(0.1), "timeout")  # Slight delay to wait for factory data to be processed
+	# Wait for factory data to be processed
+	yield(get_tree().create_timer(0.1), "timeout")
 
 	# Create a new one outside the frame and move it in
 	_generate_new_outbound_pallet(true)
@@ -182,29 +181,34 @@ func _on_FloorPath_resized():
 	_screen_size = rect_size
 
 
-### Factory flow
 ## Change factory bots
+
+
 # Button pressed to open change bots window
 func _on_ChangeBotsButton_pressed():
 	change_bots_panel.show()
 
 
+# Apply bot changes, reset sim
 func _on_ApplyButton_pressed():
 	change_bots_panel.hide()
 
 	# Remove everything from the simulation
-	emit_signal("end_simulation")
-	yield(get_tree(), "idle_frame")  # Wait for all processing to complete before deleting everything else
-	for widget in widgets.get_children():  # Delete all remaining widgets
+	emit_signal("simulation_ended")
+
+	# Wait for all processing to complete before deleting everything else
+	yield(get_tree(), "idle_frame")
+
+	# Delete remaining objects
+	for widget in widgets.get_children():
 		widget.queue_free()
-	for pallet in pallets.get_children():  # All remaining pallets
+	for pallet in pallets.get_children():
 		pallet.queue_free()
-	for bot in navigation_controller.bots.get_children():  # All remaining bots
+	for bot in navigation_controller.bots.get_children():
 		bot.queue_free()
 
 	# Generate stuff
 	_generate_bots()
-	# _generate_new_outbound_pallet(true)
 
 	# Reset inbound area
 	receive_order_button.disabled = false
@@ -217,30 +221,36 @@ func _on_CancelButton_pressed():
 	change_bots_panel.hide()
 
 
-# Function to populate factory with new bots
+# Populate factory with new bots
 func _generate_bots():
 	var id_number = 0
 	pallet_bots = []
 	widget_bots = []
-	for wb in widget_bot_counter.value:  # For the number of widget bots requested
-		var wb_instance = widget_bot_scene.instance()  # Create instance
+	for wb in widget_bot_counter.value:
+		var wb_instance = widget_bot_scene.instance()
 
-		wb_instance.global_position = charging_station.associated_waypoints[0].get_location()  # Set position to be the charging station waypoint
+		# Set position to be the charging station waypoint
+		wb_instance.global_position = charging_station.associated_waypoints[0].get_location()
+
 		# Set bot_id
 		wb_instance.bot_id = String(id_number)
 		id_number += 1
+
 		# Set goal location to be the charging station (where they spawn)
 		wb_instance.goal_location = 4
+
 		# Disable success reporting
 		wb_instance.report_success = false
+
 		# Register in navigation controller
 		navigation_controller.id_to_bot[wb_instance.bot_id] = wb_instance
 
-		navigation_controller.bots.add_child(wb_instance)  # Add to navigation controller bots
+		# Add to navigation controller bots
+		navigation_controller.bots.add_child(wb_instance)
 		navigation_controller._bot_charge(wb_instance.bot_id)
 		widget_bots.append({"id": wb_instance.bot_id})
 
-	for pb in pallet_bot_counter.value:  # For number of pallet bots requested
+	for pb in pallet_bot_counter.value:
 		var pb_instance = pallet_bot_scene.instance()
 
 		pb_instance.global_position = charging_station.associated_waypoints[0].get_location()
@@ -260,12 +270,13 @@ func _generate_bots():
 
 
 ## Bringing pallets to inbound
+
+
 # Button pressed to start the process to get a new pallet in inbound
 func _on_ReceiveOrderButton_pressed():
-	if inbound_area.pallet_node == null:  # If there isn't already something there
-		receive_order_button.disabled = true  # Disable the button
-		inbound_area.run_popup_progress_bar(2)  # Show 2 second loading bar for inbound pallets
-		# inbound_area.run_popup_progress_bar(0) # Set loading to 0 for testing
+	if inbound_area.pallet_node == null:
+		receive_order_button.disabled = true
+		inbound_area.run_popup_progress_bar(2)
 
 		# Create the pallet once the loading bar has completed
 		inbound_area.tween.connect(
@@ -273,6 +284,7 @@ func _on_ReceiveOrderButton_pressed():
 		)
 
 
+# MQTT driven signal to press button
 func _auto_receive_order():
 	receive_order_button.emit_signal("pressed")
 
@@ -284,7 +296,7 @@ func _generate_new_inbound_pallet():
 	var new_pallet = pallet_scene.instance()
 	new_pallet.payload_id = pallet_data["id"]
 	pallets.add_child(new_pallet)
-	new_pallet.global_position = inbound_area.pallet_location.get_location() + Vector2(0, 200)  # Start it somewhere off screen below
+	new_pallet.global_position = inbound_area.pallet_location.get_location() + Vector2(0, 200)
 
 	# Widgets
 	for w in 4:
@@ -297,16 +309,17 @@ func _generate_new_inbound_pallet():
 
 	# Move into place
 	inbound_area.add_pallet(new_pallet)
-	# buffer_area.add_pallet(new_pallet)
 
 	# Tell Gaia a new order has arrived
 	CommunicationManager.publish_to_app("station/inbound/pallet", to_json(pallet_data))
 
 
 ## Handle unpacking pallets in Buffer
-# Show unpack button on pallet arrival signal
+
+
+# Show unpack button on pallet arrival signal after slight animation delay
 func _show_unpack_buffer_ui():
-	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")  # Slight delay for animation effect
+	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")
 	buffer_area.show_popup_button()
 
 
@@ -317,8 +330,7 @@ func _auto_unpack_buffer():
 
 # Unpack button pressed
 func _on_BufferActionButton_pressed():
-	buffer_area.run_popup_progress_bar(1)  # Run 1 second loading
-	# buffer_area.run_popup_progress_bar(0) # Run for 0 seconds for test
+	buffer_area.run_popup_progress_bar(1)
 
 	# Switch to showing the widget space and hide the buffered pallet
 	buffer_area.pallet_space.hide()
@@ -327,19 +339,13 @@ func _on_BufferActionButton_pressed():
 
 	# Unload widgets
 	for wi in 4 - buffer_area.pallet_node.widgets.count(null):
-		var next_widget = buffer_area.pallet_node.widgets[wi]  # Get reference to widget
-		buffer_area.pallet_node.remove_widget(next_widget)  # Remove it from the pallet
-		buffer_area.add_node(next_widget)  # Add it to the buffer area
-
-		# For testing, add one to PL Start to start production line
-		# if wi < 3:
-		# 	buffer_area.add_node(next_widget)
-		# else:
-		# 	pl_start.add_node(next_widget)
+		var next_widget = buffer_area.pallet_node.widgets[wi]
+		buffer_area.pallet_node.remove_widget(next_widget)
+		buffer_area.add_node(next_widget)
 
 		# Make sure to check if this is the last widget
 		next_widget.connect(
-			"leaving_area", self, "_check_to_reset_buffer_area", [], CONNECT_ONESHOT
+			"departed_area", self, "_check_to_reset_buffer_area", [], CONNECT_ONESHOT
 		)
 
 	# Tell Gaia there are new unpacked widgets
@@ -352,7 +358,7 @@ func _on_BufferActionButton_pressed():
 
 # For each widget that leaves the area, check if the buffer is empty and is ready for next pallet
 func _check_to_reset_buffer_area():
-	yield(get_tree(), "idle_frame")  # Wait for node removal process to finish
+	yield(get_tree(), "idle_frame")
 	if not buffer_area.widget_grid.node_to_spaces.size():
 		buffer_area.pallet_space.show()
 		buffer_area.widget_space.hide()
@@ -364,24 +370,28 @@ func _auto_start_production():
 
 
 ## Widgets arrive at PL Start
+
+
 # Show start production button on widget arrival
 func _show_start_production_ui(widget):
 	yield(get_tree().create_timer(1 / simulation_controller.speed_scale), "timeout")
 	pl_start.show_popup_button()
-	_widget_in_pl_start = widget  # Assign to pl_start widget reference on arrival
+	_widget_in_pl_start = widget
 	CommunicationManager.publish_to_app("production_start_ready", widget.payload_id)
 
 
 # Start production button pressed
 func _on_PLStartActionButton_pressed():
-	if not _widget_in_production_line:  # If there's no widget in the production line
-		pl_start.widget_grid.remove_node(_widget_in_pl_start)  # Remove the widget from PL Start
-		production_line.add_node(_widget_in_pl_start)  # Move it to the production line
-		_widget_in_pl_start = null  # Remove pl_start reference to it
-		pl_start.show_popup_button(false)  # Close the popup
+	if not _widget_in_production_line:
+		pl_start.widget_grid.remove_node(_widget_in_pl_start)
+		production_line.add_node(_widget_in_pl_start)
+		_widget_in_pl_start = null
+		pl_start.show_popup_button(false)
 
 
 ## Widget arrives at production line
+
+
 # Prepare to process widget by adding it to the production line widget reference then waiting for widget moving animation to finish
 func _prep_process_widget_in_production_line(widget):
 	_widget_in_production_line = widget
@@ -393,7 +403,6 @@ func _prep_process_widget_in_production_line(widget):
 # Show widget processing animation while in production line
 func _process_widget_in_production_line():
 	_widget_in_production_line.show_processing(2)
-	# _widget_in_production_line.show_processing(0)
 
 	# Show production line UI once processing is complete
 	_widget_in_production_line.tween.connect(
@@ -433,15 +442,11 @@ func _on_ProductionLineActionButton_pressed():
 
 
 ## Widget arrives at PL End
+
+
 # Handle when widget enters PL End
 func _handle_widget_in_pl_end(_widget):
-	# Tell Gaia a widget has arrived
 	CommunicationManager.publish_to_app("processed_widget", _widget.payload_id)
-
-	# Test method to automatically move widget to outbound
-	# widget.tween.connect(
-	# 	"tween_all_completed", self, "_move_to_outbound", [widget], CONNECT_ONESHOT
-	# )
 
 
 # Test method to handle moving to outbound
@@ -453,9 +458,11 @@ func _move_to_outbound(widget):
 
 
 ## Widget is added to the outbound pallet
-# Method to check if outbound pallet is ready for shipment
+
+
+# Show "ship" button if there is no space left
 func _check_if_ready_to_ship(space_left):
-	if space_left == 0:  # Show "ship" button if there is no space left
+	if space_left == 0:
 		outbound_area.show_popup_button()
 
 
@@ -468,7 +475,6 @@ func _auto_ship():
 func _on_OutboundActionButton_pressed():
 	outbound_area.run_popup_progress_bar(1)
 
-	#
 	outbound_area.tween.connect(
 		"tween_all_completed", self, "_do_shipment", [outbound_area.pallet_node], CONNECT_ONESHOT
 	)
@@ -503,7 +509,6 @@ func _complete_shipment(old_outbound_pallet):
 
 # Generate outbound pallet
 func _generate_new_outbound_pallet(with_test_widget = false):
-	## Create outbound pallet with 3 widgets inside for testing
 	# Create a new one outside the frame and move it in
 	var pallet_data = {"id": CommunicationManager.generate_uuid(), "widgets": []}
 	var outbound_pallet = pallet_scene.instance()
@@ -515,8 +520,8 @@ func _generate_new_outbound_pallet(with_test_widget = false):
 	# Move into place
 	outbound_area.add_pallet(outbound_pallet)
 
+	# Auto-populate it with 3 widgets
 	if with_test_widget:
-		# For testing: Auto-populate it with 3 widgets
 		for w in 3:
 			var outbound_widget = widget_scene.instance()
 			outbound_widget.payload_id = CommunicationManager.generate_uuid()
@@ -525,7 +530,7 @@ func _generate_new_outbound_pallet(with_test_widget = false):
 			widgets.add_child(outbound_widget)
 			outbound_pallet.add_widget(outbound_widget)
 
-	outbound_pallet.connect("widget_added", self, "_check_if_ready_to_ship")  # Connect to signal to check if ready to ship
+	outbound_pallet.connect("widget_added", self, "_check_if_ready_to_ship")
 
 	# Tell Gaia a new pallet is in outbound
 	CommunicationManager.publish_to_app("station/outbound/pallet", to_json(pallet_data))
