@@ -1,4 +1,6 @@
 extends Control
+# Scene picker scene
+# Handles transitioning to different simulations
 
 export(String, FILE) var amr_swarm_factory_scene
 export(String, FILE) var amr_scenario_1_scene
