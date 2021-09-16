@@ -65,7 +65,7 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 910.0
 margin_bottom = 91.0
-speed_scale = 20.0
+speed_scale = 1.5
 
 [node name="MarginContainer" parent="VBoxContainer/SimulationController" index="0"]
 margin_right = 905.0
@@ -808,10 +808,10 @@ text = "Widget Bots: "
 valign = 1
 
 [node name="WidgetBotCounter" type="SpinBox" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/HBoxContainer"]
+pause_mode = 2
 margin_left = 190.0
 margin_right = 376.0
 margin_bottom = 32.0
-hint_tooltip = "End the simulation to change"
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 5.0
@@ -833,10 +833,10 @@ text = "Pallet Bots: "
 valign = 1
 
 [node name="PalletBotCounter" type="SpinBox" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/HBoxContainer2"]
+pause_mode = 2
 margin_left = 190.0
 margin_right = 376.0
 margin_bottom = 32.0
-hint_tooltip = "End the simulation to change"
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 4.0
