@@ -77,7 +77,7 @@ func _physics_process(delta):
 			battery_used_time += delta
 			if battery_used_time > battery_time:
 				battery_used_time = battery_time
-	elif not movement_path.size() and not bot_collision:
+	elif not movement_path.size() and not bot_collision and battery_used_time != battery_time:
 		# Get reference to navigation; will use later
 		var navigation_astar = _factory.navigation_controller.astar
 
@@ -162,7 +162,18 @@ func _physics_process(delta):
 			CommunicationManager.publish_to_app(
 				"bot/%s/crashed" % bot_id, _factory.navigation_controller.location_id(goal_location)
 			)
-		elif battery_used_time == battery_time and modulate.a != 0.3:
+		elif battery_used_time == battery_time and modulate.a > 0.3:
+			print(
+				(
+					"%s == %s and %s != 0.3 == %s"
+					% [
+						battery_used_time,
+						battery_time,
+						modulate.a,
+						battery_used_time == battery_time and modulate.a != 0.3
+					]
+				)
+			)
 			modulate.a = 0.3
 			CommunicationManager.publish_to_app(
 				"bot/%s/out_of_battery" % bot_id,

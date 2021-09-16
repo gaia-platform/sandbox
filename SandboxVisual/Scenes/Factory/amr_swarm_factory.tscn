@@ -37,6 +37,8 @@ receive_order_button_path = NodePath("VBoxContainer/GridContainer/SimulationCont
 change_bots_panel_path = NodePath("CanvasLayer/ChangeSimulationBotsBg")
 apply_changed_bots_button_path = NodePath("CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/ApplyButton")
 cancel_changed_bots_button_path = NodePath("CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/CancelButton")
+bot_ran_out_of_battery_panel_path = NodePath("CanvasLayer/BotRanOutOfBattery")
+ran_out_of_battery_label_path = NodePath("CanvasLayer/BotRanOutOfBattery/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/OutOfBatteryLabel")
 widget_bot_scene = ExtResource( 10 )
 pallet_bot_scene = ExtResource( 11 )
 widget_scene = ExtResource( 12 )
@@ -63,7 +65,7 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_right = 910.0
 margin_bottom = 91.0
-speed_scale = 1.5
+speed_scale = 20.0
 
 [node name="MarginContainer" parent="VBoxContainer/SimulationController" index="0"]
 margin_right = 905.0
@@ -871,6 +873,7 @@ margin_bottom = 249.0
 text = "Cancel"
 
 [node name="BotRanOutOfBattery" type="ColorRect" parent="CanvasLayer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color( 0, 0, 0, 0.627451 )
@@ -886,10 +889,10 @@ __meta__ = {
 }
 
 [node name="ChangeSimulationBotsPanel" type="PanelContainer" parent="CanvasLayer/BotRanOutOfBattery/CenterContainer"]
-margin_left = 307.0
-margin_top = 299.0
-margin_right = 623.0
-margin_bottom = 531.0
+margin_left = 460.0
+margin_top = 410.0
+margin_right = 470.0
+margin_bottom = 420.0
 custom_styles/panel = ExtResource( 5 )
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/BotRanOutOfBattery/CenterContainer/ChangeSimulationBotsPanel"]
@@ -973,6 +976,8 @@ text = "Close"
 [connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrderButton" to="." method="_on_ReceiveOrderButton_pressed"]
 [connection signal="pressed" from="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/ApplyButton" to="." method="_on_ApplyButton_pressed"]
 [connection signal="pressed" from="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/CancelButton" to="." method="_on_CancelButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/BotRanOutOfBattery/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/ResetButton" to="." method="_on_ApplyButton_pressed"]
+[connection signal="pressed" from="CanvasLayer/BotRanOutOfBattery/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer/CloseButton" to="." method="_on_CancelButton_pressed"]
 
 [editable path="VBoxContainer/SimulationController"]
 [editable path="VBoxContainer/GridContainer/PLStartArea"]
