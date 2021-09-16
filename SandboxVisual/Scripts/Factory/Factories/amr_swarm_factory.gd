@@ -491,7 +491,7 @@ func _complete_shipment(old_outbound_pallet):
 	for widget in old_outbound_pallet.widgets:
 		pallet_data["widgets"].append({"id": widget.payload_id})
 
-	CommunicationManager.publish_to_app("pallet_shipped", pallet_data)
+	CommunicationManager.publish_to_app("pallet_shipped", to_json(pallet_data))
 	print(pallet_data)
 
 	# Remove the old pallet node
