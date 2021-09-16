@@ -18,13 +18,14 @@ export(float) var cur_speed_squared
 export(bool) var is_charging: bool
 export(bool) var is_inside_area: bool
 
-### Properties
+# Properties
 var payload_node = null
 var is_pallet: bool
 var bot_collision: KinematicCollision2D
 var report_success = true
 var disabled_point = -1
 var battery_used_time = 0
+var disabled_out_of_battery = false
 var reported_charged = false
 
 # Navigation
@@ -162,23 +163,13 @@ func _physics_process(delta):
 			CommunicationManager.publish_to_app(
 				"bot/%s/crashed" % bot_id, _factory.navigation_controller.location_id(goal_location)
 			)
-		elif battery_used_time == battery_time and modulate.a > 0.3:
-			print(
-				(
-					"%s == %s and %s != 0.3 == %s"
-					% [
-						battery_used_time,
-						battery_time,
-						modulate.a,
-						battery_used_time == battery_time and modulate.a != 0.3
-					]
-				)
-			)
+		elif battery_used_time == battery_time and modulate.a != 0.3 and not disabled_out_of_battery:
 			modulate.a = 0.3
 			CommunicationManager.publish_to_app(
 				"bot/%s/out_of_battery" % bot_id,
 				_factory.navigation_controller.location_id(goal_location)
 			)
+			disabled_out_of_battery = true
 
 
 func publish_status_item(item: String):
