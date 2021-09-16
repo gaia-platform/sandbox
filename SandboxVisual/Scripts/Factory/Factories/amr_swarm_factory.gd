@@ -119,6 +119,17 @@ func _ready():
 	CommunicationManager.publish_to_app("ping", "running")
 
 
+# Bot ran out of battery buttons
+func bot_ran_out_of_battery(bot):
+	simulation_controller.pause_button.emit_signal("pressed")
+	bot_ran_out_of_battery_panel.show()
+	ran_out_of_battery_label.text = (
+		"%s (id: %s) ran out of battery while traveling to %s"
+		% ["Pallet Bot" if bot.bot_type else "Widget Bot", bot.bot_id, areas[bot.goal_location].id]
+	)
+
+
+# Factory init data send
 func _init_app():
 	var robot_types = [
 		{"id": "pallet_bot", "pallet_capacity": 1, "widget_capacity": 0},
@@ -186,16 +197,6 @@ func _on_FloorPath_resized():
 
 	# Update screen size variable to new size
 	_screen_size = rect_size
-
-
-## Bot ran out of battery buttons
-func _bot_ran_out_of_battery_signal(bot):
-	simulation_controller.pause_button.emit_signal("pressed")
-	bot_ran_out_of_battery_panel.show()
-	ran_out_of_battery_label.text = (
-		"%s (id: %s) ran out of battery while traveling to %s"
-		% ["Pallet Bot" if bot.type else "Widget Bot", bot.id, areas[bot.goal_location]]
-	)
 
 
 ## Change factory bots

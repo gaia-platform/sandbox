@@ -163,13 +163,18 @@ func _physics_process(delta):
 			CommunicationManager.publish_to_app(
 				"bot/%s/crashed" % bot_id, _factory.navigation_controller.location_id(goal_location)
 			)
-		elif battery_used_time == battery_time and modulate.a != 0.3 and not disabled_out_of_battery:
+		elif (
+			battery_used_time == battery_time
+			and modulate.a != 0.3
+			and not disabled_out_of_battery
+		):
 			modulate.a = 0.3
 			CommunicationManager.publish_to_app(
 				"bot/%s/out_of_battery" % bot_id,
 				_factory.navigation_controller.location_id(goal_location)
 			)
 			disabled_out_of_battery = true
+			_factory.bot_ran_out_of_battery(self)
 
 
 func publish_status_item(item: String):
