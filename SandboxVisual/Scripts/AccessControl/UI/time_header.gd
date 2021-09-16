@@ -1,11 +1,12 @@
 extends PanelContainer
+# Handle and show simulation time
 
-# Settings
+# Settings and nodes
 export(String) var label_prefix = "Location at time: "
 export(int) var minutes = 480  # 8 am
-
-# Nodes
 export(NodePath) var time_label_path
+
+# Time label node
 onready var time_label = get_node(time_label_path)
 
 
@@ -13,6 +14,7 @@ func _ready():
 	_display_time_label()
 
 
+# Increment the time forward by 30 minutes
 func _on_FastForwardButton_pressed():
 	minutes += 30
 	_display_time_label()
@@ -24,20 +26,21 @@ func _display_time_label():
 	time_label.text = label_prefix + _minutes_to_string()
 
 
+# Convert minutes into a time stamp
 func _minutes_to_string():
-	# Hours
+	# Format hours
 	var hours = floor(minutes / 60.0)
 	var hours_mod = int(hours) % 12
-	hours = "12" if hours_mod == 0 else String(hours_mod)  # 12 hour time
+	hours = "12" if hours_mod == 0 else String(hours_mod)
 
-	# Minutes
+	# Format minutes
 	var str_minutes: String
 	var minutes_mod = minutes % 60
-	if minutes_mod == 0:  # 00 for 0 minutes
+	if minutes_mod == 0:
 		str_minutes = "00"
-	elif minutes_mod < 10:  # Add 0 in front of single digit time
+	elif minutes_mod < 10:
 		str_minutes = "0%d" % (minutes_mod)
-	else:  # Put whole number otherwise
+	else:
 		str_minutes = String(minutes_mod)
 
 	# Append AM/PM

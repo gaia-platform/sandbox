@@ -1,7 +1,10 @@
 extends KinematicBody2D
+# WidgetBot and PalletBot main controller
+# Handles actions and signals
 
-#### Variables
-### Properties
+signal departed_area
+
+# Properties
 export(String) var bot_id
 export(int, "WidgetBot", "PalletBot") var bot_type
 export(int) var max_payload_weight
@@ -9,20 +12,11 @@ export(float) var max_speed
 export(float) var battery_time  # In seconds
 export(float) var charge_time  # In seconds
 
-### State
+# State
 export(int) var goal_location
 export(float) var cur_speed_squared
 export(bool) var is_charging: bool
 export(bool) var is_inside_area: bool
-
-### Nodes
-onready var collision_shape = $CollisionShape2D
-onready var tween = $Tween
-onready var _factory = get_tree().get_current_scene()
-
-### Navigation
-var movement_path = []
-var _movement_queue = []
 
 ### Properties
 var payload_node = null
@@ -33,11 +27,21 @@ var disabled_point = -1
 var battery_used_time = 0
 var reported_charged = false
 
-signal leaving_area
+# Navigation
+var movement_path = []
+var _movement_queue = []
+
+# Nodes
+onready var collision_shape = $CollisionShape2D
+onready var tween = $Tween
+onready var _factory = get_tree().get_current_scene()
 
 
 func _ready():
-	yield(get_tree(), "idle_frame")  # Wait for any external init to complete
+	# Wait for any external init to complete
+	yield(get_tree(), "idle_frame")
+
+	# Then subscribe to topics
 	CommunicationManager.subscribe_to_topic("bot/%s/move_location" % bot_id)
 	CommunicationManager.subscribe_to_topic("bot/%s/charge" % bot_id)
 	CommunicationManager.subscribe_to_topic("bot/%s/pickup_payload" % bot_id)
@@ -46,20 +50,22 @@ func _ready():
 
 
 func _physics_process(delta):
-	if movement_path.size() and not bot_collision and battery_used_time != battery_time:  # There is still a goal coordinate to reach
-		var cur_dir = (movement_path[0] - position).normalized()  # Vector pointing towards next goal point
-		var movement_step = cur_dir * max_speed * delta  # Movement increment
-		var post_movement_dir = movement_path[0] - (position + movement_step)  # Vector pointing towards goal point, but after step
-		var cur_dot_post = cur_dir.dot(post_movement_dir)  # Get alignment of current direction vector and post step vector to goal
+	if movement_path.size() and not bot_collision and battery_used_time != battery_time:
+		var cur_dir = (movement_path[0] - position).normalized()
+		var movement_step = cur_dir * max_speed * delta
+		var post_movement_dir = movement_path[0] - (position + movement_step)
+		var cur_dot_post = cur_dir.dot(post_movement_dir)
 
-		if cur_dot_post <= 0:  # If directions are pointing towards each other (meaning next step overshoots goal)
-			position = movement_path[0]  # Lock to goal point
-			movement_path.remove(0)  # Remove this goal point
+		# Check if making a step will overshoot goal
+		if cur_dot_post <= 0:
+			position = movement_path[0]
+			movement_path.remove(0)
 
 			if movement_path.size():
 				_animate_rotation()
-		else:  # Otherwise, continue moving
-			cur_speed_squared = movement_step.length_squared()  # Update speed
+		else:
+			cur_speed_squared = movement_step.length_squared()
+
 			# Unmodulate the color if it was previously changed (from collision)
 			if modulate != Color.white:
 				modulate = Color.white
@@ -71,7 +77,7 @@ func _physics_process(delta):
 			battery_used_time += delta
 			if battery_used_time > battery_time:
 				battery_used_time = battery_time
-	elif not movement_path.size() and not bot_collision:  # Stop at final position
+	elif not movement_path.size() and not bot_collision:
 		# Get reference to navigation; will use later
 		var navigation_astar = _factory.navigation_controller.astar
 
@@ -86,8 +92,6 @@ func _physics_process(delta):
 				navigation_astar.set_point_disabled(disabled_point)
 
 			# Report success
-			# Note: do not publish the event if the robot is_charging because
-			# it was already published when the robot arrived at the viewpoint.
 			if report_success and not is_charging:
 				CommunicationManager.publish_to_app(
 					"bot/%s/arrived" % bot_id,
@@ -130,7 +134,7 @@ func _physics_process(delta):
 
 		# Check to see if there are more movements in the queue
 		var next_movement = _movement_queue.pop_front()
-		if next_movement:  # If there is another movement path in the queue
+		if next_movement:
 			# Set it as the new movement
 			movement_path = next_movement
 			_animate_rotation()
@@ -145,6 +149,7 @@ func _physics_process(delta):
 			var _stop_movement = move_and_collide(Vector2.ZERO)  # Stop movement
 			movement_path.resize(0)
 			_movement_queue.clear()
+
 			if disabled_point != -1:
 				_factory.navigation_controller.astar.set_point_disabled(disabled_point, false)
 				disabled_point = -1
@@ -165,8 +170,6 @@ func _physics_process(delta):
 			)
 
 
-## Signal methods
-# Status item
 func publish_status_item(item: String):
 	var payload
 	match item:
@@ -201,35 +204,37 @@ func travel(path: PoolVector2Array):
 	if is_inside_area:
 		raise()
 		report_success = false
-		move_to(path[0])  # Move to area waypoint
+
+		move_to(path[0])
 		path.remove(0)
-		yield(get_tree(), "idle_frame")  # Wait for movement to start
+
+		yield(get_tree(), "idle_frame")
 		is_inside_area = false
-		emit_signal("leaving_area")
+
+		emit_signal("departed_area")
 	_movement_queue.append(path)
 
 
 func pickup_payload(payload):
 	var succeed: bool
-	if not payload_node and payload and payload.is_pallet == (bot_type == 1):  # If there isn't already a payload registered and the type matches bot
-		var prev_global_pos = payload.global_position  # Get current global position
-		payload.get_parent().remove_child(payload)  # Orphan
-		add_child(payload)  # Add to this bot
-		payload.global_position = prev_global_pos  # Reset position (gets messed up after parenting)
-		payload.rotation = -rotation  # Also counter bot's rotation
+	if not payload_node and payload and payload.is_pallet == (bot_type == 1):
+		var prev_global_pos = payload.global_position
+		payload.get_parent().remove_child(payload)
+		add_child(payload)
+		payload.global_position = prev_global_pos
+		payload.rotation = -rotation
 
-		var payload_destination = Vector2.ZERO  # Send to center of widget if it's a pallet
-		if bot_type:  # Updates for PalletBot
-			# collision_shape.shape.extents = Vector2(53, 64)
-			# collision_shape.position = Vector2(40.5, 0)
+		# Position payload in center (ZERO) if widget bot, otherwise shift it
+		var payload_destination = Vector2.ZERO
+		if bot_type:
 			payload_destination = Vector2(52, 0)
 
-		payload.move_to(payload_destination, true)  # Attach to payload
-		payload_node = payload  # Register payload
+		payload.move_to(payload_destination, true)
+		payload_node = payload
 
 		succeed = true
 
-		if goal_location == 5:  # If at inbound area, re-enable receive order button
+		if goal_location == _factory.navigation_controller.location_index("buffer"):
 			_factory.receive_order_button.disabled = false
 
 	CommunicationManager.publish_to_app(
@@ -238,20 +243,19 @@ func pickup_payload(payload):
 
 
 func drop_payload(area):
-	var prev_global_pos = payload_node.global_position  # Get global position
-	remove_child(payload_node)  # Remove from bot
-	payload_node.rotation = 0  # Reset rotation
-	if bot_type:  # PalletBot specific stuff
-		# collision_shape.shape.extents = Vector2(24, 24)
-		# collision_shape.position = Vector2.ZERO
+	var prev_global_pos = payload_node.global_position
+	remove_child(payload_node)
+	payload_node.rotation = 0
+
+	if bot_type:
 		_factory.pallets.add_child(payload_node)
-		payload_node.global_position = prev_global_pos  # Set position (gets messed up after parenting)
-		area.add_pallet(payload_node)  # Adds a pallet to location
-	else:
-		_factory.widgets.add_child(payload_node)  # Add back to widget pool
 		payload_node.global_position = prev_global_pos
-		area.add_node(payload_node)  # Adds a widget to location
-	payload_node = null  # Unregister payload
+		area.add_pallet(payload_node)
+	else:
+		_factory.widgets.add_child(payload_node)
+		payload_node.global_position = prev_global_pos
+		area.add_node(payload_node)
+	payload_node = null
 
 	# Tell Gaia the payload as been moved
 	CommunicationManager.publish_to_app("bot/%s/payload_dropped" % bot_id, area.id)
