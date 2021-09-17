@@ -16,7 +16,8 @@ export(NodePath) var popup_action_progress_path
 
 # Properties
 export(String) var id
-export(String) var area_type
+export(String, "widget_area", "pallet_area", "both_area", "bot_area") var area_type
+export(NodePath) var associated_area_path
 
 # Properties
 var associated_waypoints: Array
@@ -30,6 +31,7 @@ onready var widget_grid = widget_space.get_child(0)
 onready var popup = get_node(popup_path)
 onready var popup_action_button = get_node(popup_action_button_path)
 onready var popup_action_progress = get_node(popup_action_progress_path)
+onready var associated_area = get_node(associated_area_path)
 
 onready var tween = $Tween
 

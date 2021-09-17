@@ -52,6 +52,9 @@ MQTT topic template: `[UUID]/[topic]`
 | `bot/[bot_id]/payload_dropped`   | `"buffer"`            | ^ same but for dropping payload                              |
 | `bot/[bot_id]/charging`          | `true`                | Response from bot when it moves into the charging station    |
 | `bot/[bot_id]/moving_to`         | `"buffer"`            | Response when bot start traveling to a new location (payload) |
+| `area/[area_id]/bot_arrived`     | `[bot_id]`            | Response when a bot enters into an area                      |
+| `area/[area_id]/widget_arrived`  | `[widget_id]`         | ^ but for a widget arriving                                  |
+| `area/[area_id]/pallet_arrived`  | `[pallet_id]`         | ^ but for a pallet arriving                                  |
 | `bot/is_charged`                 | `[bot_id]`            | Response when `[bot_id]` finished charging                   |
 | `production_start_ready`         | `[widget.payload_id]` | Response when a widget sent to PL_start is ready for production |
 | `production_finished`            | `[widget.payload_id]` | Response when a widget finishes production                   |

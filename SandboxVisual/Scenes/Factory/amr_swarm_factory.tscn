@@ -487,7 +487,7 @@ margin_right = 220.0
 margin_bottom = 713.0
 associated_waypoint_paths = [ NodePath("../Waypoint4") ]
 id = "buffer"
-area_type = "widget_area"
+area_type = "both_area"
 
 [node name="AreaConnector" parent="VBoxContainer/GridContainer/BufferArea" index="0"]
 margin_right = 215.0
@@ -557,7 +557,7 @@ margin_right = 450.0
 margin_bottom = 713.0
 associated_waypoint_paths = [ NodePath("../Waypoint5") ]
 id = "charging"
-area_type = "charging_station"
+area_type = "bot_area"
 
 [node name="AreaConnector" parent="VBoxContainer/GridContainer/ChargingStation" index="0"]
 margin_right = 215.0
@@ -873,8 +873,8 @@ text = "Cancel"
 [connection signal="pressed" from="VBoxContainer/GridContainer/PLStartArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_PLStartActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/PLArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_ProductionLineActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/OutboundArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_OutboundActionButton_pressed"]
-[connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="NavigationController" method="_on_FloorPath_resized"]
 [connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="." method="_on_FloorPath_resized"]
+[connection signal="resized" from="VBoxContainer/GridContainer/FloorPath" to="NavigationController" method="_on_FloorPath_resized"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/BufferArea/CanvasLayer/Popup/MarginContainer/ActionButton" to="." method="_on_BufferActionButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ChangeBotsButton" to="." method="_on_ChangeBotsButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer/ReceiveOrderButton" to="." method="_on_ReceiveOrderButton_pressed"]
