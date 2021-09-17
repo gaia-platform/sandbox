@@ -44,12 +44,20 @@ func _ready():
 
 
 func add_node(node):
+	var topic_prefix = "area/%s/" % id
 	if widget_space.visible:
 		widget_grid.add_node(node)
 		emit_signal("new_node_added", node)
+		var bot_id = node.get("bot_id")
+		# FIXME: the following signals may fire before the animation for the widget has fully completed
+		if bot_id != null:
+			CommunicationManager.publish_to_app(topic_prefix + "bot_arrived", bot_id)
+		else:
+			CommunicationManager.publish_to_app(topic_prefix + "widget_arrived", node.payload_id)
 	else:
 		if pallet_node != null:
 			pallet_node.add_widget(node)
+			CommunicationManager.publish_to_app(topic_prefix + "pallet_arrived", node.payload_id)
 
 
 func add_pallet(pallet):
