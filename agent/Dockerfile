@@ -7,6 +7,10 @@ WORKDIR /usr/src/app
 
 # APT Update to get current locations.
 RUN apt update -y
+RUN apt upgrade -y
+
+# Clang and Cmake Install.
+RUN apt install -y cmake clang nano openssl
 
 # NPM Install
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
@@ -24,7 +28,7 @@ RUN groupadd -g 999 appuser && \
 USER appuser
 
 # Copy all directory files into the image.
-COPY . .
+COPY --chown=appuser:appuser . .
 
 # Expost port 3000 for communication.
 EXPOSE 3000

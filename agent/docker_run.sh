@@ -61,6 +61,7 @@ show_usage() {
 
     echo "Usage: $(basename "$SCRIPT_NAME") [flags]"
     echo "Flags:"
+    echo "  -i,--interactive            Run the container in interactive mode."
     echo "  -n,--name                   Name of the agent to start with."
     echo "  -a,--auto-build             Auto-build the image before running it."
     echo "  -v,--verbose                Show lots of information while executing the project."
@@ -73,12 +74,17 @@ show_usage() {
 parse_command_line() {
     VERBOSE_MODE=0
     AUTO_BUILD=0
+    INTERACTIVE_MODE=
     AGENT_ID=
     PARAMS=()
     while (( "$#" )); do
     case "$1" in
         -a|--auto-build)
             AUTO_BUILD=1
+            shift
+        ;;
+        -i|--interactive)
+            INTERACTIVE_MODE=/bin/bash
             shift
         ;;
         -n|--name)
@@ -143,7 +149,8 @@ if [[ $AUTO_BUILD -ne 0 ]] ; then
     fi
 fi
 
-docker run --rm -e AGENT_ID=$AGENT_ID $IMAGE_NAME
+echo docker run --rm -it -e AGENT_ID=$AGENT_ID $IMAGE_NAME $INTERACTIVE_MODE
+docker run --rm -it -e AGENT_ID=$AGENT_ID $IMAGE_NAME $INTERACTIVE_MODE
 
 # If we get here, we have a clean exit from the script.
 complete_process 0

@@ -136,6 +136,13 @@ if [[ $FORCE_BUILD -ne 0 ]] ; then
     fi
 fi
 
+rm -rf $SCRIPTPATH/repo
+mkdir $SCRIPTPATH/repo
+git clone https://github.com/gaia-platform/amr_swarm_template $SCRIPTPATH/repo
+pushd $SCRIPTPATH/repo
+./build.sh -v -f
+popd
+
 if [[ $VERBOSE_MODE -ne 0 ]] ; then
     echo "Building '$IMAGE_NAME' image."
 fi
