@@ -5,32 +5,61 @@
 
 database coordinator
 
-table project (
-    name string,
-    ddl_file string,
-    ruleset_file string,
-    output string,
-    session references session,
-    active_session references session
-        using current_project
-)
-
 table session (
-    session_id string,
+    session_id string unique,
     agent_id string,
     is_active bool,
     last_session_timestamp uint64,
     last_agent_timestamp uint64,
     created_timestamp uint64,
+    current_project_name string,
     projects references project[],
-    current_project references project,
-    activities references activity[]
+    browser_activities references browser_activity[],
+    agent_activities references agent_activity[],
+    project_activities references project_activity[],
+    editor_file_requests references editor_file_request[],
+    editor_file_contents references editor_file_content[]
 )
 
-create table if not exists activity (
-    type uint8,
-    action uint8,
-    payload string,
+table project (
+    name string,
+    version string,
+    session references session,
+    project_files references project_file[]
+)
+
+table project_file (
+    name string,
+    content string,
+    project references project
+)
+
+table browser_activity (
     timestamp uint64,
     session references session
-);
+)
+
+table agent_activity (
+    timestamp uint64,
+    agent_id string,
+    session references session
+)
+
+table project_activity (
+    name string,
+    timestamp uint64,
+    session references session
+)
+
+table editor_file_request (
+    name string,
+    timestamp uint64,
+    session references session
+)
+
+table editor_file_content (
+    name string,
+    content string,
+    timestamp uint64,
+    session references session
+)

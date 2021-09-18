@@ -26,10 +26,11 @@
 
 #include "gaia/rules/rules.hpp"
 #include "gaia/system.hpp"
+#include "gaia/logger.hpp"
 
 #include "gaia_coordinator.h"
 #include "json.hpp"
-#include "enums.hpp"
+// #include "enums.hpp"
 
 using json = nlohmann::json;
 using namespace Aws::Crt;
@@ -42,7 +43,7 @@ using namespace gaia::direct_access;
 using namespace gaia::coordinator;
 using namespace gaia::rules;
 
-using namespace enums;
+// using namespace enums;
 
 std::shared_ptr<Aws::Crt::Mqtt::MqttConnection> connection;
 
@@ -55,38 +56,61 @@ auto onPublishComplete = [](Mqtt::MqttConnection &, uint16_t packetId, int error
 {
     if (packetId)
     {
-        fprintf(stdout, "Operation on packetId %d Succeeded\n", packetId);
+        gaia_log::app().info("Operation on packetId {} succeeded", packetId);
     }
     else
     {
-        fprintf(stdout, "Operation failed with error %s\n", aws_error_debug_str(errorCode));
+        gaia_log::app().info("Operation failed with error {}", aws_error_debug_str(errorCode));
     }
 };
 
-/*
-bool get_project(const string &session_id, const string &name, project_t& project)
+void publish_message(const string& topic, const string& payload)
 {
-    auto project_iter = project_t::list().
-            where(project_t::expr::session_id == session_id
-                && project_t::expr::name == name).begin();
-    if (project_iter == project_t::list().end())
+    if (connection)
     {
-        return false;
+        ByteBuf payload_buf = ByteBufFromArray((const uint8_t *)payload.data(), payload.length());
+        connection->Publish(topic.c_str(), AWS_MQTT_QOS_AT_LEAST_ONCE, false, payload_buf, onPublishComplete);
     }
-
-    project = *project_iter;
-    return true;
 }
-*/
 
-session_t get_session(const string &id)
+void dump_db()
+{
+    printf("\n");
+    printf("--------------------------------------------------------\n");
+    printf("Sessions:\n");
+    for (const auto &s : session_t::list())
+    {
+        printf("--------------------------------------------------------\n");
+        printf("session:            %s\n", s.session_id());
+        printf("agent:              %s\n", s.agent_id());
+        printf("is_active:          %s\n", s.is_active() ? "YES" : "NO");
+        printf("current_project_name: %s\n", s.current_project_name());
+        printf("last_session_timestamp: %lu\n", s.last_session_timestamp());
+        printf("last_agent_timestamp: %lu\n", s.last_agent_timestamp());
+        printf("created_timestamp: %lu\n", s.created_timestamp());
+        printf("    Projects:\n");
+        for (const auto &p : s.projects())
+        {
+            printf("    ----------------------------------------------------\n");
+            printf("    name:               %s\n", p.name());
+            for (const auto &pf : p.project_files())
+            {
+                printf("        -------------------------------------------------\n");
+                printf("        name:               %s\n", pf.name());
+            }
+        }
+    }
+    printf("--------------------------------------------------------\n");
+}
+
+session_t get_session(const string& id)
 {
     auto session_iter = session_t::list()
                             .where(session_t::expr::session_id == id || session_t::expr::agent_id == id)
                             .begin();
     if (session_iter == session_t::list().end())
     {
-        printf("Creating new session\n");
+        gaia_log::app().info("Creating new session");
         session_writer w;
         w.session_id = id;
         w.agent_id = "NONE";
@@ -96,77 +120,51 @@ session_t get_session(const string &id)
         w.created_timestamp = (uint64_t)time(nullptr);
         return session_t::get(w.insert_row());
     }
-    printf("Existing session found\n");
+    gaia_log::app().info("Existing session found");
     return *session_iter;
 }
 
-activity_t new_activity(activity_type::e_activity_type type,
-                        action::e_action action,
-                        const string &payload)
+browser_activity_t browser_activity()
 {
-    printf("New activity\n");
-    activity_writer w;
-    w.type = type;
-    w.action = action;
-    w.payload = payload;
+    browser_activity_writer w;
     w.timestamp = (uint64_t)time(nullptr);
-    return activity_t::get(w.insert_row());
+    return browser_activity_t::get(w.insert_row());
 }
 
-void log_activity(const string &id,
-                  activity_type::e_activity_type type,
-                  action::e_action action,
-                  const string &payload)
+agent_activity_t agent_activity(const string& agent_id)
 {
-    begin_transaction();
-
-    session_t session = get_session(id);
-    activity_t activity = new_activity(type, action, payload);
-    session.activities().insert(activity);
-
-    commit_transaction();
+    agent_activity_writer w;
+    w.agent_id = agent_id;
+    w.timestamp = (uint64_t)time(nullptr);
+    return agent_activity_t::get(w.insert_row());
 }
 
-void dump_db()
+project_activity_t project_activity(const string& name)
 {
-    printf("\n");
-    begin_transaction();
-    printf("--------------------------------------------------------\n");
-    printf("Sessions:\n");
-    for (const auto &s : session_t::list())
-    {
-        printf("--------------------------------------------------------\n");
-        printf("session:            %s\n", s.session_id());
-        printf("agent:              %s\n", s.agent_id());
-        printf("is_active:          %s\n", s.is_active() ? "YES" : "NO");
-        printf("last_session_timestamp: %lu\n", s.last_session_timestamp());
-        printf("last_agent_timestamp: %lu\n", s.last_agent_timestamp());
-        printf("created_timestamp: %lu\n", s.created_timestamp());
-    }
-    printf("--------------------------------------------------------\n");
-    printf("Projects:\n");
-    for (const auto &p : project_t::list())
-    {
-        printf("--------------------------------------------------------\n");
-        printf("session:            %s\n", p.session().session_id());
-        printf("name:               %s\n", p.name());
-        printf("ddl_file:           %s\n", p.ddl_file());
-        printf("ruleset_file:       %s\n", p.ruleset_file());
-    }
-    printf("--------------------------------------------------------\n");
-    commit_transaction();
+    project_activity_writer w;
+    w.name = name;
+    w.timestamp = (uint64_t)time(nullptr);
+    return project_activity_t::get(w.insert_row());
 }
 
-void publish_message(const string &topic, const string &payload)
+editor_file_request_t editor_file_request(const string& name)
 {
-    if (connection)
-    {
-        ByteBuf payload_buf = ByteBufFromArray((const uint8_t *)payload.data(), payload.length());
-        connection->Publish(topic.c_str(), AWS_MQTT_QOS_AT_LEAST_ONCE, false, payload_buf, onPublishComplete);
-    }
+    editor_file_request_writer w;
+    w.name = name;
+    w.timestamp = (uint64_t)time(nullptr);
+    return editor_file_request_t::get(w.insert_row());
 }
 
-vector<string> split_topic(const string &topic)
+editor_file_content_t editor_file_content(const string& name, const string& content)
+{
+    editor_file_content_writer w;
+    w.name = name;
+    w.content = content;
+    w.timestamp = (uint64_t)time(nullptr);
+    return editor_file_content_t::get(w.insert_row());
+}
+
+vector<string> split_topic(const string& topic)
 {
     vector<string> result;
     size_t left = 0;
@@ -181,37 +179,64 @@ vector<string> split_topic(const string &topic)
     return result;
 }
 
-void on_message(Mqtt::MqttConnection &, const String &topic, const ByteBuf &payload,
+void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payload,
                 bool /*dup*/, Mqtt::QOS /*qos*/, bool /*retain*/)
 {
     vector<string> topic_vector = split_topic(topic.c_str());
-    fprintf(stdout, "Message received on topic %s\n", topic.c_str());
-    fprintf(stdout, "Message: ");
+    gaia_log::app().info("Message received on topic {}", topic.c_str());
+    gaia_log::app().info("Message:");
     fwrite(payload.buffer, 1, payload.len, stdout);
-    fprintf(stdout, "\n");
+    printf("\n");
 
     if (topic_vector.size() < 3)
     {
-        fprintf(stdout, "Unexpected topic");
+        gaia_log::app().error("Unexpected topic");
         return;
     }
-    log_activity(topic_vector[1], activity_type::to_activity_type(topic_vector[2]),
-                 action::to_action(topic_vector.size() >= 4 ? topic_vector[3] : topic_vector[1]),
-                 (char *)payload.buffer);
+
+    begin_transaction();
+
+    session_t session = get_session(topic_vector[1]);
+
+    if (topic_vector[2] == "browser")
+    {
+        auto activity = browser_activity();
+        session.browser_activities().insert(activity);
+    }
+    else if (topic_vector[2] == "agent")
+    {
+        auto activity = agent_activity(topic_vector[1]);
+        session.agent_activities().insert(activity);
+    }
+    else if (topic_vector[2] == "project")
+    {
+        auto activity = project_activity(topic_vector[3] == "exit"
+                                        ? "exit" : (char *)payload.buffer);
+        session.project_activities().insert(activity);
+    }
+    else if (topic_vector[2] == "editor")
+    {
+        auto activity = editor_file_request((char *)payload.buffer);
+        session.editor_file_requests().insert(activity);
+    }
+
+    commit_transaction();
 }
 
 int main()
 {
     gaia::system::initialize();
 
+    begin_transaction();
     dump_db();
+    commit_transaction();
 
     ApiHandle apiHandle;
 
     String endpoint("a31gq30tvzx17m-ats.iot.us-west-2.amazonaws.com");
-    String certificatePath("../../certs/coordinator-certificate.pem.crt");
-    String keyPath("../../certs/coordinator-private.pem.key");
-    String caFile("../../certs/AmazonRootCA1.pem");
+    String certificatePath("../certs/coordinator-certificate.pem.crt");
+    String keyPath("../certs/coordinator-private.pem.key");
+    String caFile("../certs/AmazonRootCA1.pem");
     String clientId = Aws::Crt::UUID().ToString();
     String topic("client-xx/topic_1");
 

@@ -48,7 +48,6 @@ translate_ruleset(
     -I ${PROJECT_SOURCE_DIR}/include)
 
 add_executable(coordinator
-  src/enums.cpp
   src/coordinator.cpp
 )
 

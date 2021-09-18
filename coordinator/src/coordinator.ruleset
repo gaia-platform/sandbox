@@ -10,18 +10,18 @@
 #include "gaia/logger.hpp"
 #include "gaia_coordinator.h"
 #include "json.hpp"
-#include "enums.hpp"
 
 using json = nlohmann::json;
 using namespace std;
 using namespace gaia::coordinator;
-using namespace enums;
 
 string get_uuid();
 void publish_message(const string &topic, const string &payload);
 
 //const uint64_t c_session_timeout = 1200;
-const uint64_t c_session_timeout = 1200000;
+const uint64_t c_session_timeout = 1200000; // for testing
+
+void dump_db();
 
 void manage_gaia_container(const string &action,
                            const string &session_id,
@@ -51,131 +51,148 @@ void send_message(const string &id,
 
 ruleset coordinator_ruleset
 {
-    on_insert(activity)
+    on_insert(browser_activity)
     {
-        gaia_log::app().info("{} action: {}", activity.type, activity.action);
-    }
+        gaia_log::app().info("New browser activity.");
 
-    on_insert(activity)
-    {
-        if (activity.type == activity_type::e_activity_type::browser)
+        session.last_session_timestamp = browser_activity.timestamp;
+        if (session.is_active &&
+            session.last_agent_timestamp + c_session_timeout < browser_activity.timestamp)
         {
-            session.last_session_timestamp = activity.timestamp;
-            if (session.is_active &&
-                session.last_agent_timestamp + c_session_timeout < activity.timestamp)
-            {
-                gaia_log::app().info("Session {} is active but agent is MIA.", session.session_id);
-                session.is_active = false;
-                manage_gaia_container("stop", session.session_id, session.agent_id);
-            }
-            if (!session.is_active)
-            {
-                session.is_active = true;
-                session.agent_id = get_uuid().c_str();
-                session.last_agent_timestamp = activity.timestamp;
-                manage_gaia_container("start", session.session_id, session.agent_id);
-            }
+            gaia_log::app().info("Session {} is active but agent is MIA.", session.session_id);
+            session.is_active = false;
+            manage_gaia_container("stop", session.session_id, session.agent_id);
+        }
+        if (!session.is_active)
+        {
+            session.is_active = true;
+            session.agent_id = get_uuid().c_str();
+            session.last_agent_timestamp = browser_activity.timestamp;
+            manage_gaia_container("start", session.session_id, session.agent_id);
         }
     }
 
-    on_insert(activity)
+    on_insert(agent_activity)
     {
-        if (activity.type == activity_type::e_activity_type::agent
-            && activity.action == action::e_action::connected)
+        if (strcmp(agent_activity.agent_id, session.agent_id) != 0)
         {
-            if (string(activity.payload) != session.agent_id)
-            {
-                manage_gaia_container("stop", session.session_id, activity.payload);
-            }
-            else if (!session.is_active ||
-                session.last_session_timestamp + c_session_timeout < activity.timestamp)
-            {
-                session.is_active = false;
-                manage_gaia_container("stop", session.session_id, session.agent_id);
-            }
-            else
-            {
-                session.last_agent_timestamp = activity.timestamp;
-            }
+            manage_gaia_container("stop", session.session_id, agent_activity.agent_id);
+        }
+        else if (!session.is_active ||
+            session.last_session_timestamp + c_session_timeout < browser_activity.timestamp)
+        {
+            session.is_active = false;
+            manage_gaia_container("stop", session.session_id, session.agent_id);
+        }
+        else
+        {
+            session.last_agent_timestamp = agent_activity.timestamp;
         }
     }
 
-    on_insert(activity)
+    on_insert(project_activity)
     {
-        if (activity.type == activity_type::e_activity_type::project
-            && activity.action == action::e_action::select)
-        {
-            /*
-            auto activity_row = activity_t::get(activity.gaia_id());
-            if (activity_row.session())
-            {
-                if (activity_row.session().project())
-                {
-                    activity_row.session().project().session_list().clear();
-                }
-                project_t project;
-                auto project_iter = project_t::list().
-                        where(project_t::expr::session_id == activity_row.session().session_id()
-                              && project_t::expr::name == activity.payload).begin();
-                if (project_iter == project_t::list().end())
-                {
-                    project_writer w;
-                    w.session_id = activity_row.session().session_id();
-                    w.name = activity.payload;
-                    w.ddl_file = "default";
-                    w.ruleset_file = "default";
-                    project = project_t::get(w.insert_row());
-                }
-                else
-                {
-                    project = *project_iter;
-                }
-                project.session_list().insert(activity_row.session().gaia_id());
-                send_message(activity_row.session().agent_id(), project.name(), "get", "files");
-                // send_message(activity_row.session().agent_id(), project.name(), "ddl", project.ddl_file());
-                // send_message(activity_row.session().agent_id(), project.name(), "ruleset", project.ruleset_file());
-            }
-            */
-        }
-    }
+        session.current_project_name = project_activity.name;
 
-    on_insert(activity)
-    {
-        if (activity.type == activity_type::e_activity_type::editor)
-        {
-            /*
-            auto activity_row = activity_t::get(activity.gaia_id());
-            if (activity_row.session() && activity_row.session().project())
-            {
-                project_writer w = activity_row.session().project().writer();
-                if (activity.action == action::e_action::ddl_file)
-                {
-                    w.ddl_file = activity_row.payload();
-                    send_message(activity_row.session().agent_id(),
-                            activity_row.session().project().name(),
-                            "ddl", activity_row.payload());
-                }
-                else if (activity.action == action::e_action::ruleset_file)
-                {
-                    w.ruleset_file = activity_row.payload();
-                    send_message(activity_row.session().agent_id(),
-                            activity_row.session().project().name(),
-                            "ruleset", activity_row.payload());
-                }
-                w.update_row();
-            }
-            */
-        }
-    }
-
-    on_insert(activity)
-    {
-        if (activity.type == activity_type::e_activity_type::project
-            && activity.action == action::e_action::exit)
+        if (strcmp(project_activity.name, "exit") == 0)
         {
             send_message(session.session_id, "editor", "ddl", "no ddl file loaded");
             send_message(session.session_id, "editor", "output", "no output yet");
             send_message(session.session_id, "editor", "ruleset", "no ruleset file loaded");
+            return;
+        }
+
+        for (session->P:project)
+        {
+            if (strcmp(P.name, project_activity.name) == 0)
+            {
+                gaia_log::app().info("Found existing project {}.", project_activity.name);
+                send_message(session.session_id, "project", "selected", project_activity.name);
+
+                /*
+                if (strcmp(P.ddl_file, "default") == 0)
+                {
+                    send_message(session.agent_id, project_activity.name, "get", "ddl");
+                }
+                else
+                {
+                    send_message(session.session_id, "editor", "ddl", P.ddl_file);
+                }
+                if (strcmp(P.ruleset_file, "default") == 0)
+                {
+                    send_message(session.agent_id, project_activity.name, "get", "ruleset");
+                }
+                else
+                {
+                    send_message(session.session_id, "editor", "ruleset", P.ruleset_file);
+                }
+*/
+
+                dump_db();
+                return;
+            }
+        }
+
+        gaia_log::app().info("No existing project {} found. Creating new one.", project_activity.name);
+
+        project_writer w;
+        w.name = project_activity.name;
+        auto project_ = project_t::get(w.insert_row());
+        session.projects.connect(project_);
+
+        send_message(session.session_id, "project", "selected", project_activity.name);
+
+        // send_message(session.agent_id, project_activity.name, "get", "ddl");
+        // send_message(session.agent_id, project_activity.name, "get", "ruleset");
+
+        dump_db();
+    }
+
+    on_insert(editor_file_request)
+    {
+        gaia_log::app().info("Editor file request activity");
+
+        for (session->P:project)
+        {
+            if (strcmp(P.name, session.current_project_name) == 0)
+            {
+                for (P->PF:project_file)
+                {
+                    if (strcmp(PF.name, editor_file_request.name) == 0)
+                    {
+                        send_message(session.session_id, "editor", PF.name, PF.content);
+                        return;
+                    }
+                }
+
+                gaia_log::app().info("No file '{}' found, requesting from agent.", editor_file_request.name);
+                send_message(session.agent_id, P.name,"get", editor_file_request.name);
+            }
+        }
+    }
+
+    on_insert(editor_file_content)
+    {
+        gaia_log::app().info("Editor activity");
+
+        for (session->P:project)
+        {
+            if (strcmp(P.name, session.current_project_name) == 0)
+            {
+/*                if (strcmp(file_extension, "ddl") == 0)
+                {
+                    P.ddl_file = content;
+                }
+                else if (strcmp(file_extension, "ruleset") == 0)
+                {
+                    P.ruleset_file = content;
+                }
+*/
+                // send_message(session.agent_id, P.name, editor_file_content.extension, editor_file_content.content);
+
+                dump_db();
+                return;
+            }
         }
     }
 }
