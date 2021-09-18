@@ -23,6 +23,10 @@ export(NodePath) var change_bots_panel_path
 export(NodePath) var apply_changed_bots_button_path
 export(NodePath) var cancel_changed_bots_button_path
 
+# Bot crashed window
+export(NodePath) var bot_ran_out_of_battery_panel_path
+export(NodePath) var ran_out_of_battery_label_path
+
 # To be spawned
 export(PackedScene) var widget_bot_scene
 export(PackedScene) var pallet_bot_scene
@@ -64,6 +68,9 @@ onready var receive_order_button = get_node(receive_order_button_path)
 onready var change_bots_panel = get_node(change_bots_panel_path)
 onready var apply_changed_bots_button = get_node(apply_changed_bots_button_path)
 onready var cancel_changed_bots_button = get_node(cancel_changed_bots_button_path)
+
+onready var bot_ran_out_of_battery_panel = get_node(bot_ran_out_of_battery_panel_path)
+onready var ran_out_of_battery_label = get_node(ran_out_of_battery_label_path)
 
 onready var navigation_controller = get_node(navigation_controller_path)
 onready var widgets = get_node(widgets_path)
@@ -112,6 +119,17 @@ func _ready():
 	CommunicationManager.publish_to_app("ping", "running")
 
 
+# Bot ran out of battery buttons
+func bot_ran_out_of_battery(bot):
+	simulation_controller.pause_button.emit_signal("pressed")
+	bot_ran_out_of_battery_panel.show()
+	ran_out_of_battery_label.text = (
+		"%s (id: %s) ran out of battery while traveling to %s"
+		% ["Pallet Bot" if bot.bot_type else "Widget Bot", bot.bot_id, areas[bot.goal_location].id]
+	)
+
+
+# Factory init data send
 func _init_app():
 	var robot_types = [
 		{"id": "pallet_bot", "pallet_capacity": 1, "widget_capacity": 0},
@@ -186,12 +204,18 @@ func _on_FloorPath_resized():
 
 # Button pressed to open change bots window
 func _on_ChangeBotsButton_pressed():
+	simulation_controller.pause_button.emit_signal("pressed")
 	change_bots_panel.show()
 
 
 # Apply bot changes, reset sim
 func _on_ApplyButton_pressed():
-	change_bots_panel.hide()
+	simulation_controller.pause_button.emit_signal("pressed")
+
+	if change_bots_panel.visible:
+		change_bots_panel.hide()
+	else:
+		bot_ran_out_of_battery_panel.hide()
 
 	# Remove everything from the simulation
 	emit_signal("simulation_ended")
@@ -218,7 +242,11 @@ func _on_ApplyButton_pressed():
 
 
 func _on_CancelButton_pressed():
-	change_bots_panel.hide()
+	simulation_controller.pause_button.emit_signal("pressed")
+	if change_bots_panel.visible:
+		change_bots_panel.hide()
+	else:
+		bot_ran_out_of_battery_panel.hide()
 
 
 # Populate factory with new bots

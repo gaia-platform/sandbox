@@ -5,6 +5,7 @@
 [sub_resource type="StyleBoxEmpty" id=1]
 
 [node name="GeneralButton" type="Button"]
+pause_mode = 2
 margin_right = 240.0
 margin_bottom = 33.0
 focus_mode = 0

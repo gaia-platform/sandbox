@@ -18,13 +18,14 @@ export(float) var cur_speed_squared
 export(bool) var is_charging: bool
 export(bool) var is_inside_area: bool
 
-### Properties
+# Properties
 var payload_node = null
 var is_pallet: bool
 var bot_collision: KinematicCollision2D
 var report_success = true
 var disabled_point = -1
 var battery_used_time = 0
+var disabled_out_of_battery = false
 var reported_charged = false
 
 # Navigation
@@ -73,16 +74,17 @@ func _physics_process(delta):
 			# Move and check for collisions
 			bot_collision = move_and_collide(movement_step)
 
-			# Add to battery used time
-			battery_used_time += delta
-			if battery_used_time > battery_time:
-				battery_used_time = battery_time
+			# Add to battery used time if outside charging
+			if not is_inside_area and not is_charging:
+				battery_used_time += delta
+				if battery_used_time > battery_time:
+					battery_used_time = battery_time
 	elif not movement_path.size() and not bot_collision:
 		# Get reference to navigation; will use later
 		var navigation_astar = _factory.navigation_controller.astar
 
 		# Stop if needed
-		if cur_speed_squared != 0:
+		if cur_speed_squared != 0 and battery_used_time != battery_time:
 			cur_speed_squared = 0
 			var _stop_movement = move_and_collide(Vector2.ZERO)
 
@@ -108,7 +110,12 @@ func _physics_process(delta):
 				if reported_charged:
 					reported_charged = false
 				battery_used_time -= delta * battery_time / charge_time
-			elif battery_used_time <= 0:
+
+				# Kick below 0 to allow for MQTT signal step to finish charging
+				if battery_used_time == 0:
+					battery_used_time = -1
+
+			elif battery_used_time < 0:
 				battery_used_time = 0
 				if not reported_charged:
 					CommunicationManager.publish_to_app("bot/is_charged", bot_id)
@@ -162,12 +169,18 @@ func _physics_process(delta):
 			CommunicationManager.publish_to_app(
 				"bot/%s/crashed" % bot_id, _factory.navigation_controller.location_id(goal_location)
 			)
-		elif battery_used_time == battery_time and modulate.a != 0.3:
+		elif (
+			battery_used_time == battery_time
+			and modulate.a != 0.3
+			and not disabled_out_of_battery
+		):
 			modulate.a = 0.3
 			CommunicationManager.publish_to_app(
 				"bot/%s/out_of_battery" % bot_id,
 				_factory.navigation_controller.location_id(goal_location)
 			)
+			disabled_out_of_battery = true
+			_factory.bot_ran_out_of_battery(self)
 
 
 func publish_status_item(item: String):

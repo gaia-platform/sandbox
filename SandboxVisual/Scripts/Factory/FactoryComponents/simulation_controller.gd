@@ -19,7 +19,8 @@ func _ready():
 
 func _on_ExitButton_pressed():
 	# Cleanup
-	Engine.time_scale = 1  # Reset speed
+	Engine.time_scale = 1
+	get_tree().paused = false
 
 	# Switch scenes
 	var change_scene_status = get_tree().change_scene(scene_picker_scene)
