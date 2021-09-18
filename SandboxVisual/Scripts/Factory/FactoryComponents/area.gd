@@ -18,6 +18,9 @@ export(NodePath) var popup_action_progress_path
 export(String) var id
 export(String, "widget_area", "pallet_area", "both_area", "bot_area") var area_type
 export(NodePath) var associated_area_path
+export(bool) var show_button
+export(bool) var show_progress_bar
+export(float) var progress_bar_duration
 
 # Properties
 var associated_waypoints: Array
@@ -59,6 +62,11 @@ func add_node(node):
 			pallet_node.add_widget(node)
 			CommunicationManager.publish_to_app(topic_prefix + "pallet_arrived", node.payload_id)
 
+	if show_button:
+		show_popup_button()
+	elif show_progress_bar:
+		run_popup_progress_bar(progress_bar_duration / _factory.simulation_controller.speed_scale)
+
 
 func add_pallet(pallet):
 	if pallet_space.visible and not pallet_node:
@@ -66,6 +74,7 @@ func add_pallet(pallet):
 		pallet_node = pallet
 		pallet.connect("departed_area", self, "_cleanup_pallet", [], CONNECT_ONESHOT)
 		emit_signal("new_pallet_added")
+		CommunicationManager.publish_to_app("area/%s/pallet_arrived" % id, pallet.payload_id)
 
 
 func show_popup_button(show = true, hide_delay = 0):
