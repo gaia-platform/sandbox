@@ -90,20 +90,13 @@ function mqttClientReconnectHandler() { // Reconnection handler
    console.log("reconnect");
 }
 
-function sendFiles(projectName) {
-   fs.readFile('templates/' + projectName + '/src/' + projectName.replace('_template', '') + '.ddl', 'utf8' , (err, data) => {
+function sendFile(projectName, fileName) {
+   fs.readFile('templates/' + projectName + '_template/src/' + fileName, 'utf8' , (err, data) => {
       if (err) {
         console.error(err);
         return;
       }
-      publishToEditor('ddl', data);
-   });
-   fs.readFile('templates/' + projectName + '/src/' + projectName.replace('_template', '') + '.ruleset', 'utf8' , (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      publishToEditor('ruleset', data);
+      publishToEditor(fileName, data);
    });
 }
 
@@ -113,7 +106,7 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
    var topicTokens = topic.split('/');
    switch (topicTokens[2]) {
       case 'get':
-         sendFiles(topicTokens[1]);
+         sendFile(topicTokens[1], payload);
          break;
 
       default:
