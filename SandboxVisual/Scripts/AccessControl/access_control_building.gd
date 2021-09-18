@@ -1,26 +1,26 @@
 extends Control
+# Access Control demo main controller
+# Manages setup of sim and gather all components together
 
 # Node paths
-export (NodePath) var error_panel_path
-export (NodePath) var time_header_path
-export (NodePath) var place_container_path
-export (NodePath) var people_container_path
-export (PackedScene) var building_node
-export (PackedScene) var person_node
-export (String, FILE) var scene_picker_scene
-
-# Get their nodes
-onready var error_panel = get_node(error_panel_path)
-onready var time_header = get_node(time_header_path)
-onready var place_container = get_node(place_container_path)
-onready var people_container = get_node(people_container_path)
+export(NodePath) var error_panel_path
+export(NodePath) var time_header_path
+export(NodePath) var place_container_path
+export(NodePath) var people_container_path
+export(PackedScene) var building_node
+export(PackedScene) var person_node
+export(String, FILE) var scene_picker_scene
 
 # Meta properties
 var id_to_building: Dictionary
 var id_to_room: Dictionary  # Two layers: building -> room
 var id_to_person: Dictionary
 
-var _connection_var: int
+# Get nodes
+onready var error_panel = get_node(error_panel_path)
+onready var time_header = get_node(time_header_path)
+onready var place_container = get_node(place_container_path)
+onready var people_container = get_node(people_container_path)
 
 
 func _ready():
@@ -28,20 +28,20 @@ func _ready():
 	CommunicationManager.subscribe_to_topic("access_control/init")
 
 	# Connect to signals
-	_connection_var = CommunicationManager.connect("ac_init", self, "_init_setup")
+	var _connection_var = CommunicationManager.connect("ac_init", self, "_init_setup")
 	_connection_var = CommunicationManager.connect(
 		"ac_move_to_building", self, "_move_person_to_building"
 	)
 	_connection_var = CommunicationManager.connect("ac_move_to_room", self, "_move_person_to_room")
 
-	# Temp setup data
+	# Temp setup data; remove in production
 	_init_setup(CommunicationManager.get_setup_data())
+	# TODO: add actual setup data
 
 	CommunicationManager.publish_to_coordinator("project/select", "access_control_template")
 
 
-### Signal methods
-## Set initial properties
+# Generate demo using data sent from Gaia
 func _init_setup(setup_data):
 	if setup_data != null:
 		# Add buildings
@@ -60,7 +60,7 @@ func _init_setup(setup_data):
 			var new_person = person_node.instance()
 			people_container.add_child(new_person)
 
-			# Run setup deferred (to give tiem for item to load)
+			# Run setup deferred (to give time for item to load)
 			new_person.call_deferred(
 				"set_person_init_properties", person, self, setup_data["buildings"][0], {}, false
 			)
@@ -73,15 +73,13 @@ func _init_setup(setup_data):
 
 
 func _on_ExitButton_pressed():
-#	_project_action("exit", "simulation")
 	var change_scene_status = get_tree().change_scene(scene_picker_scene)
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
 	CommunicationManager.publish_to_coordinator("project/exit", "simulation")
 
 
-### Methods
-## Move person into a building. Moves them outside if no building is specified
+# Move person into a building. Moves them outside if no building is specified
 func _move_person_to_building(person_id: String, building_id: String):
 	var person = id_to_person[person_id]
 	var target_location = (
@@ -90,20 +88,20 @@ func _move_person_to_building(person_id: String, building_id: String):
 		else people_container
 	)
 
-	person.get_parent().remove_child(person)  # Orphan first
-	target_location.add_child(person)  # Add to new location
-	target_location.move_child(person, 0)  # Move to top
+	person.get_parent().remove_child(person)
+	target_location.add_child(person)
+	target_location.move_child(person, 0)
 
 	person.update_options_for_inside_building(target_location != people_container)
 
 
-## Moves person into a room in a given building
+# Moves person into a room in a given building
 func _move_person_to_room(person_id: String, building_id: String, room_id: String):
 	var person = id_to_person[person_id]
 	var room = id_to_room[building_id][room_id]
 
-	person.get_parent().remove_child(person)  # Orphan first
-	room.add_child(person)  # Add to new location
-	room.move_child(person, 0)  # Move to top
+	person.get_parent().remove_child(person)
+	room.add_child(person)
+	room.move_child(person, 0)
 
 	person.update_options_for_inside_building(true)

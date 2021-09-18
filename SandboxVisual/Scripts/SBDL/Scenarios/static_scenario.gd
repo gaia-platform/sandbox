@@ -1,8 +1,9 @@
 extends Node2D
+# Scene script for static machine and movable obstacles
 
-export (NodePath) var machine_path
+export(NodePath) var machine_path
 onready var machine = get_node(machine_path)
-export (String, FILE) var scene_picker_scene
+export(String, FILE) var scene_picker_scene
 
 onready var test_object = $TestObject
 
@@ -23,7 +24,6 @@ func _physics_process(_delta):
 
 
 func _on_ExitButton_pressed():
-#	_project_action("exit", "simulation")
 	var change_scene_status = get_tree().change_scene(scene_picker_scene)
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
