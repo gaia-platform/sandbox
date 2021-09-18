@@ -1,9 +1,11 @@
 extends Control
+# Scene picker scene
+# Handles transitioning to different simulations
 
-export (String, FILE) var amr_swarm_factory_scene
-export (String, FILE) var amr_scenario_1_scene
-export (String, FILE) var sbdl_scene
-export (String, FILE) var access_control_scene
+export(String, FILE) var amr_swarm_factory_scene
+export(String, FILE) var amr_scenario_1_scene
+export(String, FILE) var sbdl_scene
+export(String, FILE) var access_control_scene
 
 
 func _ready():

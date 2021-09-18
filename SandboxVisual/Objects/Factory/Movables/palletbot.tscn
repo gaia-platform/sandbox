@@ -11,8 +11,8 @@ script = ExtResource( 1 )
 bot_type = 1
 max_payload_weight = 500
 max_speed = 250.0
-battery_time = 8
-charge_time = 2
+battery_time = 45.0
+charge_time = 22.5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 1 )

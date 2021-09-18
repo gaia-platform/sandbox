@@ -91,6 +91,18 @@
     data.ddl.model = monaco.editor.createModel('no ddl file loaded', 'sql');
     data.output.model = monaco.editor.createModel('no output yet', 'text');
 
+    // Set Monaco editor theme
+    monaco.editor.defineTheme('gaiaTheme', {
+      base: 'vs',
+      inherit: true,
+      rules: [{ background: 'F4F6F8' }],
+      colors: {
+        'editor.background': '#F4F6F8',
+      }
+    });
+    monaco.editor.setTheme('gaiaTheme');
+
+    // Load editor
     editor = monaco.editor.create(document.getElementById('sandboxEditor'), {
       model: data.ruleset.model,
       minimap: {

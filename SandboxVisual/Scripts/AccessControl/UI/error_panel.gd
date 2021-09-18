@@ -1,6 +1,8 @@
 extends PanelContainer
+# Toggle error header and message
 
-export (NodePath) var error_message_label_path
+# Error message label reference
+export(NodePath) var error_message_label_path
 onready var error_message_label = get_node(error_message_label_path)
 
 
