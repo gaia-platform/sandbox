@@ -155,13 +155,24 @@ editor_file_request_t editor_file_request(const string& name)
     return editor_file_request_t::get(w.insert_row());
 }
 
-editor_file_content_t editor_file_content(const string& name, const string& content)
+project_file_t project_file(const string& name, const string& content)
 {
-    editor_file_content_writer w;
+    project_file_writer w;
     w.name = name;
     w.content = content;
+    return project_file_t::get(w.insert_row());
+}
+
+editor_content_t editor_content(const string& name, const string& content)
+{
+    auto pf = project_file(name, content);
+
+    editor_content_writer w;
     w.timestamp = (uint64_t)time(nullptr);
-    return editor_file_content_t::get(w.insert_row());
+    auto ec = editor_content_t::get(w.insert_row());
+
+    pf.editor_contents().insert(ec);
+    return ec;
 }
 
 vector<string> split_topic(const string& topic)
@@ -216,8 +227,22 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
     }
     else if (topic_vector[2] == "editor")
     {
-        auto activity = editor_file_request((char *)payload.buffer);
-        session.editor_file_requests().insert(activity);
+        if (topic_vector.size() < 4)
+        {
+            gaia_log::app().error("Unexpected topic");
+            return;
+        }
+
+        if (topic_vector[3] == "req")
+        {
+            auto activity = editor_file_request((char *)payload.buffer);
+            session.editor_file_requests().insert(activity);
+        }
+        else
+        {
+            auto activity = editor_content(topic_vector[3], (char *)payload.buffer);
+            session.editor_contents().insert(activity);
+        }
     }
 
     commit_transaction();

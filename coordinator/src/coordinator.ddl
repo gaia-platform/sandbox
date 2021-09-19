@@ -18,7 +18,7 @@ table session (
     agent_activities references agent_activity[],
     project_activities references project_activity[],
     editor_file_requests references editor_file_request[],
-    editor_file_contents references editor_file_content[]
+    editor_contents references editor_content[]
 )
 
 table project (
@@ -31,7 +31,8 @@ table project (
 table project_file (
     name string,
     content string,
-    project references project
+    project references project,
+    editor_contents references editor_content[]
 )
 
 table browser_activity (
@@ -57,9 +58,8 @@ table editor_file_request (
     session references session
 )
 
-table editor_file_content (
-    name string,
-    content string,
+table editor_content (
     timestamp uint64,
+    project_file references project_file,
     session references session
 )
