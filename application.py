@@ -35,7 +35,7 @@ def reader():
 @app.route('/', methods=['GET'])
 def index():
     # return the rendered template
-    return render_template("index.html")
+    return render_template("index.html", prod=sys.argv[1])
 
 @app.route('/receive', methods=['GET'])
 def receive():
