@@ -136,15 +136,15 @@ if [[ $FORCE_BUILD -ne 0 ]] ; then
     fi
 fi
 
-rm -rf $SCRIPTPATH/build
-rm -rf $SCRIPTPATH/repo
-mkdir $SCRIPTPATH/repo
-git clone https://github.com/gaia-platform/amr_swarm_template $SCRIPTPATH/repo
-#pushd $SCRIPTPATH/repo
-#./build.sh -v -f
-#popd
-#rm -rf $SCRIPTPATH/repo/build
-git clone --recurse-submodules https://github.com/aws/aws-iot-device-sdk-cpp-v2.git $SCRIPTPATH/repo/aws-iot-device-sdk-cpp-v2
+# rm -rf $SCRIPTPATH/build
+# rm -rf $SCRIPTPATH/repo
+# mkdir $SCRIPTPATH/repo
+# git clone https://github.com/gaia-platform/amr_swarm_template $SCRIPTPATH/repo
+## pushd $SCRIPTPATH/repo
+## ./build.sh -v -f
+## popd
+## rm -rf $SCRIPTPATH/repo/build
+#git clone --recurse-submodules https://github.com/aws/aws-iot-device-sdk-cpp-v2.git $SCRIPTPATH/repo/aws-iot-device-sdk-cpp-v2
 
 #complete_process 1
 

@@ -10,7 +10,7 @@ RUN apt update --assume-yes
 RUN apt upgrade --assume-yes
 
 # Clang and Cmake are pre-requisites for compiling with Gaia.
-RUN apt install -y cmake clang build-essentials
+RUN apt install -y cmake clang
 
 # NPM is a pre-requisite for the agent.
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]

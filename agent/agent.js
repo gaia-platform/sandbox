@@ -34,9 +34,9 @@ const mqttClient = AWSIoTData.device({
    protocol: 'wss',
    maximumReconnectTimeMs: 8000,
    debug: true,
-   accessKeyId: '',
-   secretKey: '',
-   sessionToken: ''
+   accessKeyId: AWS.config.credentials.accessKeyId,
+   secretKey: AWS.config.credentials.secretAccessKey,
+   sessionToken: AWS.config.credentials.sessionToken
 });
 
 /// Cognito authentication
