@@ -159,9 +159,12 @@ ruleset coordinator_ruleset
                 {
                     if (strcmp(PF.name, editor_content->project_file.name) == 0)
                     {
+                        gaia_log::app().info("Existing file '{}' found.", editor_content->project_file.name);
                         PF.content = editor_content->project_file.content;
                         send_message(session.agent_id, P.name, editor_content->project_file.name,
                             editor_content->project_file.content);
+
+                        dump_db();
                         return;
                     }
                 }

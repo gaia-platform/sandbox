@@ -30,7 +30,6 @@
 
 #include "gaia_coordinator.h"
 #include "json.hpp"
-// #include "enums.hpp"
 
 using json = nlohmann::json;
 using namespace Aws::Crt;
@@ -42,8 +41,6 @@ using namespace gaia::db::triggers;
 using namespace gaia::direct_access;
 using namespace gaia::coordinator;
 using namespace gaia::rules;
-
-// using namespace enums;
 
 std::shared_ptr<Aws::Crt::Mqtt::MqttConnection> connection;
 
@@ -238,9 +235,9 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
             auto activity = editor_file_request((char *)payload.buffer);
             session.editor_file_requests().insert(activity);
         }
-        else
+        else if (topic_vector.size() == 5 && topic_vector[3] == "file")
         {
-            auto activity = editor_content(topic_vector[3], (char *)payload.buffer);
+            auto activity = editor_content(topic_vector[4], (char *)payload.buffer);
             session.editor_contents().insert(activity);
         }
     }
