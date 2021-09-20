@@ -65,6 +65,7 @@ margin_right = 425.0
 margin_bottom = 800.0
 
 [node name="SlowerButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
+pause_mode = 1
 margin_left = 435.0
 margin_right = 527.0
 margin_bottom = 800.0
@@ -86,6 +87,7 @@ valign = 1
 autowrap = true
 
 [node name="FasterButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
+pause_mode = 1
 margin_left = 603.0
 margin_right = 695.0
 margin_bottom = 800.0

@@ -1,4 +1,5 @@
 extends PanelContainer
+# References to person buttons and labels
 
 # Button paths
 export(NodePath) var options_label_path

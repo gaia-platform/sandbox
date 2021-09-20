@@ -1,6 +1,8 @@
 extends Label
+# Event label controller
+# Properly format event label given data
 
-# Item properties
+# Event properties
 export(int) var start_hour
 export(int) var start_minute
 export(bool) var start_is_am
@@ -20,7 +22,7 @@ func _ready():
 			end_hour,
 			end_minute,
 			_return_am_string(end_is_am),
-			event_name
+			event_name,
 		]
 	)
 

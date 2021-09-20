@@ -1,29 +1,28 @@
 extends Sprite
+# Pallet object controller
+# Handles movement and widget additions
+
+signal departed_area
+signal widget_added(space_left)
 
 # Get Widget grid
 export(NodePath) var widget_grid_path
-onready var widget_grid = get_node(widget_grid_path)
-onready var widget_spaces = widget_grid.get_children()
-
-# Get Tween
-onready var tween = $Tween
-
-# Get WidgetHolder
-onready var widget_holder = $WidgetHolder
 
 # Properties
 var widgets = [null, null, null, null]
 var payload_id: String
 var is_pallet = true
 
-onready var _factory = get_tree().get_current_scene()
+onready var tween = $Tween
 
-signal leaving_area
-signal widget_added(space_left)
+onready var widget_grid = get_node(widget_grid_path)
+onready var widget_spaces = widget_grid.get_children()
+
+onready var _factory = get_tree().get_current_scene()
 
 
 func move_to(location: Vector2, leaving = false):
-	tween.remove_all()  # Reset all
+	tween.remove_all()
 	# Linearly move to location in 0.5 seconds
 	tween.interpolate_property(
 		self,
@@ -37,13 +36,13 @@ func move_to(location: Vector2, leaving = false):
 	tween.start()
 
 	if leaving:
-		emit_signal("leaving_area")
+		emit_signal("departed_area")
 
 
 func add_widget(widget, animate = true):
 	# Find empty space
 	var first_empty = widgets.find(null)
-	if first_empty != -1:  # There's an open space on the pallet
+	if first_empty != -1:
 		# Add to next open location
 		widgets[first_empty] = widget
 
@@ -59,7 +58,7 @@ func add_widget(widget, animate = true):
 
 		# Move the node to this location
 		widget.set("is_inside_area", true)
-		widget.connect("leaving_area", self, "remove_widget", [widget])
+		widget.connect("departed_area", self, "remove_widget", [widget])
 		if animate:
 			widget.move_to(local_loc)
 		else:
@@ -80,4 +79,4 @@ func remove_widget(widget):
 		_factory.widgets.add_child(widget)
 		widget.global_position = widget_glob_pos
 
-		widget.disconnect("leaving_area", self, "remove_widget")
+		widget.disconnect("departed_area", self, "remove_widget")
