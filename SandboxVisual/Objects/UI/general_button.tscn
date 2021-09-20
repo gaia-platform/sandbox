@@ -1,10 +1,11 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://Assets/Fonts/Lato/lato_regular.tres" type="DynamicFont" id=1]
+[ext_resource path="res://Assets/Fonts/roboto_regular_button.tres" type="DynamicFont" id=1]
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
 [node name="GeneralButton" type="Button"]
+pause_mode = 2
 margin_right = 240.0
 margin_bottom = 33.0
 focus_mode = 0

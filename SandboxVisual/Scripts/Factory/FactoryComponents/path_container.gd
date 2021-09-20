@@ -1,7 +1,9 @@
 extends Control
+# Path controller
+# Handles creation and properties
 
-export (int, "-", "|", "+", "T", "-|", "|-", "T-Up", "L", "_|", "r", "r-left") var path_shape
-export (Array, NodePath) var connected_node_paths
+export(int, "-", "|", "+", "T", "-|", "|-", "T-Up", "L", "_|", "r", "r-left") var path_shape
+export(Array, NodePath) var connected_node_paths
 
 var connected_nodes: Array
 
@@ -13,6 +15,12 @@ func _ready():
 
 	# Run init shape creation
 	_on_PathContainer_resized()
+
+
+# Return center point
+func get_location():
+	var half_dim = rect_size / 2
+	return Vector2(rect_global_position.x + half_dim.x, rect_global_position.y + half_dim.y)
 
 
 func _on_PathContainer_resized():
@@ -67,9 +75,3 @@ func _on_PathContainer_resized():
 			path_line.set_points(PoolVector2Array([left_vector, center_vector, down_vector]))
 		_:
 			print("Unknown size requested")
-
-
-# Return center point
-func get_location():
-	var half_dim = rect_size / 2
-	return Vector2(rect_global_position.x + half_dim.x, rect_global_position.y + half_dim.y)

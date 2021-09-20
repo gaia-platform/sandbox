@@ -1,11 +1,12 @@
 extends PanelContainer
+# References to person buttons and labels
 
 # Button paths
-export (NodePath) var options_label_path
-export (NodePath) var button_container_path
-export (NodePath) var button_one_path
-export (NodePath) var button_two_path
-export (NodePath) var button_three_path
+export(NodePath) var options_label_path
+export(NodePath) var button_container_path
+export(NodePath) var button_one_path
+export(NodePath) var button_two_path
+export(NodePath) var button_three_path
 
 # Get their nodes
 onready var options_label = get_node(options_label_path)
