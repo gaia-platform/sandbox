@@ -30,7 +30,6 @@
 
 #include "gaia_coordinator.h"
 #include "json.hpp"
-// #include "enums.hpp"
 
 using json = nlohmann::json;
 using namespace Aws::Crt;
@@ -42,8 +41,6 @@ using namespace gaia::db::triggers;
 using namespace gaia::direct_access;
 using namespace gaia::coordinator;
 using namespace gaia::rules;
-
-// using namespace enums;
 
 std::shared_ptr<Aws::Crt::Mqtt::MqttConnection> connection;
 
