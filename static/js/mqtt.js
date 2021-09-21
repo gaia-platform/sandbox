@@ -98,10 +98,10 @@ mqttClient.on('message', mqttClientMessageHandler);
 
 //// Methods
 // Subscribe to topics
-window.subscribeToTopic = function (topic) {
+window.subscribeToTopic = function (topic, autoUnsubscribe = true) {
    var fullTopicName = window.sandboxUUID + "/" + topic;
    mqttClient.subscribe(fullTopicName);
-   if (topic !== "editor/#") {
+   if (autoUnsubscribe) {
       subscribedTopics.push(fullTopicName);
    }
 }
@@ -113,7 +113,9 @@ window.publishData = function (topic, payload) { // Topic publish handler
 
 // Sending data to sandbox_coordinator
 window.publishToCoordinator = function (topic, payload) {
-   mqttClient.publish("sandbox_coordinator/" + window.sandboxUUID + "/" + topic, payload);
+   if ($("#inprod").attr("data-inprod") == "true") {
+      mqttClient.publish("sandbox_coordinator/" + window.sandboxUUID + "/" + topic, payload);
+   }
 }
 
 // Sending data to application

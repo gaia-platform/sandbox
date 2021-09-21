@@ -38,7 +38,7 @@ func _ready():
 	_init_setup(CommunicationManager.get_setup_data())
 	# TODO: add actual setup data
 
-	CommunicationManager.publish_to_coordinator("project/select", "access_control_template")
+	CommunicationManager.select_project("access_control_template")
 
 
 # Generate demo using data sent from Gaia
@@ -76,7 +76,7 @@ func _on_ExitButton_pressed():
 	var change_scene_status = get_tree().change_scene(scene_picker_scene)
 	if change_scene_status != OK:
 		print("Error changing scene: %d" % change_scene_status)
-	CommunicationManager.publish_to_coordinator("project/exit", "simulation")
+	CommunicationManager.exit_project()
 
 
 # Move person into a building. Moves them outside if no building is specified
