@@ -35,16 +35,19 @@ set(COORDINATOR_DDL ${PROJECT_SOURCE_DIR}/src/coordinator.ddl)
 set(COORDINATOR_RULESET ${PROJECT_SOURCE_DIR}/src/coordinator.ruleset)
 
 # --- Generate EDC from DDL---
-process_schema(DDL_FILE ${COORDINATOR_DDL})
+process_schema(
+  DDL_FILE ${COORDINATOR_DDL}
+  DATABASE_NAME coordinator
+)
 
 # -- Translate ruleset into CPP --
 translate_ruleset(
   RULESET_FILE ${COORDINATOR_RULESET}
+  DATABASE_NAME coordinator
   CLANG_PARAMS
     -I ${PROJECT_SOURCE_DIR}/include)
 
 add_executable(coordinator
-  src/enums.cpp
   src/coordinator.cpp
 )
 
