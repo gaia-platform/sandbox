@@ -150,16 +150,14 @@ func publish_to_app(topic: String, payload):
 		print("%s: %s" % [topic, payload])
 
 
-func publish_to_coordinator(topic, payload):
+func select_project(project_name):
 	if is_working:
-		JavaScript.eval(
-			(
-				"parent.publishToCoordinator('%s', '%s');"
-				% [topic, payload if typeof(payload) == TYPE_STRING else String(payload)]
-			)
-		)
-	else:
-		print("%s: %s" % [topic, payload])
+		JavaScript.eval("parent.selectProject('%s');" % project_name)
+
+
+func exit_project():
+	if is_working:
+		JavaScript.eval("parent.exitProject();")
 
 
 func cleanup():
