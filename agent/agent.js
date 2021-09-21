@@ -26,18 +26,28 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
    IdentityPoolId: awsConfig.poolId
 });
 
-/// Config and connect MQTT
-const mqttClient = AWSIoTData.device({
-   region: AWS.config.region,
-   host: awsConfig.host,
-   clientId: agentId,
-   protocol: 'wss',
-   maximumReconnectTimeMs: 8000,
-   debug: true,
-   accessKeyId: AWS.config.credentials.accessKeyId,
-   secretKey: AWS.config.credentials.secretAccessKey,
-   sessionToken: AWS.config.credentials.sessionToken
-});
+var mqttClient;
+
+function connect(credentials)
+{
+   /// Config and connect MQTT
+   mqttClient = AWSIoTData.device({
+      region: AWS.config.region,
+      host: awsConfig.host,
+      clientId: agentId,
+      protocol: 'wss',
+      maximumReconnectTimeMs: 8000,
+      debug: true,
+      accessKeyId: credentials.AccessKeyId,
+      secretKey: credentials.SecretKey,
+      sessionToken: credentials.SessionToken
+   });
+
+   // Install handlers
+   mqttClient.on('connect', mqttClientConnectHandler);
+   mqttClient.on('reconnect', mqttClientReconnectHandler);
+   mqttClient.on('message', mqttClientMessageHandler);
+}
 
 /// Cognito authentication
 var cognitoIdentity = new AWS.CognitoIdentity();
@@ -49,9 +59,7 @@ AWS.config.credentials.get(function (err, data) {
       };
       cognitoIdentity.getCredentialsForIdentity(params, function (err, data) {
          if (!err) {
-            mqttClient.updateWebSocketCredentials(data.Credentials.AccessKeyId,
-               data.Credentials.SecretKey,
-               data.Credentials.SessionToken);
+            connect(data.Credentials);
          } else {
             console.log('error retrieving credentials: ' + err);
          }
@@ -113,14 +121,3 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
          break;
    }
 }
-
-// Install handlers
-mqttClient.on('connect', mqttClientConnectHandler);
-mqttClient.on('reconnect', mqttClientReconnectHandler);
-mqttClient.on('message', mqttClientMessageHandler);
-
-
-//// Methods
-//window.publishData = function (topic, payload) { // Topic publish handler
-//   mqttClient.publish(topic, payload);
-//}
