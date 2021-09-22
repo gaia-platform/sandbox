@@ -136,10 +136,11 @@ agent_activity_t agent_activity(const string& agent_id)
     return agent_activity_t::get(w.insert_row());
 }
 
-project_activity_t project_activity(const string& name)
+project_activity_t project_activity(const string& name, const string& action)
 {
     project_activity_writer w;
     w.name = name;
+    w.action = action;
     w.timestamp = (uint64_t)time(nullptr);
     return project_activity_t::get(w.insert_row());
 }
@@ -218,8 +219,7 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
     }
     else if (topic_vector[2] == "project")
     {
-        auto activity = project_activity(topic_vector[3] == "exit"
-                                        ? "exit" : (char *)payload.buffer);
+        auto activity = project_activity((char *)payload.buffer, topic_vector[3]);
         session.project_activities().insert(activity);
     }
     else if (topic_vector[2] == "editor")
