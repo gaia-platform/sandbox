@@ -1,0 +1,3 @@
+[submodule "agent/templates/amr_swarm_template"]
+	path = agent/templates/amr_swarm_template
+	url = https://github.com/gaia-platform/amr_swarm_template
