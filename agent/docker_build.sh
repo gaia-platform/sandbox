@@ -7,6 +7,17 @@
 
 # Simple function to start the process off.
 start_process() {
+    if [ -z "$GAIA_SDK_PATH" ]
+    then
+      echo "Error: You must specify the gaia-sdk path."
+      show_usage
+    fi
+
+    if [[ ! -f "$GAIA_SDK_PATH" ]]
+    then
+        complete_process 1 "Error: The specified gaia-sdk path file does not exists: '$GAIA_SDK_PATH'."
+    fi
+
     if [ "$VERBOSE_MODE" -ne 0 ]; then
         echo "Building agent docker image..."
     fi
@@ -72,6 +83,7 @@ show_usage() {
 parse_command_line() {
     FORCE_BUILD=0
     VERBOSE_MODE=0
+    GAIA_SDK_PATH=""
     PARAMS=()
     while (( "$#" )); do
     case "$1" in
@@ -81,6 +93,11 @@ parse_command_line() {
         ;;
         -v|--verbose)
             VERBOSE_MODE=1
+            shift
+        ;;
+        -g|--gaia-sdk)
+            GAIA_SDK_PATH="$2"
+            shift
             shift
         ;;
         -h|--help)
@@ -107,7 +124,7 @@ SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 TEMP_FILE=/tmp/agent-build.tmp
 DID_PUSHD=0
 
-IMAGE_NAME=agent
+IMAGE_NAME=gaia-sandobox-agent
 
 # Parse any command line values.
 parse_command_line "$@"
@@ -136,25 +153,28 @@ if [[ $FORCE_BUILD -ne 0 ]] ; then
     fi
 fi
 
-rm -rf $SCRIPTPATH/build
-rm -rf $SCRIPTPATH/repo
-mkdir $SCRIPTPATH/repo
-git clone https://github.com/gaia-platform/amr_swarm_template $SCRIPTPATH/repo
-#pushd $SCRIPTPATH/repo
-#./build.sh -v -f
-#popd
-#rm -rf $SCRIPTPATH/repo/build
-git clone --recurse-submodules https://github.com/aws/aws-iot-device-sdk-cpp-v2.git $SCRIPTPATH/repo/aws-iot-device-sdk-cpp-v2
+cp $GAIA_SDK_PATH .
+GAIA_SDK_FILE=`basename $GAIA_SDK_PATH`
+
+# rm -rf $SCRIPTPATH/build
+# rm -rf $SCRIPTPATH/repo
+# mkdir $SCRIPTPATH/repo
+# git clone https://github.com/gaia-platform/amr_swarm_template $SCRIPTPATH/repo
+## pushd $SCRIPTPATH/repo
+## ./build.sh -v -f
+## popd
+## rm -rf $SCRIPTPATH/repo/build
+#git clone --recurse-submodules https://github.com/aws/aws-iot-device-sdk-cpp-v2.git $SCRIPTPATH/repo/aws-iot-device-sdk-cpp-v2
 
 #complete_process 1
 
 if [[ $VERBOSE_MODE -ne 0 ]] ; then
     echo "Building '$IMAGE_NAME' image."
 fi
-if ! docker build --force-rm --tag $IMAGE_NAME . ; then # > "$TEMP_FILE" 2>&1 ; then
+
+if ! docker build --build-arg GAIA_SDK_FILE="$GAIA_SDK_FILE" --force-rm --tag $IMAGE_NAME . ; then # > "$TEMP_FILE" 2>&1 ; then
     complete_process 1 "Build of image '$IMAGE_NAME' was not completed."
 fi
 
 # If we get here, we have a clean exit from the script.
 complete_process 0
-

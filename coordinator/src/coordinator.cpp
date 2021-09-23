@@ -136,10 +136,11 @@ agent_activity_t agent_activity(const string& agent_id)
     return agent_activity_t::get(w.insert_row());
 }
 
-project_activity_t project_activity(const string& name)
+project_activity_t project_activity(const string& name, const string& action)
 {
     project_activity_writer w;
     w.name = name;
+    w.action = action;
     w.timestamp = (uint64_t)time(nullptr);
     return project_activity_t::get(w.insert_row());
 }
@@ -191,10 +192,10 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
                 bool /*dup*/, Mqtt::QOS /*qos*/, bool /*retain*/)
 {
     vector<string> topic_vector = split_topic(topic.c_str());
+    string payload_str((char *)payload.buffer, payload.len);
+    payload_str += '\0';
     gaia_log::app().info("Message received on topic {}", topic.c_str());
-    gaia_log::app().info("Message:");
-    fwrite(payload.buffer, 1, payload.len, stdout);
-    printf("\n");
+    gaia_log::app().info("Message: {}", payload_str.c_str());
 
     if (topic_vector.size() < 3)
     {
@@ -218,8 +219,7 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
     }
     else if (topic_vector[2] == "project")
     {
-        auto activity = project_activity(topic_vector[3] == "exit"
-                                        ? "exit" : (char *)payload.buffer);
+        auto activity = project_activity(payload_str.c_str(), topic_vector[3]);
         session.project_activities().insert(activity);
     }
     else if (topic_vector[2] == "editor")
@@ -232,12 +232,12 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
 
         if (topic_vector[3] == "req")
         {
-            auto activity = editor_file_request((char *)payload.buffer);
+            auto activity = editor_file_request(payload_str.c_str());
             session.editor_file_requests().insert(activity);
         }
         else if (topic_vector.size() == 5 && topic_vector[3] == "file")
         {
-            auto activity = editor_content(topic_vector[4], (char *)payload.buffer);
+            auto activity = editor_content(topic_vector[4], payload_str.c_str());
             session.editor_contents().insert(activity);
         }
     }

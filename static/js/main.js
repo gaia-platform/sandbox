@@ -26,9 +26,11 @@
 
     window.sandboxUUID = storedSandboxUuid;
     window.appUUID = storedAppUUID;
+    window.currentProject = null;
     window.publishToCoordinator("browser", "refresh");
-    window.subscribeToTopic("editor/#");
-    window.subscribeToTopic("appUUID");
+    window.subscribeToTopic("editor/#", false);
+    window.subscribeToTopic("project/#", false);
+    window.subscribeToTopic("appUUID", false);
   });
 
   var editor = null;
@@ -68,28 +70,56 @@
       return;
     }
 
+    if (topicLevels[1] == 'project') {
+      window.publishToCoordinator("editor/req", window.currentProject + ".ddl");
+      window.publishToCoordinator("editor/req", window.currentProject + ".ruleset");
+      return;
+    }
+
     if (topicLevels[1] != 'editor') {
       return;
     }
 
     let fileName = topicLevels[2];
-    if (fileName != 'ruleset' && fileName != 'ddl' && 'output') {
+    let fileExt = fileName.split('.').pop();
+    if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'output') {
       return;
     }
 
+    setTab(fileExt);
     if (topicLevels[3] == 'append') {
-      // append text to appropriate window
+      data[fileExt].model = monaco.editor.createModel(data[fileExt].model.getValue() + payload, fileFormat(fileExt));
+      editor.revealLine(editor.getModel().getLineCount())
     }
+    else {
+      data[fileExt].model = monaco.editor.createModel(payload, fileFormat(fileExt));
+      data[fileExt].state = null;
+    }
+  }
 
-    data[fileName].model = monaco.editor.createModel(payload, fileFormat(fileName));
-    data[fileName].state = null;
-    setTab(fileName);
+  window.selectProject = function (projectName) {
+    window.currentProject = projectName.replace("_template", "");
+    window.publishToCoordinator("project/select", window.currentProject);
+  }
+
+  function initEditorData() {
+    data.ruleset.model = monaco.editor.createModel('no ruleset file loaded', 'cpp');
+    data.ruleset.state = null;
+    data.ddl.model = monaco.editor.createModel('no ddl file loaded', 'sql');
+    data.ddl.state = null;
+    data.output.model = monaco.editor.createModel('no output yet', 'text');
+    data.output.state = null;
+  }
+
+  window.exitProject = function () {
+    window.currentProject = null;
+    window.publishToCoordinator("project/exit", "exit");
+    initEditorData();
+    setTab('output');
   }
 
   function load() {
-    data.ruleset.model = monaco.editor.createModel('no ruleset file loaded', 'cpp');
-    data.ddl.model = monaco.editor.createModel('no ddl file loaded', 'sql');
-    data.output.model = monaco.editor.createModel('no output yet', 'text');
+    initEditorData();
 
     // Set Monaco editor theme
     monaco.editor.defineTheme('gaiaTheme', {
@@ -167,6 +197,7 @@
   });
 
   $("#run-button").click(function () {
+    window.publishToCoordinator("project/build", window.currentProject);
     // window.publishToCoordinator("editor/ddl", data.ddl.model.getValue());
   })
 
