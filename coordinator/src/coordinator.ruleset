@@ -95,7 +95,6 @@ ruleset coordinator_ruleset
         if (strcmp(project_activity.action, "exit") == 0)
         {
             session.current_project_name = "none";
-            return;
         }
     }
 
