@@ -1,11 +1,10 @@
 // Imports
-var AWS = require('aws-sdk');
-var AWSIoTData = require('aws-iot-device-sdk');
-
+const { spawn, exec } = require('child_process');
+const AWS = require('aws-sdk');
+const AWSIoTData = require('aws-iot-device-sdk');
 const fs = require('fs')
 
 console.log('Loaded AWS SDK for JavaScript and AWS IoT SDK for Node.js');
-
 
 //// Variables
 /// MQTT
@@ -16,8 +15,12 @@ var awsConfig = {
 };
 var agentId = process.env.AGENT_ID;
 var sessionId = process.env.SESSION_ID;
+process.env.REMOTE_CLIENT_ID = sessionId;
 
 const keepAliveInterval = 15;  // in minutes
+//const projectNames = ['access_control', 'amr_swarm'];
+const projectNames = ['amr_swarm'];
+var gaiaChild = null;
 
 //// Setup AWS and MQTT
 AWS.config.region = awsConfig.region;
@@ -108,6 +111,92 @@ function sendFile(projectName, fileName) {
    });
 }
 
+function cleanProjects() {
+   projectNames.forEach(projectName => {
+      console.log('rm -r templates/' + projectName + '_template/build/gaia_generated');
+      exec('rm -r templates/' + projectName + '_template/build/gaia_generated');
+   });
+}
+
+function resetGaia(cb) {
+   cleanProjects();
+   if (gaiaChild) {
+      gaiaChild.kill();
+      gaiaChild = null;
+   }
+   exec('rm -r ~/.local/gaia/db/', (error, stdout, stderr) => {
+      console.error(`error: ${error}`);
+      console.log(`stdout: ${stdout}`);
+      console.error(`stderr: ${stderr}`);
+      gaiaChild = spawn('gaia_db_server', ['--data-dir', '~/.local/gaia/db']);
+      cb();
+      gaiaChild.stdout.on('data', (chunk) => {
+         console.log(chunk);
+      });
+      gaiaChild.stdout.on('error', (error) => {
+         console.log(error);
+      });
+      gaiaChild.on('close', (code) => {
+         console.log(`child process exited with code ${code}`);
+      });
+   });
+}
+
+function runProject(projectName) {
+   var projectProcess = exec('bash ../start_amr_swarm.sh', { cwd: 'templates/' + projectName + '_template/build' });
+   publishToEditor('output/append', 'Running application...\n');
+   projectProcess.stderr.on('data', (chunk) => {
+      publishToEditor('output/append', chunk);
+      console.log(chunk.toString());
+   });
+   projectProcess.stdout.on('data', (chunk) => {
+      publishToEditor('output/append', chunk);
+      console.log(chunk.toString());
+   });
+   projectProcess.stdout.on('error', (error) => {
+      console.log(error);
+   });
+   projectProcess.on('close', (code) => {
+      console.log(`child process exited with code ${code}`);
+   });
+}
+
+function buildProject(projectName) {
+   resetGaia(function () {
+      var cmakeBuild = spawn('cmake', ['..'], { cwd: 'templates/' + projectName + '_template/build' });
+      cmakeBuild.stdout.on('data', (chunk) => {
+         console.log(chunk.toString());
+      });
+      cmakeBuild.stdout.on('error', (error) => {
+         console.log(error);
+      });
+      cmakeBuild.on('close', (code) => {
+         console.log(`child process exited with code ${code}`);
+         if (code == 0) {
+            publishToEditor('output', 'New build started\n');
+            var makeBuild = spawn('make', { cwd: 'templates/' + projectName + '_template/build' });
+            makeBuild.stderr.on('data', (chunk) => {
+               publishToEditor('output/append', chunk);
+               console.log(chunk.toString());
+            });
+            makeBuild.stdout.on('data', (chunk) => {
+               publishToEditor('output/append', chunk);
+               console.log(chunk.toString());
+            });
+            makeBuild.stdout.on('error', (error) => {
+               console.log(error);
+            });
+            makeBuild.on('close', (code) => {
+               console.log(`child process exited with code ${code}`);
+               if (code == 0) {
+                  runProject(projectName);
+               }
+            });
+         }
+      });
+   });
+}
+
 function mqttClientMessageHandler(topic, payload) { // Message handler
    console.log('message: ' + topic);
    console.log('payload: ' + payload);
@@ -117,6 +206,10 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
          sendFile(topicTokens[1], payload);
          break;
 
+      case 'build':
+         buildProject(topicTokens[1]);
+         break;
+   
       default:
          break;
    }

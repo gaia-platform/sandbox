@@ -48,6 +48,7 @@ table agent_activity (
 
 table project_activity (
     name string,
+    action string,
     timestamp uint64,
     session references session
 )

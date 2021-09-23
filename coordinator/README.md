@@ -14,23 +14,27 @@ Follow instructions [here](https://gaia-platform.github.io/gaia-platform-docs.io
 ### Installing aws-iot-device-sdk-cpp
 From inside the root sandbox directory clone the [aws-iot-device-sdk-cpp](https://github.com/aws/aws-iot-device-sdk-cpp-v2) and build using clang. May also work with gcc but so far only tested with clang.
 ```bash
-export CC=/usr/bin/clang
-export CXX=/usr/bin/clang++
-cd {where_you_cloned_the_sandbox_repo}
+export CC=/usr/bin/clang-10
+export CPP=/usr/bin/clang-cpp-10
+export CXX=/usr/bin/clang++-10
+export LDFLAGS=-fuse-ld=lld-10
+cd {coordinator_directory}
 git clone --recursive https://github.com/aws/aws-iot-device-sdk-cpp-v2.git
-mkdir aws-iot-device-sdk-cpp-v2-build
-cd aws-iot-device-sdk-cpp-v2-build
-cmake -DCMAKE_CXX_FLAGS="-stdlib=libc++" -DCMAKE_INSTALL_PREFIX="<absolute path to where_you_cloned_the_sandbox_repo>" ../aws-iot-device-sdk-cpp-v2
-cmake --build . --target install
+cd aws-iot-device-sdk-cpp-v2
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
 ```
 
 ## Build Sandbox Coordinator
 Create build directory within coordinator directory, run cmake and then make.
 ```bash
-cd {where_you_cloned_the_sandbox_repo}/coordinator
+cd {coordinator_directory}
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX="<absolute path to where_you_cloned_the_sandbox_repo>" ..
+cmake ..
 make
 ```
 

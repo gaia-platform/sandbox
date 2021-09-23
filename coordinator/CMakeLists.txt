@@ -16,8 +16,7 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 find_package(Threads REQUIRED)
 
 # Default compiler/linker flags.
-add_compile_options(-c -Wall -Wextra -stdlib=libc++)
-add_link_options(-stdlib=libc++)
+add_compile_options(-c -Wall -Wextra)
 
 # Debug build-specific options.
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
