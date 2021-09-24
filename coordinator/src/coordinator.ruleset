@@ -71,6 +71,7 @@ ruleset coordinator_ruleset
             session.is_active = true;
             session.agent_id = get_uuid().c_str();
             session.last_agent_timestamp = browser_activity.timestamp;
+            send_message(session.session_id, "editor", "output", "Restoring session, this may take a few minutes...");
             start_gaia_container(session.session_id, session.agent_id);
         }
     }
@@ -90,6 +91,11 @@ ruleset coordinator_ruleset
         else
         {
             session.last_agent_timestamp = agent_activity.timestamp;
+            if (strcmp(agent_activity.action, "connected") == 0 &&
+                strcmp(session.current_project_name, "none") != 0)
+            {
+                send_message(session.session_id, "project", "selected", session.current_project_name);
+            }
         }
     }
 
@@ -160,6 +166,7 @@ ruleset coordinator_ruleset
                 }
 
                 gaia_log::app().info("No file '{}' found, requesting from agent.", editor_file_request.name);
+                send_message(session.session_id, "editor", editor_file_request.name, "Retrieving file...");
                 send_message(session.agent_id, P.name,"get", editor_file_request.name);
                 return;
             }
