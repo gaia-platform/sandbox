@@ -82,7 +82,7 @@ function publishToCoordinator(action, payload) {
 }
 
 function sendKeepAlive() {
-   publishToCoordinator('connected', agentId);
+   publishToCoordinator('keepAlive', agentId);
    setTimeout(sendKeepAlive, keepAliveInterval * 60 * 1000);
 }
 
@@ -94,7 +94,8 @@ function mqttClientConnectHandler() { // Connection handler
    // Subscribe to our current topic.
    //
    mqttClient.subscribe(agentId + '/#');
-   sendKeepAlive();
+   publishToCoordinator('connected', agentId);
+   setTimeout(sendKeepAlive, keepAliveInterval * 60 * 1000);
 }
 
 function mqttClientReconnectHandler() { // Reconnection handler
