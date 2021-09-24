@@ -4,6 +4,3 @@
 [submodule "agent/templates/access_control_template"]
 	path = agent/templates/access_control_template
 	url = https://github.com/gaia-platform/access_control_template
-[submodule "agent/templates/aws-iot-device-sdk-cpp-v2"]
-	path = agent/templates/aws-iot-device-sdk-cpp-v2
-	url = https://github.com/aws/aws-iot-device-sdk-cpp-v2.git
