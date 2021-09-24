@@ -116,6 +116,7 @@ function cleanProjects() {
    projectNames.forEach(projectName => {
       console.log('rm -r templates/' + projectName + '_template/build/gaia_generated');
       exec('rm -r templates/' + projectName + '_template/build/gaia_generated');
+      exec('mkdir -p templates/' + projectName + '_template/build');
    });
 }
 
@@ -125,10 +126,12 @@ function resetGaia(cb) {
       gaiaChild.kill();
       gaiaChild = null;
    }
+   console.log('rm -r ~/.local/gaia/db/');
    exec('rm -r ~/.local/gaia/db/', (error, stdout, stderr) => {
       console.error(`error: ${error}`);
       console.log(`stdout: ${stdout}`);
       console.error(`stderr: ${stderr}`);
+      console.log('spawn gaia_db_server');
       gaiaChild = spawn('gaia_db_server', ['--data-dir', '~/.local/gaia/db']);
       cb();
       gaiaChild.stdout.on('data', (chunk) => {
@@ -164,6 +167,8 @@ function runProject(projectName) {
 
 function buildProject(projectName) {
    resetGaia(function () {
+      console.log('from directory: templates/' + projectName + '_template/build');
+      console.log('cmake ..');
       var cmakeBuild = spawn('cmake', ['..'], { cwd: 'templates/' + projectName + '_template/build' });
       cmakeBuild.stdout.on('data', (chunk) => {
          console.log(chunk.toString());
