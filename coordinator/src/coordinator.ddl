@@ -41,8 +41,9 @@ table browser_activity (
 )
 
 table agent_activity (
-    timestamp uint64,
     agent_id string,
+    action string,
+    timestamp uint64,
     session references session
 )
 

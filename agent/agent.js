@@ -216,6 +216,10 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
          buildProject(topicTokens[1]);
          break;
    
+      case 'exit':
+         process.exit(0);
+         break;
+         
       default:
          break;
    }

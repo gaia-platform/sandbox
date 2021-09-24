@@ -86,14 +86,15 @@
       return;
     }
 
-    setTab(fileExt);
     if (topicLevels[3] == 'append') {
+      setTab(fileExt);
       data[fileExt].model = monaco.editor.createModel(data[fileExt].model.getValue() + payload, fileFormat(fileExt));
       editor.revealLine(editor.getModel().getLineCount())
     }
     else {
       data[fileExt].model = monaco.editor.createModel(payload, fileFormat(fileExt));
       data[fileExt].state = null;
+      setTab(fileExt);
     }
   }
 
