@@ -82,7 +82,7 @@ ruleset coordinator_ruleset
             stop_gaia_container(agent_activity.agent_id);
         }
         else if (!session.is_active ||
-            session.last_session_timestamp + c_session_timeout < browser_activity.timestamp)
+            session.last_session_timestamp + c_session_timeout < agent_activity.timestamp)
         {
             session.is_active = false;
             stop_gaia_container(session.agent_id);
