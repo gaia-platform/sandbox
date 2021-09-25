@@ -18,6 +18,7 @@ using namespace gaia::coordinator;
 string get_uuid();
 void publish_message(const string &topic, const string &payload);
 
+const uint64_t c_agent_timeout = 150;
 const uint64_t c_session_timeout = 7200;
 // const uint64_t c_session_timeout = 1200000; // for testing
 
@@ -58,7 +59,7 @@ ruleset coordinator_ruleset
 
         session.last_session_timestamp = browser_activity.timestamp;
         if (session.is_active &&
-            session.last_agent_timestamp + c_session_timeout < browser_activity.timestamp)
+            session.last_agent_timestamp + c_agent_timeout < browser_activity.timestamp)
         {
             gaia_log::app().info("Session {} is active but agent is MIA.", session.session_id);
             session.is_active = false;
