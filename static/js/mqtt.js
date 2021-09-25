@@ -108,6 +108,7 @@ window.subscribeToTopic = function (topic, autoUnsubscribe = true) {
 
 // Sending data out
 window.publishData = function (topic, payload) { // Topic publish handler
+   console.log(moment().format() + '\npublished message: ' + topic + ':' + payload.toString());
    mqttClient.publish(topic, payload);
 }
 
@@ -121,8 +122,9 @@ window.publishToCoordinator = function (topic, payload) {
 // Sending data to application
 window.publishToApp = function (topic, payload) {
    if (window.appUUID) {
-      console.log(moment().format() + '\npublished message: ' + topic + ':' + payload.toString());
       mqttClient.publish(window.appUUID + "/" + topic, payload);
+      // Let coordinator know there has been messaging to the app to keep session alive longer
+      window.publishToCoordinator("browser", "refresh");
    }
 }
 

@@ -30,6 +30,7 @@
     window.publishToCoordinator("browser", "refresh");
     window.subscribeToTopic("editor/#", false);
     window.subscribeToTopic("project/#", false);
+    window.subscribeToTopic("session/#", false);
     window.subscribeToTopic("appUUID", false);
   });
 
