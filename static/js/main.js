@@ -34,12 +34,18 @@
     window.subscribeToTopic("appUUID", false);
   });
 
-  var currentProject = null;
-  var sessionLoading = false;
-  var sessionLoadCountdown = 0;
-  var projectBuildState = 'unknown';
-  var projectRunState = 'stopped';
-  var editsExist = false;
+  var state = {
+    project: {
+      current: null,
+      buildStatus: 'unknown',
+      runStatus: 'stopped',
+      edits: new Set()
+    },
+    session: {
+      loading: false,
+      loadCountdown: 0
+    }
+  }
   var editor = null;
   var data = {
     ruleset: {
@@ -72,7 +78,7 @@
     data[fileExt].state = null;
     if (fileExt != 'output') {
       data[fileExt].model.onDidChangeContent((event) => {
-        editsExist = true;
+        state.project.edits.add(fileExt);
         setCtrlButtonLabel();
       });
     }
@@ -86,29 +92,29 @@
   }
 
   function sessionRestoreMessages() {
-    if (sessionLoading) {
-      if (sessionLoadCountdown > 0) {
+    if (state.session.loading) {
+      if (state.session.countdown > 0) {
         setTabText('output', 'Restoring session.\nEstimated time remaining: '
-            + Math.floor(sessionLoadCountdown / 60).toString() + ':'
-            + (sessionLoadCountdown % 60 < 10 ? '0' : '')
-            + (sessionLoadCountdown % 60).toString()
+            + Math.floor(state.session.countdown / 60).toString() + ':'
+            + (state.session.countdown % 60 < 10 ? '0' : '')
+            + (state.session.countdown % 60).toString()
             + '\n');
-      } else if (sessionLoadCountdown == 0) {
+      } else if (state.session.countdown == 0) {
         setTabText('output', 'Taking longer than expected.');
       } else {
         appendTabText('output', '.');
       }
-      sessionLoadCountdown -= 1;
+      state.session.countdown -= 1;
       setTimeout(sessionRestoreMessages, 1 * 1000);
     }
   }
 
   function setCtrlButtonLabel() {
-    if (editsExist) {
+    if (state.project.edits.size > 0) {
       $("#ctrl-button").html('Save');
-    } else if (projectRunState == 'running') {
+    } else if (state.project.runStatus == 'running') {
       $("#ctrl-button").html('Stop');   
-    } else if (projectBuildState == 'success') {
+    } else if (state.project.buildStatus == 'success') {
       $("#ctrl-button").html('Run');
     } else {
       $("#ctrl-button").html('Build');
@@ -126,18 +132,18 @@
     }
 
     if (topicLevels[1] == 'session') {
-      sessionLoading = true;
-      sessionLoadCountdown = 2 * 60;
+      state.session.loading = true;
+      state.session.countdown = 2 * 60;
       sessionRestoreMessages();
       return;
     }
 
     if (topicLevels[1] == 'project') {
       if (topicLevels[2] == 'selected') {
-        window.publishToCoordinator("editor/req", currentProject + ".ddl");
-        window.publishToCoordinator("editor/req", currentProject + ".ruleset");
+        window.publishToCoordinator("editor/req", state.project.current + ".ddl");
+        window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
       } else if (topicLevels[2] == 'build') {
-        projectBuildState = payload;
+        state.project.buildStatus = payload;
         setCtrlButtonLabel();
       }
       return;
@@ -153,8 +159,8 @@
       return;
     }
 
-    if (sessionLoading) {
-      sessionLoading = false;
+    if (state.session.loading) {
+      state.session.loading = false;
       setTabText('output', '');
     }
 
@@ -167,8 +173,8 @@
   }
 
   window.selectProject = function (projectName) {
-    currentProject = projectName.replace("_template", "");
-    window.publishToCoordinator("project/select", currentProject);
+    state.project.current = projectName.replace("_template", "");
+    window.publishToCoordinator("project/select", state.project.current);
   }
 
   function initEditorData(ruleset, ddl, output) {
@@ -181,7 +187,7 @@
   }
 
   window.exitProject = function () {
-    currentProject = null;
+    state.project.current = null;
     window.publishToCoordinator("project/exit", "exit");
     initEditorData('no ruleset file loaded', 'no ddl file loaded', 'no output yet');
     setTab('output');
@@ -266,14 +272,14 @@
   });
 
   $("#ctrl-button").click(function () {
-    window.publishToCoordinator("project/build", currentProject);
+    window.publishToCoordinator("project/build", state.project.current);
 /*    if (editsExist) {
       window.publishToCoordinator("editor/ddl", data.ddl.model.getValue());
       window.publishToCoordinator("editor/ruleset", data.ruleset.model.getValue());
       editsExist = false;
-    } else if (projectRunState == 'running') {
+    } else if (state.project.runStatus == 'running') {
       $("#ctrl-button").html('Stop');   
-    } else if (projectBuildState == 'success') {
+    } else if (state.project.buildStatus == 'success') {
       $("#ctrl-button").html('Run');
     } else {
       $("#ctrl-button").html('Build');
