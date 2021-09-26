@@ -159,13 +159,14 @@ ruleset coordinator_ruleset
                     if (strcmp(PF.name, editor_file_request.name) == 0)
                     {
                         send_message(session.session_id, "editor", PF.name, PF.content);
+                        send_message(session.agent_id, P.name, PF.name, PF.content);
                         return;
                     }
                 }
 
                 gaia_log::app().info("No file '{}' found, requesting from agent.", editor_file_request.name);
                 // send_message(session.session_id, "editor", editor_file_request.name, "Retrieving file...");
-                send_message(session.agent_id, P.name,"get", editor_file_request.name);
+                send_message(session.agent_id, P.name, "get", editor_file_request.name);
                 // send_message(session.session_id, "editor", "output", "Restoring session, this may take a few minutes...");
                 return;
             }
