@@ -26,7 +26,7 @@
 
     window.sandboxUUID = storedSandboxUuid;
     window.appUUID = storedAppUUID;
-    window.currentProject = null;
+
     window.publishToCoordinator("browser", "refresh");
     window.subscribeToTopic("editor/#", false);
     window.subscribeToTopic("project/#", false);
@@ -34,6 +34,12 @@
     window.subscribeToTopic("appUUID", false);
   });
 
+  var currentProject = null;
+  var sessionLoading = false;
+  var sessionLoadCountdown = 0;
+  var projectBuildState = 'unknown';
+  var projectRunState = 'stopped';
+  var editsExist = false;
   var editor = null;
   var data = {
     ruleset: {
@@ -61,6 +67,54 @@
     return 'text';
   }
 
+  function setTabText(fileExt, content) {
+    data[fileExt].model = monaco.editor.createModel(content, fileFormat(fileExt));
+    data[fileExt].state = null;
+    if (fileExt != 'output') {
+      data[fileExt].model.onDidChangeContent((event) => {
+        editsExist = true;
+        setCtrlButtonLabel();
+      });
+    }
+    setTab(fileExt);
+  }
+
+  function appendTabText(fileExt, content) {
+    data[fileExt].model = monaco.editor.createModel(data[fileExt].model.getValue() + content, fileFormat(fileExt));
+    setTab(fileExt);
+    editor.revealLine(editor.getModel().getLineCount())
+  }
+
+  function sessionRestoreMessages() {
+    if (sessionLoading) {
+      if (sessionLoadCountdown > 0) {
+        setTabText('output', 'Restoring session.\nEstimated time remaining: '
+            + Math.floor(sessionLoadCountdown / 60).toString() + ':'
+            + (sessionLoadCountdown % 60 < 10 ? '0' : '')
+            + (sessionLoadCountdown % 60).toString()
+            + '\n');
+      } else if (sessionLoadCountdown == 0) {
+        setTabText('output', 'Taking longer than expected.');
+      } else {
+        appendTabText('output', '.');
+      }
+      sessionLoadCountdown -= 1;
+      setTimeout(sessionRestoreMessages, 1 * 1000);
+    }
+  }
+
+  function setCtrlButtonLabel() {
+    if (editsExist) {
+      $("#ctrl-button").html('Save');
+    } else if (projectRunState == 'running') {
+      $("#ctrl-button").html('Stop');   
+    } else if (projectBuildState == 'success') {
+      $("#ctrl-button").html('Run');
+    } else {
+      $("#ctrl-button").html('Build');
+    }
+  }
+
   window.mainMessageHandler = function (topic, payload) {
     let topicLevels = topic.split('/');
 
@@ -71,9 +125,21 @@
       return;
     }
 
+    if (topicLevels[1] == 'session') {
+      sessionLoading = true;
+      sessionLoadCountdown = 2 * 60;
+      sessionRestoreMessages();
+      return;
+    }
+
     if (topicLevels[1] == 'project') {
-      window.publishToCoordinator("editor/req", window.currentProject + ".ddl");
-      window.publishToCoordinator("editor/req", window.currentProject + ".ruleset");
+      if (topicLevels[2] == 'selected') {
+        window.publishToCoordinator("editor/req", currentProject + ".ddl");
+        window.publishToCoordinator("editor/req", currentProject + ".ruleset");
+      } else if (topicLevels[2] == 'build') {
+        projectBuildState = payload;
+        setCtrlButtonLabel();
+      }
       return;
     }
 
@@ -87,41 +153,42 @@
       return;
     }
 
+    if (sessionLoading) {
+      sessionLoading = false;
+      setTabText('output', '');
+    }
+
     if (topicLevels[3] == 'append') {
-      setTab(fileExt);
-      data[fileExt].model = monaco.editor.createModel(data[fileExt].model.getValue() + payload, fileFormat(fileExt));
-      editor.revealLine(editor.getModel().getLineCount())
+      appendTabText(fileExt, payload);
     }
     else {
-      data[fileExt].model = monaco.editor.createModel(payload, fileFormat(fileExt));
-      data[fileExt].state = null;
-      setTab(fileExt);
+      setTabText(fileExt, payload);
     }
   }
 
   window.selectProject = function (projectName) {
-    window.currentProject = projectName.replace("_template", "");
-    window.publishToCoordinator("project/select", window.currentProject);
+    currentProject = projectName.replace("_template", "");
+    window.publishToCoordinator("project/select", currentProject);
   }
 
-  function initEditorData() {
-    data.ruleset.model = monaco.editor.createModel('no ruleset file loaded', 'cpp');
+  function initEditorData(ruleset, ddl, output) {
+    data.ruleset.model = monaco.editor.createModel(ruleset, 'cpp');
     data.ruleset.state = null;
-    data.ddl.model = monaco.editor.createModel('no ddl file loaded', 'sql');
+    data.ddl.model = monaco.editor.createModel(ddl, 'sql');
     data.ddl.state = null;
-    data.output.model = monaco.editor.createModel('no output yet', 'text');
+    data.output.model = monaco.editor.createModel(output, 'text');
     data.output.state = null;
   }
 
   window.exitProject = function () {
-    window.currentProject = null;
+    currentProject = null;
     window.publishToCoordinator("project/exit", "exit");
-    initEditorData();
+    initEditorData('no ruleset file loaded', 'no ddl file loaded', 'no output yet');
     setTab('output');
   }
 
   function load() {
-    initEditorData();
+    initEditorData('initializing...', 'initializing...', 'initializing...');
 
     // Set Monaco editor theme
     monaco.editor.defineTheme('gaiaTheme', {
@@ -198,9 +265,20 @@
     setTab($(this).attr("data-tab-name"));
   });
 
-  $("#run-button").click(function () {
-    window.publishToCoordinator("project/build", window.currentProject);
-    // window.publishToCoordinator("editor/ddl", data.ddl.model.getValue());
+  $("#ctrl-button").click(function () {
+    window.publishToCoordinator("project/build", currentProject);
+/*    if (editsExist) {
+      window.publishToCoordinator("editor/ddl", data.ddl.model.getValue());
+      window.publishToCoordinator("editor/ruleset", data.ruleset.model.getValue());
+      editsExist = false;
+    } else if (projectRunState == 'running') {
+      $("#ctrl-button").html('Stop');   
+    } else if (projectBuildState == 'success') {
+      $("#ctrl-button").html('Run');
+    } else {
+      $("#ctrl-button").html('Build');
+    }
+    */    
   })
 
   $("#reset-button").click(function () {
@@ -218,4 +296,3 @@
     $("#privacy-modal").hide();
   });
 })(jQuery);
-
