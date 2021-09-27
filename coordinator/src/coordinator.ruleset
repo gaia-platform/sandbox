@@ -108,7 +108,7 @@ ruleset coordinator_ruleset
             if (strcmp(agent_activity.action, "connected") == 0 &&
                 strcmp(session.current_project_name, "none") != 0)
             {
-                send_message(session.session_id, "project", session.current_project_name);
+                send_message(session.session_id, "project", "select", session.current_project_name);
             }
         }
     }
@@ -135,7 +135,7 @@ ruleset coordinator_ruleset
             if (strcmp(P.name, project_activity.name) == 0)
             {
                 gaia_log::app().info("Found existing project {}.", project_activity.name);
-                send_message(session.session_id, "project", project_activity.name);
+                send_message(session.session_id, "project", "select", project_activity.name);
 
                 dump_db();
                 return;
@@ -149,7 +149,7 @@ ruleset coordinator_ruleset
         auto project_ = project_t::get(w.insert_row());
         session.projects.connect(project_);
 
-        send_message(session.session_id, "project", project_activity.name);
+        send_message(session.session_id, "project", "select", project_activity.name);
 
         dump_db();
     }
