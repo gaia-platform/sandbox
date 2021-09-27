@@ -28,6 +28,7 @@
     window.appUUID = storedAppUUID;
 
     window.publishToCoordinator("browser", "refresh");
+    window.publishToCoordinator("project/stop", "current");
     window.subscribeToTopic("editor/#", false);
     window.subscribeToTopic("project/#", false);
     window.subscribeToTopic("session/#", false);
@@ -113,9 +114,11 @@
     if (state.project.edits.size > 0) {
       $("#ctrl-button").html('Save');
     } else if (state.project.runStatus == 'running') {
-      $("#ctrl-button").html('Stop');   
+      $("#ctrl-button").html('Stop');
     } else if (state.project.buildStatus == 'success') {
       $("#ctrl-button").html('Run');
+    } else if (state.project.buildStatus == 'building') {
+      $("#ctrl-button").html('Cancel build');
     } else {
       $("#ctrl-button").html('Build');
     }
@@ -127,7 +130,7 @@
     if (topicLevels[1] == 'appUUID') {
       window.appUUID = payload;
       setCookie("appUUID", window.appUUID);
-      window.publishToApp("ping", "running");
+      window.publishToApp('ping', 'running');
       return;
     }
 
@@ -139,13 +142,25 @@
     }
 
     if (topicLevels[1] == 'project') {
-      if (topicLevels[2] == 'selected') {
-        window.publishToCoordinator("editor/req", state.project.current + ".ddl");
-        window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
-      } else if (topicLevels[2] == 'build') {
-        state.project.buildStatus = payload;
-        setCtrlButtonLabel();
+      switch (topicLevels[2].toString()) {
+        case 'select':
+          state.project.current = payload;
+          window.publishToCoordinator("editor/req", state.project.current + ".ddl");
+          window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
+          break;
+
+        case 'build':
+          state.project.buildStatus = payload;
+          break;
+
+        case 'program':
+          state.project.runStatus = payload;
+          break;
+
+        default:
+          break;
       }
+      setCtrlButtonLabel();
       return;
     }
 
@@ -272,19 +287,21 @@
   });
 
   $("#ctrl-button").click(function () {
-    window.publishToCoordinator("project/build", state.project.current);
-/*    if (editsExist) {
-      window.publishToCoordinator("editor/ddl", data.ddl.model.getValue());
-      window.publishToCoordinator("editor/ruleset", data.ruleset.model.getValue());
-      editsExist = false;
-    } else if (state.project.runStatus == 'running') {
-      $("#ctrl-button").html('Stop');   
+    if (state.project.edits.size > 0) {
+      state.project.edits.forEach (function(fileExt) {
+        window.publishToCoordinator('editor/file/' + state.project.current + '.' + fileExt,
+          data[fileExt].model.getValue());
+      });
+      state.project.edits = new Set();
+      setCtrlButtonLabel();
+    } else if (state.project.runStatus == 'running'
+          || state.project.buildStatus == 'building') {
+      window.publishToCoordinator('project/stop', 'current');
     } else if (state.project.buildStatus == 'success') {
-      $("#ctrl-button").html('Run');
+      window.publishToCoordinator('project/run', state.project.current);
     } else {
-      $("#ctrl-button").html('Build');
+      window.publishToCoordinator('project/build', state.project.current);
     }
-    */    
   })
 
   $("#reset-button").click(function () {
