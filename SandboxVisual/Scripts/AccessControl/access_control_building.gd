@@ -34,9 +34,6 @@ func _ready():
 	)
 	_connection_var = CommunicationManager.connect("ac_move_to_room", self, "_move_person_to_room")
 
-	# Temp setup data
-	_init_setup(CommunicationManager.get_setup_data())
-
 	CommunicationManager.publish_to_coordinator("project/select", "access_control_template")
 
 
@@ -60,7 +57,7 @@ func _init_setup(setup_data):
 			var new_person = person_node.instance()
 			people_container.add_child(new_person)
 
-			# Run setup deferred (to give tiem for item to load)
+			# Run setup deferred (to give time for item to load)
 			new_person.call_deferred(
 				"set_person_init_properties", person, self, setup_data["buildings"][0], {}, false
 			)
