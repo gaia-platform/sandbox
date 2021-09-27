@@ -26,13 +26,27 @@
 
     window.sandboxUUID = storedSandboxUuid;
     window.appUUID = storedAppUUID;
-    window.currentProject = null;
+
     window.publishToCoordinator("browser", "refresh");
+    window.publishToCoordinator("project/stop", "current");
     window.subscribeToTopic("editor/#", false);
     window.subscribeToTopic("project/#", false);
+    window.subscribeToTopic("session/#", false);
     window.subscribeToTopic("appUUID", false);
   });
 
+  var state = {
+    project: {
+      current: null,
+      buildStatus: 'unknown',
+      runStatus: 'stopped',
+      edits: new Set()
+    },
+    session: {
+      loading: false,
+      loadCountdown: 0
+    }
+  }
   var editor = null;
   var data = {
     ruleset: {
@@ -60,19 +74,93 @@
     return 'text';
   }
 
+  function setTabText(fileExt, content) {
+    data[fileExt].model = monaco.editor.createModel(content, fileFormat(fileExt));
+    data[fileExt].state = null;
+    if (fileExt != 'output') {
+      data[fileExt].model.onDidChangeContent((event) => {
+        state.project.edits.add(fileExt);
+        setCtrlButtonLabel();
+      });
+    }
+    setTab(fileExt);
+  }
+
+  function appendTabText(fileExt, content) {
+    data[fileExt].model = monaco.editor.createModel(data[fileExt].model.getValue() + content, fileFormat(fileExt));
+    setTab(fileExt);
+    editor.revealLine(editor.getModel().getLineCount())
+  }
+
+  function sessionRestoreMessages() {
+    if (state.session.loading) {
+      if (state.session.countdown > 0) {
+        setTabText('output', 'Restoring session.\nEstimated time remaining: '
+            + Math.floor(state.session.countdown / 60).toString() + ':'
+            + (state.session.countdown % 60 < 10 ? '0' : '')
+            + (state.session.countdown % 60).toString()
+            + '\n');
+      } else if (state.session.countdown == 0) {
+        setTabText('output', 'Taking longer than expected.');
+      } else {
+        appendTabText('output', '.');
+      }
+      state.session.countdown -= 1;
+      setTimeout(sessionRestoreMessages, 1 * 1000);
+    }
+  }
+
+  function setCtrlButtonLabel() {
+    if (state.project.edits.size > 0) {
+      $("#ctrl-button").html('Save');
+    } else if (state.project.runStatus == 'running') {
+      $("#ctrl-button").html('Stop');
+    } else if (state.project.buildStatus == 'success') {
+      $("#ctrl-button").html('Run');
+    } else if (state.project.buildStatus == 'building') {
+      $("#ctrl-button").html('Cancel build');
+    } else {
+      $("#ctrl-button").html('Build');
+    }
+  }
+
   window.mainMessageHandler = function (topic, payload) {
     let topicLevels = topic.split('/');
 
     if (topicLevels[1] == 'appUUID') {
       window.appUUID = payload;
       setCookie("appUUID", window.appUUID);
-      window.publishToApp("ping", "running");
+      window.publishToApp('ping', 'running');
+      return;
+    }
+
+    if (topicLevels[1] == 'session') {
+      state.session.loading = true;
+      state.session.countdown = 2 * 60;
+      sessionRestoreMessages();
       return;
     }
 
     if (topicLevels[1] == 'project') {
-      window.publishToCoordinator("editor/req", window.currentProject + ".ddl");
-      window.publishToCoordinator("editor/req", window.currentProject + ".ruleset");
+      switch (topicLevels[2].toString()) {
+        case 'select':
+          state.project.current = payload;
+          window.publishToCoordinator("editor/req", state.project.current + ".ddl");
+          window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
+          break;
+
+        case 'build':
+          state.project.buildStatus = payload;
+          break;
+
+        case 'program':
+          state.project.runStatus = payload;
+          break;
+
+        default:
+          break;
+      }
+      setCtrlButtonLabel();
       return;
     }
 
@@ -86,41 +174,42 @@
       return;
     }
 
+    if (state.session.loading) {
+      state.session.loading = false;
+      setTabText('output', '');
+    }
+
     if (topicLevels[3] == 'append') {
-      setTab(fileExt);
-      data[fileExt].model = monaco.editor.createModel(data[fileExt].model.getValue() + payload, fileFormat(fileExt));
-      editor.revealLine(editor.getModel().getLineCount())
+      appendTabText(fileExt, payload);
     }
     else {
-      data[fileExt].model = monaco.editor.createModel(payload, fileFormat(fileExt));
-      data[fileExt].state = null;
-      setTab(fileExt);
+      setTabText(fileExt, payload);
     }
   }
 
   window.selectProject = function (projectName) {
-    window.currentProject = projectName.replace("_template", "");
-    window.publishToCoordinator("project/select", window.currentProject);
+    state.project.current = projectName.replace("_template", "");
+    window.publishToCoordinator("project/select", state.project.current);
   }
 
-  function initEditorData() {
-    data.ruleset.model = monaco.editor.createModel('no ruleset file loaded', 'cpp');
+  function initEditorData(ruleset, ddl, output) {
+    data.ruleset.model = monaco.editor.createModel(ruleset, 'cpp');
     data.ruleset.state = null;
-    data.ddl.model = monaco.editor.createModel('no ddl file loaded', 'sql');
+    data.ddl.model = monaco.editor.createModel(ddl, 'sql');
     data.ddl.state = null;
-    data.output.model = monaco.editor.createModel('no output yet', 'text');
+    data.output.model = monaco.editor.createModel(output, 'text');
     data.output.state = null;
   }
 
   window.exitProject = function () {
-    window.currentProject = null;
+    state.project.current = null;
     window.publishToCoordinator("project/exit", "exit");
-    initEditorData();
+    initEditorData('no ruleset file loaded', 'no ddl file loaded', 'no output yet');
     setTab('output');
   }
 
   function load() {
-    initEditorData();
+    initEditorData('initializing...', 'initializing...', 'initializing...');
 
     // Set Monaco editor theme
     monaco.editor.defineTheme('gaiaTheme', {
@@ -197,9 +286,22 @@
     setTab($(this).attr("data-tab-name"));
   });
 
-  $("#run-button").click(function () {
-    window.publishToCoordinator("project/build", window.currentProject);
-    // window.publishToCoordinator("editor/ddl", data.ddl.model.getValue());
+  $("#ctrl-button").click(function () {
+    if (state.project.edits.size > 0) {
+      state.project.edits.forEach (function(fileExt) {
+        window.publishToCoordinator('editor/file/' + state.project.current + '.' + fileExt,
+          data[fileExt].model.getValue());
+      });
+      state.project.edits = new Set();
+      setCtrlButtonLabel();
+    } else if (state.project.runStatus == 'running'
+          || state.project.buildStatus == 'building') {
+      window.publishToCoordinator('project/stop', 'current');
+    } else if (state.project.buildStatus == 'success') {
+      window.publishToCoordinator('project/run', state.project.current);
+    } else {
+      window.publishToCoordinator('project/build', state.project.current);
+    }
   })
 
   $("#reset-button").click(function () {
@@ -217,4 +319,3 @@
     $("#privacy-modal").hide();
   });
 })(jQuery);
-

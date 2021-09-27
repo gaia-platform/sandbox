@@ -18,10 +18,35 @@ using namespace gaia::coordinator;
 string get_uuid();
 void publish_message(const string &topic, const string &payload);
 
-const uint64_t c_session_timeout = 1200;
+const uint64_t c_agent_timeout = 150;
+const uint64_t c_session_timeout = 7200;
 // const uint64_t c_session_timeout = 1200000; // for testing
 
 void dump_db();
+
+void send_message(const string &id,
+                  const string &topic,
+                  const string &payload)
+{
+    publish_message(id + '/' + topic, payload);
+}
+
+void send_message(const string &id,
+                  const string &topic_level_1,
+                  const string &topic_level_2,
+                  const string &payload)
+{
+    publish_message(id + '/' + topic_level_1 + '/' + topic_level_2, payload);
+}
+
+void send_message(const string &id,
+                  const string &topic_level_1,
+                  const string &topic_level_2,
+                  const string &topic_level_3,
+                  const string &payload)
+{
+    publish_message(id + '/' + topic_level_1 + '/' + topic_level_2 + '/' + topic_level_3, payload);
+}
 
 void start_gaia_container(const string &session_id,
                           const string &agent_id)
@@ -31,25 +56,15 @@ void start_gaia_container(const string &session_id,
     json j;
     j["session_id"] = session_id;
     j["agent_id"] = agent_id;
-    publish_message("manage_gaia_container", j.dump());    
-}
-
-void send_message(const string &id,
-                  const string &project_name,
-                  const string &action,
-                  const string &payload)
-{
-    gaia_log::app().info("Sending {} action for project {} with id {}",
-                         project_name, action, id);
-
-    publish_message(id + '/' + project_name + '/' + action, payload);
+    publish_message("manage_gaia_container", j.dump());
+    send_message(session_id, "session", "loading");
 }
 
 void stop_gaia_container(const string &agent_id)
 {
     gaia_log::app().info("Sending stop for agent_id {}", agent_id);
 
-    send_message(agent_id, "agent", "exit", "exit");  
+    send_message(agent_id, "agent", "exit");  
 }
 
 ruleset coordinator_ruleset
@@ -60,7 +75,7 @@ ruleset coordinator_ruleset
 
         session.last_session_timestamp = browser_activity.timestamp;
         if (session.is_active &&
-            session.last_agent_timestamp + c_session_timeout < browser_activity.timestamp)
+            session.last_agent_timestamp + c_agent_timeout < browser_activity.timestamp)
         {
             gaia_log::app().info("Session {} is active but agent is MIA.", session.session_id);
             session.is_active = false;
@@ -93,7 +108,7 @@ ruleset coordinator_ruleset
             if (strcmp(agent_activity.action, "connected") == 0 &&
                 strcmp(session.current_project_name, "none") != 0)
             {
-                send_message(session.session_id, "project", "selected", session.current_project_name);
+                send_message(session.session_id, "project", "select", session.current_project_name);
             }
         }
     }
@@ -120,7 +135,7 @@ ruleset coordinator_ruleset
             if (strcmp(P.name, project_activity.name) == 0)
             {
                 gaia_log::app().info("Found existing project {}.", project_activity.name);
-                send_message(session.session_id, "project", "selected", project_activity.name);
+                send_message(session.session_id, "project", "select", project_activity.name);
 
                 dump_db();
                 return;
@@ -134,17 +149,14 @@ ruleset coordinator_ruleset
         auto project_ = project_t::get(w.insert_row());
         session.projects.connect(project_);
 
-        send_message(session.session_id, "project", "selected", project_activity.name);
+        send_message(session.session_id, "project", "select", project_activity.name);
 
         dump_db();
     }
 
     on_insert(project_activity)
     {
-        if (strcmp(project_activity.action, "build") == 0)
-        {
-            send_message(session.agent_id, project_activity.name, "build", "normal");
-        }
+        send_message(session.agent_id, project_activity.name, project_activity.action);
     }
 
     on_insert(editor_file_request)
@@ -160,14 +172,15 @@ ruleset coordinator_ruleset
                     if (strcmp(PF.name, editor_file_request.name) == 0)
                     {
                         send_message(session.session_id, "editor", PF.name, PF.content);
+                        send_message(session.agent_id, P.name, PF.name, PF.content);
                         return;
                     }
                 }
 
                 gaia_log::app().info("No file '{}' found, requesting from agent.", editor_file_request.name);
-                send_message(session.session_id, "editor", editor_file_request.name, "Retrieving file...");
-                send_message(session.agent_id, P.name,"get", editor_file_request.name);
-                send_message(session.session_id, "editor", "output", "Restoring session, this may take a few minutes...");
+                // send_message(session.session_id, "editor", editor_file_request.name, "Retrieving file...");
+                send_message(session.agent_id, P.name, "get", editor_file_request.name);
+                // send_message(session.session_id, "editor", "output", "Restoring session, this may take a few minutes...");
                 return;
             }
         }
@@ -187,7 +200,7 @@ ruleset coordinator_ruleset
                     {
                         gaia_log::app().info("Existing file '{}' found.", editor_content->project_file.name);
                         PF.content = editor_content->project_file.content;
-                        send_message(session.agent_id, P.name, editor_content->project_file.name,
+                        send_message(session.agent_id, P.name, "file", editor_content->project_file.name,
                             editor_content->project_file.content);
 
                         dump_db();
@@ -197,7 +210,7 @@ ruleset coordinator_ruleset
 
                 gaia_log::app().info("No existing file '{}' found. Storing new one.", editor_content->project_file.name);
                 P.project_file.connect(editor_content->project_file);                
-                send_message(session.agent_id, P.name, editor_content->project_file.name,
+                send_message(session.agent_id, P.name, "file", editor_content->project_file.name,
                     editor_content->project_file.content);
 
                 dump_db();

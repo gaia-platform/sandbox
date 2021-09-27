@@ -65,6 +65,7 @@ void publish_message(const string& topic, const string& payload)
 {
     if (connection)
     {
+        gaia_log::app().info("Publishing on topic {}", topic);
         ByteBuf payload_buf = ByteBufFromArray((const uint8_t *)payload.data(), payload.length());
         connection->Publish(topic.c_str(), AWS_MQTT_QOS_AT_LEAST_ONCE, false, payload_buf, onPublishComplete);
     }
