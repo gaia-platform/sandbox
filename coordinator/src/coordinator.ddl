@@ -3,44 +3,64 @@
 -- All rights reserved.
 ---------------------------------------------
 
-create database if not exists coordinator;
+database coordinator
 
-use coordinator;
-
-create table if not exists project (
-    name string,
-    ddl_file string,
-    ruleset_file string,
-    output string
-);
-
-create table if not exists session (
-    session_id string,
+table session (
+    session_id string unique,
     agent_id string,
     is_active bool,
     last_session_timestamp uint64,
     last_agent_timestamp uint64,
-    created_timestamp uint64
-);
+    created_timestamp uint64,
+    current_project_name string,
+    projects references project[],
+    browser_activities references browser_activity[],
+    agent_activities references agent_activity[],
+    project_activities references project_activity[],
+    editor_file_requests references editor_file_request[],
+    editor_contents references editor_content[]
+)
 
-create table if not exists activity (
-    type uint8,
-    action uint8,
-    payload string,
-    timestamp uint64
-);
+table project (
+    name string,
+    version string,
+    session references session,
+    project_files references project_file[]
+)
 
-create relationship if not exists session_projects (
-    session.projects -> project[],
-    project.session -> session
-);
+table project_file (
+    name string,
+    content string,
+    project references project,
+    editor_contents references editor_content[]
+)
 
-create relationship if not exists session_current_project (
-    session.current_project -> project,
-    project.active_session -> session
-);
+table browser_activity (
+    timestamp uint64,
+    session references session
+)
 
-create relationship if not exists activity_session (
-    session.activities -> activity[],
-    activity.session -> session
-);
+table agent_activity (
+    timestamp uint64,
+    agent_id string,
+    session references session
+)
+
+table project_activity (
+    name string,
+    action string,
+    timestamp uint64,
+    session references session
+)
+
+table editor_file_request (
+    name string,
+    timestamp uint64,
+    session references session
+)
+
+table editor_content (
+    timestamp uint64,
+    project_file references project_file,
+    session references session
+)

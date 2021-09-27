@@ -1,21 +1,22 @@
 extends PanelContainer
+# Building controller
+# Handles init
 
 # Node paths
-export (NodePath) var building_name_label_path
-export (NodePath) var room_container_path
-export (PackedScene) var building_room_node
-export (PackedScene) var person_node
+export(NodePath) var building_name_label_path
+export(NodePath) var room_container_path
+export(PackedScene) var building_room_node
+export(PackedScene) var person_node
+
+# Properties
+var building_id: int
 
 # Get their nodes
 onready var building_name_label = get_node(building_name_label_path)
 onready var room_container = get_node(room_container_path)
 
-# Properties
-var building_id: int
 
-
-### Methods
-## Set building properties
+# Set building properties
 func set_building_init_properties(building: Dictionary, ac_reference):
 	# Set building name, ID, and room ID space
 	building_name_label.text = building["name"]

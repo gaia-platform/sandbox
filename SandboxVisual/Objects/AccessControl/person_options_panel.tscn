@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Assets/AccessControl/Icons/laugh.svg" type="Texture" id=1]
-[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Assets/Fonts/roboto_light_med.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Assets/AccessControl/StyleBoxes/schedule_panel_flat.tres" type="StyleBox" id=3]
 [ext_resource path="res://Assets/AccessControl/Icons/id_badge.svg" type="Texture" id=4]
 [ext_resource path="res://Objects/AccessControl/ui_button.tscn" type="PackedScene" id=5]
@@ -25,7 +25,7 @@ button_three_path = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Button
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_right = 930.0
-margin_bottom = 106.0
+margin_bottom = 102.0
 custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
@@ -35,7 +35,7 @@ custom_constants/margin_bottom = 10
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 920.0
-margin_bottom = 96.0
+margin_bottom = 92.0
 custom_constants/separation = 10
 
 [node name="OptionsLabel" type="Label" parent="MarginContainer/VBoxContainer"]

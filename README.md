@@ -31,7 +31,7 @@ If you find that you need to listen to MQTT topics or directly publish to topics
 
 All of the MQTT topics used in the sandbox are in the file [MQTT Communication Specifications Doc](https://github.com/gaia-platform/sandbox/blob/main/MQTT%20Communication%20Specs.md). There you can see the topic structure as well as which topics are published/subscribed to by the sandbox and simulation.
 
-To interact with MQTT directly, please download `mqtt-explorer.zip` located at the root of this repo, unzip it, and open `index.html`. This is a simple, pre-authenticated, applet which will let you communicate directly with the MQTT broker. Prefix your MQTT topics with `[UUID]/` and replace `[UUID]` with either your `REMOTE_CLIENT_ID` for publishing or your `appUUID` for subscribing. You can view your UUIDs by clicking the "Show UUIDs" button in the top right of the sandbox.
+To interact with MQTT directly, please download `mqtt-explorer.zip` located at the root of this repo, unzip it, and open `index.html`. This is a simple, pre-authenticated, applet which will let you communicate directly with the MQTT broker. Prefix your MQTT topics with `[UUID]/` and replace `[UUID]` with either your `REMOTE_CLIENT_ID` for publishing or your `appUUID` for subscribing. You can view your UUIDs by clicking the "Show REMOTE_CLIENT_ID" or "Show Subscribe UUID" buttons in the top right of the sandbox.
 
 ## Sandbox visual development
 Note: This is only necessary for simulation development

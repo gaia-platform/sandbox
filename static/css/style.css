@@ -92,9 +92,10 @@
   height: auto;
   margin-right: auto;
   font-size: 40px;
-  margin-top: -0.58em;
+  margin-top: -0.515em;
+  color: #313450;
   margin-bottom: auto;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .privacy-column {
@@ -128,13 +129,13 @@
   padding-left: 25px;
   padding-right: 25px;
   background-color: rgba(56, 152, 236, 0);
-  color: rgba(51, 51, 51, 1);
+  color: #313450;
   border-radius: 4px;
   text-align: center;
   cursor: pointer;
   margin-top: auto;
   margin-bottom: auto;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
   text-decoration: none;
   transition: 0.3s;
 }
@@ -166,7 +167,7 @@
   padding-bottom: 15px;
   padding-left: 25px;
   padding-right: 25px;
-  background-color: rgba(88, 59, 198, 1);
+  background-color: #583bc6;
   color: white;
   border-radius: 100px;
   text-align: center;
@@ -174,7 +175,7 @@
   margin-top: auto;
   margin-bottom: auto;
   margin-right: auto;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
   text-decoration: none;
 }
 
@@ -222,7 +223,7 @@
   color: white;
   text-align: center;
   cursor: pointer;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .selected-tab {
@@ -288,7 +289,7 @@
   border-radius: 100px;
   text-align: center;
   cursor: pointer;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .column-8 {
@@ -320,7 +321,7 @@
   border-radius: 100px;
   text-align: center;
   cursor: pointer;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .column-9 {
@@ -352,7 +353,7 @@
   border-radius: 100px;
   text-align: center;
   cursor: pointer;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
 .div-7 {
@@ -414,10 +415,14 @@
   padding-bottom: 15px;
   padding-left: 25px;
   padding-right: 25px;
-  background-color: rgba(88, 59, 198, 1);
+  background-color: #583bc6;
   color: white;
   border-radius: 100px;
   text-align: center;
   cursor: pointer;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
+}
+
+body {
+  background-color: #F4F6F8;
 }

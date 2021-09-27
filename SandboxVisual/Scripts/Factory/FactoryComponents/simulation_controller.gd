@@ -1,10 +1,12 @@
 extends PanelContainer
+# Simulation Control panel handler
+# Handles button presses and properties
 
-export (float) var speed_scale = 1
-export (String, FILE) var scene_picker_scene
-export (NodePath) var level_name_label_path
-export (NodePath) var pause_button_path
-export (NodePath) var speed_scale_label_path
+export(float) var speed_scale = 1
+export(String, FILE) var scene_picker_scene
+export(NodePath) var level_name_label_path
+export(NodePath) var pause_button_path
+export(NodePath) var speed_scale_label_path
 
 onready var level_name_label = get_node(level_name_label_path)
 onready var pause_button = get_node(pause_button_path)
@@ -17,7 +19,8 @@ func _ready():
 
 func _on_ExitButton_pressed():
 	# Cleanup
-	Engine.time_scale = 1  # Reset speed
+	Engine.time_scale = 1
+	get_tree().paused = false
 
 	# Switch scenes
 	var change_scene_status = get_tree().change_scene(scene_picker_scene)
@@ -25,7 +28,7 @@ func _on_ExitButton_pressed():
 		print("Error changing scene: %d" % change_scene_status)
 
 	# Does this really belong here? Doesn't seem to fire
-	CommunicationManager.publish_to_coordinator("project/exit", "simulation")
+	CommunicationManager.exit_project()
 
 
 func _on_PauseButton_pressed():

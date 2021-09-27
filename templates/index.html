@@ -12,7 +12,6 @@
   <!-- Google Fonts (Lato and Roboto)-->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
   <!-- Main Stylesheet File -->
@@ -20,6 +19,7 @@
 </head>
 
 <body>
+  <div id="inprod" data-inprod={{prod}}></div>
   <div stackColumnsAt="tablet" class="div" data-name="div-1">
     <div class="builder-columns columns header">
       <div class="builder-column column">
@@ -104,13 +104,15 @@
               <span class="span-4 button" id="run-button">Run</span>
             </div>
 
+            {% if prod == 'false' %}
             <div class="builder-column column-8">
-              <span class="span-5 button" id="reset-button">Reset</span>
+              <span class="span-5 button" id="reset-button">Show REMOTE_CLIENT_ID</span>
             </div>
 
             <div class="builder-column column-9">
-              <span class="span-6 button" id="test-button">Show UUIDs</span>
+              <span class="span-6 button" id="test-button">Show Subscribe UUID</span>
             </div>
+            {% endif %}
           </div>
         </div>
 

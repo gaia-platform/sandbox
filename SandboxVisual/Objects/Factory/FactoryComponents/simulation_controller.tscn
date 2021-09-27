@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://Assets/Fonts/Roboto/roboto_light_med.tres" type="DynamicFont" id=1]
-[ext_resource path="res://Assets/Fonts/Roboto/roboto_regular.tres" type="DynamicFont" id=2]
+[ext_resource path="res://Assets/Fonts/roboto_light_med.tres" type="DynamicFont" id=1]
+[ext_resource path="res://Assets/Fonts/roboto_regular.tres" type="DynamicFont" id=2]
 [ext_resource path="res://Assets/Factory/StyleBoxes/simulation_controller_flat.tres" type="StyleBox" id=3]
 [ext_resource path="res://Scripts/Factory/FactoryComponents/simulation_controller.gd" type="Script" id=4]
 [ext_resource path="res://Objects/UI/general_button.tscn" type="PackedScene" id=5]
@@ -65,6 +65,7 @@ margin_right = 425.0
 margin_bottom = 800.0
 
 [node name="SlowerButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
+pause_mode = 1
 margin_left = 435.0
 margin_right = 527.0
 margin_bottom = 800.0
@@ -86,6 +87,7 @@ valign = 1
 autowrap = true
 
 [node name="FasterButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
+pause_mode = 1
 margin_left = 603.0
 margin_right = 695.0
 margin_bottom = 800.0

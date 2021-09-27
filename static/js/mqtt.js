@@ -1,6 +1,7 @@
 // Imports
 var AWS = require('aws-sdk');
 var AWSIoTData = require('aws-iot-device-sdk');
+var moment = require('moment');
 
 console.log('Loaded AWS SDK for JavaScript and AWS IoT SDK for Node.js');
 
@@ -76,7 +77,7 @@ function mqttClientReconnectHandler() { // Reconnection handler
 }
 
 function mqttClientMessageHandler(topic, payload) { // Message handler
-   console.log('message: ' + topic + ':' + payload.toString());
+   console.log(moment().format() + '\nreceived message: ' + topic + ':' + payload.toString());
 
    // Add message
    let msg = { topic: topic.toString(), payload: payload.toString() }
@@ -97,10 +98,10 @@ mqttClient.on('message', mqttClientMessageHandler);
 
 //// Methods
 // Subscribe to topics
-window.subscribeToTopic = function (topic) {
+window.subscribeToTopic = function (topic, autoUnsubscribe = true) {
    var fullTopicName = window.sandboxUUID + "/" + topic;
    mqttClient.subscribe(fullTopicName);
-   if (topic !== "editor/#") {
+   if (autoUnsubscribe) {
       subscribedTopics.push(fullTopicName);
    }
 }
@@ -112,12 +113,15 @@ window.publishData = function (topic, payload) { // Topic publish handler
 
 // Sending data to sandbox_coordinator
 window.publishToCoordinator = function (topic, payload) {
-   mqttClient.publish("sandbox_coordinator/" + window.sandboxUUID + "/" + topic, payload);
+   if ($("#inprod").attr("data-inprod") == "true") {
+      mqttClient.publish("sandbox_coordinator/" + window.sandboxUUID + "/" + topic, payload);
+   }
 }
 
 // Sending data to application
 window.publishToApp = function (topic, payload) {
    if (window.appUUID) {
+      console.log(moment().format() + '\npublished message: ' + topic + ':' + payload.toString());
       mqttClient.publish(window.appUUID + "/" + topic, payload);
    }
 }
