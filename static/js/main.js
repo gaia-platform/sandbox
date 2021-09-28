@@ -31,7 +31,7 @@
     window.publishToCoordinator("project/stop", "current");
     window.subscribeToTopic("editor/#", false);
     window.subscribeToTopic("project/#", false);
-    window.subscribeToTopic("session/#", false);
+    window.subscribeToTopic("session", false);
     window.subscribeToTopic("appUUID", false);
   });
 
