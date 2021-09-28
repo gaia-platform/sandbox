@@ -198,8 +198,7 @@ function buildProject(projectName) {
 }
 
 function mqttClientMessageHandler(topic, payload) { // Message handler
-   console.log('message: ' + topic);
-   console.log('payload: ' + payload);
+   console.log('message: ' + topic + ' payload: ' + payload);
    var topicTokens = topic.split('/');
    switch (topicTokens[2]) {
       case 'get':

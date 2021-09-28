@@ -218,7 +218,7 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
     {
         if (topic_vector.size() < 4)
         {
-            gaia_log::app().error("Unexpected topic");
+            gaia_log::app().error("Unexpected topic {}", topic.c_str());
             return;
         }
         auto activity = agent_activity(topic_vector[1], topic_vector[3]);
