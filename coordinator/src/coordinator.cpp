@@ -65,6 +65,7 @@ void publish_message(const string& topic, const string& payload)
 {
     if (connection)
     {
+        gaia_log::app().info("Publishing on topic {}", topic);
         ByteBuf payload_buf = ByteBufFromArray((const uint8_t *)payload.data(), payload.length());
         connection->Publish(topic.c_str(), AWS_MQTT_QOS_AT_LEAST_ONCE, false, payload_buf, onPublishComplete);
     }
@@ -128,10 +129,11 @@ browser_activity_t browser_activity()
     return browser_activity_t::get(w.insert_row());
 }
 
-agent_activity_t agent_activity(const string& agent_id)
+agent_activity_t agent_activity(const string& agent_id, const string& action)
 {
     agent_activity_writer w;
     w.agent_id = agent_id;
+    w.action = action;
     w.timestamp = (uint64_t)time(nullptr);
     return agent_activity_t::get(w.insert_row());
 }
@@ -214,7 +216,12 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
     }
     else if (topic_vector[2] == "agent")
     {
-        auto activity = agent_activity(topic_vector[1]);
+        if (topic_vector.size() < 4)
+        {
+            gaia_log::app().error("Unexpected topic {}", topic.c_str());
+            return;
+        }
+        auto activity = agent_activity(topic_vector[1], topic_vector[3]);
         session.agent_activities().insert(activity);
     }
     else if (topic_vector[2] == "project")
