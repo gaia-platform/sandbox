@@ -135,9 +135,14 @@
     }
 
     if (topicLevels[1] == 'session') {
-      state.session.loading = true;
-      state.session.countdown = 2 * 60;
-      sessionRestoreMessages();
+      if (payload == 'loading') {
+        state.session.loading = true;
+        state.session.countdown = 2 * 60;
+        sessionRestoreMessages();
+      }
+      else if (payload == 'loaded') {
+        state.session.loading = false;
+      }
       return;
     }
 
@@ -145,6 +150,7 @@
       switch (topicLevels[2].toString()) {
         case 'select':
           state.project.current = payload;
+          setTabText('output', 'Ready');
           window.publishToCoordinator("editor/req", state.project.current + ".ddl");
           window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
           break;
@@ -172,11 +178,6 @@
     let fileExt = fileName.split('.').pop();
     if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'output') {
       return;
-    }
-
-    if (state.session.loading) {
-      state.session.loading = false;
-      setTabText('output', '');
     }
 
     if (topicLevels[3] == 'append') {
