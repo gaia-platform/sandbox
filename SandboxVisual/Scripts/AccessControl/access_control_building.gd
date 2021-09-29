@@ -25,7 +25,7 @@ onready var people_container = get_node(people_container_path)
 
 func _ready():
 	# Subscribe to topics
-	CommunicationManager.subscribe_to_topic("init")
+	CommunicationManager.subscribe_to_topic("access_control/init")
 
 	# Connect to signals
 	var _connection_var = CommunicationManager.connect("ac_init", self, "_init_setup")
