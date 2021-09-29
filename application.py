@@ -37,6 +37,10 @@ def index():
     # return the rendered template
     return render_template("index.html", prod=sys.argv[1])
 
+@app.route('/health', methods=['GET'])
+def health():
+    return 'OK'
+
 @app.route('/receive', methods=['GET'])
 def receive():
     result = ''
