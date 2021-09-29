@@ -38,7 +38,9 @@ func _ready():
 
 
 # Generate demo using data sent from Gaia
-func _init_setup(setup_data):
+func _init_setup(setup_data_json):
+	var setup_data = JSON.parse(setup_data_json).result
+
 	if setup_data != null:
 		# Add buildings
 		for building in setup_data["buildings"]:
