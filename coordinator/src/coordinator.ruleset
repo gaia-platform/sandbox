@@ -107,7 +107,7 @@ ruleset coordinator_ruleset
             session.last_agent_timestamp = agent_activity.timestamp;
             if (strcmp(agent_activity.action, "connected") == 0)
             {
-                send_message(session_id, "session", "loaded");
+                send_message(session.session_id, "session", "loaded");
 
                 if (strcmp(session.current_project_name, "none") != 0)
                 {
