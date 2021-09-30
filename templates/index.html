@@ -104,13 +104,17 @@
               <span class="span-4 button" id="ctrl-button">Build</span>
             </div>
 
-            {% if prod == 'false' %}
             <div class="builder-column column-8">
-              <span class="span-5 button" id="reset-button">Show REMOTE_CLIENT_ID</span>
+              <span class="span-5 button" id="get-started-button">Get Started</span>
             </div>
 
+            {% if prod == 'false' %}
             <div class="builder-column column-9">
-              <span class="span-6 button" id="test-button">Show Subscribe UUID</span>
+              <span class="span-6 button" id="reset-button">Show REMOTE_CLIENT_ID</span>
+            </div>
+
+            <div class="builder-column column-10">
+              <span class="span-7 button" id="test-button">Show Subscribe UUID</span>
             </div>
             {% endif %}
           </div>
@@ -125,13 +129,89 @@
   </div>
 
   <!-- Privacy Modal -->
-  <div id="privacy-modal">
+  <div id="privacy-modal" class="modal">
     <div id="privacy-modal-content">
       <p>
         The Gaia Sandbox system stores two
         <strong>strictly necessary cookies</strong>.
         Deleting these cookies will simply reset your Sandbox experience,
         which will mean you lose any code or edits made in the sandbox.
+      </p>
+      <span class="modal-close-button button">OK</span>
+    </div>
+  </div>
+
+  <!-- Get Started Modal -->
+  <div id="get-started-modal" class="modal">
+    <div id="get-started-content">
+      <p>
+        <h1 id="gaiaamrswarmfactorysample">Gaia AMR swarm factory sample</h1>
+
+<p>The Gaia Sandbox provides a containerized simulation environment that allows you to experiment with samples written using the Gaia Platform.</p>
+
+<p>This sample models a factory that contains the following:</p>
+
+<ul>
+<li>Robots that move in safe zones on the factory floor
+
+
+<ul>
+<li>Pallet robots</li>
+
+<li>widget robots</li></ul>
+</li>
+
+<li>An automated factory assembly line across the top. <br />
+
+
+<ul>
+<li>When a widget part is placed in the input (<strong>PL Start</strong>) it moves to the <strong>Outbound</strong> station on the right.</li></ul>
+</li>
+</ul>
+
+<p>Pallets of widget parts arrive on the bottom-right and need to be moved by a pallet robot to the pallet unpacking station (<strong>Buffer</strong>) on the bottom left. From there,  widget moves the raw widget materials to the <strong>PL Start</strong> station on the automated factory line.into the input area for the automated widget factory.  Finally, "processed" widgets are packed onto an outbound pallet by the widget robot and shipped off.</p>
+
+<h2 id="overviewofthesandbox">Overview of the Sandbox</h2>
+
+<p>The Sandbox UI consists of the following elements.</p>
+
+<h3 id="simulatorwindow">Simulator window</h3>
+
+<p>The right side of the screen provides a visualization of the factory and the robots in it. When the simulation runs, the factory produces events that the Gaia sample app responds to by sending tasks to the robots.</p>
+
+<h3 id="rulesetddlandoutputtabs">Ruleset, DDL, and Output tabs</h3>
+
+<p>There are three tabs on the left. These are windows that show:</p>
+
+<ul>
+<li>Ruleset: Displays the Declarative C++ code that handles the factory events. You can modify the code in this tab and rebuild the sample to see how the changes affect the way that the sample runs. Rulesets encode the "business logic" that controls robot behavior.</li>
+
+<li>DDL: Displays the DDL code that describes the layout of the factory, the state of the AMR robots, and events the factory produces.  In short, the DDL represents the data model for the app.</li>
+
+<li>Output: Displays details when building/running your program.</li>
+</ul>
+
+<h2 id="buildandrunthesample">Build and run the sample</h2>
+
+<p>For the best user experience, run the Sandbox in full screen mode set to Full HD or higher resolution.</p>
+
+<p>The Sandbox contains a complete sample for you to examine and modify.</p>
+
+<p>To build the sample, select the <strong>Build</strong> button located above the simulator window. The state of the button changes depending on what point in the build/run cycle that you are in.</p>
+
+<p>While the sample builds, the <strong>Output</strong> window displays the progress of the build.</p>
+
+<p><strong>Note</strong>: It can take several minutes to build the sample. </p>
+
+<p>When the sample has completed building, select the <strong>Run</strong> button, then select the <strong>Receive Order</strong> button at the bottom right corner of the factory display. </p>
+
+<p>The pallet bot moves the incoming widget order to the <strong>Buffer</strong>. </p>
+
+<p>In this beta version of the Sandbox the simulation stops running after about 2000 lines of output. To reset the simulation, refresh the browser window. If you encounter either a synchronization or serialization error, reset the Sandbox by \<fill in when implemented></p>
+
+<p>Now you can start experimenting with the sample to see how it affects the running of the factory. You can modify the rules and DDL and run the sample and compare results.</p>
+
+<p>For more information about Rulesets and Gaia DDL, see the <a href="http://docs.gaiaplatform.io">Gaia technical documentation</a>. </p>
       </p>
       <span class="modal-close-button button">OK</span>
     </div>

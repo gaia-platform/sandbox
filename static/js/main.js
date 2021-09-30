@@ -153,6 +153,7 @@
           setTabText('output', 'Ready');
           window.publishToCoordinator("editor/req", state.project.current + ".ddl");
           window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
+          window.publishToCoordinator("editor/req", "get_started.md");
           break;
 
         case 'build':
@@ -299,6 +300,7 @@
           || state.project.buildStatus == 'building') {
       window.publishToCoordinator('project/stop', 'current');
     } else if (state.project.buildStatus == 'success') {
+      window.messages.push(JSON.stringify({ topic: "reset", payload: "reset" }));
       window.publishToCoordinator('project/run', state.project.current);
     } else {
       window.publishToCoordinator('project/build', state.project.current);
@@ -316,7 +318,12 @@
   $("#privacy-button").click(function () {
     $("#privacy-modal").show();
   });
+
+  $("#get-started-button").click(function () {
+    $("#get-started-modal").show();
+  });
+
   $(".modal-close-button").click(function () {
-    $("#privacy-modal").hide();
+    $(".modal").hide();
   });
 })(jQuery);
