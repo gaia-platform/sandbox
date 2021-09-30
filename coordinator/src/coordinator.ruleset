@@ -105,10 +105,14 @@ ruleset coordinator_ruleset
         else
         {
             session.last_agent_timestamp = agent_activity.timestamp;
-            if (strcmp(agent_activity.action, "connected") == 0 &&
-                strcmp(session.current_project_name, "none") != 0)
+            if (strcmp(agent_activity.action, "connected") == 0)
             {
-                send_message(session.session_id, "project", "select", session.current_project_name);
+                send_message(session.session_id, "session", "loaded");
+
+                if (strcmp(session.current_project_name, "none") != 0)
+                {
+                    send_message(session.session_id, "project", "select", session.current_project_name);
+                }
             }
         }
     }
