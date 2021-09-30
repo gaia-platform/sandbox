@@ -18,7 +18,7 @@ using namespace gaia::coordinator;
 string get_uuid();
 void publish_message(const string &topic, const string &payload);
 
-const uint64_t c_agent_timeout = 150;
+const uint64_t c_agent_timeout = 240;
 const uint64_t c_session_timeout = 7200;
 // const uint64_t c_session_timeout = 1200000; // for testing
 
