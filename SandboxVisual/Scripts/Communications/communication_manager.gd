@@ -53,15 +53,6 @@ func _physics_process(_delta):
 			var topic = message_decoded.result.topic
 			var payload = message_decoded.result.payload
 
-			var time_in_ms = OS.get_system_time_msecs()
-			var time_in_s = String(time_in_ms % 60000)
-			print(
-				(
-					"[%s.%s] Message received topic:%s payload:%s"
-					% [time_in_s.substr(0, 2), time_in_s.substr(2), topic, payload]
-				)
-			)
-
 			## Detect who to send to
 			var topic_extract = topic.split("/")
 			match get_tree().get_current_scene().get_name():
