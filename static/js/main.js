@@ -35,6 +35,8 @@
     window.subscribeToTopic("appUUID", false);
   });
 
+  var get_started = "Get started guide currently unavailable";
+
   var state = {
     project: {
       current: null,
@@ -177,11 +179,13 @@
 
     let fileName = topicLevels[2];
     let fileExt = fileName.split('.').pop();
-    if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'output') {
+    if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'output' && fileExt != 'md') {
       return;
     }
 
-    if (topicLevels[3] == 'append') {
+    if (fileExt == 'md') {
+      get_started = payload;
+    } else if (topicLevels[3] == 'append') {
       appendTabText(fileExt, payload);
     }
     else {
@@ -211,7 +215,7 @@
   }
 
   function load() {
-    initEditorData('initializing...', 'initializing...', 'initializing...');
+    initEditorData('Loading...', 'Loading...', 'Loading...');
 
     // Set Monaco editor theme
     monaco.editor.defineTheme('gaiaTheme', {
@@ -320,6 +324,8 @@
   });
 
   $("#get-started-button").click(function () {
+    var result = window.md.render(get_started);
+    $("#get-started-md").html(result);
     $("#get-started-modal").show();
   });
 
