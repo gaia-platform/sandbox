@@ -34,15 +34,13 @@ func _ready():
 	)
 	_connection_var = CommunicationManager.connect("ac_move_to_room", self, "_move_person_to_room")
 
-	# Temp setup data; remove in production
-	_init_setup(CommunicationManager.get_setup_data())
-	# TODO: add actual setup data
-
 	CommunicationManager.select_project("access_control_template")
 
 
 # Generate demo using data sent from Gaia
-func _init_setup(setup_data):
+func _init_setup(setup_data_json):
+	var setup_data = JSON.parse(setup_data_json).result
+
 	if setup_data != null:
 		# Add buildings
 		for building in setup_data["buildings"]:
