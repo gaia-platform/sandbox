@@ -275,13 +275,29 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
       }
       return;
    }
-   if (topicTokens[2] == 'get') {
-      sendFile(topicTokens[1], payload);
-      return;
-   }
-   if (topicTokens[2] == 'file') {
-      saveFile(topicTokens[1], topicTokens[3], payload);
+   switch (topicTokens[2]) {
+      case 'get':
+         sendFile(topicTokens[1], payload);
+         break;
+   
+      case 'file':
+         saveFile(topicTokens[1], topicTokens[3], payload);
+         break;
+   
+      case 'sessionId':
+         sessionId = payload;
+         break;
+   
+      default:
+         break;
    }
 }
 
 resetGaia();
+
+if (sessionId == 'standby')
+{
+   projectNames.forEach(function(projectName){
+      buildProject(projectName);
+   });
+}
