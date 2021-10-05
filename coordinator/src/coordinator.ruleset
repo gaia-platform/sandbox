@@ -117,7 +117,10 @@ ruleset coordinator_ruleset: serial_group()
             < session.last_timestamp)
         {
             gaia_log::app().info("Session {} is active but agent {} is MIA.", session.id, agent.id);
+            stop_gaia_container(agent.id);
             session.is_active = false;
+            session.agent.disconnect();
+            agent.remove();
             // UNDONE: send reload message to sandbox
         }
     }
