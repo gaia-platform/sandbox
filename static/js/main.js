@@ -144,13 +144,14 @@
       }
       else if (payload == 'loaded') {
         state.session.loading = false;
+        window.selectProject(state.project.current);
       }
       return;
     }
 
     if (topicLevels[1] == 'project') {
       switch (topicLevels[2].toString()) {
-        case 'select':
+        case 'ready':
           state.project.current = payload;
           setTabText('output', 'Ready');
           window.publishToCoordinator("editor/req", state.project.current + ".ddl");

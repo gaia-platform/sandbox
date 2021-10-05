@@ -18,7 +18,6 @@ using namespace gaia::coordinator;
 string get_uuid();
 void publish_message(const string& topic, const string& payload);
 
-
 const uint32_t c_standby_containers = 1;
 const uint64_t c_agent_timeout = 240;
 const uint64_t c_session_timeout = 7200;
@@ -122,7 +121,7 @@ ruleset coordinator_ruleset
     {
         if (!session.is_active)
         {
-            gaia_log::app().info("Session {} is no longer active.", session.id);
+            gaia_log::app().info("Session {} with agent {} is no longer active.", session.id, agent.id);
             stop_gaia_container(agent.id);
             session.agent.disconnect();
             agent.remove();
@@ -161,9 +160,7 @@ ruleset coordinator_ruleset
             if (strcmp(P.name, session.current_project_name) == 0)
             {
                 gaia_log::app().info("Found existing project {}.", P.name);
-                send_message(session.id, "project", "select", P.name);
-
-                dump_db();
+                send_message(agent.id, "project", "select", P.name);
                 return;
             }
         }
@@ -175,9 +172,7 @@ ruleset coordinator_ruleset
         auto project_ = project_t::get(w.insert_row());
         session.projects.connect(project_);
 
-        send_message(session.id, "project", "select", session.current_project_name);
-
-        dump_db();
+        send_message(agent.id, "project", "select", session.current_project_name);
     }
 
     on_insert(agent)

@@ -235,10 +235,6 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
             }
             else
             {
-                if (session.agent())
-                {
-                    send_message(session.agent().id(), payload_str.c_str(), topic_vector[3]);
-                }
                 if (topic_vector[3] == "exit")
                 {
                     w.current_project_name = "none";
@@ -246,6 +242,7 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
                 else if (topic_vector[3] == "select")
                 {
                     w.current_project_name = payload_str.c_str();
+                    send_message(session.agent().id(), "project", "select", payload_str.c_str());
                 }
             }
         }
