@@ -86,12 +86,22 @@ ruleset coordinator_ruleset: serial_group()
 {
     on_change(agent.last_timestamp)
     {
-        if (in_use && (!session.is_active ||
-            session.last_timestamp + c_session_timeout < agent.last_timestamp))
+        if (!in_use)
+        {
+            return;
+        }
+
+        agent_t a;
+        a = agent;
+        if (!a.session() || !session.is_active
+            || session.last_timestamp + c_session_timeout < agent.last_timestamp)
         {
             stop_gaia_container(agent.id);
-            session.is_active = false;
-            session.agent.disconnect();
+            if (a.session())
+            {
+                session.is_active = false;
+                session.agent.disconnect();
+            }
             agent.remove();
         }
     }
