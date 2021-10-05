@@ -291,6 +291,13 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
       default:
          break;
    }
+   if (topicTokens[2] == 'get') {
+      sendFile(topicTokens[1], payload);
+      return;
+   }
+   if (topicTokens[2] == 'file') {
+      saveFile(topicTokens[1], topicTokens[3], payload);
+   }
 }
 
 resetGaia();
