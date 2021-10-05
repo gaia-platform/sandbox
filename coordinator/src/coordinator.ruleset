@@ -136,7 +136,6 @@ ruleset coordinator_ruleset
                 A.in_use = true;
                 session.connect(A);
                 send_message(A.id, "sessionId", session.id);
-                add_standby_gaia_container();
                 return;
             }
         }
@@ -174,6 +173,11 @@ ruleset coordinator_ruleset
         session.projects.connect(project_);
 
         send_message(agent.id, "project", "select", session.current_project_name);
+    }
+
+    on_change(agent.in_use)
+    {
+        add_standby_gaia_container();
     }
 
     on_insert(agent)
