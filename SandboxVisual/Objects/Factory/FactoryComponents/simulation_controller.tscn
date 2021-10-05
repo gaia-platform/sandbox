@@ -17,7 +17,6 @@ __meta__ = {
 }
 scene_picker_scene = "res://Scenes/scene_picker.tscn"
 level_name_label_path = NodePath("MarginContainer/HBoxContainer/LevelNameLabel")
-pause_button_path = NodePath("MarginContainer/HBoxContainer/PauseButton")
 speed_scale_label_path = NodePath("MarginContainer/HBoxContainer/SpeedScaleLabel")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -40,7 +39,7 @@ size_flags_vertical = 3
 custom_constants/separation = 10
 
 [node name="LevelNameLabel" type="Label" parent="MarginContainer/HBoxContainer"]
-margin_right = 202.0
+margin_right = 394.0
 margin_bottom = 800.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -51,31 +50,14 @@ align = 1
 valign = 1
 autowrap = true
 
-[node name="PauseButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
-margin_left = 212.0
-margin_right = 415.0
-margin_bottom = 800.0
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 1.1
-text = "Pause"
-
 [node name="Control" type="Control" parent="MarginContainer/HBoxContainer"]
-margin_left = 425.0
-margin_right = 425.0
+margin_left = 404.0
+margin_right = 404.0
 margin_bottom = 800.0
-
-[node name="SlowerButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
-pause_mode = 1
-margin_left = 435.0
-margin_right = 527.0
-margin_bottom = 800.0
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.5
-text = "<<"
 
 [node name="SpeedScaleLabel" type="Label" parent="MarginContainer/HBoxContainer"]
-margin_left = 537.0
-margin_right = 593.0
+margin_left = 414.0
+margin_right = 521.0
 margin_bottom = 800.0
 size_flags_horizontal = 3
 size_flags_vertical = 1
@@ -86,28 +68,16 @@ align = 1
 valign = 1
 autowrap = true
 
-[node name="FasterButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
-pause_mode = 1
-margin_left = 603.0
-margin_right = 695.0
-margin_bottom = 800.0
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.5
-text = ">>"
-
 [node name="Control2" type="Control" parent="MarginContainer/HBoxContainer"]
-margin_left = 705.0
-margin_right = 705.0
+margin_left = 531.0
+margin_right = 531.0
 margin_bottom = 800.0
 
 [node name="ExitButton" parent="MarginContainer/HBoxContainer" instance=ExtResource( 5 )]
-margin_left = 715.0
+margin_left = 541.0
 margin_right = 900.0
 margin_bottom = 800.0
 size_flags_horizontal = 3
 text = "Exit to Menu"
 
-[connection signal="pressed" from="MarginContainer/HBoxContainer/PauseButton" to="." method="_on_PauseButton_pressed"]
-[connection signal="pressed" from="MarginContainer/HBoxContainer/SlowerButton" to="." method="_on_SlowerButton_pressed"]
-[connection signal="pressed" from="MarginContainer/HBoxContainer/FasterButton" to="." method="_on_FasterButton_pressed"]
 [connection signal="pressed" from="MarginContainer/HBoxContainer/ExitButton" to="." method="_on_ExitButton_pressed"]
