@@ -128,22 +128,23 @@ ruleset coordinator_ruleset
             return;
         }
 
-        if (/A:agent.in_use == false)
+        for (/A:agent)
         {
-            gaia_log::app().info("Found standby agent {} for session {}.", A.id, session.id);
-            A.in_use = true;
-            session.connect(A);
-            send_message(A.id, "sessionId", session.id);
-            add_standby_gaia_container();
-            return;
+            if (A.in_use == false)
+            {
+                gaia_log::app().info("Found standby agent {} for session {}.", A.id, session.id);
+                A.in_use = true;
+                session.connect(A);
+                send_message(A.id, "sessionId", session.id);
+                add_standby_gaia_container();
+                return;
+            }
         }
-        nomatch
-        {
-            gaia_log::app().info("Starting new agent.");
-            send_message(session.id, "session", "loading");
-            session.connect(agent.insert(id:get_uuid().c_str(), in_use:true, last_timestamp:0,
-                                            created_timestamp:(uint64_t)time(nullptr)));
-        }
+
+        gaia_log::app().info("Starting new agent.");
+        send_message(session.id, "session", "loading");
+        session.connect(agent.insert(id:get_uuid().c_str(), in_use:true, last_timestamp:0,
+                                        created_timestamp:(uint64_t)time(nullptr)));
     }
 
     on_change(session.current_project_name)
