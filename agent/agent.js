@@ -99,6 +99,14 @@ function mqttClientConnectHandler() { // Connection handler
    mqttClient.subscribe(agentId + '/#');
    publishToCoordinator('connected', agentId);
    setTimeout(sendKeepAlive, keepAliveInterval * 60 * 1000);
+   if (sessionId == 'standby') {
+      console.log('do builds...');
+      projectNames.forEach(function(projectName){
+         buildProject(projectName);
+      });
+   } else {
+      mqttClient.publish(sessionId + '/session', 'loaded');      
+   }
 }
 
 function mqttClientReconnectHandler() { // Reconnection handler
@@ -195,7 +203,11 @@ function stopProcesses() {
 }
 
 function runProject(projectName) {
-   projectProcess = exec('bash ../start_amr_swarm.sh', { cwd: 'templates/' + projectName + '_template/build' });
+   projectProcess = exec('bash ../start_amr_swarm.sh',
+      {
+         cwd: 'templates/' + projectName + '_template/build',
+         env: { 'SESSION_ID': sessionId }
+      });
    publishToEditor('output/append', 'Running application...\n');
    mqttClient.publish(sessionId + '/project/program', 'running');
    projectProcess.stderr.on('data', (chunk) => {
@@ -246,7 +258,16 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
    console.log('message: ' + topic + ' payload: ' + payload);
    var topicTokens = topic.split('/');
    if (topicTokens.length < 3) {
+      if (topicTokens[1] == 'sessionId') {
+         sessionId = payload;
+         mqttClient.publish(sessionId + '/session', 'loaded');
+         return;
+      }
       switch (payload.toString()) {
+         case 'select':
+            mqttClient.publish(sessionId + '/project/ready', topicTokens[1]);
+            break;
+      
          case 'stop':
             stopProcesses();
             break;
@@ -284,20 +305,9 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
          saveFile(topicTokens[1], topicTokens[3], payload);
          break;
    
-      case 'sessionId':
-         sessionId = payload;
-         break;
-   
       default:
          break;
    }
 }
 
 resetGaia();
-
-if (sessionId == 'standby')
-{
-   projectNames.forEach(function(projectName){
-      buildProject(projectName);
-   });
-}
