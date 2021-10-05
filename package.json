@@ -22,6 +22,7 @@
     "aws-iot-device-sdk": "^2.2.10",
     "aws-sdk": "^2.955.0",
     "buffer": "^4.9.2",
+    "markdown-it": "^12.2.0",
     "moment": "^2.29.1",
     "process": "^0.11.10"
   }
