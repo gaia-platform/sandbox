@@ -117,6 +117,7 @@ void dump_db()
         if (a.session())
         {
             printf("session id:           %s\n", a.session().id());
+            printf("session timestamp:    %lu\n", a.session().last_timestamp());
         }
     }
     printf("--------------------------------------------------------\n");
