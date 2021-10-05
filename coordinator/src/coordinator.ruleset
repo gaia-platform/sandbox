@@ -63,7 +63,6 @@ void start_gaia_container(const string& session_id,
 {
     gaia_log::app().info("Sending start for session_id {} with agent_id {}", session_id, agent_id);
 
-    return;
     json j;
     j["session_id"] = session_id;
     j["agent_id"] = agent_id;
