@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "*.ruleset": "cpp",
-        "typeinfo": "cpp",
-        "future": "cpp"
-    }
-}
