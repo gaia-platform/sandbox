@@ -112,6 +112,7 @@ func _ready():
 	)
 	_connect_to_signal = CommunicationManager.connect("factory_unload_pl", self, "_auto_unload_pl")
 	_connect_to_signal = CommunicationManager.connect("factory_ship", self, "_auto_ship")
+	_connect_to_signal = CommunicationManager.connect("factory_reset", self, "_reload")
 
 	# Populate bots
 	_generate_bots()
@@ -128,6 +129,9 @@ func bot_ran_out_of_battery(bot):
 		% ["Pallet Bot" if bot.bot_type else "Widget Bot", bot.bot_id, areas[bot.goal_location].id]
 	)
 
+func _reload():
+	get_tree().paused = false
+	get_tree().reload_current_scene()
 
 # Factory init data send
 func _init_app():
@@ -204,13 +208,13 @@ func _on_FloorPath_resized():
 
 # Button pressed to open change bots window
 func _on_ChangeBotsButton_pressed():
-	simulation_controller.pause_button.emit_signal("pressed")
+	# simulation_controller.pause_button.emit_signal("pressed")
 	change_bots_panel.show()
 
 
 # Apply bot changes, reset sim
 func _on_ApplyButton_pressed():
-	simulation_controller.pause_button.emit_signal("pressed")
+	# simulation_controller.pause_button.emit_signal("pressed")
 
 	if change_bots_panel.visible:
 		change_bots_panel.hide()
