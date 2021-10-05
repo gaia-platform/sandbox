@@ -91,9 +91,9 @@ ruleset coordinator_ruleset
             session.last_timestamp + c_session_timeout < agent.last_timestamp))
         {
             stop_gaia_container(agent.id);
+            session.is_active = false;
             session.agent.disconnect();
             agent.remove();
-            session.is_active = false;
         }
     }
 
@@ -141,6 +141,7 @@ ruleset coordinator_ruleset
         nomatch
         {
             gaia_log::app().info("Starting new agent.");
+            send_message(session.id, "session", "loading");
             session.connect(agent.insert(id:get_uuid().c_str(), in_use:true, last_timestamp:0,
                                             created_timestamp:(uint64_t)time(nullptr)));
         }
