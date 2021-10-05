@@ -82,7 +82,7 @@ void add_standby_gaia_container()
     }
 }
 
-ruleset coordinator_ruleset
+ruleset coordinator_ruleset: serial_group()
 {
     on_change(agent.last_timestamp)
     {
@@ -125,6 +125,13 @@ ruleset coordinator_ruleset
             stop_gaia_container(agent.id);
             session.agent.disconnect();
             agent.remove();
+            return;
+        }
+
+        session_t s;
+        s = session;
+        if (s.agent())
+        {
             return;
         }
 
