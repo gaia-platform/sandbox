@@ -10,8 +10,8 @@ export(NodePath) var schedule_panel_path
 
 # Properties
 var person_id: int
-var room_id: int
-var building_id: int
+var room_id: String = ""
+var building_id: String = ""
 var is_stranger: bool
 
 # Get nodes
@@ -59,8 +59,8 @@ func set_person_init_properties(
 	CommunicationManager.subscribe_to_topic("access_control/%s/move_to_room" % person_id)
 	CommunicationManager.subscribe_to_topic("access_control/%s/scan" % person_id)
 
-	# Building option label
-	building_options.options_label.text = building["name"]
+	# Building option button
+	building_options.option_button.add_item(building["name"], building["building_id"])
 
 	# Building options state
 	is_stranger = person.stranger
@@ -75,6 +75,26 @@ func set_person_init_properties(
 	# Schedule
 	schedule_panel.add_schedule_events(person["events"], true)
 
+func update_location_and_options(
+	scan_options: Dictionary,
+	new_building_id: String = "",
+	new_room_id: String = ""
+):
+	building_id = new_building_id
+	room_id = new_room_id
+
+	building_options.option_button.clear()
+	for id in scan_options.keys():
+		building_options.option_button.add_item(scan_options[id], (id if (typeof(id) == TYPE_INT) else int(id)))
+
+	var inside_building: bool = !building_id.empty()
+
+	if not is_stranger and not inside_building:
+		building_options.button_one.show()
+		building_options.button_one.set_state(false)
+	else:
+		building_options.button_one.hide()
+	building_options.button_three.visible = inside_building
 
 func update_options_for_inside_building(inside_building: bool):
 	if not is_stranger and not inside_building:
@@ -102,13 +122,21 @@ func _person_option_selected(button: Button):
 	elif "wifi" in texture_path:
 		scan_type_value = "leaving_wifi" if button.selected else "joining_wifi"
 
+	var selected_id: int = building_options.option_button.get_selected()
+	if selected_id < 0:
+		return # Nothing was selected in the Option Button.
+
 	# Create message
 	var publish_dict = {
 		"scan_type": scan_type_value,
-		"person_id": person_id,
-		"building_id": building_id,
-		"room_id": room_id
+		"person_id": person_id
 	}
+	if building_id.empty():
+		publish_dict["building_id"] = selected_id
+	else:
+		publish_dict["building_id"] = int(building_id)
+		publish_dict["room_id"] = selected_id
+	
 	CommunicationManager.publish_to_app("access_control/scan", to_json(publish_dict))
 
 

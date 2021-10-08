@@ -24,7 +24,7 @@ func set_building_room_init_properties(room: Dictionary, building: Dictionary, a
 	room_name_label.text = room["name"]
 	building_id = building["building_id"]
 	room_id = room["room_id"]
-	ac_reference.id_to_room[String(building_id)][String(room_id)] = people_container
+	ac_reference.id_to_room[String(building_id)][String(room_id)] = self
 
 	# Add people
 	for person in room["people"]:
