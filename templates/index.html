@@ -116,12 +116,16 @@
             <div class="builder-column column-10">
               <span class="span-7 button" id="test-button">Show Subscribe UUID</span>
             </div>
+
+            <div class="builder-column column-11">
+              <span class="span-8 button" id="test-me">TEST</span>
+            </div>
             {% endif %}
           </div>
         </div>
 
         <div class="div-7">
-          <iframe src="{{ url_for('static', filename='visual/index.html') }}"
+          <iframe id="godot" src="{{ url_for('static', filename='visual/index.html') }}"
             style="position: relative; height: 100%; width: 100%;" frameBorder="0" scrolling="no"></iframe>
         </div>
       </div>
