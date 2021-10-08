@@ -122,9 +122,9 @@ func _person_option_selected(button: Button):
 	elif "wifi" in texture_path:
 		scan_type_value = "leaving_wifi" if button.selected else "joining_wifi"
 
-	var selected_id: int = building_options.option_button.get_selected()
-	if selected_id < 0:
+	if building_options.option_button.get_selected() < 0:
 		return # Nothing was selected in the Option Button.
+	var selected_id: int = building_options.option_button.get_selected_id()
 
 	# Create message
 	var publish_dict = {
@@ -133,6 +133,7 @@ func _person_option_selected(button: Button):
 	}
 	if building_id.empty():
 		publish_dict["building_id"] = selected_id
+		publish_dict["room_id"] = null
 	else:
 		publish_dict["building_id"] = int(building_id)
 		publish_dict["room_id"] = selected_id
