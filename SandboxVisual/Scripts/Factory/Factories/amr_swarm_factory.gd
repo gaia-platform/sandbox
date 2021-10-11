@@ -114,10 +114,10 @@ func _ready():
 	_connect_to_signal = CommunicationManager.connect("factory_ship", self, "_auto_ship")
 	_connect_to_signal = CommunicationManager.connect("factory_reset", self, "_reload")
 
+	CommunicationManager.publish_to_app("ping", "running")
+	
 	# Populate bots
 	_generate_bots()
-
-	CommunicationManager.publish_to_app("ping", "running")
 
 
 # Bot ran out of battery buttons
@@ -235,14 +235,14 @@ func _on_ApplyButton_pressed():
 	for bot in navigation_controller.bots.get_children():
 		bot.queue_free()
 
+	CommunicationManager.publish_to_app("ping", "running")
+
 	# Generate stuff
 	_generate_bots()
 
 	# Reset inbound area
 	receive_order_button.disabled = false
 	inbound_area.pallet_node = null
-
-	CommunicationManager.publish_to_app("ping", "running")
 
 
 func _on_CancelButton_pressed():
@@ -279,7 +279,7 @@ func _generate_bots():
 
 		# Add to navigation controller bots
 		navigation_controller.bots.add_child(wb_instance)
-		navigation_controller._bot_charge(wb_instance.bot_id)
+		navigation_controller._bot_charge_internal(wb_instance.bot_id, false)
 		widget_bots.append({"id": wb_instance.bot_id})
 
 	for pb in pallet_bot_counter.value:
@@ -297,7 +297,7 @@ func _generate_bots():
 		navigation_controller.id_to_bot[pb_instance.bot_id] = pb_instance
 
 		navigation_controller.bots.add_child(pb_instance)
-		navigation_controller._bot_charge(pb_instance.bot_id)
+		navigation_controller._bot_charge_internal(pb_instance.bot_id, false)
 		pallet_bots.append({"id": pb_instance.bot_id})
 
 

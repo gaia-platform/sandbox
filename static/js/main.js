@@ -320,6 +320,10 @@
     prompt("Subscribe to MQTT topics with this UUID:", window.appUUID);
   });
 
+  $("#test-me").click(function () {
+    document.getElementById('godot').contentDocument.location.reload(true);
+  });
+
   $("#privacy-button").click(function () {
     $("#privacy-modal").show();
   });
