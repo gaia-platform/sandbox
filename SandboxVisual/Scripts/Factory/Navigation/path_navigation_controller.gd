@@ -92,8 +92,10 @@ func _bot_move_location(bot_id: String, location: String):
 		bot.bot_collision = null
 		_navigate_bot(bot, location_index)
 
-
 func _bot_charge(bot_id: String):
+	_bot_charge_internal(bot_id, true)
+	
+func _bot_charge_internal(bot_id: String, publish_event: bool):
 	var bot = id_to_bot[bot_id]  # Get the bot
 	var success: bool
 	if bot.goal_location == location_index("charging") and not bot.is_inside_area:
@@ -103,7 +105,8 @@ func _bot_charge(bot_id: String):
 			bot.disabled_point = -1
 		success = true
 		bot.is_charging = true
-	CommunicationManager.publish_to_app("bot/%s/charging" % bot_id, success)
+	if publish_event:
+		CommunicationManager.publish_to_app("bot/%s/charging" % bot_id, success)
 
 
 func _bot_pickup_payload(bot_id: String, location: String):
