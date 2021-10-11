@@ -42,6 +42,8 @@ using namespace gaia::direct_access;
 using namespace gaia::coordinator;
 using namespace gaia::rules;
 
+string env_coordinator_name;
+
 std::shared_ptr<Aws::Crt::Mqtt::MqttConnection> connection;
 
 void send_message(const string& id, const string& topic, const string& payload);
@@ -275,6 +277,16 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
 
 int main()
 {
+    char* s = std::getenv("COORDINATOR_NAME");
+    if (s)
+    {
+        env_coordinator_name = s;
+    }
+    else
+    {
+        env_coordinator_name = "sandbox_coordinator_test_1";
+    }
+
     gaia::system::initialize();
 
     begin_transaction();
@@ -288,7 +300,6 @@ int main()
     String keyPath("../certs/coordinator-private.pem.key");
     String caFile("../certs/AmazonRootCA1.pem");
     String clientId = Aws::Crt::UUID().ToString();
-    String topic("client-xx/topic_1");
 
     Io::EventLoopGroup eventLoopGroup(1);
     if (!eventLoopGroup)
@@ -421,7 +432,9 @@ int main()
             subscribeFinishedPromise.set_value();
         };
 
-        connection->Subscribe("sandbox_coordinator/#", AWS_MQTT_QOS_AT_LEAST_ONCE, on_message, onSubAck);
+        string topic = env_coordinator_name;
+        topic += "/#";
+        connection->Subscribe(topic.c_str(), AWS_MQTT_QOS_AT_LEAST_ONCE, on_message, onSubAck);
         subscribeFinishedPromise.get_future().wait();
 
         String input = "";

@@ -24,6 +24,8 @@ const uint64_t c_session_timeout = 7200;
 
 // const uint64_t c_session_timeout = 1200000; // for testing
 
+extern string env_coordinator_name;
+
 void dump_db();
 
 void send_message(const string& id,
@@ -65,6 +67,7 @@ void start_gaia_container(const string& session_id,
     json j;
     j["session_id"] = session_id;
     j["agent_id"] = agent_id;
+    j["coordinator_name"] = env_coordinator_name;
     publish_message("manage_gaia_container", j.dump());
     send_message(session_id, "session", "loading");
 }
@@ -84,7 +87,7 @@ void add_standby_gaia_container()
 
 ruleset coordinator_ruleset: serial_group()
 {
-    on_change(agent.last_timestamp)
+    on_update(agent.last_timestamp)
     {
         if (!in_use)
         {
@@ -110,7 +113,7 @@ ruleset coordinator_ruleset: serial_group()
         }
     }
 
-    on_change(session.last_timestamp)
+    on_update(session.last_timestamp)
     {
         if (session.is_active &&
             max(agent.last_timestamp, agent.created_timestamp) + c_agent_timeout
@@ -125,7 +128,7 @@ ruleset coordinator_ruleset: serial_group()
         }
     }
 
-    on_change(session.last_timestamp)
+    on_update(session.last_timestamp)
     {
         if (!session.is_active &&
             session.last_timestamp + c_session_timeout > (uint64_t)time(nullptr))
@@ -134,7 +137,7 @@ ruleset coordinator_ruleset: serial_group()
         }
     }
 
-    on_change(session.is_active)
+    on_update(session.is_active)
     {
         if (!session.is_active)
         {
@@ -170,7 +173,7 @@ ruleset coordinator_ruleset: serial_group()
                                         created_timestamp:(uint64_t)time(nullptr)));
     }
 
-    on_change(session.current_project_name)
+    on_update(session.current_project_name)
     {
         gaia_log::app().info("Current project name change to {}.", session.current_project_name);
 
@@ -199,7 +202,7 @@ ruleset coordinator_ruleset: serial_group()
         send_message(agent.id, "project", "select", session.current_project_name);
     }
 
-    on_change(agent.in_use)
+    on_update(agent.in_use)
     {
         add_standby_gaia_container();
     }
