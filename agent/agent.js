@@ -2,7 +2,7 @@
 const { spawn, exec } = require('child_process');
 const AWS = require('aws-sdk');
 const AWSIoTData = require('aws-iot-device-sdk');
-const fs = require('fs')
+const fs = require('fs');
 
 console.log('Loaded AWS SDK for JavaScript and AWS IoT SDK for Node.js');
 
@@ -13,8 +13,11 @@ var awsConfig = {
    host: 'a31gq30tvzx17m-ats.iot.us-west-2.amazonaws.com', // 'YourAwsIoTEndpoint', e.g. 'prefix.iot.us-east-1.amazonaws.com'
    region: 'us-west-2' // 'YourAwsRegion', e.g. 'us-east-1'
 };
+
+var coordinatorName = process.env.COORDINATOR_NAME || 'sandbox_coordinator';
 var agentId = process.env.AGENT_ID;
 var sessionId = process.env.SESSION_ID;
+
 process.env.REMOTE_CLIENT_ID = sessionId;
 
 const keepAliveInterval = 1;  // in minutes
@@ -81,7 +84,7 @@ function publishToEditor(file, contents) {
 }
 
 function publishToCoordinator(action, payload) {
-   mqttClient.publish("sandbox_coordinator/" + agentId + "/agent/" + action, payload);
+   mqttClient.publish(coordinatorName + "/" + agentId + "/agent/" + action, payload);
 }
 
 function sendKeepAlive() {

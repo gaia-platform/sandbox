@@ -6,19 +6,23 @@
 database coordinator
 
 table session (
-    session_id string unique,
-    agent_id string,
+    id string unique,
     is_active bool,
-    last_session_timestamp uint64,
-    last_agent_timestamp uint64,
+    last_timestamp uint64,
     created_timestamp uint64,
     current_project_name string,
+    agent references agent,
     projects references project[],
-    browser_activities references browser_activity[],
-    agent_activities references agent_activity[],
-    project_activities references project_activity[],
     editor_file_requests references editor_file_request[],
     editor_contents references editor_content[]
+)
+
+table agent (
+    id string unique,
+    in_use bool,
+    last_timestamp uint64,
+    created_timestamp uint64,
+    session references session
 )
 
 table project (
@@ -33,25 +37,6 @@ table project_file (
     content string,
     project references project,
     editor_contents references editor_content[]
-)
-
-table browser_activity (
-    timestamp uint64,
-    session references session
-)
-
-table agent_activity (
-    agent_id string,
-    action string,
-    timestamp uint64,
-    session references session
-)
-
-table project_activity (
-    name string,
-    action string,
-    timestamp uint64,
-    session references session
 )
 
 table editor_file_request (
