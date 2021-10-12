@@ -128,7 +128,7 @@ ruleset coordinator_ruleset: serial_group()
         }
     }
 
-    on_update(session.last_timestamp)
+    on_change(session.last_timestamp)
     {
         if (!session.is_active &&
             session.last_timestamp + c_session_timeout > (uint64_t)time(nullptr))
@@ -137,7 +137,7 @@ ruleset coordinator_ruleset: serial_group()
         }
     }
 
-    on_update(session.is_active)
+    on_change(session.is_active)
     {
         if (!session.is_active)
         {
