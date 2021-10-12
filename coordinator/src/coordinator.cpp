@@ -284,7 +284,7 @@ int main()
     }
     else
     {
-        env_coordinator_name = "sandbox_coordinator_test_1";
+        env_coordinator_name = "sandbox_coordinator";
     }
 
     gaia::system::initialize();
