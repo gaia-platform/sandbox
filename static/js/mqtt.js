@@ -124,8 +124,6 @@ window.publishToCoordinator = function (topic, payload) {
 window.publishToApp = function (topic, payload) {
    if (window.appUUID) {
       mqttClient.publish(window.appUUID + "/" + topic, payload);
-      // Let coordinator know there has been messaging to the app to keep session alive longer
-      window.publishToCoordinator("browser", "refresh");
    }
 }
 
