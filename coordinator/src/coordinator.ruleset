@@ -202,7 +202,7 @@ ruleset coordinator_ruleset: serial_group()
         send_message(agent.id, "project", "select", session.current_project_name);
     }
 
-    on_update(agent.in_use)
+    on_change(agent.in_use)
     {
         add_standby_gaia_container();
     }
