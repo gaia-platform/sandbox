@@ -116,7 +116,7 @@ window.publishData = function (topic, payload) { // Topic publish handler
 // Sending data to sandbox_coordinator
 window.publishToCoordinator = function (topic, payload) {
    if ($("#inprod").attr("data-inprod") == "true" && window.sandboxUUID) {
-      mqttClient.publish("sandbox_coordinator/" + window.sandboxUUID + "/" + topic, payload);
+      mqttClient.publish($("#coordinator").attr("data-coordinator") + "/" + window.sandboxUUID + "/" + topic, payload);
    }
 }
 
