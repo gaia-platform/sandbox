@@ -26,8 +26,6 @@ const uint64_t c_session_timeout = 7200;
 
 extern string env_coordinator_name;
 
-void dump_db();
-
 void send_message(const string& id,
                   const string& topic,
                   const string& payload)
@@ -263,8 +261,6 @@ ruleset coordinator_ruleset: serial_group()
                         PF.content = editor_content->project_file.content;
                         send_message(agent.id, P.name, "file", editor_content->project_file.name,
                             editor_content->project_file.content);
-
-                        dump_db();
                         return;
                     }
                 }
@@ -273,8 +269,6 @@ ruleset coordinator_ruleset: serial_group()
                 P.project_file.connect(editor_content->project_file);                
                 send_message(agent.id, P.name, "file", editor_content->project_file.name,
                     editor_content->project_file.content);
-
-                dump_db();
                 return;
             }
         }

@@ -78,13 +78,17 @@ void publish_message(const string& topic, const string& payload)
     }
 }
 
-void dump_db()
+void dump_db(const string& filter = "")
 {
     printf("\n");
     printf("--------------------------------------------------------\n");
     printf("Sessions:\n");
     for (const auto &s : session_t::list())
     {
+        if (strncmp(filter.c_str(), s.id(), filter.length()) != 0)
+        {
+            continue;
+        }
         printf("--------------------------------------------------------\n");
         printf("session:              %s\n", s.id());
         printf("is_active:            %s\n", s.is_active() ? "YES" : "NO");
@@ -111,6 +115,10 @@ void dump_db()
     printf("Agents:\n");
     for (const auto &a : agent_t::list())
     {
+        if (strncmp(filter.c_str(), a.id(), filter.length()) != 0)
+        {
+            continue;
+        }
         printf("--------------------------------------------------------\n");
         printf("agent:                %s\n", a.id());
         printf("in_use:               %s\n", a.in_use() ? "YES" : "NO");
@@ -440,12 +448,12 @@ int main()
         String input = "";
         while (input != "x")
         {
-            fprintf(stdout, "Enter 'd' to see database. Enter 'x' to exit this program.\n");
+            fprintf(stdout, "Enter to see database. Enter string to search id prefixes. Enter 'x' to exit this program.\n");
             std::getline(std::cin, input);
-            if (input == "d")
+            if (input != "x")
             {
                 begin_transaction();
-                dump_db();
+                dump_db(input.c_str());
                 commit_transaction();
             }            
         }
