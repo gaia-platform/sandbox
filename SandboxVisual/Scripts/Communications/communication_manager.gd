@@ -58,6 +58,8 @@ func _physics_process(_delta):
 			match get_tree().get_current_scene().get_name():
 				"AMRSwarmFactory":
 					match topic_extract[-1]:
+						"reset":
+							emit_signal("factory_reset")
 						"running":
 							emit_signal("factory_running")
 						"move_location":

@@ -35,6 +35,8 @@
     window.subscribeToTopic("appUUID", false);
   });
 
+  var get_started = "Get started guide currently unavailable";
+
   var state = {
     project: {
       current: null,
@@ -153,6 +155,7 @@
           setTabText('output', 'Ready');
           window.publishToCoordinator("editor/req", state.project.current + ".ddl");
           window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
+          window.publishToCoordinator("editor/req", "get_started.md");
           break;
 
         case 'build':
@@ -176,11 +179,13 @@
 
     let fileName = topicLevels[2];
     let fileExt = fileName.split('.').pop();
-    if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'output') {
+    if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'output' && fileExt != 'md') {
       return;
     }
 
-    if (topicLevels[3] == 'append') {
+    if (fileExt == 'md') {
+      get_started = payload;
+    } else if (topicLevels[3] == 'append') {
       appendTabText(fileExt, payload);
     }
     else {
@@ -210,7 +215,7 @@
   }
 
   function load() {
-    initEditorData('initializing...', 'initializing...', 'initializing...');
+    initEditorData('Loading...', 'Loading...', 'Loading...');
 
     // Set Monaco editor theme
     monaco.editor.defineTheme('gaiaTheme', {
@@ -299,6 +304,7 @@
           || state.project.buildStatus == 'building') {
       window.publishToCoordinator('project/stop', 'current');
     } else if (state.project.buildStatus == 'success') {
+      window.messages.push(JSON.stringify({ topic: "reset", payload: "reset" }));
       window.publishToCoordinator('project/run', state.project.current);
     } else {
       window.publishToCoordinator('project/build', state.project.current);
@@ -313,10 +319,21 @@
     prompt("Subscribe to MQTT topics with this UUID:", window.appUUID);
   });
 
+  $("#test-me").click(function () {
+    document.getElementById('godot').contentDocument.location.reload(true);
+  });
+
   $("#privacy-button").click(function () {
     $("#privacy-modal").show();
   });
+
+  $("#get-started-button").click(function () {
+    var result = window.md.render(get_started);
+    $("#get-started-md").html(result);
+    $("#get-started-modal").show();
+  });
+
   $(".modal-close-button").click(function () {
-    $("#privacy-modal").hide();
+    $(".modal").hide();
   });
 })(jQuery);
