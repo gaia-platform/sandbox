@@ -20,7 +20,7 @@ void publish_message(const string& topic, const string& payload);
 
 const uint32_t c_standby_containers = 1;
 const uint64_t c_agent_timeout = 240;
-const uint64_t c_session_timeout = 7200;
+const uint64_t c_session_timeout = 3600;
 
 // const uint64_t c_session_timeout = 1200000; // for testing
 
@@ -54,7 +54,7 @@ void stop_gaia_container(const string& agent_id)
 {
     gaia_log::app().info("Sending stop for agent_id {}", agent_id);
 
-    send_message(agent_id, "agent", "exit");  
+    send_message(agent_id, "agent", "exit");
 }
 
 void start_gaia_container(const string& session_id,
@@ -85,13 +85,32 @@ void add_standby_gaia_container()
 
 ruleset coordinator_ruleset: serial_group()
 {
+    // This is to lazily trim MIA agents one at a time whenever a live agent reports to the coordinator
     on_update(agent.last_timestamp)
     {
-        if (!in_use)
+        for (/A:agent)
         {
-            return;
-        }
+            if (max(A.last_timestamp, A.created_timestamp) + c_agent_timeout < (uint64_t)time(nullptr))
+            {
+                agent_t a;
+                a = A;
+                if (a.session())
+                {
+                    session.is_active = false;
+                    session.agent.disconnect();
+                }
+                A.remove();
+                if (!A.in_use)
+                {
+                    add_standby_gaia_container();
+                }
+                return;
+            }
+        }       
+    }
 
+    on_update(agent.last_timestamp)
+    {
         agent_t a;
         a = agent;
         if (a.session())
@@ -102,13 +121,16 @@ ruleset coordinator_ruleset: serial_group()
                 session.is_active = false;
                 session.agent.disconnect();
                 agent.remove();
+                return;
             }
         }
-        else
+        else if (in_use)
         {
             stop_gaia_container(agent.id);
             agent.remove();
+            return;
         }
+        send_message(agent.id, "agent", "keepAlive");
     }
 
     on_update(session.last_timestamp)
@@ -157,11 +179,20 @@ ruleset coordinator_ruleset: serial_group()
         {
             if (A.in_use == false)
             {
-                gaia_log::app().info("Found standby agent {} for session {}.", A.id, session.id);
-                A.in_use = true;
-                session.connect(A);
-                send_message(A.id, "sessionId", session.id);
-                return;
+                if (max(A.last_timestamp, A.created_timestamp) + c_agent_timeout < session.last_timestamp)
+                {
+                    gaia_log::app().info("Standby agent {} is MIA.", A.id);
+                    stop_gaia_container(A.id);
+                    A.remove();
+                }
+                else
+                {
+                    gaia_log::app().info("Found standby agent {} for session {}.", A.id, session.id);
+                    A.in_use = true;
+                    session.connect(A);
+                    send_message(A.id, "sessionId", session.id);
+                    return;
+                }
             }
         }
 
@@ -237,9 +268,7 @@ ruleset coordinator_ruleset: serial_group()
                 }
 
                 gaia_log::app().info("No file '{}' found, requesting from agent.", editor_file_request.name);
-                // send_message(session.session_id, "editor", editor_file_request.name, "Retrieving file...");
                 send_message(agent.id, P.name, "get", editor_file_request.name);
-                // send_message(session.session_id, "editor", "output", "Restoring session, this may take a few minutes...");
                 return;
             }
         }
