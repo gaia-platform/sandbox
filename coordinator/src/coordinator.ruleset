@@ -156,6 +156,11 @@ ruleset coordinator_ruleset: serial_group()
 
     on_change(session.is_active)
     {
+        if (!session.is_active)
+        {
+            return;
+        }
+
         session_t s;
         s = session;
         if (s.agent())
