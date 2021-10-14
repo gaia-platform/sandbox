@@ -100,10 +100,7 @@ ruleset coordinator_ruleset: serial_group()
                     session.agent.disconnect();
                 }
                 A.remove();
-                if (!A.in_use)
-                {
-                    add_standby_gaia_container();
-                }
+                add_standby_gaia_container();
                 return;
             }
         }       
