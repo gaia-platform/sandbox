@@ -96,8 +96,8 @@ ruleset coordinator_ruleset: serial_group()
                 a = A;
                 if (a.session())
                 {
-                    session.is_active = false;
-                    session.agent.disconnect();
+                    A->session.is_active = false;
+                    a.session().agent().disconnect();
                 }
                 A.remove();
                 add_standby_gaia_container();
@@ -156,15 +156,6 @@ ruleset coordinator_ruleset: serial_group()
 
     on_change(session.is_active)
     {
-        if (!session.is_active)
-        {
-            gaia_log::app().info("Session {} with agent {} is no longer active.", session.id, agent.id);
-            stop_gaia_container(agent.id);
-            session.agent.disconnect();
-            agent.remove();
-            return;
-        }
-
         session_t s;
         s = session;
         if (s.agent())
