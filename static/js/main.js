@@ -137,12 +137,12 @@
     }
 
     if (topicLevels[1] == 'session') {
-      if (payload == 'loading') {
+      if (payload == 'loading' && !state.session.loading) {
         state.session.loading = true;
         state.session.countdown = 2 * 60;
         sessionRestoreMessages();
       }
-      else if (payload == 'loaded') {
+      else if (payload == 'loaded' && state.session.loading) {
         state.session.loading = false;
         window.selectProject(state.project.current);
       }
