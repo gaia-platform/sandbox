@@ -35,7 +35,7 @@ def reader():
 @app.route('/', methods=['GET'])
 def index():
     # return the rendered template
-    return render_template("index.html", prod=sys.argv[1])
+    return render_template("index.html", prod=sys.argv[1], coordinator=sys.argv[2])
 
 @app.route('/health', methods=['GET'])
 def health():
