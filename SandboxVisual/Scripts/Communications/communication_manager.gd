@@ -14,6 +14,7 @@ signal factory_unpack_pallet
 signal factory_start_production
 signal factory_unload_pl
 signal factory_ship
+signal factory_reset
 
 # Access Control
 signal ac_init(init_data)
@@ -58,8 +59,12 @@ func _physics_process(_delta):
 			match get_tree().get_current_scene().get_name():
 				"AMRSwarmFactory":
 					match topic_extract[-1]:
-						"reset":
-							emit_signal("factory_reset")
+						"program":
+							print("TEST")
+							print(payload)
+							if payload == "stopped":
+								print("WHAT THE")
+								emit_signal("factory_reset")
 						"running":
 							emit_signal("factory_running")
 						"move_location":
