@@ -60,10 +60,7 @@ func _physics_process(_delta):
 				"AMRSwarmFactory":
 					match topic_extract[-1]:
 						"program":
-							print("TEST")
-							print(payload)
 							if payload == "stopped":
-								print("WHAT THE")
 								emit_signal("factory_reset")
 						"running":
 							emit_signal("factory_running")
