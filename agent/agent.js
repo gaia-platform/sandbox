@@ -118,7 +118,7 @@ function mqttClientConnectHandler() { // Connection handler
    publishToCoordinator('connected', agentId);
    setTimeout(sendKeepAlive, sendKeepAliveInterval * 60 * 1000);
    if (sessionId == 'standby') {
-      console.log('do builds...');
+      console.log('do builds... TODO: not actually doing the builds');
       /* this seems to be causing problems...
       projectNames.forEach(function(projectName){
          buildProject(projectName);

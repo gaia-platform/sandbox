@@ -3,10 +3,6 @@
 // All rights reserved.
 /////////////////////////////////////////////
 
-#include <atomic>
-#include <algorithm>
-#include <iostream>
-
 #include "gaia/logger.hpp"
 #include "gaia_coordinator.h"
 #include "json.hpp"
@@ -136,7 +132,7 @@ ruleset coordinator_ruleset: serial_group()
             max(agent.last_timestamp, agent.created_timestamp) + c_agent_timeout
             < session.last_timestamp)
         {
-            gaia_log::app().info("Session {} is active but agent {} is MIA.", session.id, agent.id);
+            gaia_log::app().error("Session {} is active but agent {} has timed out.", session.id, agent.id);
             stop_gaia_container(agent.id);
             session.is_active = false;
             session.agent.disconnect();
