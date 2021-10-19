@@ -42,7 +42,14 @@ using namespace gaia::direct_access;
 using namespace gaia::coordinator;
 using namespace gaia::rules;
 
+string env_coordinator_name;
+
 std::shared_ptr<Aws::Crt::Mqtt::MqttConnection> connection;
+
+void send_message(const string& id, const string& topic, const string& payload);
+void send_message(const string& id, const string& topic_level_1, const string& topic_level_2, const string& payload);
+void send_message(const string& id, const string& topic_level_1, const string& topic_level_2, const string& topic_level_3, const string& payload);
+void stop_gaia_container(const string& agent_id);
 
 string get_uuid()
 {
@@ -71,21 +78,27 @@ void publish_message(const string& topic, const string& payload)
     }
 }
 
-void dump_db()
+void dump_db(const string& filter = "")
 {
     printf("\n");
     printf("--------------------------------------------------------\n");
     printf("Sessions:\n");
     for (const auto &s : session_t::list())
     {
+        if (strncmp(filter.c_str(), s.id(), filter.length()) != 0)
+        {
+            continue;
+        }
         printf("--------------------------------------------------------\n");
-        printf("session:            %s\n", s.session_id());
-        printf("agent:              %s\n", s.agent_id());
-        printf("is_active:          %s\n", s.is_active() ? "YES" : "NO");
+        printf("session:              %s\n", s.id());
+        printf("is_active:            %s\n", s.is_active() ? "YES" : "NO");
         printf("current_project_name: %s\n", s.current_project_name());
-        printf("last_session_timestamp: %lu\n", s.last_session_timestamp());
-        printf("last_agent_timestamp: %lu\n", s.last_agent_timestamp());
-        printf("created_timestamp: %lu\n", s.created_timestamp());
+        printf("last_timestamp:       %lu\n", s.last_timestamp());
+        printf("created_timestamp:    %lu\n", s.created_timestamp());
+        if (s.agent())
+        {
+            printf("agent id:             %s\n", s.agent().id());
+        }
         printf("    Projects:\n");
         for (const auto &p : s.projects())
         {
@@ -99,52 +112,43 @@ void dump_db()
         }
     }
     printf("--------------------------------------------------------\n");
+    printf("Agents:\n");
+    for (const auto &a : agent_t::list())
+    {
+        if (strncmp(filter.c_str(), a.id(), filter.length()) != 0)
+        {
+            continue;
+        }
+        printf("--------------------------------------------------------\n");
+        printf("agent:                %s\n", a.id());
+        printf("in_use:               %s\n", a.in_use() ? "YES" : "NO");
+        printf("last_timestamp:       %lu\n", a.last_timestamp());
+        printf("created_timestamp:    %lu\n", a.created_timestamp());
+        if (a.session())
+        {
+            printf("session id:           %s\n", a.session().id());
+            printf("session timestamp:    %lu\n", a.session().last_timestamp());
+        }
+    }
+    printf("--------------------------------------------------------\n");
 }
 
 session_t get_session(const string& id)
 {
-    auto session_iter = session_t::list()
-                            .where(session_t::expr::session_id == id || session_t::expr::agent_id == id)
-                            .begin();
+    auto session_iter = session_t::list().where(session_t::expr::id == id).begin();
     if (session_iter == session_t::list().end())
     {
         gaia_log::app().info("Creating new session");
         session_writer w;
-        w.session_id = id;
-        w.agent_id = "NONE";
+        w.id = id;
         w.is_active = false;
-        w.last_session_timestamp = (uint64_t)time(nullptr);
-        w.last_agent_timestamp = (uint64_t)time(nullptr);
+        w.last_timestamp = (uint64_t)time(nullptr);
         w.created_timestamp = (uint64_t)time(nullptr);
+        w.current_project_name = "none";
         return session_t::get(w.insert_row());
     }
     gaia_log::app().info("Existing session found");
     return *session_iter;
-}
-
-browser_activity_t browser_activity()
-{
-    browser_activity_writer w;
-    w.timestamp = (uint64_t)time(nullptr);
-    return browser_activity_t::get(w.insert_row());
-}
-
-agent_activity_t agent_activity(const string& agent_id, const string& action)
-{
-    agent_activity_writer w;
-    w.agent_id = agent_id;
-    w.action = action;
-    w.timestamp = (uint64_t)time(nullptr);
-    return agent_activity_t::get(w.insert_row());
-}
-
-project_activity_t project_activity(const string& name, const string& action)
-{
-    project_activity_writer w;
-    w.name = name;
-    w.action = action;
-    w.timestamp = (uint64_t)time(nullptr);
-    return project_activity_t::get(w.insert_row());
 }
 
 editor_file_request_t editor_file_request(const string& name)
@@ -207,46 +211,73 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
 
     begin_transaction();
 
-    session_t session = get_session(topic_vector[1]);
-
-    if (topic_vector[2] == "browser")
-    {
-        auto activity = browser_activity();
-        session.browser_activities().insert(activity);
-    }
-    else if (topic_vector[2] == "agent")
+    if (topic_vector[2] == "agent")
     {
         if (topic_vector.size() < 4)
         {
             gaia_log::app().error("Unexpected topic {}", topic.c_str());
-            return;
         }
-        auto activity = agent_activity(topic_vector[1], topic_vector[3]);
-        session.agent_activities().insert(activity);
-    }
-    else if (topic_vector[2] == "project")
-    {
-        auto activity = project_activity(payload_str.c_str(), topic_vector[3]);
-        session.project_activities().insert(activity);
-    }
-    else if (topic_vector[2] == "editor")
-    {
-        if (topic_vector.size() < 4)
+        else
         {
-            gaia_log::app().error("Unexpected topic");
-            return;
+            auto agent_iter = agent_t::list().where(agent_t::expr::id == topic_vector[1]).begin();
+            if (agent_iter != agent_t::list().end())
+            {
+                auto w = agent_iter->writer();
+                w.last_timestamp = (uint64_t)time(nullptr);
+                w.update_row();
+            }
+            else
+            {
+                stop_gaia_container(topic_vector[1]);
+            }
         }
+    }
+    else
+    {
+        session_t session = get_session(topic_vector[1]);
+        session_writer w = session.writer();
+        w.last_timestamp = (uint64_t)time(nullptr);
 
-        if (topic_vector[3] == "req")
+        if (topic_vector[2] == "project")
         {
-            auto activity = editor_file_request(payload_str.c_str());
-            session.editor_file_requests().insert(activity);
+            if (topic_vector.size() < 4)
+            {
+                gaia_log::app().error("Unexpected topic {}", topic.c_str());
+            }
+            else
+            {
+                if (session.agent())
+                {
+                    send_message(session.agent().id(), payload_str.c_str(), topic_vector[3]);
+                }
+                if (topic_vector[3] == "exit")
+                {
+                    w.current_project_name = "none";
+                }
+                else if (topic_vector[3] == "select")
+                {
+                    w.current_project_name = payload_str.c_str();
+                }
+            }
         }
-        else if (topic_vector.size() == 5 && topic_vector[3] == "file")
+        else if (topic_vector[2] == "editor")
         {
-            auto activity = editor_content(topic_vector[4], payload_str.c_str());
-            session.editor_contents().insert(activity);
+            if (topic_vector.size() < 4)
+            {
+                gaia_log::app().error("Unexpected topic");
+            }
+            else if (topic_vector[3] == "req")
+            {
+                auto activity = editor_file_request(payload_str.c_str());
+                session.editor_file_requests().insert(activity);
+            }
+            else if (topic_vector.size() == 5 && topic_vector[3] == "file")
+            {
+                auto activity = editor_content(topic_vector[4], payload_str.c_str());
+                session.editor_contents().insert(activity);
+            }
         }
+        w.update_row();
     }
 
     commit_transaction();
@@ -254,6 +285,16 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
 
 int main()
 {
+    char* s = std::getenv("COORDINATOR_NAME");
+    if (s)
+    {
+        env_coordinator_name = s;
+    }
+    else
+    {
+        env_coordinator_name = "sandbox_coordinator";
+    }
+
     gaia::system::initialize();
 
     begin_transaction();
@@ -267,7 +308,6 @@ int main()
     String keyPath("../certs/coordinator-private.pem.key");
     String caFile("../certs/AmazonRootCA1.pem");
     String clientId = Aws::Crt::UUID().ToString();
-    String topic("client-xx/topic_1");
 
     Io::EventLoopGroup eventLoopGroup(1);
     if (!eventLoopGroup)
@@ -378,7 +418,7 @@ int main()
     {
         std::promise<void> subscribeFinishedPromise;
         auto onSubAck =
-            [&](Mqtt::MqttConnection &, uint16_t packetId, const String &topic, Mqtt::QOS QoS, int errorCode)
+            [&](Mqtt::MqttConnection &, uint16_t packetId, const String& topic, Mqtt::QOS QoS, int errorCode)
         {
             if (errorCode)
             {
@@ -400,12 +440,23 @@ int main()
             subscribeFinishedPromise.set_value();
         };
 
-        connection->Subscribe("sandbox_coordinator/#", AWS_MQTT_QOS_AT_LEAST_ONCE, on_message, onSubAck);
+        string topic = env_coordinator_name;
+        topic += "/#";
+        connection->Subscribe(topic.c_str(), AWS_MQTT_QOS_AT_LEAST_ONCE, on_message, onSubAck);
         subscribeFinishedPromise.get_future().wait();
 
-        String input;
-        fprintf(stdout, "Enter enter to exit this program.\n");
-        std::getline(std::cin, input);
+        String input = "";
+        while (input != "x")
+        {
+            fprintf(stdout, "Enter to see database. Enter string to search id prefixes. Enter 'x' to exit this program.\n");
+            std::getline(std::cin, input);
+            if (input != "x")
+            {
+                begin_transaction();
+                dump_db(input.c_str());
+                commit_transaction();
+            }            
+        }
 
         std::promise<void> unsubscribeFinishedPromise;
         connection->Unsubscribe(

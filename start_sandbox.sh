@@ -8,6 +8,7 @@ show_usage() {
     echo "Flags:"
     echo "  -d,--debug                  Debug mode."
     echo "  -p,--prod                   Run in production, otherwise no messaging with coordinator."
+    echo "  -c,--coord name             Provide coordinator name to override default of sandbox_coordinator."
     echo "  -h,--help                   Display this help text."
     echo ""
     exit 1
@@ -17,6 +18,7 @@ show_usage() {
 parse_command_line() {
     DEBUG=false
     PROD=false
+    COORD=sandbox_coordinator
 
     while (( "$#" )); do
     case "$1" in
@@ -26,6 +28,11 @@ parse_command_line() {
         ;;
         -p|--prod)  # run in production, otherwise no messaging with coordinator
             PROD=true
+            shift
+        ;;
+        -c|--coord)
+            shift
+            COORD=$1
             shift
         ;;
         -h|--help)
@@ -55,4 +62,5 @@ fi
 sed -i "16s/.*/\t\t\tbackground-color: #f4f6f8;/" static/visual/index.html # Change loading screen to white
 sed -i "58s/.*/\t\t\tbackground-color: gray;/" static/visual/index.html # Change loading progress bar to gray
 sed -i "195s/.*/\t\t\t\t\tstatusIndeterminate.children[i].style.borderTopColor = 'gray';/" static/visual/index.html # Change loading wheel to gray
-python3 application.py $PROD
+
+python3 application.py $PROD $COORD

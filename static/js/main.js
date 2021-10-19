@@ -137,20 +137,21 @@
     }
 
     if (topicLevels[1] == 'session') {
-      if (payload == 'loading') {
+      if (payload == 'loading' && !state.session.loading) {
         state.session.loading = true;
         state.session.countdown = 2 * 60;
         sessionRestoreMessages();
       }
-      else if (payload == 'loaded') {
+      else if (payload == 'loaded' && state.session.loading) {
         state.session.loading = false;
+        window.selectProject(state.project.current);
       }
       return;
     }
 
     if (topicLevels[1] == 'project') {
       switch (topicLevels[2].toString()) {
-        case 'select':
+        case 'ready':
           state.project.current = payload;
           setTabText('output', 'Ready');
           window.publishToCoordinator("editor/req", state.project.current + ".ddl");

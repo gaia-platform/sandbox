@@ -3,10 +3,6 @@
 // All rights reserved.
 /////////////////////////////////////////////
 
-#include <atomic>
-#include <algorithm>
-#include <iostream>
-
 #include "gaia/logger.hpp"
 #include "gaia_coordinator.h"
 #include "json.hpp"
@@ -16,151 +12,230 @@ using namespace std;
 using namespace gaia::coordinator;
 
 string get_uuid();
-void publish_message(const string &topic, const string &payload);
+void publish_message(const string& topic, const string& payload);
 
-const uint64_t c_agent_timeout = 150;
-const uint64_t c_session_timeout = 7200;
+const uint32_t c_standby_containers = 1;
+const uint64_t c_agent_timeout = 240;
+const uint64_t c_session_timeout = 3600;
+
 // const uint64_t c_session_timeout = 1200000; // for testing
 
-void dump_db();
+extern string env_coordinator_name;
 
-void send_message(const string &id,
-                  const string &topic,
-                  const string &payload)
+void send_message(const string& id,
+                  const string& topic,
+                  const string& payload)
 {
     publish_message(id + '/' + topic, payload);
 }
 
-void send_message(const string &id,
-                  const string &topic_level_1,
-                  const string &topic_level_2,
-                  const string &payload)
+void send_message(const string& id,
+                  const string& topic_level_1,
+                  const string& topic_level_2,
+                  const string& payload)
 {
     publish_message(id + '/' + topic_level_1 + '/' + topic_level_2, payload);
 }
 
-void send_message(const string &id,
-                  const string &topic_level_1,
-                  const string &topic_level_2,
-                  const string &topic_level_3,
-                  const string &payload)
+void send_message(const string& id,
+                  const string& topic_level_1,
+                  const string& topic_level_2,
+                  const string& topic_level_3,
+                  const string& payload)
 {
     publish_message(id + '/' + topic_level_1 + '/' + topic_level_2 + '/' + topic_level_3, payload);
 }
 
-void start_gaia_container(const string &session_id,
-                          const string &agent_id)
+void stop_gaia_container(const string& agent_id)
 {
-    gaia_log::app().info("Sending start for agent_id {}", agent_id);
+    gaia_log::app().info("Sending stop for agent_id {}", agent_id);
+
+    send_message(agent_id, "agent", "exit");
+}
+
+void start_gaia_container(const string& session_id,
+                          const string& agent_id)
+{
+    gaia_log::app().info("Sending start for session_id {} with agent_id {}", session_id, agent_id);
 
     json j;
     j["session_id"] = session_id;
     j["agent_id"] = agent_id;
+    j["coordinator_name"] = env_coordinator_name;
     publish_message("manage_gaia_container", j.dump());
     send_message(session_id, "session", "loading");
 }
 
-void stop_gaia_container(const string &agent_id)
+void add_standby_gaia_container()
 {
-    gaia_log::app().info("Sending stop for agent_id {}", agent_id);
-
-    send_message(agent_id, "agent", "exit");  
+    if (agent_t::list().where(agent_t::expr::in_use == false).size() < c_standby_containers)
+    {
+        agent_writer w;
+        w.id = get_uuid().c_str();
+        w.in_use = false;
+        w.last_timestamp = 0;
+        w.created_timestamp = (uint64_t)time(nullptr);
+        w.insert_row();
+    }
 }
 
-ruleset coordinator_ruleset
+ruleset coordinator_ruleset: serial_group()
 {
-    on_insert(browser_activity)
+    // This is to lazily trim MIA agents one at a time whenever a live agent reports to the coordinator
+    on_update(agent.last_timestamp)
     {
-        gaia_log::app().info("New browser activity.");
-
-        session.last_session_timestamp = browser_activity.timestamp;
-        if (session.is_active &&
-            session.last_agent_timestamp + c_agent_timeout < browser_activity.timestamp)
+        for (/A:agent)
         {
-            gaia_log::app().info("Session {} is active but agent is MIA.", session.session_id);
-            session.is_active = false;
-            stop_gaia_container(session.agent_id);
-        }
-        if (!session.is_active)
-        {
-            session.is_active = true;
-            session.agent_id = get_uuid().c_str();
-            session.last_agent_timestamp = browser_activity.timestamp;
-            start_gaia_container(session.session_id, session.agent_id);
-        }
+            if (max(A.last_timestamp, A.created_timestamp) + c_agent_timeout < (uint64_t)time(nullptr))
+            {
+                agent_t a;
+                a = A;
+                if (a.session())
+                {
+                    A->session.is_active = false;
+                    a.session().agent().disconnect();
+                }
+                A.remove();
+                add_standby_gaia_container();
+                return;
+            }
+        }       
     }
 
-    on_insert(agent_activity)
+    on_update(agent.last_timestamp)
     {
-        if (strcmp(agent_activity.agent_id, session.agent_id) != 0)
+        agent_t a;
+        a = agent;
+        if (a.session())
         {
-            stop_gaia_container(agent_activity.agent_id);
-        }
-        else if (!session.is_active ||
-            session.last_session_timestamp + c_session_timeout < agent_activity.timestamp)
-        {
-            session.is_active = false;
-            stop_gaia_container(session.agent_id);
-        }
-        else
-        {
-            session.last_agent_timestamp = agent_activity.timestamp;
-            if (strcmp(agent_activity.action, "connected") == 0)
+            if (!session.is_active || session.last_timestamp + c_session_timeout < agent.last_timestamp)
             {
-                send_message(session.session_id, "session", "loaded");
-
-                if (strcmp(session.current_project_name, "none") != 0)
-                {
-                    send_message(session.session_id, "project", "select", session.current_project_name);
-                }
+                stop_gaia_container(agent.id);
+                session.is_active = false;
+                session.agent.disconnect();
+                agent.remove();
+                return;
             }
         }
+        else if (in_use)
+        {
+            stop_gaia_container(agent.id);
+            agent.remove();
+            return;
+        }
+        send_message(agent.id, "agent", "keepAlive");
     }
 
-    on_insert(project_activity)
+    on_update(session.last_timestamp)
     {
-        if (strcmp(project_activity.action, "exit") == 0)
+        if (session.is_active &&
+            max(agent.last_timestamp, agent.created_timestamp) + c_agent_timeout
+            < session.last_timestamp)
         {
-            session.current_project_name = "none";
+            gaia_log::app().error("Session {} is active but agent {} has timed out.", session.id, agent.id);
+            stop_gaia_container(agent.id);
+            session.is_active = false;
+            session.agent.disconnect();
+            agent.remove();
+            // UNDONE: send reload message to sandbox
         }
     }
 
-    on_insert(project_activity)
+    on_change(session.last_timestamp)
     {
-        if (strcmp(project_activity.action, "select") != 0)
+        if (!session.is_active &&
+            session.last_timestamp + c_session_timeout > (uint64_t)time(nullptr))
+        {
+            session.is_active = true;
+        }
+    }
+
+    on_change(session.is_active)
+    {
+        if (!session.is_active)
         {
             return;
         }
 
-        session.current_project_name = project_activity.name;
+        session_t s;
+        s = session;
+        if (s.agent())
+        {
+            return;
+        }
+
+        for (/A:agent)
+        {
+            if (A.in_use == false)
+            {
+                if (max(A.last_timestamp, A.created_timestamp) + c_agent_timeout < session.last_timestamp)
+                {
+                    gaia_log::app().info("Standby agent {} is MIA.", A.id);
+                    stop_gaia_container(A.id);
+                    A.remove();
+                }
+                else
+                {
+                    gaia_log::app().info("Found standby agent {} for session {}.", A.id, session.id);
+                    A.in_use = true;
+                    session.connect(A);
+                    send_message(A.id, "sessionId", session.id);
+                    return;
+                }
+            }
+        }
+
+        gaia_log::app().info("Starting new agent.");
+        send_message(session.id, "session", "loading");
+        session.connect(agent.insert(id:get_uuid().c_str(), in_use:true, last_timestamp:0,
+                                        created_timestamp:(uint64_t)time(nullptr)));
+    }
+
+    on_update(session.current_project_name)
+    {
+        gaia_log::app().info("Current project name change to {}.", session.current_project_name);
+
+        if (strcmp(session.current_project_name, "none") == 0)
+        {
+            return;
+        }
 
         for (session->P:project)
         {
-            if (strcmp(P.name, project_activity.name) == 0)
+            if (strcmp(P.name, session.current_project_name) == 0)
             {
-                gaia_log::app().info("Found existing project {}.", project_activity.name);
-                send_message(session.session_id, "project", "select", project_activity.name);
-
-                dump_db();
+                gaia_log::app().info("Found existing project {}.", P.name);
+                send_message(agent.id, "project", "select", P.name);
                 return;
             }
         }
 
-        gaia_log::app().info("No existing project {} found. Creating new one.", project_activity.name);
+        gaia_log::app().info("No existing project {} found. Creating new one.", session.current_project_name);
 
         project_writer w;
-        w.name = project_activity.name;
+        w.name = session.current_project_name;
         auto project_ = project_t::get(w.insert_row());
         session.projects.connect(project_);
 
-        send_message(session.session_id, "project", "select", project_activity.name);
-
-        dump_db();
+        send_message(agent.id, "project", "select", session.current_project_name);
     }
 
-    on_insert(project_activity)
+    on_change(agent.in_use)
     {
-        send_message(session.agent_id, project_activity.name, project_activity.action);
+        add_standby_gaia_container();
+    }
+
+    on_insert(agent)
+    {
+        if (agent.in_use)
+        {
+            start_gaia_container(session.id, agent.id);
+        }
+        else
+        {
+            start_gaia_container("standby", agent.id);
+        }
+        add_standby_gaia_container();
     }
 
     on_insert(editor_file_request)
@@ -175,16 +250,14 @@ ruleset coordinator_ruleset
                 {
                     if (strcmp(PF.name, editor_file_request.name) == 0)
                     {
-                        send_message(session.session_id, "editor", PF.name, PF.content);
-                        send_message(session.agent_id, P.name, PF.name, PF.content);
+                        send_message(session.id, "editor", PF.name, PF.content);
+                        send_message(agent.id, P.name, PF.name, PF.content);
                         return;
                     }
                 }
 
                 gaia_log::app().info("No file '{}' found, requesting from agent.", editor_file_request.name);
-                // send_message(session.session_id, "editor", editor_file_request.name, "Retrieving file...");
-                send_message(session.agent_id, P.name, "get", editor_file_request.name);
-                // send_message(session.session_id, "editor", "output", "Restoring session, this may take a few minutes...");
+                send_message(agent.id, P.name, "get", editor_file_request.name);
                 return;
             }
         }
@@ -204,20 +277,16 @@ ruleset coordinator_ruleset
                     {
                         gaia_log::app().info("Existing file '{}' found.", editor_content->project_file.name);
                         PF.content = editor_content->project_file.content;
-                        send_message(session.agent_id, P.name, "file", editor_content->project_file.name,
+                        send_message(agent.id, P.name, "file", editor_content->project_file.name,
                             editor_content->project_file.content);
-
-                        dump_db();
                         return;
                     }
                 }
 
                 gaia_log::app().info("No existing file '{}' found. Storing new one.", editor_content->project_file.name);
                 P.project_file.connect(editor_content->project_file);                
-                send_message(session.agent_id, P.name, "file", editor_content->project_file.name,
+                send_message(agent.id, P.name, "file", editor_content->project_file.name,
                     editor_content->project_file.content);
-
-                dump_db();
                 return;
             }
         }
