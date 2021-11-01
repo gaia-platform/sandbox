@@ -22,8 +22,7 @@ process.env.REMOTE_CLIENT_ID = sessionId;
 
 const sendKeepAliveInterval = 1;  // in minutes
 const receiveKeepAliveInterval = 3;  // in minutes
-//const projectNames = ['access_control', 'amr_swarm'];
-const projectNames = ['amr_swarm'];
+const projectNames = ['access_control'];
 var gaiaChild = null;
 var cmakeBuild = null;
 var makeBuild = null;
@@ -118,12 +117,10 @@ function mqttClientConnectHandler() { // Connection handler
    publishToCoordinator('connected', agentId);
    setTimeout(sendKeepAlive, sendKeepAliveInterval * 60 * 1000);
    if (sessionId == 'standby') {
-      console.log('do builds... TODO: not actually doing the builds');
-      /* this seems to be causing problems...
+      console.log('Building project(s)...');
       projectNames.forEach(function(projectName){
          buildProject(projectName);
       });
-      */
    } else {
       mqttClient.publish(sessionId + '/session', 'loaded');      
    }
@@ -161,8 +158,7 @@ function saveFile(projectName, fileName, content) {
 function cleanProjects() {
    projectNames.forEach(projectName => {
       console.log('rm -r templates/' + projectName + '_template/build/gaia_generated');
-      exec('rm -r templates/' + projectName + '_template/build/gaia_generated');
-      exec('mkdir -p templates/' + projectName + '_template/build');
+      exec('rm -r templates/' + projectName + '_template/build/gaia_generated && mkdir -p templates/' + projectName + '_template/build');
       console.log('from directory: templates/' + projectName + '_template/build');
       console.log('cmake ..');
       cmakeBuild = spawn('cmake', ['..'], { cwd: 'templates/' + projectName + '_template/build' });
@@ -305,11 +301,12 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
             break;
 
          case 'exit':
-            stopProcesses();
+            break;
+            /*stopProcesses();
             if (topicTokens[1] == 'agent') {
                exitAgent();
             }
-            break;
+            break;*/
                
          default:
             break;
