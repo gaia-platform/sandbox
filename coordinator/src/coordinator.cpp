@@ -292,7 +292,8 @@ int main()
     }
     else
     {
-        env_coordinator_name = "sandbox_coordinator";
+        fprintf(stderr, "Environment variable COORDINATOR_NAME must be set. In production (and only in production) the COORDINATOR_NAME must be set to sandbox_coordinator\n");
+        exit(-1);
     }
 
     gaia::system::initialize();
