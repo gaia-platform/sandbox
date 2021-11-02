@@ -88,6 +88,8 @@ ruleset coordinator_ruleset: serial_group()
         {
             if (max(A.last_timestamp, A.created_timestamp) + c_agent_timeout < (uint64_t)time(nullptr))
             {
+                gaia_log::app().info("Found timed-out agent {}, removing from DB", A.id);
+
                 agent_t a;
                 a = A;
                 if (a.session())
@@ -110,6 +112,8 @@ ruleset coordinator_ruleset: serial_group()
         {
             if (!session.is_active || session.last_timestamp + c_session_timeout < agent.last_timestamp)
             {
+                gaia_log::app().info("Agent {} reported for inactive session {}.", agent.id, session.id);
+
                 stop_gaia_container(agent.id);
                 session.is_active = false;
                 session.agent.disconnect();
@@ -166,22 +170,14 @@ ruleset coordinator_ruleset: serial_group()
 
         for (/A:agent)
         {
-            if (A.in_use == false)
+            if (A.in_use == false
+                && max(A.last_timestamp, A.created_timestamp) + c_agent_timeout > session.last_timestamp)
             {
-                if (max(A.last_timestamp, A.created_timestamp) + c_agent_timeout < session.last_timestamp)
-                {
-                    gaia_log::app().info("Standby agent {} is MIA.", A.id);
-                    stop_gaia_container(A.id);
-                    A.remove();
-                }
-                else
-                {
-                    gaia_log::app().info("Found standby agent {} for session {}.", A.id, session.id);
-                    A.in_use = true;
-                    session.connect(A);
-                    send_message(A.id, "sessionId", session.id);
-                    return;
-                }
+                gaia_log::app().info("Found standby agent {} for session {}.", A.id, session.id);
+                A.in_use = true;
+                session.connect(A);
+                send_message(A.id, "sessionId", session.id);
+                return;
             }
         }
 
