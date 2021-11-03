@@ -175,6 +175,8 @@ func _init_app():
 		"factory_data", to_json({"robot_types": robot_types, "areas_by_type": areas_by_type})
 	)
 
+	change_bots_button.disabled = true
+
 	# Wait for factory data to be processed
 	yield(get_tree().create_timer(0.1), "timeout")
 

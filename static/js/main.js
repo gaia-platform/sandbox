@@ -290,7 +290,9 @@
 
   // Button functions
   $(".editor-tab").click(function () {
-    setTab($(this).attr("data-tab-name"));
+    if ($(this).attr("data-tab-name") != "run") {
+      setTab($(this).attr("data-tab-name"));
+    }
   });
 
   $("#ctrl-button").click(function () {
@@ -318,10 +320,6 @@
 
   $("#test-button").click(function () {
     prompt("Subscribe to MQTT topics with this UUID:", window.appUUID);
-  });
-
-  $("#test-me").click(function () {
-    document.getElementById('godot').contentDocument.location.reload(true);
   });
 
   $("#privacy-button").click(function () {

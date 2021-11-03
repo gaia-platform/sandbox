@@ -85,12 +85,14 @@
   <div stackColumnsAt="tablet" class="div-3" data-name="div-2">
     <div class="builder-columns columns">
       <div class="builder-column column-5">
-        <div class="div-4">
+        <div class="div-4" style="width: 100%;">
           <span class="editor-tab button selected-tab" data-tab-name="ruleset">Ruleset</span>
 
           <span class="editor-tab button" data-tab-name="ddl">DDL</span>
 
           <span class="editor-tab button" data-tab-name="output">Output</span>
+
+          <span style="position: absolute; right: 0;" class="editor-tab button" data-tab-name="run" id="ctrl-button">Build</span>
         </div>
 
         <div class="div-5" id="sandboxEditor">
@@ -101,28 +103,21 @@
         <div stackColumnsAt="tablet" class="div-6" data-name="div-3">
           <div class="builder-columns columns">
             <div class="builder-column column-7">
-              <span class="span-4 button" id="ctrl-button">Build</span>
-            </div>
-
-            <div class="builder-column column-8">
-              <span class="span-5 button" id="get-started-button">Get Started</span>
+              <span style="background-color:#00B7DD" class="span-4 button" id="get-started-button">Read me</span>
             </div>
 
             <!-- These buttons should only be available when running without communicating with
               a coordinator. Otherwise the coordinator is responsible for exchanging any IDs. -->
             {% if coordinator == 'none' %}
+            <div class="builder-column column-8">
+              <span class="span-5 button" id="reset-button">Show REMOTE_CLIENT_ID</span>
+            </div>
+
             <div class="builder-column column-9">
-              <span class="span-6 button" id="reset-button">Show REMOTE_CLIENT_ID</span>
-            </div>
-
-            <div class="builder-column column-10">
-              <span class="span-7 button" id="test-button">Show Subscribe UUID</span>
-            </div>
-
-            <div class="builder-column column-11">
-              <span class="span-8 button" id="test-me">TEST</span>
+              <span class="span-6 button" id="test-button">Show Subscribe UUID</span>
             </div>
             {% endif %}
+
           </div>
         </div>
 
