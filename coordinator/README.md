@@ -29,7 +29,7 @@ sudo make install
 ```
 
 ## Install AWS IoT certificates
-* Go [here](https://us-west-2.console.aws.amazon.com/iot/home?region=us-west-2#/thing/sandbox_coordinator) to create a certificate for the sandbox_coordinator thing and attach the certificate to the [SandboxCoordinator Policy](arn:aws:iot:us-west-2:794670594658:policy/SandboxCoordinator).
+* [Create a certificate](https://us-west-2.console.aws.amazon.com/iot/home?region=us-west-2#/thing/sandbox_coordinator) for the `sandbox_coordinator` Thing and attach the certificate to the certificate to the SandboxCoordinator Policy: arn:aws:iot:us-west-2:794670594658:policy/SandboxCoordinator.
 * Download the new certificate, private key, and Amazon root CA1 certificate.
 * Create a new folder named certs in your coordinator directory and copy the downloaded files there.
 * Rename the certificate and private key respectively to: coordinator-certificate.pem.crt and coordinator-private.pem.key
@@ -46,7 +46,7 @@ make
 ```
 
 ## Run the Coordinator
-When developing and/or testing the coordinator, set the environment variable COORDINATOR_NAME to a globally unique name for your instance of the coordinator. In production (and only in production) the COORDINATOR_NAME value must be set to sandbox_coordinator.
+When developing and/or testing the coordinator, set the environment variable COORDINATOR_NAME to a globally unique name for your instance of the coordinator. In production (and only in production) the COORDINATOR_NAME value must be set to `sandbox_coordinator`.
 ```bash
 export COORDINATOR_NAME=<your chosen coordinator name>
 ```

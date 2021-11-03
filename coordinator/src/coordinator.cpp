@@ -296,6 +296,19 @@ int main()
         exit(-1);
     }
 
+    if (env_coordinator_name == "sandbox_coordinator")
+    {
+        fprintf(stdout, "Environment variable COORDINATOR_NAME must only be set to sandbox_coordinator when deployed in production.\n");
+        fprintf(stdout, "Are you deploying in production and sure you want to continue?\n");
+        fprintf(stdout, "(Enter y to continue, n to exit)\n");
+        String input;
+        std::getline(std::cin, input);
+        if (input != "y" && input != "Y")
+        {
+            exit(-1);
+        }
+    }
+
     gaia::system::initialize();
 
     begin_transaction();
@@ -456,7 +469,7 @@ int main()
                 begin_transaction();
                 dump_db(input.c_str());
                 commit_transaction();
-            }            
+            }
         }
 
         std::promise<void> unsubscribeFinishedPromise;
