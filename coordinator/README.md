@@ -46,7 +46,7 @@ make
 ```
 
 ## Run the Coordinator
-When developing and/or testing the coordinator, set the environment variable COORDINATOR_NAME to a globally unique name for your instance of the coordinator. In production (and only in production) the COORDINATOR_NAME value must be set to `sandbox_coordinator`.
+When developing and/or testing the coordinator, set the environment variable `COORDINATOR_NAME` to a globally unique name for your instance of the coordinator. In production (and only in production) the `COORDINATOR_NAME` value must be set to `sandbox_coordinator`.
 ```bash
 export COORDINATOR_NAME=<your chosen coordinator name>
 ```
