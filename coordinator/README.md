@@ -56,4 +56,4 @@ Then run the coordinator
 ```
 
 ## Run the Sandbox web server
-Follow the instruction in the README.md file in the root directory of the sandbox project to install and launch the sandbox front end/UI specifying the coordinator name you used above when launching it.
+Follow this repository's [README](../README.md) instructions to install and launch the sandbox front-end/UI specifying the coordinator name you used above when launching it.
