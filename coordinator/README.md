@@ -31,9 +31,9 @@ sudo make install
 ## Install AWS IoT certificates
 * [Create a certificate](https://us-west-2.console.aws.amazon.com/iot/home?region=us-west-2#/thing/sandbox_coordinator) for the `sandbox_coordinator` Thing and attach the certificate to the certificate to the SandboxCoordinator Policy: arn:aws:iot:us-west-2:794670594658:policy/SandboxCoordinator.
 * Download the new certificate, private key, and Amazon root CA1 certificate.
-* Create a new folder named certs in your coordinator directory and copy the downloaded files there.
-* Rename the certificate and private key respectively to: coordinator-certificate.pem.crt and coordinator-private.pem.key
-* Leave the Amazon root certificate name unchanged, namely: AmazonRootCA1.pem
+* Create a new folder named `certs` in your coordinator directory and copy the downloaded files there.
+* Rename the certificate and private key respectively to: `coordinator-certificate.pem.crt` and `coordinator-private.pem.key`
+* Leave the Amazon root certificate name unchanged, namely: `AmazonRootCA1.pem`
 
 ## Build Sandbox Coordinator
 Create build directory within coordinator directory, run cmake and then make.
@@ -56,4 +56,4 @@ Then run the coordinator
 ```
 
 ## Run the Sandbox web server
-Follow the instruction in the README.md file in the root directory of the sandbox project to install and launch the sandbox front end/UI specifying the coordinator name you used above when launching it.
+Follow this repository's [README](../README.md) instructions to install and launch the sandbox front-end/UI specifying the coordinator name you used above when launching it.

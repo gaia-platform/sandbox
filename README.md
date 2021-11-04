@@ -62,6 +62,6 @@ The above command will launch the sandbox without communicating with a coordinat
 ```bash
 . ./start_sandbox.sh -c <the coordinator name>
 ```
-Do *not* use the name sandbox_coordinator unless running in production.
+Do *not* use the name `sandbox_coordinator` unless running in production.
 ___
 Please contact [Steve Harris](mailto:steve@gaiaplatform.io) for questions.
