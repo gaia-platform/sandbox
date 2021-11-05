@@ -14,7 +14,8 @@ table session (
     agent references agent,
     projects references project[],
     editor_file_requests references editor_file_request[],
-    editor_contents references editor_content[]
+    editor_contents references editor_content[],
+    metrics references session_metrics
 )
 
 table agent (
@@ -48,5 +49,17 @@ table editor_file_request (
 table editor_content (
     timestamp uint64,
     project_file references project_file,
+    session references session
+)
+
+table session_metrics (
+    num_ruleset_edits uint16,
+    num_ddl_edits uint16,
+    num_ruleset_changed_chars uint16,
+    num_ddl_changed_chars uint16,
+    num_builds uint16,
+    num_runs uint16,
+    num_stops uint16,
+    num_errors uint16,
     session references session
 )

@@ -6,6 +6,7 @@
 #include "gaia/logger.hpp"
 #include "gaia_coordinator.h"
 #include "json.hpp"
+#include "metrics.hpp"
 
 using json = nlohmann::json;
 using namespace std;
@@ -265,6 +266,9 @@ ruleset coordinator_ruleset: serial_group()
 
         for (session->P:project)
         {
+            session_t session_edc;
+            session_edc = session;
+
             if (strcmp(P.name, session.current_project_name) == 0)
             {
                 for (P->PF:project_file)
@@ -272,17 +276,23 @@ ruleset coordinator_ruleset: serial_group()
                     if (strcmp(PF.name, editor_content->project_file.name) == 0)
                     {
                         gaia_log::app().info("Existing file '{}' found.", editor_content->project_file.name);
+                        metrics::emit_file_changed(session_edc.metrics(), editor_content,  PF.content);
                         PF.content = editor_content->project_file.content;
                         send_message(agent.id, P.name, "file", editor_content->project_file.name,
                             editor_content->project_file.content);
+
+                        metrics::dump_metrics(session_edc.metrics());
                         return;
                     }
                 }
 
                 gaia_log::app().info("No existing file '{}' found. Storing new one.", editor_content->project_file.name);
-                P.project_file.connect(editor_content->project_file);                
+                metrics::emit_file_changed(session_edc.metrics(), editor_content, nullptr);
+                P.project_file.connect(editor_content->project_file);
                 send_message(agent.id, P.name, "file", editor_content->project_file.name,
                     editor_content->project_file.content);
+
+                metrics::dump_metrics(session_edc.metrics());
                 return;
             }
         }

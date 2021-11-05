@@ -1,0 +1,4 @@
+build/
+cmake-*
+.coordinator_db
+.idea
