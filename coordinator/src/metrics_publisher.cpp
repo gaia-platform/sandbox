@@ -9,6 +9,8 @@
 
 #include <pqxx/pqxx>
 
+#include <gaia/logger.hpp>
+
 namespace gaia
 {
 namespace coordinator
@@ -20,11 +22,16 @@ void publish_metrics(session_metrics_t metrics)
 {
     try
     {
+        char* cluster_password = std::getenv("SANDBOX_METRICS_DB_PASS");
+
         // Connect to the database.
-        pqxx::connection conn("user=postgres "
-                              "host=sandbox-metrics-cluster.cluster-c0izgjn7ls3x.us-west-2.rds.amazonaws.com "
-                              "password=xxxxx "
-                              "dbname=sandbox_metrics");
+        pqxx::connection conn(
+            gaia_fmt::format(
+                "user=postgres "
+                "host=sandbox-metrics-cluster.cluster-c0izgjn7ls3x.us-west-2.rds.amazonaws.com "
+                "password={} "
+                "dbname=sandbox_metrics",
+                cluster_password));
         std::cout << "Connected to " << conn.dbname() << '\n';
 
         // Start a transaction.
