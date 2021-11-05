@@ -19,7 +19,6 @@
 </head>
 
 <body>
-  <div id="inprod" data-inprod={{prod}}></div>
   <div id="coordinator" data-coordinator={{coordinator}}></div>
   <div stackColumnsAt="tablet" class="div" data-name="div-1">
     <div class="builder-columns columns header">
@@ -107,7 +106,9 @@
               <span style="background-color:#00B7DD" class="span-4 button" id="get-started-button">Read me</span>
             </div>
 
-            {% if prod == 'false' %}
+            <!-- These buttons should only be available when running without communicating with
+              a coordinator. Otherwise the coordinator is responsible for exchanging any IDs. -->
+            {% if coordinator == 'none' %}
             <div class="builder-column column-8">
               <span class="span-5 button" id="reset-button">Show REMOTE_CLIENT_ID</span>
             </div>
