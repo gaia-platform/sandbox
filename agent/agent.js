@@ -3,6 +3,7 @@ const { spawn, exec } = require('child_process');
 const AWS = require('aws-sdk');
 const AWSIoTData = require('aws-iot-device-sdk');
 const fs = require('fs');
+const util = require('util');
 
 console.log('Loaded AWS SDK for JavaScript and AWS IoT SDK for Node.js');
 
@@ -23,6 +24,10 @@ process.env.REMOTE_CLIENT_ID = sessionId;
 const sendKeepAliveInterval = 1;  // in minutes
 const receiveKeepAliveInterval = 3;  // in minutes
 const projectNames = ['access_control'];
+
+var gaiaDbServer = null;
+var activeProject = null;
+
 var gaiaChild = null;
 var cmakeBuild = null;
 var makeBuild = null;
@@ -37,6 +42,23 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 });
 
 var mqttClient;
+
+const promiseExec = util.promisify(exec);
+
+function promisify_child_process(child) {
+   return new Promise((resolve, reject) => {
+      child.on("error", error => reject(error));
+      child.on("close", (code, signal) => {
+         if (signal) {
+            reject(new Error("Child process received signal ${signal} and exited with code ${code}."));
+         } else if (code != 0) {
+            reject(new Error("Child process exited with code ${code}."));
+         } else {
+            resolve(child);
+         }
+      });
+   })
+}
 
 function connect(credentials)
 {
@@ -155,28 +177,71 @@ function saveFile(projectName, fileName, content) {
    mqttClient.publish(sessionId + '/project/build', 'dirty');
 }
 
-function cleanProjects() {
-   projectNames.forEach(projectName => {
-      console.log('rm -r templates/' + projectName + '_template/build/gaia_generated');
-      exec('rm -r templates/' + projectName + '_template/build/gaia_generated && mkdir -p templates/' + projectName + '_template/build');
-      console.log('from directory: templates/' + projectName + '_template/build');
-      console.log('cmake ..');
-      cmakeBuild = spawn('cmake', ['..'], { cwd: 'templates/' + projectName + '_template/build' });
-      cmakeBuild.stdout.on('data', (chunk) => {
-         console.log(chunk.toString());
-      });
-      cmakeBuild.stdout.on('error', (error) => {
-         console.log(error);
-      });
-      cmakeBuild.on('close', (code) => {
-         console.log(`cmake child process exited with code ${code}`);
-         cmakeBuild = null;
-      });
+async function restartGaiaDbServer(projectName) {
+   if (gaiaDbServer) {
+      gaiaDbServer.kill();
+      gaiaDbServer = null;
+   }
+
+   const dataDir = '~/.local/share/gaia/${projectName}/db';
+
+   const { stdout, stderr } = await promiseExec('rm -r ${dataDir}');
+   console.log(stdout);
+   console.error(stderr);
+
+   gaiaDbServer = spawn('gaia_db_server', ['--data-dir', dataDir], {
+      // Ingore stdin, use Node's stdout, use Node's stderr
+      stdio: ['ignore', 'inherit', 'inherit']
    });
 }
 
+async function selectProject(projectName) {
+   if (!projectNames.includes(projectName)) {
+      throw new Error("Project ${projectName} doesn't exist");
+   }
+
+   console.log("Selecting project ${projectName}.");
+   await restartGaiaDbServer(projectName);
+}
+
+async function cleanBuildDirectory(projectName) {
+   const command = 'rm -r templates/' + projectName + '_template/build && mkdir -p templates/' + projectName + '_template/build';
+   console.log(command);
+
+   try {
+      const { stdout, stderr } = await promiseExec(command);
+      console.log(stdout);
+      console.error(stderr);
+   } catch (e) {
+      console.error(e);
+   }
+}
+
+async function cmakeConfigure(projectName) {
+   console.log('from directory: templates/' + projectName + '_template/build');
+   console.log('cmake ..');
+
+   const cmake_proc = spawn('cmake', ['..'], {
+      cwd: 'templates/' + projectName + '_template/build',
+      // Ingore stdin, use Node's stdout, use Node's stderr
+      stdio: ['ignore', 'inherit', 'inherit']
+   });
+
+   try {
+      await promisify_child_process(cmake_proc);
+   } catch (e) {
+      console.error(e);
+   }
+}
+
+async function cleanProject(projectName) {
+   await cleanBuildDirectory(projectName);
+   await cmakeConfigure(projectName);
+}
+
 function resetGaia() {
-   cleanProjects();
+   projectNames.forEach(projectName => cleanProject(projectName));
+
    if (gaiaChild) {
       gaiaChild.kill();
       gaiaChild = null;
@@ -281,6 +346,7 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
       }
       switch (payload.toString()) {
          case 'select':
+            selectProject(topicTokens[1]);
             mqttClient.publish(sessionId + '/project/ready', topicTokens[1]);
             break;
       
