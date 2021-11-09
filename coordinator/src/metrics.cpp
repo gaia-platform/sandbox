@@ -102,7 +102,7 @@ void emit_file_changed(session_t session, gaia::coordinator::editor_content_t fi
     }
 
     session_writer session_w = session.writer();
-    session_w.last_metric_update_timestamp = utils::get_time_seconds();
+    session_w.last_metric_update_timestamp = utils::current_time_seconds();
     session_w.update_row();
 }
 
@@ -122,11 +122,11 @@ void emit_project_metrics(session_t session, const std::string& project_action)
     }
 
     session_writer session_w = session.writer();
-    session_w.last_metric_update_timestamp = utils::get_time_seconds();
+    session_w.last_metric_update_timestamp = utils::current_time_seconds();
     session_w.update_row();
 }
 
-void dump_metrics(session_t session)
+void log_metrics(session_t session)
 {
     stringstream metrics_stream("session_metrics_t:\n");
 

@@ -278,7 +278,7 @@ ruleset coordinator_ruleset: serial_group()
                     if (strcmp(PF.name, editor_content->project_file.name) == 0)
                     {
                         gaia_log::app().info("Existing file '{}' found.", editor_content->project_file.name);
-                        metrics::emit_file_changed(session, editor_content,  PF.content);
+                        metrics::emit_file_changed(session, editor_content, PF.content);
                         PF.content = editor_content->project_file.content;
                         send_message(agent.id, P.name, "file", editor_content->project_file.name,
                             editor_content->project_file.content);

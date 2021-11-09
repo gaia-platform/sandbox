@@ -184,7 +184,7 @@ void create_fake_metrics()
     std::uniform_int_distribution<int> dist1(3600, 86400);
     std::uniform_int_distribution<int> dist2(0, 100);
 
-    uint64_t curr_time = utils::get_time_seconds();
+    uint64_t curr_time = utils::current_time_seconds();
 
     for (int i = 0; i < 100; i++)
     {

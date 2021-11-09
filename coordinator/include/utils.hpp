@@ -14,9 +14,9 @@ namespace coordinator
 namespace utils
 {
 
-uint64_t get_time_millis();
+uint64_t current_time_millis();
 
-uint64_t get_time_seconds();
+uint64_t current_time_seconds();
 
 std::string trim_to_size(const std::string& string);
 

@@ -79,7 +79,7 @@ void emit_project_metrics(session_t session, const std::string& project_action);
 /**
  * Log the metrics.
  */
-void dump_metrics(session_t session);
+void log_metrics(session_t session);
 
 } // namespace metrics
 } // namespace coordinator

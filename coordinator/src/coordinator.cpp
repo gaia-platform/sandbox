@@ -133,8 +133,8 @@ session_t get_session(const string& id)
         session_writer w;
         w.id = id;
         w.is_active = false;
-        w.last_timestamp = get_time_seconds();
-        w.created_timestamp = get_time_seconds();
+        w.last_timestamp = current_time_seconds();
+        w.created_timestamp = current_time_seconds();
         w.current_project_name = "none";
         session_t session = session_t::get(w.insert_row());
 
@@ -151,7 +151,7 @@ editor_file_request_t editor_file_request(const string& name)
 {
     editor_file_request_writer w;
     w.name = name;
-    w.timestamp = get_time_seconds();
+    w.timestamp = current_time_seconds();
     return editor_file_request_t::get(w.insert_row());
 }
 
@@ -168,7 +168,7 @@ editor_content_t editor_content(const string& name, const string& content)
     project_file_t pf = project_file(name, content);
 
     editor_content_writer w;
-    w.timestamp = get_time_seconds();
+    w.timestamp = current_time_seconds();
     auto ec = editor_content_t::get(w.insert_row());
 
     pf.editor_contents().insert(ec);
@@ -217,7 +217,7 @@ void on_message(Mqtt::MqttConnection&, const String& topic, const ByteBuf& paylo
             if (agent_iter != agent_t::list().end())
             {
                 auto agent_w = agent_iter->writer();
-                agent_w.last_timestamp = get_time_seconds();
+                agent_w.last_timestamp = current_time_seconds();
                 agent_w.update_row();
             }
             else
@@ -230,7 +230,7 @@ void on_message(Mqtt::MqttConnection&, const String& topic, const ByteBuf& paylo
     {
         session_t session = get_session(topic_vector[1]);
         session_writer session_w = session.writer();
-        session_w.last_timestamp = get_time_seconds();
+        session_w.last_timestamp = current_time_seconds();
 
         if (topic_vector[2] == "project")
         {
