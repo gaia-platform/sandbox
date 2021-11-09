@@ -29,6 +29,7 @@ constexpr char c_sandbox_metrics_db_ddl[]
       "CREATE TABLE IF NOT EXISTS session (\n"
       "    id UUID PRIMARY KEY NOT NULL,\n"
       "    is_active BOOL,\n"
+      "    is_test BOOL,\n"
       "    last_timestamp timestamptz NOT NULL\n,"
       "    created_timestamp timestamptz NOT NULL\n,"
       "    current_project_name VARCHAR(50)\n"
@@ -46,14 +47,15 @@ constexpr char c_sandbox_metrics_db_ddl[]
 std::string upsert_session_record_query(const session_t& session)
 {
     return gaia_fmt::format(
-        "INSERT INTO session (id, is_active, last_timestamp, created_timestamp, current_project_name)\n"
-        "    VALUES ('{}', {}, to_timestamp({}), to_timestamp({}), '{}')\n"
+        "INSERT INTO session (id, is_active, is_test, last_timestamp, created_timestamp, current_project_name)\n"
+        "    VALUES ('{}', {}, {}, to_timestamp({}), to_timestamp({}), '{}')\n"
         "    ON CONFLICT (id) DO UPDATE\n"
         "        SET is_active = EXCLUDED.is_active,\n"
+        "            is_test = EXCLUDED.is_test,\n"
         "            last_timestamp = EXCLUDED.last_timestamp,\n"
         "            created_timestamp = EXCLUDED.created_timestamp,\n"
         "            current_project_name = EXCLUDED.current_project_name;",
-        session.id(), session.is_active(), session.last_timestamp(),
+        session.id(), session.is_active(), session.is_test(), session.last_timestamp(),
         session.created_timestamp(), session.current_project_name());
 }
 
@@ -111,6 +113,7 @@ void create_schema()
 
     // Start a transaction.
     pqxx::work work{connection};
+    gaia_log::app().debug("Create schema query: {}", c_sandbox_metrics_db_ddl);
     work.exec0(c_sandbox_metrics_db_ddl);
 
     work.commit();
@@ -126,6 +129,7 @@ void upsert_session(session_t session)
         pqxx::work work{connection};
 
         std::string create_session_record = upsert_session_record_query(session);
+        gaia_log::app().debug("Upsert session query: {}", create_session_record);
         work.exec0(create_session_record);
 
         work.commit();
@@ -146,8 +150,7 @@ void publish_metrics(session_t session)
         pqxx::work work{connection};
 
         std::string update_metrics = upsert_metric_record_query(session);
-
-        gaia_log::app().info("update_metrics: \n {}", update_metrics);
+        gaia_log::app().debug("Update metrics query: {}", update_metrics);
         work.exec0(update_metrics);
 
         work.commit();
