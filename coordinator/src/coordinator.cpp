@@ -301,7 +301,21 @@ int main()
     }
     else
     {
-        g_env_coordinator_name = "sandbox_coordinator";
+        fprintf(stderr, "Environment variable COORDINATOR_NAME must be set. In production (and only in production) the COORDINATOR_NAME must be set to sandbox_coordinator\n");
+        exit(-1);
+    }
+
+    if (g_env_coordinator_name == "sandbox_coordinator")
+    {
+        fprintf(stdout, "Environment variable COORDINATOR_NAME must only be set to sandbox_coordinator when deployed in production.\n");
+        fprintf(stdout, "Are you deploying in production and sure you want to continue?\n");
+        fprintf(stdout, "(Enter y to continue, n to exit)\n");
+        String input;
+        std::getline(std::cin, input);
+        if (input != "y" && input != "Y")
+        {
+            exit(-1);
+        }
     }
 
     gaia::system::initialize();
