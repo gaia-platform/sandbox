@@ -81,6 +81,8 @@ size_t levenshtein_distance(const string& s1, const string& s2)
 
 void emit_file_changed(session_t session, gaia::coordinator::editor_content_t file, const char* old_content)
 {
+    bool metric_updated = true;
+
     size_t char_changes = 0;
 
     if (old_content != nullptr)
@@ -97,17 +99,26 @@ void emit_file_changed(session_t session, gaia::coordinator::editor_content_t fi
     }
     else if (ends_with(file.project_file().name(), c_ddl_extension))
     {
-        upsert_increment_metric_value(session, c_ddl_extension);
+        upsert_increment_metric_value(session, c_ddl_edits);
         upsert_increment_metric_value(session, c_ddl_changed_chars, char_changes);
     }
+    else
+    {
+        metric_updated = false;
+    }
 
-    session_writer session_w = session.writer();
-    session_w.last_metric_update_timestamp = utils::current_time_seconds();
-    session_w.update_row();
+    if (metric_updated)
+    {
+        session_writer session_w = session.writer();
+        session_w.last_metric_update_timestamp = utils::current_time_seconds();
+        session_w.update_row();
+    }
 }
 
 void emit_project_metrics(session_t session, const std::string& project_action)
 {
+    bool metric_updated = true;
+
     if (project_action == c_build_project_action)
     {
         upsert_increment_metric_value(session, c_builds);
@@ -120,10 +131,17 @@ void emit_project_metrics(session_t session, const std::string& project_action)
     {
         upsert_increment_metric_value(session, c_stops);
     }
+    else
+    {
+        metric_updated = false;
+    }
 
-    session_writer session_w = session.writer();
-    session_w.last_metric_update_timestamp = utils::current_time_seconds();
-    session_w.update_row();
+    if (metric_updated)
+    {
+        session_writer session_w = session.writer();
+        session_w.last_metric_update_timestamp = utils::current_time_seconds();
+        session_w.update_row();
+    }
 }
 
 void log_metrics(session_t session)
@@ -156,6 +174,9 @@ session_metrics_t lookup_metric(session_t session, const char* name)
 
 session_metrics_t upsert_increment_metric_value(session_t session, const char* name, double value)
 {
+    gaia_log::app().info(
+        "upsert_increment_metric_value: {} {} {} {} ", session_metrics_t::list().size(), session.id(), name, value);
+
     session_metrics_t metrics = lookup_metric(session, name);
 
     if (!metrics)

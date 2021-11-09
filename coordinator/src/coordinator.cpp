@@ -138,9 +138,6 @@ session_t get_session(const string& id)
         w.current_project_name = "none";
         session_t session = session_t::get(w.insert_row());
 
-        session_metrics_writer metrics_w;
-        session.metrics().connect(metrics_w.insert_row());
-
         return session;
     }
     gaia_log::app().debug("Session with id {} already exists", id);
@@ -291,6 +288,7 @@ void on_message(Mqtt::MqttConnection&, const String& topic, const ByteBuf& paylo
 
     commit_transaction();
 }
+
 
 int main()
 {

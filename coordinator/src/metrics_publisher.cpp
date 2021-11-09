@@ -123,7 +123,7 @@ void upsert_session(session_t session)
 {
     try
     {
-        gaia_log::app().info("Creating/updating session: {}", session.id());
+        gaia_log::app().info("Creating/updating session record: {}", session.id());
 
         pqxx::connection connection = create_connection();
         pqxx::work work{connection};
@@ -150,7 +150,7 @@ void publish_metrics(session_t session)
         pqxx::work work{connection};
 
         std::string update_metrics = upsert_metric_record_query(session);
-        gaia_log::app().debug("Update metrics query: {}", update_metrics);
+        gaia_log::app().info("Update metrics query: {}", update_metrics);
         work.exec0(update_metrics);
 
         work.commit();
