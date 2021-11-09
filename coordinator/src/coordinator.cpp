@@ -3,9 +3,7 @@
 // All rights reserved.
 /////////////////////////////////////////////
 
-#include <chrono>
 #include <cstring>
-#include <ctime>
 
 #include <algorithm>
 #include <iostream>
@@ -14,7 +12,6 @@
 
 #include <aws/crt/Api.h>
 #include <aws/crt/StlAllocator.h>
-#include <aws/crt/UUID.h>
 #include <aws/crt/auth/Credentials.h>
 #include <aws/iot/MqttClient.h>
 
@@ -25,6 +22,8 @@
 #include "gaia_coordinator.h"
 #include "json.hpp"
 #include "metrics.hpp"
+#include "metrics_publisher.hpp"
+#include "utils.hpp"
 
 using json = nlohmann::json;
 using namespace Aws::Crt;
@@ -37,7 +36,7 @@ using namespace gaia::direct_access;
 using namespace gaia::coordinator;
 using namespace gaia::rules;
 
-using namespace std::chrono;
+using namespace gaia::coordinator::utils;
 
 string g_env_coordinator_name;
 
@@ -47,28 +46,6 @@ void send_message(const string& id, const string& topic, const string& payload);
 void send_message(const string& id, const string& topic_level_1, const string& topic_level_2, const string& payload);
 void send_message(const string& id, const string& topic_level_1, const string& topic_level_2, const string& topic_level_3, const string& payload);
 void stop_gaia_container(const string& agent_id);
-
-string get_uuid()
-{
-    return Aws::Crt::UUID().ToString().c_str();
-}
-
-uint64_t get_time_millis()
-{
-    return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
-}
-
-std::string trim_to_size(const std::string& string)
-{
-    if (string.length() <= 100)
-    {
-        return string;
-    }
-    else
-    {
-        return string.substr(0, 100) + "...";
-    }
-}
 
 auto g_on_publish_complete = [](Mqtt::MqttConnection&, uint16_t packet_id, int error_code)
 {
@@ -156,8 +133,8 @@ session_t get_session(const string& id)
         session_writer w;
         w.id = id;
         w.is_active = false;
-        w.last_timestamp = static_cast<uint64_t>(time(nullptr));
-        w.created_timestamp = static_cast<uint64_t>(time(nullptr));
+        w.last_timestamp = get_time_seconds();
+        w.created_timestamp = get_time_seconds();
         w.current_project_name = "none";
         session_t session = session_t::get(w.insert_row());
 
@@ -174,7 +151,7 @@ editor_file_request_t editor_file_request(const string& name)
 {
     editor_file_request_writer w;
     w.name = name;
-    w.timestamp = static_cast<uint64_t>(time(nullptr));
+    w.timestamp = get_time_seconds();
     return editor_file_request_t::get(w.insert_row());
 }
 
@@ -191,7 +168,7 @@ editor_content_t editor_content(const string& name, const string& content)
     project_file_t pf = project_file(name, content);
 
     editor_content_writer w;
-    w.timestamp = static_cast<uint64_t>(time(nullptr));
+    w.timestamp = get_time_seconds();
     auto ec = editor_content_t::get(w.insert_row());
 
     pf.editor_contents().insert(ec);
@@ -240,7 +217,7 @@ void on_message(Mqtt::MqttConnection&, const String& topic, const ByteBuf& paylo
             if (agent_iter != agent_t::list().end())
             {
                 auto agent_w = agent_iter->writer();
-                agent_w.last_timestamp = static_cast<uint64_t>(time(nullptr));
+                agent_w.last_timestamp = get_time_seconds();
                 agent_w.update_row();
             }
             else
@@ -253,7 +230,7 @@ void on_message(Mqtt::MqttConnection&, const String& topic, const ByteBuf& paylo
     {
         session_t session = get_session(topic_vector[1]);
         session_writer session_w = session.writer();
-        session_w.last_timestamp = static_cast<uint64_t>(time(nullptr));
+        session_w.last_timestamp = get_time_seconds();
 
         if (topic_vector[2] == "project")
         {
@@ -266,7 +243,7 @@ void on_message(Mqtt::MqttConnection&, const String& topic, const ByteBuf& paylo
                 if (session.agent())
                 {
                     send_message(session.agent().id(), payload_str, topic_vector[3]);
-                    metrics::emit_project_metrics(session.metrics(), topic_vector[3]);
+                    metrics::emit_project_metrics(session, topic_vector[3]);
                 }
 
                 if (topic_vector[3] == "exit")
@@ -328,6 +305,7 @@ int main()
     }
 
     gaia::system::initialize();
+    metrics::create_schema();
 
     begin_transaction();
     dump_db();
@@ -339,7 +317,7 @@ int main()
     String certificate_path("../certs/coordinator-certificate.pem.crt");
     String key_path("../certs/coordinator-private.pem.key");
     String ca_file("../certs/AmazonRootCA1.pem");
-    String client_id = Aws::Crt::UUID().ToString();
+    String client_id = get_uuid().c_str();
 
     Io::EventLoopGroup event_loop_group(1);
     if (!event_loop_group)

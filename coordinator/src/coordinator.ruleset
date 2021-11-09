@@ -7,12 +7,14 @@
 #include "gaia_coordinator.h"
 #include "json.hpp"
 #include "metrics.hpp"
+#include "metrics_publisher.hpp"
+#include "utils.hpp"
 
 using json = nlohmann::json;
 using namespace std;
 using namespace gaia::coordinator;
+using namespace gaia::coordinator::utils;
 
-string get_uuid();
 void publish_message(const string& topic, const string& payload);
 
 const uint32_t c_standby_containers = 1;
@@ -21,7 +23,7 @@ const uint64_t c_session_timeout = 3600;
 
 // const uint64_t c_session_timeout = 1200000; // for testing
 
-extern string env_coordinator_name;
+extern string g_env_coordinator_name;
 
 void send_message(const string& id,
                   const string& topic,
@@ -62,7 +64,7 @@ void start_gaia_container(const string& session_id,
     json j;
     j["session_id"] = session_id;
     j["agent_id"] = agent_id;
-    j["coordinator_name"] = env_coordinator_name;
+    j["coordinator_name"] = g_env_coordinator_name;
     publish_message("manage_gaia_container", j.dump());
     send_message(session_id, "session", "loading");
 }
@@ -266,8 +268,8 @@ ruleset coordinator_ruleset: serial_group()
 
         for (session->P:project)
         {
-            session_t session_edc;
-            session_edc = session;
+            session_t session_dac;
+            session_dac = session;
 
             if (strcmp(P.name, session.current_project_name) == 0)
             {
@@ -276,25 +278,34 @@ ruleset coordinator_ruleset: serial_group()
                     if (strcmp(PF.name, editor_content->project_file.name) == 0)
                     {
                         gaia_log::app().info("Existing file '{}' found.", editor_content->project_file.name);
-                        metrics::emit_file_changed(session_edc.metrics(), editor_content,  PF.content);
+                        metrics::emit_file_changed(session, editor_content,  PF.content);
                         PF.content = editor_content->project_file.content;
                         send_message(agent.id, P.name, "file", editor_content->project_file.name,
                             editor_content->project_file.content);
-
-                        metrics::dump_metrics(session_edc.metrics());
                         return;
                     }
                 }
 
                 gaia_log::app().info("No existing file '{}' found. Storing new one.", editor_content->project_file.name);
-                metrics::emit_file_changed(session_edc.metrics(), editor_content, nullptr);
+                metrics::emit_file_changed(session, editor_content, nullptr);
                 P.project_file.connect(editor_content->project_file);
                 send_message(agent.id, P.name, "file", editor_content->project_file.name,
                     editor_content->project_file.content);
-
-                metrics::dump_metrics(session_edc.metrics());
                 return;
             }
         }
+    }
+}
+
+ruleset metrics_update
+{
+    on_change(session)
+    {
+        metrics::upsert_session(session);
+    }
+
+    on_update(session.last_metric_update_timestamp)
+    {
+        metrics::publish_metrics(session);
     }
 }

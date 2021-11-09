@@ -50,6 +50,7 @@ add_executable(coordinator
   src/coordinator.cpp
   src/metrics.cpp
   src/metrics_publisher.cpp
+  src/utils.cpp
 )
 
 find_package(aws-crt-cpp REQUIRED)

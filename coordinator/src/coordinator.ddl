@@ -10,12 +10,14 @@ table session (
     is_active bool,
     last_timestamp uint64,
     created_timestamp uint64,
+    last_metric_update_timestamp uint64,
     current_project_name string,
     agent references agent,
+    is_test bool,
     projects references project[],
     editor_file_requests references editor_file_request[],
     editor_contents references editor_content[],
-    metrics references session_metrics
+    metrics references session_metrics[]
 )
 
 table agent (
@@ -53,13 +55,9 @@ table editor_content (
 )
 
 table session_metrics (
-    num_ruleset_edits uint16,
-    num_ddl_edits uint16,
-    num_ruleset_changed_chars uint16,
-    num_ddl_changed_chars uint16,
-    num_builds uint16,
-    num_runs uint16,
-    num_stops uint16,
-    num_errors uint16,
+    name string,
+    value double,
+    session_id string,
     session references session
+        where session_metrics.session_id = session.id
 )

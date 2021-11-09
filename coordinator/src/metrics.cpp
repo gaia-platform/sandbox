@@ -5,9 +5,12 @@
 
 #include "metrics.hpp"
 
+#include <sstream>
 #include <string>
 
 #include <gaia/logger.hpp>
+
+#include "utils.hpp"
 
 namespace gaia
 {
@@ -19,7 +22,9 @@ namespace metrics
 inline bool ends_with(std::string const& value, std::string const& ending)
 {
     if (ending.size() > value.size())
+    {
         return false;
+    }
     return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
 }
 
@@ -74,9 +79,8 @@ size_t levenshtein_distance(const string& s1, const string& s2)
     return costs[n];
 }
 
-void emit_file_changed(gaia::coordinator::session_metrics_t metrics, gaia::coordinator::editor_content_t file, const char* old_content)
+void emit_file_changed(session_t session, gaia::coordinator::editor_content_t file, const char* old_content)
 {
-    session_metrics_writer session_metrics_w = metrics.writer();
     size_t char_changes = 0;
 
     if (old_content != nullptr)
@@ -88,57 +92,100 @@ void emit_file_changed(gaia::coordinator::session_metrics_t metrics, gaia::coord
 
     if (ends_with(file.project_file().name(), c_ruleset_extension))
     {
-        session_metrics_w.num_ruleset_edits = metrics.num_ruleset_edits() + 1;
-        session_metrics_w.num_ruleset_changed_chars = metrics.num_ruleset_changed_chars() + char_changes;
+        upsert_increment_metric_value(session, c_ruleset_edits);
+        upsert_increment_metric_value(session, c_ruleset_changed_chars, char_changes);
     }
     else if (ends_with(file.project_file().name(), c_ddl_extension))
     {
-        session_metrics_w.num_ddl_edits = metrics.num_ddl_edits() + 1;
-        session_metrics_w.num_ddl_changed_chars = metrics.num_ddl_changed_chars() + char_changes;
+        upsert_increment_metric_value(session, c_ddl_extension);
+        upsert_increment_metric_value(session, c_ddl_changed_chars, char_changes);
     }
-    session_metrics_w.update_row();
+
+    session_writer session_w = session.writer();
+    session_w.last_metric_update_timestamp = utils::get_time_seconds();
+    session_w.update_row();
 }
 
-void emit_project_metrics(session_metrics_t metrics, const std::string& project_action)
+void emit_project_metrics(session_t session, const std::string& project_action)
 {
-    session_metrics_writer session_metrics_w = metrics.writer();
-
     if (project_action == c_build_project_action)
     {
-        session_metrics_w.num_builds = metrics.num_builds() + 1;
+        upsert_increment_metric_value(session, c_builds);
     }
     else if (project_action == c_run_project_action)
     {
-        session_metrics_w.num_runs = metrics.num_runs() + 1;
+        upsert_increment_metric_value(session, c_runs);
     }
     else if (project_action == c_stop_project_action)
     {
-        session_metrics_w.num_stops = metrics.num_stops() + 1;
+        upsert_increment_metric_value(session, c_stops);
     }
 
-    session_metrics_w.update_row();
+    session_writer session_w = session.writer();
+    session_w.last_metric_update_timestamp = utils::get_time_seconds();
+    session_w.update_row();
 }
 
-void dump_metrics(session_metrics_t metrics)
+void dump_metrics(session_t session)
 {
-    gaia_log::app().info(
-        "session_metrics_t: \n"
-        " num_ruleset_edits: {}\n"
-        " num_ddl_edits: {}\n"
-        " num_ruleset_changed_chars: {}\n"
-        " num_ddl_changed_chars: {}\n"
-        " num_builds: {}\n"
-        " num_runs: {}\n"
-        " num_stops: {}\n"
-        " num_errors: {}",
-        metrics.num_ruleset_edits(),
-        metrics.num_ddl_edits(),
-        metrics.num_ruleset_changed_chars(),
-        metrics.num_ddl_changed_chars(),
-        metrics.num_builds(),
-        metrics.num_runs(),
-        metrics.num_stops(),
-        metrics.num_errors());
+    stringstream metrics_stream("session_metrics_t:\n");
+
+    for (size_t i = 0; i < c_num_metrics; i++)
+    {
+        const char* name = c_all_metrics[i];
+        double value = lookup_metric_value(session, name);
+        metrics_stream << " " << name << ": " << value << '\n';
+    }
+
+    gaia_log::app().info(metrics_stream.str().c_str());
+}
+
+session_metrics_t lookup_metric(session_t session, const char* name)
+{
+    //    using metrics_expr = session_metrics_expr;
+    auto metrics_iter = session.metrics()
+                            .where(session_metrics_expr::name == name);
+
+    if (metrics_iter.begin() != metrics_iter.end())
+    {
+        return *(metrics_iter.begin());
+    }
+
+    return session_metrics_t();
+}
+
+session_metrics_t upsert_increment_metric_value(session_t session, const char* name, double value)
+{
+    session_metrics_t metrics = lookup_metric(session, name);
+
+    if (!metrics)
+    {
+        session_metrics_writer metrics_w;
+        metrics_w.name = name;
+        metrics_w.session_id = session.id();
+        metrics_w.value = 1.0;
+        metrics_w.insert_row();
+    }
+    else
+    {
+        session_metrics_writer metrics_w = metrics.writer();
+        metrics_w.value = metrics.value() + value;
+        metrics_w.update_row();
+    }
+
+    return metrics;
+}
+
+double lookup_metric_value(session_t session, const char* name)
+{
+    session_metrics_t metrics = lookup_metric(session, name);
+
+    if (!metrics)
+    {
+        return 0.0;
+    }
+
+    return metrics.value();
 }
 
 } // namespace metrics
