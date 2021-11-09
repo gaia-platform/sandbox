@@ -174,9 +174,6 @@ session_metrics_t lookup_metric(session_t session, const char* name)
 
 session_metrics_t upsert_increment_metric_value(session_t session, const char* name, double value)
 {
-    gaia_log::app().info(
-        "upsert_increment_metric_value: {} {} {} {} ", session_metrics_t::list().size(), session.id(), name, value);
-
     session_metrics_t metrics = lookup_metric(session, name);
 
     if (!metrics)
