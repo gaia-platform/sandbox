@@ -50,9 +50,9 @@ function promisify_child_process(child) {
       child.on("error", error => reject(error));
       child.on("close", (code, signal) => {
          if (signal) {
-            reject(new Error("Child process received signal ${signal} and exited with code ${code}."));
+            reject(new Error(`Child process received signal ${signal} and exited with code ${code}.`));
          } else if (code != 0) {
-            reject(new Error("Child process exited with code ${code}."));
+            reject(new Error(`Child process exited with code ${code}.`));
          } else {
             resolve(child);
          }
@@ -177,15 +177,15 @@ function saveFile(projectName, fileName, content) {
    mqttClient.publish(sessionId + '/project/build', 'dirty');
 }
 
-async function restartGaiaDbServer(projectName) {
+async function resetGaiaDbServer(projectName) {
    if (gaiaDbServer) {
       gaiaDbServer.kill();
       gaiaDbServer = null;
    }
 
-   const dataDir = '~/.local/share/gaia/${projectName}/db';
+   const dataDir = `~/.local/share/gaia/${projectName}/db`;
 
-   const { stdout, stderr } = await promiseExec('rm -r ${dataDir}');
+   const { stdout, stderr } = await promiseExec(`rm -r ${dataDir}`);
    console.log(stdout);
    console.error(stderr);
 
@@ -197,41 +197,35 @@ async function restartGaiaDbServer(projectName) {
 
 async function selectProject(projectName) {
    if (!projectNames.includes(projectName)) {
-      throw new Error("Project ${projectName} doesn't exist");
+      throw new Error(`Project ${projectName} doesn't exist`);
    }
 
-   console.log("Selecting project ${projectName}.");
-   await restartGaiaDbServer(projectName);
+   activeProject = "";
+   console.log(`Selecting project ${projectName}.`);
+   await resetGaiaDbServer(projectName);
+   activeProject = projectName;
 }
 
 async function cleanBuildDirectory(projectName) {
-   const command = 'rm -r templates/' + projectName + '_template/build && mkdir -p templates/' + projectName + '_template/build';
+   const command = `rm -r templates/${projectName}_template/build && mkdir -p templates/${projectName}_template/build`;
    console.log(command);
 
-   try {
-      const { stdout, stderr } = await promiseExec(command);
-      console.log(stdout);
-      console.error(stderr);
-   } catch (e) {
-      console.error(e);
-   }
+   const { stdout, stderr } = await promiseExec(command);
+   console.log(stdout);
+   console.error(stderr);
 }
 
 async function cmakeConfigure(projectName) {
-   console.log('from directory: templates/' + projectName + '_template/build');
+   console.log(`from directory: templates/${projectName}_template/build`);
    console.log('cmake ..');
 
    const cmake_proc = spawn('cmake', ['..'], {
-      cwd: 'templates/' + projectName + '_template/build',
+      cwd: `templates/${projectName}_template/build`,
       // Ingore stdin, use Node's stdout, use Node's stderr
       stdio: ['ignore', 'inherit', 'inherit']
    });
 
-   try {
-      await promisify_child_process(cmake_proc);
-   } catch (e) {
-      console.error(e);
-   }
+   await promisify_child_process(cmake_proc);
 }
 
 async function cleanProject(projectName) {
@@ -240,7 +234,7 @@ async function cleanProject(projectName) {
 }
 
 function resetGaia() {
-   projectNames.forEach(projectName => cleanProject(projectName));
+   // TODO: rewrite the use of resetGaia() to use the new per-project functions like resetGaiaDbServer()
 
    if (gaiaChild) {
       gaiaChild.kill();
