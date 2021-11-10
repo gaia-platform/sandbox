@@ -5,46 +5,48 @@ const AWSIoTData = require('aws-iot-device-sdk');
 const fs = require('fs');
 const util = require('util');
 
-console.log('Loaded AWS SDK for JavaScript and AWS IoT SDK for Node.js');
-
-//// Variables
-/// MQTT
+// AWS configurations
 var awsConfig = {
    poolId: 'us-west-2:167b474a-b678-4271-8f1e-77f84aa530f7', // 'YourCognitoIdentityPoolId'
    host: 'a31gq30tvzx17m-ats.iot.us-west-2.amazonaws.com', // 'YourAwsIoTEndpoint', e.g. 'prefix.iot.us-east-1.amazonaws.com'
    region: 'us-west-2' // 'YourAwsRegion', e.g. 'us-east-1'
 };
+AWS.config.region = awsConfig.region;
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+   IdentityPoolId: awsConfig.poolId
+});
+var cognitoIdentity = new AWS.CognitoIdentity();
 
+// MQTT
+var mqttClient;
+
+// Sandbox-specific variables
 var coordinatorName = process.env.COORDINATOR_NAME || 'sandbox_coordinator';
 var agentId = process.env.AGENT_ID;
-var sessionId = process.env.SESSION_ID;
 
+// TODO: refactor sandbox to use only SESSION_ID instead of having two redundant environment variables.
+var sessionId = process.env.SESSION_ID;
 process.env.REMOTE_CLIENT_ID = sessionId;
 
 const sendKeepAliveInterval = 1;  // in minutes
 const receiveKeepAliveInterval = 3;  // in minutes
+
+// Agent-specific variables
 const projectNames = ['access_control'];
 
 var gaiaDbServer = null;
 var activeProject = null;
 
-var gaiaChild = null;
+var gaiaChild = null; // TODO: phase out
 var cmakeBuild = null;
 var makeBuild = null;
 var projectProcess = null;
 var receiveKeepAliveTimeout;
 
-//// Setup AWS and MQTT
-AWS.config.region = awsConfig.region;
-
-AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-   IdentityPoolId: awsConfig.poolId
-});
-
-var mqttClient;
-
+// This makes exec() friendly for async/await code.
 const promiseExec = util.promisify(exec);
 
+// This is useful after calling spawn(), which is more tedious to promisify than exec().
 function promisify_child_process(child) {
    return new Promise((resolve, reject) => {
       child.on("error", error => reject(error));
@@ -60,6 +62,7 @@ function promisify_child_process(child) {
    })
 }
 
+// Connect to the MQTT broker and register callbacks for MQTT-related events.
 function connect(credentials)
 {
    /// Config and connect MQTT
@@ -80,26 +83,6 @@ function connect(credentials)
    mqttClient.on('reconnect', mqttClientReconnectHandler);
    mqttClient.on('message', mqttClientMessageHandler);
 }
-
-/// Cognito authentication
-var cognitoIdentity = new AWS.CognitoIdentity();
-AWS.config.credentials.get(function (err, data) {
-   if (!err) {
-      console.log('retrieved identity: ' + AWS.config.credentials.identityId);
-      var params = {
-         IdentityId: AWS.config.credentials.identityId
-      };
-      cognitoIdentity.getCredentialsForIdentity(params, function (err, data) {
-         if (!err) {
-            connect(data.Credentials);
-         } else {
-            console.log('error retrieving credentials: ' + err);
-         }
-      });
-   } else {
-      console.log('error retrieving identity:' + err);
-   }
-});
 
 function exitAgent() {
    if (gaiaChild) {
@@ -387,5 +370,33 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
    }
 }
 
-resetGaia();
-receiveKeepAlive();
+function agentInit() {
+   AWS.config.credentials.get(function (err, data) {
+      if (!err) {
+         console.log('retrieved identity: ' + AWS.config.credentials.identityId);
+         var params = {
+            IdentityId: AWS.config.credentials.identityId
+         };
+         cognitoIdentity.getCredentialsForIdentity(params, function (err, data) {
+            if (!err) {
+               connect(data.Credentials);
+            } else {
+               console.log('error retrieving credentials: ' + err);
+            }
+         });
+      } else {
+         console.log('error retrieving identity:' + err);
+      }
+   });
+   
+   resetGaia();
+   receiveKeepAlive();
+}
+
+// TODO: remove this, it's only for testing in a terminal.
+process.on('SIGINT', () => {
+   console.log("Caught interrupt signal");
+   process.exit();
+});
+
+agentInit();
