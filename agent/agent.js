@@ -111,13 +111,9 @@ function receiveKeepAlive() {
    receiveKeepAliveTimeout = setTimeout(exitAgent, receiveKeepAliveInterval * 60 * 1000);
 }
 
-//// MQTT functions
-function mqttClientConnectHandler() { // Connection handler
+function mqttClientConnectHandler() { 
    console.log('connect, clientId: ' + agentId);
 
-   //
-   // Subscribe to our current topic.
-   //
    mqttClient.subscribe(agentId + '/#');
    publishToCoordinator('connected', agentId);
    setTimeout(sendKeepAlive, sendKeepAliveInterval * 60 * 1000);
@@ -131,7 +127,7 @@ function mqttClientConnectHandler() { // Connection handler
    }
 }
 
-function mqttClientReconnectHandler() { // Reconnection handler
+function mqttClientReconnectHandler() {
    console.log("reconnect");
 }
 
@@ -160,22 +156,43 @@ function saveFile(projectName, fileName, content) {
    mqttClient.publish(sessionId + '/project/build', 'dirty');
 }
 
-async function resetGaiaDbServer(projectName) {
+function getDataDir(projectName) {
+   return `~/.local/share/gaia/${projectName}/db`;
+}
+
+async function fileExists(file) {
+   try {
+      await fs.promises.access(file);
+      return true;
+   } catch {
+      return false;
+   }
+}
+
+async function purgeGaiaDbData(projectName) {
+   stopGaiaDbServer(projectName);
+   const dataDirExists = await fileExists(getDataDir(projectName));
+
+   if (dataDirExists) {
+      const { stdout, stderr } = await promiseExec(`rm -r ${getDataDir(projectName)}`);
+      console.log(stdout);
+      console.error(stderr);
+   }
+}
+
+async function startGaiaDbServer(projectName, purgeOldData = false) {
+   gaiaDbServer = spawn('gaia_db_server', ['--data-dir', getDataDir(projectName)], {
+      // Ingore stdin, ignore stdout, ignore stderr
+      stdio: ['ignore', 'ignore', 'ignore']
+   });
+}
+
+// TODO: make this async with an error when the DB server can't be killed.
+function stopGaiaDbServer() {
    if (gaiaDbServer) {
       gaiaDbServer.kill();
       gaiaDbServer = null;
    }
-
-   const dataDir = `~/.local/share/gaia/${projectName}/db`;
-
-   const { stdout, stderr } = await promiseExec(`rm -r ${dataDir}`);
-   console.log(stdout);
-   console.error(stderr);
-
-   gaiaDbServer = spawn('gaia_db_server', ['--data-dir', dataDir], {
-      // Ingore stdin, use Node's stdout, use Node's stderr
-      stdio: ['ignore', 'inherit', 'inherit']
-   });
 }
 
 async function selectProject(projectName) {
@@ -184,14 +201,19 @@ async function selectProject(projectName) {
    }
 
    activeProject = "";
-   console.log(`Selecting project ${projectName}.`);
-   await resetGaiaDbServer(projectName);
+   console.log(`Switching to project ${projectName}...`);
+
+   stopGaiaDbServer();
+   await purgeGaiaDbData(projectName);
+   await startGaiaDbServer(projectName);
+
    activeProject = projectName;
+   console.log(`Selected project ${projectName}.`);
 }
 
 async function cleanBuildDirectory(projectName) {
    const command = `rm -r templates/${projectName}_template/build && mkdir -p templates/${projectName}_template/build`;
-   console.log(command);
+   console.log(`Cleaning build directory of project ${projectName}.`);
 
    const { stdout, stderr } = await promiseExec(command);
    console.log(stdout);
@@ -199,8 +221,7 @@ async function cleanBuildDirectory(projectName) {
 }
 
 async function cmakeConfigure(projectName) {
-   console.log(`from directory: templates/${projectName}_template/build`);
-   console.log('cmake ..');
+   console.log(`Configuring CMake for project ${projectName}.`);
 
    const cmake_proc = spawn('cmake', ['..'], {
       cwd: `templates/${projectName}_template/build`,
@@ -211,13 +232,8 @@ async function cmakeConfigure(projectName) {
    await promisify_child_process(cmake_proc);
 }
 
-async function cleanProject(projectName) {
-   await cleanBuildDirectory(projectName);
-   await cmakeConfigure(projectName);
-}
-
 function resetGaia() {
-   // TODO: rewrite the use of resetGaia() to use the new per-project functions like resetGaiaDbServer()
+   // TODO: rewrite the use of resetGaia() to use the new per-project functions
 
    if (gaiaChild) {
       gaiaChild.kill();
@@ -323,8 +339,7 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
       }
       switch (payload.toString()) {
          case 'select':
-            selectProject(topicTokens[1]);
-            mqttClient.publish(sessionId + '/project/ready', topicTokens[1]);
+            selectProject(topicTokens[1]).then(mqttClient.publish(sessionId + '/project/ready', topicTokens[1]));
             break;
       
          case 'stop':
@@ -395,8 +410,11 @@ function agentInit() {
 
 // TODO: remove this, it's only for testing in a terminal.
 process.on('SIGINT', () => {
-   console.log("Caught interrupt signal");
+   console.log("\nCaught interrupt signal.");
    process.exit();
 });
 
-agentInit();
+// This script is being incrementally tested, so the normal init procedure should not occur.
+//agentInit();
+
+selectProject('access_control');
