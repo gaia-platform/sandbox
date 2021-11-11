@@ -11,6 +11,12 @@ You'll need to
 ### Installing Gaia
 Follow instructions [here](https://gaia-platform.github.io/gaia-platform-docs.io/articles/getting-started-with-gaia.html) to install Gaia.
 
+### Installing other dependecies
+
+```bash
+sudo apt-get install libpqxx-dev
+```
+
 ### Installing aws-iot-device-sdk-cpp
 From inside the root sandbox directory clone the [aws-iot-device-sdk-cpp](https://github.com/aws/aws-iot-device-sdk-cpp-v2) and build using clang. May also work with gcc but so far only tested with clang.
 ```bash
