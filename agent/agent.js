@@ -35,10 +35,12 @@ const receiveKeepAliveInterval = 3;  // in minutes
 const projectNames = ['access_control'];
 
 var gaiaDbServer = null;
+var cmakeProcess = null;
+
 var activeProject = null;
 
 var gaiaChild = null; // TODO: phase out
-var cmakeBuild = null;
+var cmakeBuild = null; // TODO: phase out
 var makeBuild = null;
 var projectProcess = null;
 var receiveKeepAliveTimeout;
@@ -156,10 +158,6 @@ function saveFile(projectName, fileName, content) {
    mqttClient.publish(sessionId + '/project/build', 'dirty');
 }
 
-function getDataDir(projectName) {
-   return `~/.local/share/gaia/${projectName}/db`;
-}
-
 async function fileExists(file) {
    try {
       await fs.promises.access(file);
@@ -169,14 +167,22 @@ async function fileExists(file) {
    }
 }
 
+function getBuildDir(projectName) {
+   return `/usr/src/app/templates/${projectName}_template/build`;
+}
+
+function getDataDir(projectName) {
+   return `~/.local/share/gaia/${projectName}/db`;
+}
+
 async function purgeGaiaDbData(projectName) {
    stopGaiaDbServer(projectName);
    const dataDirExists = await fileExists(getDataDir(projectName));
 
    if (dataDirExists) {
       const { stdout, stderr } = await promiseExec(`rm -r ${getDataDir(projectName)}`);
-      console.log(stdout);
-      console.error(stderr);
+      if (stdout) { console.log(stdout); }
+      if (stderr) { console.error(stderr); }
    }
 }
 
@@ -200,7 +206,7 @@ async function selectProject(projectName) {
       throw new Error(`Project ${projectName} doesn't exist`);
    }
 
-   activeProject = "";
+   activeProject = null;
    console.log(`Switching to project ${projectName}...`);
 
    stopGaiaDbServer();
@@ -212,52 +218,36 @@ async function selectProject(projectName) {
 }
 
 async function cleanBuildDirectory(projectName) {
-   const command = `rm -r templates/${projectName}_template/build && mkdir -p templates/${projectName}_template/build`;
-   console.log(`Cleaning build directory of project ${projectName}.`);
+   const buildDir = getBuildDir(projectName);
+   const buildDirExists = await fileExists(buildDir);
+   var command;
 
+   if (buildDirExists) {
+      command = `rm -r ${buildDir} && mkdir -p ${buildDir}`;
+   } else {
+      command = `mkdir -p ${buildDir}`;
+   }
+
+   console.log(`Cleaning build directory of project ${projectName}.`);
    const { stdout, stderr } = await promiseExec(command);
-   console.log(stdout);
-   console.error(stderr);
+   if (stdout) { console.log(stdout); }
+   if (stderr) { console.error(stderr); }
 }
 
 async function cmakeConfigure(projectName) {
    console.log(`Configuring CMake for project ${projectName}.`);
+   const buildDir = getBuildDir(projectName);
 
-   const cmake_proc = spawn('cmake', ['..'], {
+   cmakeProcess = spawn('cmake', ['..'], {
       cwd: `templates/${projectName}_template/build`,
       // Ingore stdin, use Node's stdout, use Node's stderr
       stdio: ['ignore', 'inherit', 'inherit']
    });
 
-   await promisify_child_process(cmake_proc);
+   await promisify_child_process(cmakeProcess);
 }
 
-function resetGaia() {
-   // TODO: rewrite the use of resetGaia() to use the new per-project functions
-
-   if (gaiaChild) {
-      gaiaChild.kill();
-      gaiaChild = null;
-   }
-   console.log('rm -r ~/.local/gaia/db/');
-   exec('rm -r ~/.local/gaia/db/', (error, stdout, stderr) => {
-      console.error(`error: ${error}`);
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
-      console.log('spawn gaia_db_server');
-      gaiaChild = spawn('gaia_db_server', ['--data-dir', '~/.local/gaia/db']);
-      gaiaChild.stdout.on('data', (chunk) => {
-         console.log(chunk);
-      });
-      gaiaChild.stdout.on('error', (error) => {
-         console.log(error);
-      });
-      gaiaChild.on('close', (code) => {
-         console.log(`gaia_db_server child process exited with code ${code}`);
-         gaiaChild = null;
-      });
-   });
-}
+function resetGaia() { throw new Error('resetGaia() is outdated.'); }
 
 function stopProcesses() {
    if (cmakeBuild) {
@@ -417,4 +407,12 @@ process.on('SIGINT', () => {
 // This script is being incrementally tested, so the normal init procedure should not occur.
 //agentInit();
 
-selectProject('access_control');
+async function runTests() {
+   const p = 'access_control'
+   await selectProject(p);
+   await cleanBuildDirectory(p);
+   await cmakeConfigure(p);
+   stopGaiaDbServer();
+}
+
+runTests();
