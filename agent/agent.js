@@ -35,13 +35,10 @@ const receiveKeepAliveInterval = 3;  // in minutes
 const projectNames = ['access_control'];
 
 var gaiaDbServer = null;
-var cmakeProcess = null;
 
 var activeProject = null;
 
-var gaiaChild = null; // TODO: phase out
-var cmakeBuild = null; // TODO: phase out
-var makeBuild = null;
+var makeProcess = null;
 var projectProcess = null;
 var receiveKeepAliveTimeout;
 
@@ -238,8 +235,8 @@ async function cmakeConfigure(projectName) {
    console.log(`Configuring CMake for project ${projectName}.`);
    const buildDir = getBuildDir(projectName);
 
-   cmakeProcess = spawn('cmake', ['..'], {
-      cwd: `templates/${projectName}_template/build`,
+   const cmakeProcess = spawn('cmake', ['..'], {
+      cwd: buildDir,
       // Ingore stdin, use Node's stdout, use Node's stderr
       stdio: ['ignore', 'inherit', 'inherit']
    });
@@ -247,16 +244,10 @@ async function cmakeConfigure(projectName) {
    await promisify_child_process(cmakeProcess);
 }
 
-function resetGaia() { throw new Error('resetGaia() is outdated.'); }
-
 function stopProcesses() {
-   if (cmakeBuild) {
-      cmakeBuild.kill();
-      cmakeBuild = null;
-   }
    if (makeBuild) {
-      makeBuild.kill();
-      makeBuild = null;
+      makeProcess.kill();
+      makeProcess = null;
       mqttClient.publish(sessionId + '/project/build', 'cancelled');
    }
    if (projectProcess) {
@@ -264,6 +255,43 @@ function stopProcesses() {
       projectProcess = null;
       mqttClient.publish(sessionId + '/project/program', 'stopped');
    }
+}
+
+async function buildProject(projectName) {
+   console.log(projectName + ' build started...');
+   publishToEditor('output', 'New build started\n');
+   mqttClient.publish(sessionId + '/project/build', 'building');
+
+   const buildDir = getBuildDir(projectName);
+
+   makeProcess = spawn('make', ['-j$(nproc)'], {
+      cwd: buildDir,
+      // Ingore stdin, use Node's stdout, use Node's stderr
+      stdio: ['ignore', 'inherit', 'inherit']
+   });
+
+   // Old stuff
+   makeBuild = spawn('make', { cwd: 'templates/' + projectName + '_template/build' });
+
+   makeBuild.stderr.on('data', (chunk) => {
+      publishToEditor('output/append', chunk);
+      console.log(chunk.toString());
+   });
+
+   makeBuild.stdout.on('data', (chunk) => {
+      publishToEditor('output/append', chunk);
+      console.log(chunk.toString());
+   });
+
+   makeBuild.stdout.on('error', (error) => {
+      console.log(error);
+   });
+
+   makeBuild.on('close', (code) => {
+      console.log(`child process exited with code ${code}`);
+      makeBuild = null;
+      mqttClient.publish(sessionId + '/project/build', code == 0 ? 'success' : 'failed');
+   });
 }
 
 function runProject(projectName) {
@@ -289,32 +317,6 @@ function runProject(projectName) {
       console.log(`child process exited with code ${code}`);
       projectProcess = null;
       mqttClient.publish(sessionId + '/project/program', 'stopped');
-   });
-}
-
-function buildProject(projectName) {
-   if (!gaiaChild) {
-      resetGaia();
-   }
-   console.log(projectName + ' build started...');
-   publishToEditor('output', 'New build started\n');
-   mqttClient.publish(sessionId + '/project/build', 'building');
-   makeBuild = spawn('make', { cwd: 'templates/' + projectName + '_template/build' });
-   makeBuild.stderr.on('data', (chunk) => {
-      publishToEditor('output/append', chunk);
-      console.log(chunk.toString());
-   });
-   makeBuild.stdout.on('data', (chunk) => {
-      publishToEditor('output/append', chunk);
-      console.log(chunk.toString());
-   });
-   makeBuild.stdout.on('error', (error) => {
-      console.log(error);
-   });
-   makeBuild.on('close', (code) => {
-      console.log(`child process exited with code ${code}`);
-      makeBuild = null;
-      mqttClient.publish(sessionId + '/project/build', code == 0 ? 'success' : 'failed');
    });
 }
 
