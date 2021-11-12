@@ -173,8 +173,7 @@ ruleset coordinator_ruleset: serial_group()
 
         for (/A:agent)
         {
-            if (A.in_use == false
-                && max(A.last_timestamp, A.created_timestamp) + c_agent_timeout > session.last_timestamp)
+            if (A.in_use == false && (A.last_timestamp + c_agent_timeout > session.last_timestamp))
             {
                 gaia_log::app().info("Found standby agent {} for session {}.", A.id, session.id);
                 A.in_use = true;
