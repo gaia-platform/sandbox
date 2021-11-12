@@ -34,7 +34,16 @@ const sendKeepAliveInterval = 1;  // in minutes
 const receiveKeepAliveInterval = 3;  // in minutes
 
 // Agent-specific variables
-const projectNames = ['access_control'];
+const projects = {
+   'access_control': {
+      command: 'source',
+      args: ['../start_access_control.sh']
+   },
+   'amr_swarm': {
+      command: '../start_amr_swarm.sh',
+      args: []
+   }
+}
 
 var gaiaDbServer = null;
 
@@ -120,6 +129,7 @@ function mqttClientConnectHandler() {
    setTimeout(sendKeepAlive, sendKeepAliveInterval * 60 * 1000);
    if (sessionId == 'standby') {
       console.log('Building project(s)...');
+      // TODO: rewrite to use the projects object instead of projectNames
       projectNames.forEach(function(projectName){
          buildProject(projectName);
       });
@@ -201,7 +211,7 @@ function stopGaiaDbServer() {
 }
 
 async function selectProject(projectName) {
-   if (!projectNames.includes(projectName)) {
+   if (!projects.hasOwnProperty(projectName)) {
       throw new Error(`Project ${projectName} doesn't exist`);
    }
 
@@ -265,8 +275,10 @@ async function makeBuild(projectName) {
    //mqttClient.publish(sessionId + '/project/build', 'building');
 
    const buildDir = getBuildDir(projectName);
+   // Leave one thread available for NodeJS
+   const makeThreads = (numberOfCpus > 1) ? (numberOfCpus - 1) : 1;
 
-   makeProcess = spawn('make', [`-j${numberOfCpus}`], {
+   makeProcess = spawn('make', [`-j${makeThreads}`], {
       cwd: buildDir,
       // TODO: set stdin to 'ignore' after removing the getline() block from access_control
       // Ingore stdin, pipe the stdout, pipe the stderr
@@ -295,8 +307,9 @@ async function makeBuild(projectName) {
 
 function runProject(projectName) {
    const buildDir = getBuildDir(projectName);
+   const project = projects[projectName];
 
-   projectProcess = spawn('source', ['../start_access_control.sh'], {
+   projectProcess = spawn(project.command, project.args, {
       shell: '/bin/bash',
       cwd: buildDir,
       // Inherit Node's stdin, pipe the stdout, pipe the stderr
@@ -412,7 +425,7 @@ process.on('SIGINT', () => {
 //agentInit();
 
 async function runTests() {
-   const p = 'access_control'
+   const p = 'amr_swarm'
    await selectProject(p);
    await cleanBuildDirectory(p);
    await cmakeConfigure(p);
