@@ -3,10 +3,7 @@
 // All rights reserved.
 /////////////////////////////////////////////
 
-#include <unistd.h>
-
 #include <cstring>
-#include <ctime>
 
 #include <algorithm>
 #include <iostream>
@@ -16,20 +13,17 @@
 #include <aws/crt/Api.h>
 #include <aws/crt/StlAllocator.h>
 #include <aws/crt/auth/Credentials.h>
-#include <aws/crt/io/TlsOptions.h>
-
 #include <aws/iot/MqttClient.h>
 
-#include <aws/crt/UUID.h>
-#include <condition_variable>
-#include <mutex>
-
+#include "gaia/logger.hpp"
 #include "gaia/rules/rules.hpp"
 #include "gaia/system.hpp"
-#include "gaia/logger.hpp"
 
 #include "gaia_coordinator.h"
 #include "json.hpp"
+#include "metrics.hpp"
+#include "metrics_publisher.hpp"
+#include "utils.hpp"
 
 using json = nlohmann::json;
 using namespace Aws::Crt;
@@ -42,39 +36,36 @@ using namespace gaia::direct_access;
 using namespace gaia::coordinator;
 using namespace gaia::rules;
 
-string env_coordinator_name;
+using namespace gaia::coordinator::utils;
 
-std::shared_ptr<Aws::Crt::Mqtt::MqttConnection> connection;
+string g_env_coordinator_name;
+
+std::shared_ptr<Aws::Crt::Mqtt::MqttConnection> g_connection;
 
 void send_message(const string& id, const string& topic, const string& payload);
 void send_message(const string& id, const string& topic_level_1, const string& topic_level_2, const string& payload);
 void send_message(const string& id, const string& topic_level_1, const string& topic_level_2, const string& topic_level_3, const string& payload);
 void stop_gaia_container(const string& agent_id);
 
-string get_uuid()
+auto g_on_publish_complete = [](Mqtt::MqttConnection&, uint16_t packet_id, int error_code)
 {
-    return Aws::Crt::UUID().ToString().c_str();
-}
-
-auto onPublishComplete = [](Mqtt::MqttConnection &, uint16_t packetId, int errorCode)
-{
-    if (packetId)
+    if (packet_id)
     {
-        gaia_log::app().info("Operation on packetId {} succeeded", packetId);
+        gaia_log::app().debug("Operation on packetId {} succeeded", packet_id);
     }
     else
     {
-        gaia_log::app().info("Operation failed with error {}", aws_error_debug_str(errorCode));
+        gaia_log::app().error("Operation failed with error {}", aws_error_debug_str(error_code));
     }
 };
 
 void publish_message(const string& topic, const string& payload)
 {
-    if (connection)
+    if (g_connection)
     {
-        gaia_log::app().info("Publishing on topic {}", topic);
-        ByteBuf payload_buf = ByteBufFromArray((const uint8_t *)payload.data(), payload.length());
-        connection->Publish(topic.c_str(), AWS_MQTT_QOS_AT_LEAST_ONCE, false, payload_buf, onPublishComplete);
+        gaia_log::app().info("Publishing: topic: {} payload: {}", topic, trim_to_size(payload));
+        ByteBuf payload_buf = ByteBufFromArray(reinterpret_cast<const uint8_t*>(payload.data()), payload.length());
+        g_connection->Publish(topic.c_str(), AWS_MQTT_QOS_AT_LEAST_ONCE, false, payload_buf, g_on_publish_complete);
     }
 }
 
@@ -83,7 +74,7 @@ void dump_db(const string& filter = "")
     printf("\n");
     printf("--------------------------------------------------------\n");
     printf("Sessions:\n");
-    for (const auto &s : session_t::list())
+    for (const auto& s : session_t::list())
     {
         if (strncmp(filter.c_str(), s.id(), filter.length()) != 0)
         {
@@ -100,11 +91,11 @@ void dump_db(const string& filter = "")
             printf("agent id:             %s\n", s.agent().id());
         }
         printf("    Projects:\n");
-        for (const auto &p : s.projects())
+        for (const auto& p : s.projects())
         {
             printf("    ----------------------------------------------------\n");
             printf("    name:               %s\n", p.name());
-            for (const auto &pf : p.project_files())
+            for (const auto& pf : p.project_files())
             {
                 printf("        -------------------------------------------------\n");
                 printf("        name:               %s\n", pf.name());
@@ -113,7 +104,7 @@ void dump_db(const string& filter = "")
     }
     printf("--------------------------------------------------------\n");
     printf("Agents:\n");
-    for (const auto &a : agent_t::list())
+    for (const auto& a : agent_t::list())
     {
         if (strncmp(filter.c_str(), a.id(), filter.length()) != 0)
         {
@@ -138,16 +129,18 @@ session_t get_session(const string& id)
     auto session_iter = session_t::list().where(session_t::expr::id == id).begin();
     if (session_iter == session_t::list().end())
     {
-        gaia_log::app().info("Creating new session");
+        gaia_log::app().info("Creating new session with id {}", id);
         session_writer w;
         w.id = id;
         w.is_active = false;
-        w.last_timestamp = (uint64_t)time(nullptr);
-        w.created_timestamp = (uint64_t)time(nullptr);
+        w.last_timestamp = current_time_seconds();
+        w.created_timestamp = current_time_seconds();
         w.current_project_name = "none";
-        return session_t::get(w.insert_row());
+        session_t session = session_t::get(w.insert_row());
+
+        return session;
     }
-    gaia_log::app().info("Existing session found");
+    gaia_log::app().debug("Session with id {} already exists", id);
     return *session_iter;
 }
 
@@ -155,7 +148,7 @@ editor_file_request_t editor_file_request(const string& name)
 {
     editor_file_request_writer w;
     w.name = name;
-    w.timestamp = (uint64_t)time(nullptr);
+    w.timestamp = current_time_seconds();
     return editor_file_request_t::get(w.insert_row());
 }
 
@@ -169,10 +162,10 @@ project_file_t project_file(const string& name, const string& content)
 
 editor_content_t editor_content(const string& name, const string& content)
 {
-    auto pf = project_file(name, content);
+    project_file_t pf = project_file(name, content);
 
     editor_content_writer w;
-    w.timestamp = (uint64_t)time(nullptr);
+    w.timestamp = current_time_seconds();
     auto ec = editor_content_t::get(w.insert_row());
 
     pf.editor_contents().insert(ec);
@@ -194,18 +187,16 @@ vector<string> split_topic(const string& topic)
     return result;
 }
 
-void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payload,
-                bool /*dup*/, Mqtt::QOS /*qos*/, bool /*retain*/)
+void on_message(Mqtt::MqttConnection&, const String& topic, const ByteBuf& payload, bool /*dup*/, Mqtt::QOS /*qos*/, bool /*retain*/)
 {
     vector<string> topic_vector = split_topic(topic.c_str());
-    string payload_str((char *)payload.buffer, payload.len);
+    string payload_str(reinterpret_cast<char*>(payload.buffer), payload.len);
     payload_str += '\0';
-    gaia_log::app().info("Message received on topic {}", topic.c_str());
-    gaia_log::app().info("Message: {}", payload_str.c_str());
+    gaia_log::app().info("Received topic: {} payload: {}", topic.c_str(), trim_to_size(payload_str));
 
     if (topic_vector.size() < 3)
     {
-        gaia_log::app().error("Unexpected topic");
+        gaia_log::app().error("Unexpected topic:{}", topic.c_str(), trim_to_size(payload_str));
         return;
     }
 
@@ -215,16 +206,16 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
     {
         if (topic_vector.size() < 4)
         {
-            gaia_log::app().error("Unexpected topic {}", topic.c_str());
+            gaia_log::app().error("Unexpected: topic: {} payload: {}", topic.c_str(), trim_to_size(payload_str));
         }
         else
         {
             auto agent_iter = agent_t::list().where(agent_t::expr::id == topic_vector[1]).begin();
             if (agent_iter != agent_t::list().end())
             {
-                auto w = agent_iter->writer();
-                w.last_timestamp = (uint64_t)time(nullptr);
-                w.update_row();
+                auto agent_w = agent_iter->writer();
+                agent_w.last_timestamp = current_time_seconds();
+                agent_w.update_row();
             }
             else
             {
@@ -235,28 +226,30 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
     else
     {
         session_t session = get_session(topic_vector[1]);
-        session_writer w = session.writer();
-        w.last_timestamp = (uint64_t)time(nullptr);
+        session_writer session_w = session.writer();
+        session_w.last_timestamp = current_time_seconds();
 
         if (topic_vector[2] == "project")
         {
             if (topic_vector.size() < 4)
             {
-                gaia_log::app().error("Unexpected topic {}", topic.c_str());
+                gaia_log::app().error("Unexpected topic: {} payload: {}", topic.c_str(), trim_to_size(payload_str));
             }
             else
             {
                 if (session.agent())
                 {
-                    send_message(session.agent().id(), payload_str.c_str(), topic_vector[3]);
+                    send_message(session.agent().id(), payload_str, topic_vector[3]);
+                    metrics::emit_project_metrics(session, topic_vector[3]);
                 }
+
                 if (topic_vector[3] == "exit")
                 {
-                    w.current_project_name = "none";
+                    session_w.current_project_name = "none";
                 }
                 else if (topic_vector[3] == "select")
                 {
-                    w.current_project_name = payload_str.c_str();
+                    session_w.current_project_name = payload_str.c_str();
                 }
             }
         }
@@ -264,31 +257,45 @@ void on_message(Mqtt::MqttConnection &, const String& topic, const ByteBuf& payl
         {
             if (topic_vector.size() < 4)
             {
-                gaia_log::app().error("Unexpected topic");
+                gaia_log::app().error("Unexpected topic: {} payload: {}", topic.c_str(), trim_to_size(payload_str));
             }
             else if (topic_vector[3] == "req")
             {
-                auto activity = editor_file_request(payload_str.c_str());
+                editor_file_request_t activity = editor_file_request(payload_str);
                 session.editor_file_requests().insert(activity);
             }
             else if (topic_vector.size() == 5 && topic_vector[3] == "file")
             {
-                auto activity = editor_content(topic_vector[4], payload_str.c_str());
+                editor_content_t activity = editor_content(topic_vector[4], payload_str);
                 session.editor_contents().insert(activity);
+
+                for (auto& ec : session.editor_contents())
+                {
+                    gaia_log::app().info("editor_content_t Session: {}, file: {}", session.id(), ec.project_file().name());
+                }
+
+                for (auto& project : session.projects())
+                {
+                    for (auto& pf : project.project_files())
+                    {
+                        gaia_log::app().info("project_file Session: {}, file: {}", session.id(), pf.name());
+                    }
+                }
             }
         }
-        w.update_row();
+        session_w.update_row();
     }
 
     commit_transaction();
 }
+
 
 int main()
 {
     char* s = std::getenv("COORDINATOR_NAME");
     if (s)
     {
-        env_coordinator_name = s;
+        g_env_coordinator_name = s;
     }
     else
     {
@@ -296,7 +303,7 @@ int main()
         exit(-1);
     }
 
-    if (env_coordinator_name == "sandbox_coordinator")
+    if (g_env_coordinator_name == "sandbox_coordinator")
     {
         fprintf(stdout, "Environment variable COORDINATOR_NAME must only be set to sandbox_coordinator when deployed in production.\n");
         fprintf(stdout, "Are you deploying in production and sure you want to continue?\n");
@@ -310,29 +317,30 @@ int main()
     }
 
     gaia::system::initialize();
+    metrics::create_schema();
 
     begin_transaction();
     dump_db();
     commit_transaction();
 
-    ApiHandle apiHandle;
+    ApiHandle api_handle;
 
     String endpoint("a31gq30tvzx17m-ats.iot.us-west-2.amazonaws.com");
-    String certificatePath("../certs/coordinator-certificate.pem.crt");
-    String keyPath("../certs/coordinator-private.pem.key");
-    String caFile("../certs/AmazonRootCA1.pem");
-    String clientId = Aws::Crt::UUID().ToString();
+    String certificate_path("../certs/coordinator-certificate.pem.crt");
+    String key_path("../certs/coordinator-private.pem.key");
+    String ca_file("../certs/AmazonRootCA1.pem");
+    String client_id = get_uuid().c_str();
 
-    Io::EventLoopGroup eventLoopGroup(1);
-    if (!eventLoopGroup)
+    Io::EventLoopGroup event_loop_group(1);
+    if (!event_loop_group)
     {
         fprintf(
-            stderr, "Event Loop Group Creation failed with error %s\n", ErrorDebugString(eventLoopGroup.LastError()));
+            stderr, "Event Loop Group Creation failed with error %s\n", ErrorDebugString(event_loop_group.LastError()));
         exit(-1);
     }
 
-    Aws::Crt::Io::DefaultHostResolver defaultHostResolver(eventLoopGroup, 1, 5);
-    Io::ClientBootstrap bootstrap(eventLoopGroup, defaultHostResolver);
+    Aws::Crt::Io::DefaultHostResolver default_host_resolver(event_loop_group, 1, 5);
+    Io::ClientBootstrap bootstrap(event_loop_group, default_host_resolver);
 
     if (!bootstrap)
     {
@@ -342,97 +350,97 @@ int main()
 
     Aws::Iot::MqttClientConnectionConfigBuilder builder;
 
-    builder = Aws::Iot::MqttClientConnectionConfigBuilder(certificatePath.c_str(), keyPath.c_str());
-    builder.WithCertificateAuthority(caFile.c_str());
+    builder = Aws::Iot::MqttClientConnectionConfigBuilder(certificate_path.c_str(), key_path.c_str());
+    builder.WithCertificateAuthority(ca_file.c_str());
     builder.WithEndpoint(endpoint);
 
-    auto clientConfig = builder.Build();
+    auto client_config = builder.Build();
 
-    if (!clientConfig)
+    if (!client_config)
     {
         fprintf(
             stderr,
             "Client Configuration initialization failed with error %s\n",
-            ErrorDebugString(clientConfig.LastError()));
+            ErrorDebugString(client_config.LastError()));
         exit(-1);
     }
 
-    Aws::Iot::MqttClient mqttClient(bootstrap);
+    Aws::Iot::MqttClient mqtt_client(bootstrap);
 
-    if (!mqttClient)
+    if (!mqtt_client)
     {
-        fprintf(stderr, "MQTT Client Creation failed with error %s\n", ErrorDebugString(mqttClient.LastError()));
+        fprintf(stderr, "MQTT Client Creation failed with error %s\n", ErrorDebugString(mqtt_client.LastError()));
         exit(-1);
     }
 
-    connection = mqttClient.NewConnection(clientConfig);
+    g_connection = mqtt_client.NewConnection(client_config);
 
-    if (!connection)
+    if (!g_connection)
     {
-        fprintf(stderr, "MQTT Connection Creation failed with error %s\n", ErrorDebugString(mqttClient.LastError()));
+        fprintf(stderr, "MQTT Connection Creation failed with error %s\n", ErrorDebugString(mqtt_client.LastError()));
         exit(-1);
     }
 
-    std::promise<bool> connectionCompletedPromise;
-    std::promise<void> connectionClosedPromise;
+    std::promise<bool> connection_completed_promise;
+    std::promise<void> connection_closed_promise;
 
-    auto onConnectionCompleted = [&](Mqtt::MqttConnection &, int errorCode, Mqtt::ReturnCode returnCode, bool)
+    auto on_connection_completed = [&connection_completed_promise](Mqtt::MqttConnection&, int error_code, Mqtt::ReturnCode returnCode, bool)
     {
-        if (errorCode)
+        if (error_code)
         {
-            fprintf(stdout, "Connection failed with error %s\n", ErrorDebugString(errorCode));
-            connectionCompletedPromise.set_value(false);
+            fprintf(stdout, "Connection failed with error %s\n", ErrorDebugString(error_code));
+            connection_completed_promise.set_value(false);
         }
         else
         {
             if (returnCode != AWS_MQTT_CONNECT_ACCEPTED)
             {
-                fprintf(stdout, "Connection failed with mqtt return code %d\n", (int)returnCode);
-                connectionCompletedPromise.set_value(false);
+                fprintf(stdout, "Connection failed with mqtt return code %d\n", static_cast<int>(returnCode));
+                connection_completed_promise.set_value(false);
             }
             else
             {
-                fprintf(stdout, "Connection completed successfully.");
+                fprintf(stdout, "Connection completed successfully.\n");
                 gaia::system::initialize();
-                connectionCompletedPromise.set_value(true);
+                connection_completed_promise.set_value(true);
             }
         }
     };
 
-    auto onInterrupted = [&](Mqtt::MqttConnection &, int error)
+    auto on_interrupted = [&](Mqtt::MqttConnection&, int error)
     {
         fprintf(stdout, "Connection interrupted with error %s\n", ErrorDebugString(error));
     };
 
-    auto onResumed = [&](Mqtt::MqttConnection &, Mqtt::ReturnCode, bool)
+    auto on_resumed = [&](Mqtt::MqttConnection&, Mqtt::ReturnCode, bool)
     { fprintf(stdout, "Connection resumed\n"); };
 
-    auto onDisconnect = [&](Mqtt::MqttConnection &)
+    auto on_disconnect = [&connection_closed_promise](Mqtt::MqttConnection&)
     {
         {
             fprintf(stdout, "Disconnect completed\n");
             gaia::system::shutdown();
-            connectionClosedPromise.set_value();
+            connection_closed_promise.set_value();
         }
     };
 
-    connection->OnConnectionCompleted = std::move(onConnectionCompleted);
-    connection->OnDisconnect = std::move(onDisconnect);
-    connection->OnConnectionInterrupted = std::move(onInterrupted);
-    connection->OnConnectionResumed = std::move(onResumed);
+    g_connection->OnConnectionCompleted = std::move(on_connection_completed);
+    g_connection->OnDisconnect = std::move(on_disconnect);
+    g_connection->OnConnectionInterrupted = std::move(on_interrupted);
+    g_connection->OnConnectionResumed = std::move(on_resumed);
 
     fprintf(stdout, "Connecting...\n");
-    if (!connection->Connect(clientId.c_str(), false, 1000))
+    if (!g_connection->Connect(client_id.c_str(), false, 1000))
     {
-        fprintf(stderr, "MQTT Connection failed with error %s\n", ErrorDebugString(connection->LastError()));
+        fprintf(stderr, "MQTT Connection failed with error %s\n", ErrorDebugString(g_connection->LastError()));
         exit(-1);
     }
 
-    if (connectionCompletedPromise.get_future().get())
+    if (connection_completed_promise.get_future().get())
     {
-        std::promise<void> subscribeFinishedPromise;
-        auto onSubAck =
-            [&](Mqtt::MqttConnection &, uint16_t packetId, const String& topic, Mqtt::QOS QoS, int errorCode)
+        std::promise<void> subscribe_finished_promise;
+        auto on_sub_ack =
+            [&subscribe_finished_promise](Mqtt::MqttConnection&, uint16_t packet_id, const String& topic, Mqtt::QOS QoS, int errorCode)
         {
             if (errorCode)
             {
@@ -441,23 +449,23 @@ int main()
             }
             else
             {
-                if (!packetId || QoS == AWS_MQTT_QOS_FAILURE)
+                if (!packet_id || QoS == AWS_MQTT_QOS_FAILURE)
                 {
                     fprintf(stderr, "Subscribe rejected by the broker.");
                     exit(-1);
                 }
                 else
                 {
-                    fprintf(stdout, "Subscribe on topic %s on packetId %d Succeeded\n", topic.c_str(), packetId);
+                    fprintf(stdout, "Subscribe on topic %s on packetId %d Succeeded\n", topic.c_str(), packet_id);
                 }
             }
-            subscribeFinishedPromise.set_value();
+            subscribe_finished_promise.set_value();
         };
 
-        string topic = env_coordinator_name;
+        string topic = g_env_coordinator_name;
         topic += "/#";
-        connection->Subscribe(topic.c_str(), AWS_MQTT_QOS_AT_LEAST_ONCE, on_message, onSubAck);
-        subscribeFinishedPromise.get_future().wait();
+        g_connection->Subscribe(topic.c_str(), AWS_MQTT_QOS_AT_LEAST_ONCE, on_message, on_sub_ack);
+        subscribe_finished_promise.get_future().wait();
 
         String input = "";
         while (input != "x")
@@ -472,16 +480,17 @@ int main()
             }
         }
 
-        std::promise<void> unsubscribeFinishedPromise;
-        connection->Unsubscribe(
-            "#", [&](Mqtt::MqttConnection &, uint16_t, int)
-            { unsubscribeFinishedPromise.set_value(); });
-        unsubscribeFinishedPromise.get_future().wait();
+        std::promise<void> unsubscribe_finished_promise;
+        g_connection->Unsubscribe(
+            "#",
+            [&unsubscribe_finished_promise](Mqtt::MqttConnection&, uint16_t, int)
+            { unsubscribe_finished_promise.set_value(); });
+        unsubscribe_finished_promise.get_future().wait();
     }
 
-    if (connection->Disconnect())
+    if (g_connection->Disconnect())
     {
-        connectionClosedPromise.get_future().wait();
+        connection_closed_promise.get_future().wait();
     }
 
     gaia::system::shutdown();
