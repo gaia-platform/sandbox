@@ -3,6 +3,7 @@ const { spawn, exec } = require('child_process');
 const AWS = require('aws-sdk');
 const AWSIoTData = require('aws-iot-device-sdk');
 const fs = require('fs');
+const os = require('os');
 const util = require('util');
 
 // AWS configurations
@@ -21,6 +22,7 @@ var cognitoIdentity = new AWS.CognitoIdentity();
 var mqttClient;
 
 // Sandbox-specific variables
+const numberOfCpus = os.cpus().length;
 var coordinatorName = process.env.COORDINATOR_NAME || 'sandbox_coordinator';
 var agentId = process.env.AGENT_ID;
 
@@ -245,7 +247,7 @@ async function cmakeConfigure(projectName) {
 }
 
 function stopProcesses() {
-   if (makeBuild) {
+   if (makeProcess) {
       makeProcess.kill();
       makeProcess = null;
       mqttClient.publish(sessionId + '/project/build', 'cancelled');
@@ -257,41 +259,38 @@ function stopProcesses() {
    }
 }
 
-async function buildProject(projectName) {
+async function makeBuild(projectName) {
    console.log(projectName + ' build started...');
-   publishToEditor('output', 'New build started\n');
-   mqttClient.publish(sessionId + '/project/build', 'building');
+   //publishToEditor('output', 'New build started\n');
+   //mqttClient.publish(sessionId + '/project/build', 'building');
 
    const buildDir = getBuildDir(projectName);
 
-   makeProcess = spawn('make', ['-j$(nproc)'], {
+   makeProcess = spawn('make', [`-j${numberOfCpus}`], {
       cwd: buildDir,
-      // Ingore stdin, use Node's stdout, use Node's stderr
-      stdio: ['ignore', 'inherit', 'inherit']
+      // Ingore stdin, pipe the stdout, pipe the stderr
+      stdio: ['ignore', 'pipe', 'pipe']
    });
 
-   // Old stuff
-   makeBuild = spawn('make', { cwd: 'templates/' + projectName + '_template/build' });
-
-   makeBuild.stderr.on('data', (chunk) => {
-      publishToEditor('output/append', chunk);
-      console.log(chunk.toString());
+   makeProcess.stdout.on('data', chunk => {
+      //publishToEditor('output/append', chunk);
+      process.stdout.write(chunk.toString());
    });
 
-   makeBuild.stdout.on('data', (chunk) => {
-      publishToEditor('output/append', chunk);
-      console.log(chunk.toString());
+   makeProcess.stderr.on('data', chunk => {
+      //publishToEditor('output/append', chunk);
+      process.stderr.write(chunk.toString());
    });
 
-   makeBuild.stdout.on('error', (error) => {
-      console.log(error);
-   });
-
-   makeBuild.on('close', (code) => {
-      console.log(`child process exited with code ${code}`);
-      makeBuild = null;
-      mqttClient.publish(sessionId + '/project/build', code == 0 ? 'success' : 'failed');
-   });
+   try {
+      await promisify_child_process(makeProcess);
+      //mqttClient.publish(sessionId + '/project/build', 'success');
+   } catch {
+      if (!makeProcess.killed) {
+         //mqttClient.publish(sessionId + '/project/build', 'failed');
+      }
+   }
+   makeProcess = null;
 }
 
 function runProject(projectName) {
@@ -352,11 +351,11 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
 
          case 'exit':
             break;
-            /*stopProcesses();
+            stopProcesses();
             if (topicTokens[1] == 'agent') {
                exitAgent();
             }
-            break;*/
+            break;
                
          default:
             break;
@@ -414,6 +413,7 @@ async function runTests() {
    await selectProject(p);
    await cleanBuildDirectory(p);
    await cmakeConfigure(p);
+   await makeBuild(p);
    stopGaiaDbServer();
 }
 
