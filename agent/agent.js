@@ -268,6 +268,7 @@ async function makeBuild(projectName) {
 
    makeProcess = spawn('make', [`-j${numberOfCpus}`], {
       cwd: buildDir,
+      // TODO: set stdin to 'ignore' after removing the getline() block from access_control
       // Ingore stdin, pipe the stdout, pipe the stderr
       stdio: ['ignore', 'pipe', 'pipe']
    });
@@ -276,7 +277,6 @@ async function makeBuild(projectName) {
       //publishToEditor('output/append', chunk);
       process.stdout.write(chunk.toString());
    });
-
    makeProcess.stderr.on('data', chunk => {
       //publishToEditor('output/append', chunk);
       process.stderr.write(chunk.toString());
@@ -294,28 +294,31 @@ async function makeBuild(projectName) {
 }
 
 function runProject(projectName) {
-   projectProcess = exec('bash ../start_amr_swarm.sh',
-      {
-         cwd: 'templates/' + projectName + '_template/build',
-         env: { 'SESSION_ID': sessionId }
-      });
-   publishToEditor('output/append', 'Running application...\n');
-   mqttClient.publish(sessionId + '/project/program', 'running');
-   projectProcess.stderr.on('data', (chunk) => {
-      publishToEditor('output/append', chunk);
-      console.log(chunk.toString());
+   const buildDir = getBuildDir(projectName);
+
+   projectProcess = spawn('source', ['../start_access_control.sh'], {
+      shell: '/bin/bash',
+      cwd: buildDir,
+      // Inherit Node's stdin, pipe the stdout, pipe the stderr
+      stdio: ['inherit', 'pipe', 'pipe']
    });
-   projectProcess.stdout.on('data', (chunk) => {
-      publishToEditor('output/append', chunk);
-      console.log(chunk.toString());
+
+   //publishToEditor('output/append', 'Running application...\n');
+   //mqttClient.publish(sessionId + '/project/program', 'running');
+
+   projectProcess.stdout.on('data', chunk => {
+      //publishToEditor('output/append', chunk);
+      process.stdout.write(chunk.toString());
    });
-   projectProcess.stdout.on('error', (error) => {
-      console.log(error);
+   projectProcess.stderr.on('data', chunk => {
+      //publishToEditor('output/append', chunk);
+      process.stderr.write(chunk.toString());
    });
-   projectProcess.on('close', (code) => {
-      console.log(`child process exited with code ${code}`);
+   
+   projectProcess.on('close', code => {
+      console.log(`${projectName} exited with code ${code}.`);
+      //mqttClient.publish(sessionId + '/project/program', 'stopped');
       projectProcess = null;
-      mqttClient.publish(sessionId + '/project/program', 'stopped');
    });
 }
 
@@ -414,7 +417,7 @@ async function runTests() {
    await cleanBuildDirectory(p);
    await cmakeConfigure(p);
    await makeBuild(p);
-   stopGaiaDbServer();
+   runProject(p);
 }
 
 runTests();
