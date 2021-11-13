@@ -35,12 +35,10 @@ const receiveKeepAliveInterval = 3;  // in minutes
 // Agent-specific variables
 const projects = {
    'access_control': {
-      command: 'source',
-      args: ['../start_access_control.sh']
+      command: 'bash ../start_access_control.sh'
    },
    'amr_swarm': {
-      command: '../start_amr_swarm.sh',
-      args: []
+      command: 'bash ../start_amr_swarm.sh'
    }
 }
 
@@ -93,10 +91,6 @@ function connect(credentials)
 }
 
 function exitAgent() {
-   if (gaiaChild) {
-      gaiaChild.kill();
-      gaiaChild = null;
-   }
    process.exit(0);
 }
 
@@ -179,7 +173,7 @@ async function fileExists(file) {
 }
 
 function getBuildDir(projectName) {
-   return `/usr/src/app/templates/${projectName}_template/build`;
+   return `templates/${projectName}_template/build`;
 }
 
 function getDataDir(projectName) {
@@ -320,8 +314,7 @@ function runProject(projectName) {
    const buildDir = getBuildDir(projectName);
    const project = projects[projectName];
 
-   projectProcess = spawn(project.command, project.args, {
-      shell: '/bin/bash',
+   projectProcess = exec(project.command, {
       cwd: buildDir,
       // Inherit Node's stdin, pipe the stdout, pipe the stderr
       stdio: ['inherit', 'pipe', 'pipe']
@@ -427,6 +420,7 @@ function agentInit() {
       }
    });
    
+   projectSetup('access_control');
    projectSetup('amr_swarm');
    receiveKeepAlive();
 }
