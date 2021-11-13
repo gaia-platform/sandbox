@@ -26,7 +26,6 @@ const numberOfCpus = os.cpus().length;
 var coordinatorName = process.env.COORDINATOR_NAME || 'sandbox_coordinator';
 var agentId = process.env.AGENT_ID;
 
-// TODO: refactor sandbox to use only SESSION_ID instead of having two redundant environment variables.
 var sessionId = process.env.SESSION_ID;
 process.env.REMOTE_CLIENT_ID = sessionId;
 
@@ -74,7 +73,7 @@ function promisify_child_process(child) {
 // Connect to the MQTT broker and register callbacks for MQTT-related events.
 function connect(credentials)
 {
-   /// Config and connect MQTT
+   // Config and connect MQTT
    mqttClient = AWSIoTData.device({
       region: AWS.config.region,
       host: awsConfig.host,
@@ -127,11 +126,7 @@ function mqttClientConnectHandler() {
    publishToCoordinator('connected', agentId);
    setTimeout(sendKeepAlive, sendKeepAliveInterval * 60 * 1000);
    if (sessionId == 'standby') {
-      console.log('Building project(s)...');
-      // TODO: rewrite to use the projects object instead of projectNames
-      projectNames.forEach(function(projectName){
-         buildProject(projectName);
-      });
+      // TODO: build all the projects while in standby mode
    } else {
       mqttClient.publish(sessionId + '/session', 'loaded');      
    }
@@ -151,7 +146,7 @@ function sendFile(projectName, fileName) {
    });
 }
 
-function saveFile(projectName, fileName, content) {
+async function saveFile(projectName, fileName, content) {
    fs.writeFile('templates/' + projectName + '_template/src/' + fileName, content, 'utf8', (err) => {
       if (err) {
          console.error(err);
@@ -159,10 +154,18 @@ function saveFile(projectName, fileName, content) {
       }
       console.log(fileName + ' has been saved');
    });
+
    var fileNameParts = fileName.split('.');
    if (fileNameParts.length == 2 && fileNameParts[1] == 'ddl') {
-      resetGaia();
+      // If the DDL schema changes, we need to purge the database and the build directory.
+      stopGaiaDbServer();
+      await purgeGaiaDbData(projectName);
+      startGaiaDbServer(projectName);
+
+      await cleanBuildDirectory(projectName);
+      await cmakeConfigure(projectName);
    }
+
    mqttClient.publish(sessionId + '/project/build', 'dirty');
 }
 
@@ -194,14 +197,13 @@ async function purgeGaiaDbData(projectName) {
    }
 }
 
-async function startGaiaDbServer(projectName, purgeOldData = false) {
+function startGaiaDbServer(projectName) {
    gaiaDbServer = spawn('gaia_db_server', ['--data-dir', getDataDir(projectName)], {
       // Ingore stdin, ignore stdout, ignore stderr
       stdio: ['ignore', 'ignore', 'ignore']
    });
 }
 
-// TODO: make this async with an error when the DB server can't be killed.
 function stopGaiaDbServer() {
    if (gaiaDbServer) {
       gaiaDbServer.kill();
@@ -222,7 +224,7 @@ async function selectProject(projectName) {
 
    stopGaiaDbServer();
    await purgeGaiaDbData(projectName);
-   await startGaiaDbServer(projectName);
+   startGaiaDbServer(projectName);
 
    console.log(`Selected project ${projectName}.`);
 }
@@ -268,12 +270,17 @@ function stopProcesses() {
       projectProcess = null;
       mqttClient.publish(sessionId + '/project/program', 'stopped');
    }
+   stopGaiaDbServer();
 }
 
 async function makeBuild(projectName) {
+   if (!projects.hasOwnProperty(projectName)) {
+      throw new Error(`Project ${projectName} doesn't exist`);
+   }
+
    console.log(projectName + ' build started...');
-   //publishToEditor('output', 'New build started\n');
-   //mqttClient.publish(sessionId + '/project/build', 'building');
+   publishToEditor('output', 'New build started\n');
+   mqttClient.publish(sessionId + '/project/build', 'building');
 
    const buildDir = getBuildDir(projectName);
    // Leave one thread available for NodeJS
@@ -281,32 +288,35 @@ async function makeBuild(projectName) {
 
    makeProcess = spawn('make', [`-j${makeThreads}`], {
       cwd: buildDir,
-      // TODO: set stdin to 'ignore' after removing the getline() block from access_control
       // Ingore stdin, pipe the stdout, pipe the stderr
       stdio: ['ignore', 'pipe', 'pipe']
    });
 
    makeProcess.stdout.on('data', chunk => {
-      //publishToEditor('output/append', chunk);
+      publishToEditor('output/append', chunk);
       process.stdout.write(chunk.toString());
    });
    makeProcess.stderr.on('data', chunk => {
-      //publishToEditor('output/append', chunk);
+      publishToEditor('output/append', chunk);
       process.stderr.write(chunk.toString());
    });
 
    try {
       await promisify_child_process(makeProcess);
-      //mqttClient.publish(sessionId + '/project/build', 'success');
+      mqttClient.publish(sessionId + '/project/build', 'success');
    } catch {
       if (!makeProcess.killed) {
-         //mqttClient.publish(sessionId + '/project/build', 'failed');
+         mqttClient.publish(sessionId + '/project/build', 'failed');
       }
    }
    makeProcess = null;
 }
 
 function runProject(projectName) {
+   if (!projects.hasOwnProperty(projectName)) {
+      throw new Error(`Project ${projectName} doesn't exist`);
+   }
+
    const buildDir = getBuildDir(projectName);
    const project = projects[projectName];
 
@@ -317,21 +327,21 @@ function runProject(projectName) {
       stdio: ['inherit', 'pipe', 'pipe']
    });
 
-   //publishToEditor('output/append', 'Running application...\n');
-   //mqttClient.publish(sessionId + '/project/program', 'running');
+   publishToEditor('output/append', 'Running application...\n');
+   mqttClient.publish(sessionId + '/project/program', 'running');
 
    projectProcess.stdout.on('data', chunk => {
-      //publishToEditor('output/append', chunk);
+      publishToEditor('output/append', chunk);
       process.stdout.write(chunk.toString());
    });
    projectProcess.stderr.on('data', chunk => {
-      //publishToEditor('output/append', chunk);
+      publishToEditor('output/append', chunk);
       process.stderr.write(chunk.toString());
    });
    
    projectProcess.on('close', code => {
       console.log(`${projectName} exited with code ${code}.`);
-      //mqttClient.publish(sessionId + '/project/program', 'stopped');
+      mqttClient.publish(sessionId + '/project/program', 'stopped');
       projectProcess = null;
    });
 }
@@ -347,7 +357,7 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
       }
       switch (payload.toString()) {
          case 'select':
-            selectProject(topicTokens[1]).then(mqttClient.publish(sessionId + '/project/ready', topicTokens[1]));
+            selectProject(topicTokens[1]).then(() => mqttClient.publish(sessionId + '/project/ready', topicTokens[1]));
             break;
       
          case 'stop':
@@ -359,7 +369,7 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
             break;
 
          case 'build':
-            buildProject(topicTokens[1]);
+            makeBuild(topicTokens[1]);
             break;
 
          case 'keepAlive':
@@ -367,7 +377,6 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
             break;
 
          case 'exit':
-            break;
             stopProcesses();
             if (topicTokens[1] == 'agent') {
                exitAgent();
@@ -393,6 +402,12 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
    }
 }
 
+async function projectSetup(projectName) {
+   await selectProject(projectName);
+   await cleanBuildDirectory(projectName);
+   await cmakeConfigure(projectName);
+}
+
 function agentInit() {
    AWS.config.credentials.get(function (err, data) {
       if (!err) {
@@ -412,35 +427,13 @@ function agentInit() {
       }
    });
    
-   resetGaia();
+   projectSetup('amr_swarm');
    receiveKeepAlive();
 }
 
-// TODO: remove this, it's only for testing in a terminal.
 process.on('SIGINT', () => {
    console.log("\nCaught interrupt signal.");
    process.exit();
 });
 
-// This script is being incrementally tested, so the normal init procedure should not occur.
-//agentInit();
-
-async function runTests() {
-   var p = 'amr_swarm'
-   await selectProject(p);
-   await cleanBuildDirectory(p);
-   await cmakeConfigure(p);
-   await makeBuild(p);
-   runProject(p);
-
-   await new Promise(r => setTimeout(r, 10000));
-
-   p = 'access_control'
-   await selectProject(p);
-   await cleanBuildDirectory(p);
-   await cmakeConfigure(p);
-   await makeBuild(p);
-   runProject(p);
-}
-
-runTests();
+agentInit();
