@@ -115,8 +115,8 @@ window.publishData = function (topic, payload) { // Topic publish handler
 
 // Sending data to sandbox_coordinator
 window.publishToCoordinator = function (topic, payload) {
-   if ($("#inprod").attr("data-inprod") == "true") {
-      mqttClient.publish("sandbox_coordinator/" + window.sandboxUUID + "/" + topic, payload);
+   if ($("#coordinator").attr("data-coordinator") != "none" && window.sandboxUUID) {
+      mqttClient.publish($("#coordinator").attr("data-coordinator") + "/" + window.sandboxUUID + "/" + topic, payload);
    }
 }
 
@@ -124,8 +124,6 @@ window.publishToCoordinator = function (topic, payload) {
 window.publishToApp = function (topic, payload) {
    if (window.appUUID) {
       mqttClient.publish(window.appUUID + "/" + topic, payload);
-      // Let coordinator know there has been messaging to the app to keep session alive longer
-      window.publishToCoordinator("browser", "refresh");
    }
 }
 

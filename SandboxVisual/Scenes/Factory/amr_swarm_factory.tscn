@@ -695,6 +695,7 @@ size_flags_vertical = 3
 text = "Change Bots"
 
 [node name="ReceiveOrderButton" parent="VBoxContainer/GridContainer/SimulationController2/MarginContainer/VBoxContainer" instance=ExtResource( 4 )]
+visible = false
 margin_top = 63.0
 margin_right = 190.0
 margin_bottom = 171.0
