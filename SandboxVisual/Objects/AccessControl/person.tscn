@@ -23,7 +23,7 @@ schedule_panel_path = NodePath("MarginContainer/VBoxContainer/MarginContainer/VB
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 margin_right = 930.0
-margin_bottom = 228.0
+margin_bottom = 266.0
 custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
@@ -33,7 +33,7 @@ custom_constants/margin_bottom = 20
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 920.0
-margin_bottom = 208.0
+margin_bottom = 246.0
 
 [node name="PersonNameLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 margin_right = 910.0
@@ -67,16 +67,26 @@ margin_bottom = 102.0
 
 [node name="MarginContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel" index="0"]
 margin_right = 430.0
+margin_bottom = 102.0
 
 [node name="VBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer" index="0"]
 margin_right = 420.0
+margin_bottom = 92.0
 
 [node name="OptionsLabel" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="0"]
+visible = false
 margin_right = 410.0
-text = "Building Name"
+text = "Building"
 
-[node name="HBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="1"]
+[node name="OptionButton" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="1"]
+margin_top = 0.0
 margin_right = 410.0
+margin_bottom = 28.0
+
+[node name="HBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer" index="2"]
+margin_top = 38.0
+margin_right = 410.0
+margin_bottom = 81.0
 
 [node name="Button" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
 margin_left = 143.0
@@ -102,16 +112,24 @@ margin_bottom = 102.0
 
 [node name="MarginContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2" index="0"]
 margin_right = 430.0
+margin_bottom = 102.0
 
 [node name="VBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer" index="0"]
 margin_right = 420.0
+margin_bottom = 92.0
 
 [node name="OptionsLabel" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="0"]
 margin_right = 410.0
 text = "Other"
 
-[node name="HBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="1"]
+[node name="OptionButton" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="1"]
+visible = false
 margin_right = 410.0
+
+[node name="HBoxContainer" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer" index="2"]
+margin_top = 39.0
+margin_right = 410.0
+margin_bottom = 82.0
 
 [node name="Button" parent="MarginContainer/VBoxContainer/MarginContainer/VBoxContainer/HBoxContainer/PersonOptionsPanel2/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
 margin_left = 136.0
