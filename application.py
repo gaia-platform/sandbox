@@ -8,7 +8,12 @@ app = Flask(__name__)
 @app.route('/', methods=['GET'])
 def index():
     # return the rendered template
-    return render_template("index.html", coordinator=sys.argv[1])
+    return render_template("index.html", coordinator=sys.argv[1], maintenance=sys.argv[2])
+
+@app.route('/test', methods=['GET'])
+def index_test():
+    # return the rendered template
+    return render_template("index.html", coordinator=sys.argv[1], maintenance="false")
 
 @app.route('/health', methods=['GET'])
 def health():

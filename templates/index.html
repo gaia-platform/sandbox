@@ -82,6 +82,17 @@
       </div>
     </div>
   </div>
+  {% if maintenance == 'true' %}
+  <div stackColumnsAt="tablet" class="div-3" data-name="div-2">
+    <div class="builder-columns columns">
+      <div class="builder-column column-4">
+        <div class="div-2">
+          <p>Down for maintenance. Please check back later.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
   <div stackColumnsAt="tablet" class="div-3" data-name="div-2">
     <div class="builder-columns columns">
       <div class="builder-column column-5">
@@ -128,6 +139,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
 
   <!-- Privacy Modal -->
   <div id="privacy-modal" class="modal">
