@@ -45,13 +45,12 @@ const projects = {
    }
 }
 
+var receiveKeepAliveTimeout;
+
+// Processes
 var gaiaDbServer = null;
-
-var activeProject = null;
-
 var makeProcess = null;
 var projectProcess = null;
-var receiveKeepAliveTimeout;
 
 // This makes exec() friendly for async/await code.
 const promiseExec = util.promisify(exec);
@@ -215,14 +214,16 @@ async function selectProject(projectName) {
       throw new Error(`Project ${projectName} doesn't exist`);
    }
 
-   activeProject = null;
+   if (projectProcess) {
+      projectProcess.kill();
+   }
+
    console.log(`Switching to project ${projectName}...`);
 
    stopGaiaDbServer();
    await purgeGaiaDbData(projectName);
    await startGaiaDbServer(projectName);
 
-   activeProject = projectName;
    console.log(`Selected project ${projectName}.`);
 }
 
@@ -425,7 +426,16 @@ process.on('SIGINT', () => {
 //agentInit();
 
 async function runTests() {
-   const p = 'amr_swarm'
+   var p = 'amr_swarm'
+   await selectProject(p);
+   await cleanBuildDirectory(p);
+   await cmakeConfigure(p);
+   await makeBuild(p);
+   runProject(p);
+
+   await new Promise(r => setTimeout(r, 10000));
+
+   p = 'access_control'
    await selectProject(p);
    await cleanBuildDirectory(p);
    await cmakeConfigure(p);
