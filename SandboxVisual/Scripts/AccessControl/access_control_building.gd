@@ -51,7 +51,7 @@ func _init_setup(setup_data_json):
 			new_building.call_deferred("set_building_init_properties", building, self)
 
 			# Add location to ID dictionary
-			id_to_building[String(building["building_id"])] = new_building.room_container
+			id_to_building[String(building["building_id"])] = new_building
 
 		# Add people
 		for person in setup_data["people"]:
@@ -81,7 +81,7 @@ func _on_ExitButton_pressed():
 func _move_person_to_building(person_id: String, building_id: String):
 	var person = id_to_person[person_id]
 	var target_location = (
-		id_to_building[building_id]
+		id_to_building[building_id].room_container
 		if id_to_building.has(building_id)
 		else people_container
 	)
@@ -90,7 +90,19 @@ func _move_person_to_building(person_id: String, building_id: String):
 	target_location.add_child(person)
 	target_location.move_child(person, 0)
 
-	person.update_options_for_inside_building(target_location != people_container)
+	var scan_options := {}
+
+	if target_location == people_container:
+		for id in id_to_building.keys():
+			scan_options[id] = id_to_building[id].building_name_label.text
+		
+		person.update_location_and_options(scan_options)
+	else:
+		var rooms: Dictionary = id_to_room[building_id]
+		for id in rooms.keys():
+			scan_options[id] = rooms[id].room_name_label.text
+		
+		person.update_location_and_options(scan_options, building_id)
 
 
 # Moves person into a room in a given building
@@ -99,7 +111,14 @@ func _move_person_to_room(person_id: String, building_id: String, room_id: Strin
 	var room = id_to_room[building_id][room_id]
 
 	person.get_parent().remove_child(person)
-	room.add_child(person)
-	room.move_child(person, 0)
+	room.people_container.add_child(person)
+	room.people_container.move_child(person, 0)
 
-	person.update_options_for_inside_building(true)
+	var rooms: Dictionary = id_to_room[building_id].duplicate()
+	var _r = rooms.erase(room_id)
+
+	var scan_options := {}
+	for id in rooms.keys():
+		scan_options[id] = rooms[id].room_name_label.text
+
+	person.update_location_and_options(scan_options, building_id, room_id)
