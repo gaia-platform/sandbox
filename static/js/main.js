@@ -57,6 +57,7 @@
   resetState();
 
   function resetState() {
+    get_started = "Get started guide currently unavailable";
     state = {
       project: {
         current: null,

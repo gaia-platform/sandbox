@@ -22,6 +22,7 @@ signal ac_error(error_message)
 signal ac_move_to_building(person_id, building_id)
 signal ac_move_to_room(person_id, building_id, room_id)
 signal ac_option(option_value)
+signal ac_reset
 
 # States
 var is_working = true
@@ -90,6 +91,9 @@ func _physics_process(_delta):
 					match topic_extract[-1]:
 						"init":
 							emit_signal("ac_init", payload)
+						"program":
+							if payload == "stopped":
+								emit_signal("ac_reset")
 						"alert":
 							emit_signal("ac_error", payload)
 						"move_to_building":

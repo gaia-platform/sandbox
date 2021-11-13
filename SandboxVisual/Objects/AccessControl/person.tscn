@@ -39,7 +39,6 @@ margin_bottom = 246.0
 margin_right = 910.0
 margin_bottom = 33.0
 custom_fonts/font = ExtResource( 2 )
-custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Person Name"
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer"]

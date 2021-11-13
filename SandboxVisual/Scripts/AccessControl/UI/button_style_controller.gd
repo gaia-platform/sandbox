@@ -13,7 +13,7 @@ var _prev_color: Color
 
 func set_state(state: bool):
 	selected = state
-	modulate = Color("#583bc6") if state else base_color
+	modulate = Color("#28a745") if state else base_color
 
 	# Disable/enable badge-in button
 	if "badge" in get_button_icon().get_path():
@@ -24,7 +24,7 @@ func set_state(state: bool):
 func _on_Button_mouse_entered():
 	if not (stays_selected and selected):
 		_prev_color = modulate
-		modulate = Color("#ad9bf6")
+		modulate = Color("#47c0d7")
 
 
 # Reset button back to pre-highlighted color

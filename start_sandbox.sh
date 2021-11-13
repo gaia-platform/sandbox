@@ -7,6 +7,7 @@ show_usage() {
     echo "Usage: $(basename "$SCRIPT_NAME") [flags]"
     echo "Flags:"
     echo "  -d,--debug                  Debug mode."
+    echo "  -m,--maintenance            Maintenance mode."
     echo "  -c,--coord name             Provide coordinator name."
     echo "  -h,--help                   Display this help text."
     echo ""
