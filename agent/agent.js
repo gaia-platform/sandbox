@@ -3,45 +3,75 @@ const { spawn, exec } = require('child_process');
 const AWS = require('aws-sdk');
 const AWSIoTData = require('aws-iot-device-sdk');
 const fs = require('fs');
+const os = require('os');
+const util = require('util');
 
-console.log('Loaded AWS SDK for JavaScript and AWS IoT SDK for Node.js');
-
-//// Variables
-/// MQTT
+// AWS configurations
 var awsConfig = {
    poolId: 'us-west-2:167b474a-b678-4271-8f1e-77f84aa530f7', // 'YourCognitoIdentityPoolId'
    host: 'a31gq30tvzx17m-ats.iot.us-west-2.amazonaws.com', // 'YourAwsIoTEndpoint', e.g. 'prefix.iot.us-east-1.amazonaws.com'
    region: 'us-west-2' // 'YourAwsRegion', e.g. 'us-east-1'
 };
+AWS.config.region = awsConfig.region;
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+   IdentityPoolId: awsConfig.poolId
+});
+var cognitoIdentity = new AWS.CognitoIdentity();
 
+// MQTT
+var mqttClient;
+
+// Sandbox-specific variables
+const numberOfCpus = os.cpus().length;
 var coordinatorName = process.env.COORDINATOR_NAME || 'sandbox_coordinator';
 var agentId = process.env.AGENT_ID;
-var sessionId = process.env.SESSION_ID;
 
+var sessionId = process.env.SESSION_ID;
 process.env.REMOTE_CLIENT_ID = sessionId;
 
 const sendKeepAliveInterval = 1;  // in minutes
 const receiveKeepAliveInterval = 3;  // in minutes
-//const projectNames = ['access_control', 'amr_swarm'];
-const projectNames = ['amr_swarm'];
-var gaiaChild = null;
-var cmakeBuild = null;
-var makeBuild = null;
-var projectProcess = null;
+
+// Agent-specific variables
+const projects = {
+   'access_control': {
+      command: 'bash ../start_access_control.sh'
+   },
+   'amr_swarm': {
+      command: 'bash ../start_amr_swarm.sh'
+   }
+}
+
 var receiveKeepAliveTimeout;
 
-//// Setup AWS and MQTT
-AWS.config.region = awsConfig.region;
+// Processes
+var gaiaDbServer = null;
+var makeProcess = null;
+var projectProcess = null;
 
-AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-   IdentityPoolId: awsConfig.poolId
-});
+// This makes exec() friendly for async/await code.
+const promiseExec = util.promisify(exec);
 
-var mqttClient;
+// This is useful after calling spawn(), which is more tedious to promisify than exec().
+function promisify_child_process(child) {
+   return new Promise((resolve, reject) => {
+      child.on("error", error => reject(error));
+      child.on("close", (code, signal) => {
+         if (signal) {
+            reject(new Error(`Child process received signal ${signal} and exited with code ${code}.`));
+         } else if (code != 0) {
+            reject(new Error(`Child process exited with code ${code}.`));
+         } else {
+            resolve(child);
+         }
+      });
+   })
+}
 
+// Connect to the MQTT broker and register callbacks for MQTT-related events.
 function connect(credentials)
 {
-   /// Config and connect MQTT
+   // Config and connect MQTT
    mqttClient = AWSIoTData.device({
       region: AWS.config.region,
       host: awsConfig.host,
@@ -60,31 +90,7 @@ function connect(credentials)
    mqttClient.on('message', mqttClientMessageHandler);
 }
 
-/// Cognito authentication
-var cognitoIdentity = new AWS.CognitoIdentity();
-AWS.config.credentials.get(function (err, data) {
-   if (!err) {
-      console.log('retrieved identity: ' + AWS.config.credentials.identityId);
-      var params = {
-         IdentityId: AWS.config.credentials.identityId
-      };
-      cognitoIdentity.getCredentialsForIdentity(params, function (err, data) {
-         if (!err) {
-            connect(data.Credentials);
-         } else {
-            console.log('error retrieving credentials: ' + err);
-         }
-      });
-   } else {
-      console.log('error retrieving identity:' + err);
-   }
-});
-
 function exitAgent() {
-   if (gaiaChild) {
-      gaiaChild.kill();
-      gaiaChild = null;
-   }
    process.exit(0);
 }
 
@@ -107,29 +113,20 @@ function receiveKeepAlive() {
    receiveKeepAliveTimeout = setTimeout(exitAgent, receiveKeepAliveInterval * 60 * 1000);
 }
 
-//// MQTT functions
-function mqttClientConnectHandler() { // Connection handler
+function mqttClientConnectHandler() { 
    console.log('connect, clientId: ' + agentId);
 
-   //
-   // Subscribe to our current topic.
-   //
    mqttClient.subscribe(agentId + '/#');
    publishToCoordinator('connected', agentId);
    setTimeout(sendKeepAlive, sendKeepAliveInterval * 60 * 1000);
    if (sessionId == 'standby') {
-      console.log('do builds... TODO: not actually doing the builds');
-      /* this seems to be causing problems...
-      projectNames.forEach(function(projectName){
-         buildProject(projectName);
-      });
-      */
+      // TODO: build all the projects while in standby mode
    } else {
       mqttClient.publish(sessionId + '/session', 'loaded');      
    }
 }
 
-function mqttClientReconnectHandler() { // Reconnection handler
+function mqttClientReconnectHandler() {
    console.log("reconnect");
 }
 
@@ -143,7 +140,7 @@ function sendFile(projectName, fileName) {
    });
 }
 
-function saveFile(projectName, fileName, content) {
+async function saveFile(projectName, fileName, content) {
    fs.writeFile('templates/' + projectName + '_template/src/' + fileName, content, 'utf8', (err) => {
       if (err) {
          console.error(err);
@@ -151,68 +148,115 @@ function saveFile(projectName, fileName, content) {
       }
       console.log(fileName + ' has been saved');
    });
+
    var fileNameParts = fileName.split('.');
    if (fileNameParts.length == 2 && fileNameParts[1] == 'ddl') {
-      resetGaia();
+      // If the DDL schema changes, we need to purge the database and the build directory.
+      stopGaiaDbServer();
+      await purgeGaiaDbData(projectName);
+      startGaiaDbServer(projectName);
+
+      await cleanBuildDirectory(projectName);
+      await cmakeConfigure(projectName);
    }
+
    mqttClient.publish(sessionId + '/project/build', 'dirty');
 }
 
-function cleanProjects() {
-   projectNames.forEach(projectName => {
-      console.log('rm -r templates/' + projectName + '_template/build/gaia_generated');
-      exec('rm -r templates/' + projectName + '_template/build/gaia_generated');
-      exec('mkdir -p templates/' + projectName + '_template/build');
-      console.log('from directory: templates/' + projectName + '_template/build');
-      console.log('cmake ..');
-      cmakeBuild = spawn('cmake', ['..'], { cwd: 'templates/' + projectName + '_template/build' });
-      cmakeBuild.stdout.on('data', (chunk) => {
-         console.log(chunk.toString());
-      });
-      cmakeBuild.stdout.on('error', (error) => {
-         console.log(error);
-      });
-      cmakeBuild.on('close', (code) => {
-         console.log(`cmake child process exited with code ${code}`);
-         cmakeBuild = null;
-      });
+async function fileExists(file) {
+   try {
+      await fs.promises.access(file);
+      return true;
+   } catch {
+      return false;
+   }
+}
+
+function getBuildDir(projectName) {
+   return `templates/${projectName}_template/build`;
+}
+
+function getDataDir(projectName) {
+   return `~/.local/share/gaia/${projectName}/db`;
+}
+
+async function purgeGaiaDbData(projectName) {
+   stopGaiaDbServer(projectName);
+   const dataDirExists = await fileExists(getDataDir(projectName));
+
+   if (dataDirExists) {
+      const { stdout, stderr } = await promiseExec(`rm -r ${getDataDir(projectName)}`);
+      if (stdout) { console.log(stdout); }
+      if (stderr) { console.error(stderr); }
+   }
+}
+
+function startGaiaDbServer(projectName) {
+   gaiaDbServer = spawn('gaia_db_server', ['--data-dir', getDataDir(projectName)], {
+      // Ingore stdin, ignore stdout, ignore stderr
+      stdio: ['ignore', 'ignore', 'ignore']
    });
 }
 
-function resetGaia() {
-   cleanProjects();
-   if (gaiaChild) {
-      gaiaChild.kill();
-      gaiaChild = null;
+function stopGaiaDbServer() {
+   if (gaiaDbServer) {
+      gaiaDbServer.kill();
+      gaiaDbServer = null;
    }
-   console.log('rm -r ~/.local/gaia/db/');
-   exec('rm -r ~/.local/gaia/db/', (error, stdout, stderr) => {
-      console.error(`error: ${error}`);
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
-      console.log('spawn gaia_db_server');
-      gaiaChild = spawn('gaia_db_server', ['--data-dir', '~/.local/gaia/db']);
-      gaiaChild.stdout.on('data', (chunk) => {
-         console.log(chunk);
-      });
-      gaiaChild.stdout.on('error', (error) => {
-         console.log(error);
-      });
-      gaiaChild.on('close', (code) => {
-         console.log(`gaia_db_server child process exited with code ${code}`);
-         gaiaChild = null;
-      });
+}
+
+async function selectProject(projectName) {
+   if (!projects.hasOwnProperty(projectName)) {
+      throw new Error(`Project ${projectName} doesn't exist`);
+   }
+
+   if (projectProcess) {
+      projectProcess.kill();
+   }
+
+   console.log(`Switching to project ${projectName}...`);
+
+   stopGaiaDbServer();
+   await purgeGaiaDbData(projectName);
+   startGaiaDbServer(projectName);
+
+   console.log(`Selected project ${projectName}.`);
+}
+
+async function cleanBuildDirectory(projectName) {
+   const buildDir = getBuildDir(projectName);
+   const buildDirExists = await fileExists(buildDir);
+   var command;
+
+   if (buildDirExists) {
+      command = `rm -r ${buildDir} && mkdir -p ${buildDir}`;
+   } else {
+      command = `mkdir -p ${buildDir}`;
+   }
+
+   console.log(`Cleaning build directory of project ${projectName}.`);
+   const { stdout, stderr } = await promiseExec(command);
+   if (stdout) { console.log(stdout); }
+   if (stderr) { console.error(stderr); }
+}
+
+async function cmakeConfigure(projectName) {
+   console.log(`Configuring CMake for project ${projectName}.`);
+   const buildDir = getBuildDir(projectName);
+
+   const cmakeProcess = spawn('cmake', ['..'], {
+      cwd: buildDir,
+      // Ingore stdin, use Node's stdout, use Node's stderr
+      stdio: ['ignore', 'inherit', 'inherit']
    });
+
+   await promisify_child_process(cmakeProcess);
 }
 
 function stopProcesses() {
-   if (cmakeBuild) {
-      cmakeBuild.kill();
-      cmakeBuild = null;
-   }
-   if (makeBuild) {
-      makeBuild.kill();
-      makeBuild = null;
+   if (makeProcess) {
+      makeProcess.kill();
+      makeProcess = null;
       mqttClient.publish(sessionId + '/project/build', 'cancelled');
    }
    if (projectProcess) {
@@ -220,57 +264,78 @@ function stopProcesses() {
       projectProcess = null;
       mqttClient.publish(sessionId + '/project/program', 'stopped');
    }
+   stopGaiaDbServer();
 }
 
-function runProject(projectName) {
-   projectProcess = exec('bash ../start_amr_swarm.sh',
-      {
-         cwd: 'templates/' + projectName + '_template/build',
-         env: { 'SESSION_ID': sessionId }
-      });
-   publishToEditor('output/append', 'Running application...\n');
-   mqttClient.publish(sessionId + '/project/program', 'running');
-   projectProcess.stderr.on('data', (chunk) => {
-      publishToEditor('output/append', chunk);
-      console.log(chunk.toString());
-   });
-   projectProcess.stdout.on('data', (chunk) => {
-      publishToEditor('output/append', chunk);
-      console.log(chunk.toString());
-   });
-   projectProcess.stdout.on('error', (error) => {
-      console.log(error);
-   });
-   projectProcess.on('close', (code) => {
-      console.log(`child process exited with code ${code}`);
-      projectProcess = null;
-      mqttClient.publish(sessionId + '/project/program', 'stopped');
-   });
-}
-
-function buildProject(projectName) {
-   if (!gaiaChild) {
-      resetGaia();
+async function makeBuild(projectName) {
+   if (!projects.hasOwnProperty(projectName)) {
+      throw new Error(`Project ${projectName} doesn't exist`);
    }
+
    console.log(projectName + ' build started...');
    publishToEditor('output', 'New build started\n');
    mqttClient.publish(sessionId + '/project/build', 'building');
-   makeBuild = spawn('make', { cwd: 'templates/' + projectName + '_template/build' });
-   makeBuild.stderr.on('data', (chunk) => {
+
+   const buildDir = getBuildDir(projectName);
+   // Leave one thread available for NodeJS
+   const makeThreads = (numberOfCpus > 1) ? (numberOfCpus - 1) : 1;
+
+   makeProcess = spawn('make', [`-j${makeThreads}`], {
+      cwd: buildDir,
+      // Ingore stdin, pipe the stdout, pipe the stderr
+      stdio: ['ignore', 'pipe', 'pipe']
+   });
+
+   makeProcess.stdout.on('data', chunk => {
       publishToEditor('output/append', chunk);
-      console.log(chunk.toString());
+      process.stdout.write(chunk.toString());
    });
-   makeBuild.stdout.on('data', (chunk) => {
+   makeProcess.stderr.on('data', chunk => {
       publishToEditor('output/append', chunk);
-      console.log(chunk.toString());
+      process.stderr.write(chunk.toString());
    });
-   makeBuild.stdout.on('error', (error) => {
-      console.log(error);
+
+   try {
+      await promisify_child_process(makeProcess);
+      mqttClient.publish(sessionId + '/project/build', 'success');
+   } catch {
+      if (!makeProcess.killed) {
+         mqttClient.publish(sessionId + '/project/build', 'failed');
+      }
+   }
+   makeProcess = null;
+}
+
+function runProject(projectName) {
+   if (!projects.hasOwnProperty(projectName)) {
+      throw new Error(`Project ${projectName} doesn't exist`);
+   }
+
+   const buildDir = getBuildDir(projectName);
+   const project = projects[projectName];
+
+   projectProcess = exec(project.command, {
+      cwd: buildDir,
+      // Inherit Node's stdin, pipe the stdout, pipe the stderr
+      stdio: ['inherit', 'pipe', 'pipe']
    });
-   makeBuild.on('close', (code) => {
-      console.log(`child process exited with code ${code}`);
-      makeBuild = null;
-      mqttClient.publish(sessionId + '/project/build', code == 0 ? 'success' : 'failed');
+
+   publishToEditor('output/append', 'Running application...\n');
+   mqttClient.publish(sessionId + '/project/program', 'running');
+
+   projectProcess.stdout.on('data', chunk => {
+      publishToEditor('output/append', chunk);
+      process.stdout.write(chunk.toString());
+   });
+   projectProcess.stderr.on('data', chunk => {
+      publishToEditor('output/append', chunk);
+      process.stderr.write(chunk.toString());
+   });
+   
+   projectProcess.on('close', code => {
+      console.log(`${projectName} exited with code ${code}.`);
+      mqttClient.publish(sessionId + '/project/program', 'stopped');
+      projectProcess = null;
    });
 }
 
@@ -285,7 +350,7 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
       }
       switch (payload.toString()) {
          case 'select':
-            mqttClient.publish(sessionId + '/project/ready', topicTokens[1]);
+            selectProject(topicTokens[1]).then(() => mqttClient.publish(sessionId + '/project/ready', topicTokens[1]));
             break;
       
          case 'stop':
@@ -297,7 +362,7 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
             break;
 
          case 'build':
-            buildProject(topicTokens[1]);
+            makeBuild(topicTokens[1]);
             break;
 
          case 'keepAlive':
@@ -330,5 +395,39 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
    }
 }
 
-resetGaia();
-receiveKeepAlive();
+async function projectSetup(projectName) {
+   await selectProject(projectName);
+   await cleanBuildDirectory(projectName);
+   await cmakeConfigure(projectName);
+}
+
+function agentInit() {
+   AWS.config.credentials.get(function (err, data) {
+      if (!err) {
+         console.log('retrieved identity: ' + AWS.config.credentials.identityId);
+         var params = {
+            IdentityId: AWS.config.credentials.identityId
+         };
+         cognitoIdentity.getCredentialsForIdentity(params, function (err, data) {
+            if (!err) {
+               connect(data.Credentials);
+            } else {
+               console.log('error retrieving credentials: ' + err);
+            }
+         });
+      } else {
+         console.log('error retrieving identity:' + err);
+      }
+   });
+   
+   projectSetup('access_control');
+   projectSetup('amr_swarm');
+   receiveKeepAlive();
+}
+
+process.on('SIGINT', () => {
+   console.log("\nCaught interrupt signal.");
+   process.exit();
+});
+
+agentInit();

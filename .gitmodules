@@ -4,3 +4,4 @@
 [submodule "agent/templates/access_control_template"]
 	path = agent/templates/access_control_template
 	url = https://github.com/gaia-platform/access_control_template
+	branch = main
