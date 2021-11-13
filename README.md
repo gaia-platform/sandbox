@@ -57,5 +57,11 @@ You'll need to
 . ./start_sandbox.sh
 ```
 The extra period out front will run the script with your environment variables (such as PATH).
+
+The above command will launch the sandbox without communicating with a coordinator. To enable communication with a coordinator (necessary in production) specify the coordinator name with the `-c` option.
+```bash
+. ./start_sandbox.sh -c <the coordinator name>
+```
+Do *not* use the name `sandbox_coordinator` unless running in production.
 ___
-Please contact [Steve Harris](mailto:steve@gaiaplatform.io) or [Kenneth Yang](kenneth@gaiaplatform.io) for questions.
+Please contact [Steve Harris](mailto:steve@gaiaplatform.io) for questions.
