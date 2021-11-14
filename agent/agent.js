@@ -32,6 +32,8 @@ process.env.REMOTE_CLIENT_ID = sessionId;
 const sendKeepAliveInterval = 1;  // in minutes
 const receiveKeepAliveInterval = 3;  // in minutes
 
+const killType = 'SIGKILL';
+
 // Agent-specific variables
 const projects = {
    'access_control': {
@@ -185,7 +187,7 @@ function getDataDir(projectName) {
 }
 
 async function purgeGaiaDbData(projectName) {
-   stopGaiaDbServer(projectName);
+   stopGaiaDbServer();
    const dataDirExists = await fileExists(getDataDir(projectName));
 
    if (dataDirExists) {
@@ -204,7 +206,7 @@ function startGaiaDbServer(projectName) {
 
 function stopGaiaDbServer() {
    if (gaiaDbServer) {
-      gaiaDbServer.kill();
+      gaiaDbServer.kill(killType);
       gaiaDbServer = null;
    }
 }
@@ -215,7 +217,7 @@ async function selectProject(projectName) {
    }
 
    if (projectProcess) {
-      projectProcess.kill();
+      projectProcess.kill(killType);
    }
 
    console.log(`Switching to project ${projectName}...`);
@@ -259,12 +261,12 @@ async function cmakeConfigure(projectName) {
 
 function stopProcesses() {
    if (makeProcess) {
-      makeProcess.kill();
+      makeProcess.kill(killType);
       makeProcess = null;
       mqttClient.publish(sessionId + '/project/build', 'cancelled');
    }
    if (projectProcess) {
-      projectProcess.kill();
+      projectProcess.kill(killType);
       projectProcess = null;
       mqttClient.publish(sessionId + '/project/program', 'stopped');
    }
@@ -320,6 +322,7 @@ function runProject(projectName) {
 
    projectProcess = exec(project.command, {
       cwd: buildDir,
+      env: { 'SESSION_ID': sessionId, 'REMOTE_CLIENT_ID': sessionId },
       // Inherit Node's stdin, pipe the stdout, pipe the stderr
       stdio: ['inherit', 'pipe', 'pipe']
    });
@@ -424,9 +427,9 @@ function agentInit() {
       }
    });
    
+   receiveKeepAlive();
    projectSetup('access_control');
    projectSetup('amr_swarm');
-   receiveKeepAlive();
 }
 
 process.on('SIGINT', () => {
