@@ -325,8 +325,10 @@
   })
 
   $("#reset-button").click(function () {
-    setCookie("sandboxUUID", window.generateUUID());
-    location.reload();
+    if (confirm('This will reset all your changes. Continue?')) {
+      setCookie("sandboxUUID", window.generateUUID());
+      location.reload();  
+    }
   });
 
   $("#session-id-button").click(function () {
