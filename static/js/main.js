@@ -37,18 +37,7 @@
 
   var get_started = "Get started guide currently unavailable";
 
-  var state = {
-    project: {
-      current: null,
-      buildStatus: 'unknown',
-      runStatus: 'stopped',
-      edits: new Set()
-    },
-    session: {
-      loading: false,
-      loadCountdown: 0
-    }
-  }
+  var state = null;
   var editor = null;
   var data = {
     ruleset: {
@@ -64,6 +53,23 @@
       state: null
     }
   };
+
+  resetState();
+
+  function resetState() {
+    state = {
+      project: {
+        current: null,
+        buildStatus: 'unknown',
+        runStatus: 'stopped',
+        edits: new Set()
+      },
+      session: {
+        loading: false,
+        loadCountdown: 0
+      }
+    };
+  }
 
   function fileFormat(fileName) {
     switch (fileName) {
@@ -121,8 +127,10 @@
       $("#ctrl-button").html('Run');
     } else if (state.project.buildStatus == 'building') {
       $("#ctrl-button").html('Cancel build');
-    } else {
+    } else if (state.project.current) {
       $("#ctrl-button").html('Build');
+    } else {
+      $("#ctrl-button").html('No project loaded');
     }
   }
 
@@ -209,10 +217,11 @@
   }
 
   window.exitProject = function () {
-    state.project.current = null;
     window.publishToCoordinator("project/exit", "exit");
+    resetState();
     initEditorData('no ruleset file loaded', 'no ddl file loaded', 'no output yet');
     setTab('output');
+    setCtrlButtonLabel();
   }
 
   function load() {

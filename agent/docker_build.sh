@@ -124,7 +124,7 @@ SCRIPTPATH="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 TEMP_FILE=/tmp/agent-build.tmp
 DID_PUSHD=0
 
-IMAGE_NAME=gaia-sandobox-agent
+IMAGE_NAME=gaia-sandbox-agent
 
 # Parse any command line values.
 parse_command_line "$@"
