@@ -75,7 +75,7 @@ margin_bottom = 41.0
 size_flags_horizontal = 3
 custom_fonts/font = ExtResource( 13 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
-text = "Unable to connect to Gaia! Please rerun the demo."
+text = "Press 'Build', wait, then press 'Run' to start the demo."
 align = 1
 
 [node name="CloseButton" parent="VBoxContainer/ErrorPanel/MarginContainer/HBoxContainer" instance=ExtResource( 8 )]
