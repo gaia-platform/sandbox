@@ -266,7 +266,7 @@ function stopProcesses() {
       mqttClient.publish(sessionId + '/project/build', 'cancelled');
    }
    if (projectProcess) {
-      projectProcess.kill(killType);
+      projectProcess.kill();
       projectProcess = null;
       mqttClient.publish(sessionId + '/project/program', 'stopped');
    }
