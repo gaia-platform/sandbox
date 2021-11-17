@@ -36,6 +36,7 @@ const receiveKeepAliveInterval = 3;  // in minutes
 const projects = {
    'access_control': {
 <<<<<<< HEAD
+<<<<<<< HEAD
       command: 'source',
       args: ['../start_access_control.sh']
    },
@@ -47,6 +48,14 @@ const projects = {
    },
    'amr_swarm': {
       command: 'bash ../start_amr_swarm.sh'
+>>>>>>> main
+=======
+      command: '../start_access_control.sh',
+      args: ['']
+   },
+   'amr_swarm': {
+      command: '../start_amr_swarm.sh',
+      args: ['']
 >>>>>>> main
    }
 }
@@ -327,8 +336,10 @@ function runProject(projectName) {
    const buildDir = getBuildDir(projectName);
    const project = projects[projectName];
 
-   projectProcess = exec(project.command, {
+   projectProcess = spawn(project.command, project.args, {
       cwd: buildDir,
+      env: { 'SESSION_ID': sessionId, 'REMOTE_CLIENT_ID': sessionId },
+      shell: '/bin/bash',
       // Inherit Node's stdin, pipe the stdout, pipe the stderr
       stdio: ['inherit', 'pipe', 'pipe']
    });
@@ -435,11 +446,9 @@ function agentInit() {
       });
    });
    
-<<<<<<< HEAD
-=======
-   projectSetup('access_control');
->>>>>>> main
-   projectSetup('amr_swarm');
+   // amr_swarm is the first project shown to users. We must set them up
+   // in reverse order so amr_swarm's database is the most recently selected.
+   projectSetup('access_control').then(() => projectSetup('amr_swarm'));
    receiveKeepAlive();
 }
 
