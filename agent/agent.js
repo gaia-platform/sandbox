@@ -426,10 +426,9 @@ function agentInit() {
       });
    });
    
-   // TODO: setting up amr_swarm before access_control might be broken because
-   // calling selectProject() will switch databases.
-   projectSetup('access_control');
-   projectSetup('amr_swarm');
+   // amr_swarm is the first project shown to users. We must set them up
+   // in reverse order so amr_swarm's database is the most recently selected.
+   projectSetup('access_control').then(() => projectSetup('amr_swarm'));
    receiveKeepAlive();
 }
 
