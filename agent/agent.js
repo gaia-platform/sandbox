@@ -32,15 +32,15 @@ process.env.REMOTE_CLIENT_ID = sessionId;
 const sendKeepAliveInterval = 1;  // in minutes
 const receiveKeepAliveInterval = 3;  // in minutes
 
-const killType = 'SIGKILL';
-
 // Agent-specific variables
 const projects = {
    'access_control': {
-      command: 'bash ../start_access_control.sh'
+      command: '../start_access_control.sh',
+      args: ['']
    },
    'amr_swarm': {
-      command: 'bash ../start_amr_swarm.sh'
+      command: '../start_amr_swarm.sh',
+      args: ['']
    }
 }
 
@@ -55,6 +55,7 @@ var projectProcess = null;
 const promiseExec = util.promisify(exec);
 
 // This is useful after calling spawn(), which is more tedious to promisify than exec().
+// Unlike exec(), spawn() does not have a callback function as the last argument.
 function promisify_child_process(child) {
    return new Promise((resolve, reject) => {
       child.on("error", error => reject(error));
@@ -158,7 +159,6 @@ async function saveFile(projectName, fileName, content) {
    var fileNameParts = fileName.split('.');
    if (fileNameParts.length == 2 && fileNameParts[1] == 'ddl') {
       // If the DDL schema changes, we need to purge the database and the build directory.
-      stopGaiaDbServer();
       await purgeGaiaDbData(projectName);
       startGaiaDbServer(projectName);
 
@@ -187,7 +187,7 @@ function getDataDir(projectName) {
 }
 
 async function purgeGaiaDbData(projectName) {
-   stopGaiaDbServer();
+   stopGaiaDbServer(projectName);
    const dataDirExists = await fileExists(getDataDir(projectName));
 
    if (dataDirExists) {
@@ -206,7 +206,7 @@ function startGaiaDbServer(projectName) {
 
 function stopGaiaDbServer() {
    if (gaiaDbServer) {
-      gaiaDbServer.kill(killType);
+      gaiaDbServer.kill();
       gaiaDbServer = null;
    }
 }
@@ -217,7 +217,7 @@ async function selectProject(projectName) {
    }
 
    if (projectProcess) {
-      projectProcess.kill(killType);
+      projectProcess.kill();
    }
 
    console.log(`Switching to project ${projectName}...`);
@@ -261,7 +261,7 @@ async function cmakeConfigure(projectName) {
 
 function stopProcesses() {
    if (makeProcess) {
-      makeProcess.kill(killType);
+      makeProcess.kill();
       makeProcess = null;
       mqttClient.publish(sessionId + '/project/build', 'cancelled');
    }
@@ -320,9 +320,10 @@ function runProject(projectName) {
    const buildDir = getBuildDir(projectName);
    const project = projects[projectName];
 
-   projectProcess = exec(project.command, {
+   projectProcess = spawn(project.command, project.args, {
       cwd: buildDir,
       env: { 'SESSION_ID': sessionId, 'REMOTE_CLIENT_ID': sessionId },
+      shell: '/bin/bash',
       // Inherit Node's stdin, pipe the stdout, pipe the stderr
       stdio: ['inherit', 'pipe', 'pipe']
    });
@@ -410,26 +411,30 @@ async function projectSetup(projectName) {
 
 function agentInit() {
    AWS.config.credentials.get(function (err, data) {
-      if (!err) {
-         console.log('retrieved identity: ' + AWS.config.credentials.identityId);
-         var params = {
-            IdentityId: AWS.config.credentials.identityId
-         };
-         cognitoIdentity.getCredentialsForIdentity(params, function (err, data) {
-            if (!err) {
-               connect(data.Credentials);
-            } else {
-               console.log('error retrieving credentials: ' + err);
-            }
-         });
-      } else {
-         console.log('error retrieving identity:' + err);
+      if (err) {
+         console.error(`error retrieving identity: ${err}`);
+         process.exit(1);
       }
+
+      console.log(`retrieved identity: ${AWS.config.credentials.identityId}`);
+      var params = {
+         IdentityId: AWS.config.credentials.identityId
+      };
+
+      cognitoIdentity.getCredentialsForIdentity(params, function (err, data) {
+         if (err) {
+            console.log(`error retrieving credentials: ${err}`);
+            process.exit(1);
+         }
+         connect(data.Credentials);
+      });
    });
    
-   receiveKeepAlive();
+   // TODO: setting up amr_swarm before access_control might be broken because
+   // calling selectProject() will switch databases.
    projectSetup('access_control');
    projectSetup('amr_swarm');
+   receiveKeepAlive();
 }
 
 process.on('SIGINT', () => {
