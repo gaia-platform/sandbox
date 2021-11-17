@@ -35,10 +35,12 @@ const receiveKeepAliveInterval = 3;  // in minutes
 // Agent-specific variables
 const projects = {
    'access_control': {
-      command: 'bash ../start_access_control.sh'
+      command: '../start_access_control.sh',
+      args: ['']
    },
    'amr_swarm': {
-      command: 'bash ../start_amr_swarm.sh'
+      command: '../start_amr_swarm.sh',
+      args: ['']
    }
 }
 
@@ -314,8 +316,10 @@ function runProject(projectName) {
    const buildDir = getBuildDir(projectName);
    const project = projects[projectName];
 
-   projectProcess = exec(project.command, {
+   projectProcess = spawn(project.command, project.args, {
       cwd: buildDir,
+      env: { 'SESSION_ID': sessionId, 'REMOTE_CLIENT_ID': sessionId },
+      shell: '/bin/bash',
       // Inherit Node's stdin, pipe the stdout, pipe the stderr
       stdio: ['inherit', 'pipe', 'pipe']
    });
@@ -422,6 +426,8 @@ function agentInit() {
       });
    });
    
+   // TODO: setting up amr_swarm before access_control might be broken because
+   // calling selectProject() will switch databases.
    projectSetup('access_control');
    projectSetup('amr_swarm');
    receiveKeepAlive();
