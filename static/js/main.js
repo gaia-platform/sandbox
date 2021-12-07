@@ -324,7 +324,14 @@
   })
 
   $("#reset-button").click(function () {
-    prompt("Remote client ID (aka sandboxUUID)", "export REMOTE_CLIENT_ID=" + window.sandboxUUID);
+    if (confirm('This will reset all your changes. Continue?')) {
+      setCookie("sandboxUUID", window.generateUUID());
+      location.reload();  
+    }
+  });
+
+  $("#session-id-button").click(function () {
+    prompt("Session ID (aka sandboxUUID)", "export SESSION_ID=" + window.sandboxUUID);
   });
 
   $("#test-button").click(function () {

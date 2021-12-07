@@ -7,6 +7,7 @@ show_usage() {
     echo "Usage: $(basename "$SCRIPT_NAME") [flags]"
     echo "Flags:"
     echo "  -d,--debug                  Debug mode."
+    echo "  -m,--maintenance            Maintenance mode."
     echo "  -c,--coord name             Provide coordinator name."
     echo "  -h,--help                   Display this help text."
     echo ""
@@ -15,6 +16,7 @@ show_usage() {
 
 # Parse the command line.
 parse_command_line() {
+    MAINTENANCE=false
     DEBUG=false
     COORD=none
 
@@ -22,6 +24,10 @@ parse_command_line() {
     case "$1" in
         -d|--debug)
             DEBUG=1
+            shift
+        ;;
+        -m|--maintenance)
+            MAINTENANCE=true
             shift
         ;;
         -c|--coord)
@@ -57,4 +63,4 @@ sed -i "16s/.*/\t\t\tbackground-color: #f4f6f8;/" static/visual/index.html # Cha
 sed -i "58s/.*/\t\t\tbackground-color: gray;/" static/visual/index.html # Change loading progress bar to gray
 sed -i "195s/.*/\t\t\t\t\tstatusIndeterminate.children[i].style.borderTopColor = 'gray';/" static/visual/index.html # Change loading wheel to gray
 
-python3 application.py "$COORD"
+python3 application.py "$COORD" "$MAINTENANCE"

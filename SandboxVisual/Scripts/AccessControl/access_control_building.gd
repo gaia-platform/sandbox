@@ -33,9 +33,14 @@ func _ready():
 		"ac_move_to_building", self, "_move_person_to_building"
 	)
 	_connection_var = CommunicationManager.connect("ac_move_to_room", self, "_move_person_to_room")
+	_connection_var = CommunicationManager.connect("ac_reset", self, "_ac_reload")
 
 	CommunicationManager.select_project("access_control_template")
 
+func _ac_reload():
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+	
 
 # Generate demo using data sent from Gaia
 func _init_setup(setup_data_json):

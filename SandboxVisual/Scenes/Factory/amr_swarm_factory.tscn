@@ -801,7 +801,7 @@ margin_bottom = 32.0
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 5.0
-value = 1.0
+value = 3.0
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer"]
 margin_top = 101.0
@@ -826,7 +826,7 @@ margin_bottom = 32.0
 size_flags_horizontal = 3
 min_value = 1.0
 max_value = 4.0
-value = 1.0
+value = 2.0
 
 [node name="Control3" type="Control" parent="CanvasLayer/ChangeSimulationBotsBg/CenterContainer/ChangeSimulationBotsPanel/MarginContainer/VBoxContainer"]
 margin_top = 143.0

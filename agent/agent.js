@@ -134,7 +134,11 @@ function mqttClientReconnectHandler() {
 }
 
 function sendFile(projectName, fileName) {
-   fs.readFile('templates/' + projectName + '_template/src/' + fileName, 'utf8' , (err, data) => {
+   var fullFilePath = 'templates/' + projectName + '_template/src/' + fileName;
+   if (!fs.existsSync(fullFilePath)) {
+      fullFilePath = 'templates/' + projectName + '_template/' + fileName;
+   }
+   fs.readFile(fullFilePath, 'utf8' , (err, data) => {
       if (err) {
         console.error(err);
         return;

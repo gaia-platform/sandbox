@@ -82,6 +82,17 @@
       </div>
     </div>
   </div>
+  {% if maintenance == 'true' %}
+  <div stackColumnsAt="tablet" class="div-3" data-name="div-2">
+    <div class="builder-columns columns">
+      <div class="builder-column column-4">
+        <div class="div-2">
+          <p>Down for maintenance. Please check back later.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% else %}
   <div stackColumnsAt="tablet" class="div-3" data-name="div-2">
     <div class="builder-columns columns">
       <div class="builder-column column-5">
@@ -103,17 +114,21 @@
         <div stackColumnsAt="tablet" class="div-6" data-name="div-3">
           <div class="builder-columns columns">
             <div class="builder-column column-7">
+              <span class="span-4 button" id="reset-button">Reset</span>
+            </div>
+
+            <div class="builder-column column-8">
               <span style="background-color:#00B7DD" class="span-4 button" id="get-started-button">Read me</span>
             </div>
 
             <!-- These buttons should only be available when running without communicating with
               a coordinator. Otherwise the coordinator is responsible for exchanging any IDs. -->
             {% if coordinator == 'none' %}
-            <div class="builder-column column-8">
-              <span class="span-5 button" id="reset-button">Show REMOTE_CLIENT_ID</span>
+            <div class="builder-column column-9">
+              <span class="span-5 button" id="session-id-button">Show SESSION_ID</span>
             </div>
 
-            <div class="builder-column column-9">
+            <div class="builder-column column-10">
               <span class="span-6 button" id="test-button">Show Subscribe UUID</span>
             </div>
             {% endif %}
@@ -128,6 +143,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
 
   <!-- Privacy Modal -->
   <div id="privacy-modal" class="modal">
