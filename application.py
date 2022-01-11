@@ -15,6 +15,11 @@ def index_test():
     # return the rendered template
     return render_template("index.html", coordinator=sys.argv[1], maintenance="false")
 
+@app.route('/pirates', methods=['GET'])
+def pirates():
+    # return the rendered template
+    return render_template("pirates.html", coordinator=sys.argv[1], maintenance="false")
+
 @app.route('/health', methods=['GET'])
 def health():
     return 'OK'
