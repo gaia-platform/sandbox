@@ -2,33 +2,41 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <title>Gaia Sandbox</title>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta charset="utf-8">
+    <title>Gaia Sandbox</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <!-- Favicons -->
-  <link href="{{ url_for('static', filename='img/favicon.png') }}" rel="icon">
+    <!-- Favicons -->
+    <link href="{{ url_for('static', filename='img/favicon.png') }}" rel="icon">
 
-  <!-- Google Fonts (Lato and Roboto)-->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <!-- Google Fonts (Lato and Roboto)-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
-  <!-- Main Stylesheet File -->
-  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <!-- Main Stylesheet File -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <!-- Bootstrap Tour -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.12.0/css/bootstrap-tour-standalone.css"
+        rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.12.0/js/bootstrap-tour-standalone.min.js"></script>
 </head>
 
 <body>
-  <div id="coordinator" data-coordinator={{coordinator}}></div>
-  <div stackColumnsAt="tablet" class="div" data-name="div-1">
-    <div class="builder-columns columns header">
-      <div class="builder-column column">
-        <a href="https://www.gaiaplatform.io/"
-          image="https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f"
-          backgroundPosition="right" backgroundSize="contain" altText="Gaia Platform" builderTag="a" class="a"
-          data-name="a-1">
-          <picture>
-            <source srcset="
+    <div id="coordinator" data-coordinator={{coordinator}}></div>
+    <div stackColumnsAt="tablet" class="div" data-name="div-1">
+        <div class="builder-columns columns header">
+            <div class="builder-column column">
+                <a href="https://www.gaiaplatform.io/"
+                    image="https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f"
+                    backgroundPosition="right" backgroundSize="contain" altText="Gaia Platform" builderTag="a" class="a"
+                    data-name="a-1">
+                    <picture>
+                        <source srcset="
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=100   100w,
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=200   200w,
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?format=webp&width=400   400w,
@@ -39,9 +47,8 @@
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f
             " type="image/webp" />
 
-            <img
-              src="https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f"
-              srcset="
+                        <img src="https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f"
+                            srcset="
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=100   100w,
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=200   200w,
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=400   400w,
@@ -51,124 +58,127 @@
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f?width=2000 2000w,
               https://cdn.builder.io/api/v1/image/assets%2F5864aab9464741c882f7bea9704bedfc%2F4c7ab4184c814feda5eadf6581af562f
             " class="image" />
-          </picture>
+                    </picture>
 
-          <div class="builder-image-sizer image-sizer"></div>
-        </a>
-      </div>
-
-      <div class="builder-column column-2">
-        <div class="div-2">
-          <p>Sandbox - beta</p>
-        </div>
-      </div>
-
-      <div class="builder-column privacy-column">
-        <a id="privacy-button" class="a-2" data-name="a-2">
-          Privacy
-        </a>
-      </div>
-
-      <div class="builder-column get-sdk-column">
-        <a href="https://www.gaiaplatform.io/developers" class="a-2" data-name="a-2">
-          Get the SDK
-        </a>
-      </div>
-
-      <div class="builder-column column-4">
-        <a href="https://www.gaiaplatform.io/sign-up" class="a-3 button" data-name="a-3">
-          Sign up
-        </a>
-      </div>
-    </div>
-  </div>
-  {% if maintenance == 'true' %}
-  <div stackColumnsAt="tablet" class="div-3" data-name="div-2">
-    <div class="builder-columns columns">
-      <div class="builder-column column-4">
-        <div class="div-2">
-          <p>Down for maintenance. Please check back later.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  {% else %}
-  <div stackColumnsAt="tablet" class="div-3" data-name="div-2">
-    <div class="builder-columns columns">
-      <div class="builder-column column-5">
-        <div class="div-4" style="width: 100%;">
-          <span class="editor-tab button selected-tab" data-tab-name="ruleset">Ruleset</span>
-
-          <span class="editor-tab button" data-tab-name="ddl">DDL</span>
-
-          <span class="editor-tab button" data-tab-name="output">Output</span>
-
-          <span style="position: absolute; right: 0;" class="editor-tab button" data-tab-name="run" id="ctrl-button">Build</span>
-        </div>
-
-        <div class="div-5" id="sandboxEditor">
-        </div>
-      </div>
-
-      <div class="builder-column column-6">
-        <div stackColumnsAt="tablet" class="div-6" data-name="div-3">
-          <div class="builder-columns columns">
-            <div class="builder-column column-7">
-              <span class="span-4 button" id="reset-button">Reset</span>
+                    <div class="builder-image-sizer image-sizer"></div>
+                </a>
             </div>
 
-            <div class="builder-column column-8">
-              <span style="background-color:#00B7DD" class="span-4 button" id="get-started-button">Read me</span>
+            <div class="builder-column column-2">
+                <div class="div-2">
+                    <p>Sandbox - beta</p>
+                </div>
             </div>
 
-            <!-- These buttons should only be available when running without communicating with
+            <div class="builder-column privacy-column">
+                <a id="privacy-button" class="a-2" data-name="a-2">
+                    Privacy
+                </a>
+            </div>
+
+            <div class="builder-column get-sdk-column">
+                <a href="https://www.gaiaplatform.io/developers" class="a-2" data-name="a-2">
+                    Get the SDK
+                </a>
+            </div>
+
+            <div class="builder-column column-4">
+                <a href="https://www.gaiaplatform.io/sign-up" class="a-3 button" data-name="a-3" id="sign-up-button">
+                    Sign up
+                </a>
+            </div>
+        </div>
+    </div>
+    {% if maintenance == 'true' %}
+    <div stackColumnsAt="tablet" class="div-3" data-name="div-2">
+        <div class="builder-columns columns">
+            <div class="builder-column column-4">
+                <div class="div-2">
+                    <p>Down for maintenance. Please check back later.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div stackColumnsAt="tablet" class="div-3" data-name="div-2">
+        <div class="builder-columns columns">
+            <div class="builder-column column-5">
+                <div class="div-4" style="width: 100%;">
+
+                    <span class="editor-tab button selected-tab" data-tab-name="ruleset" id="ruleset">Ruleset</span>
+
+                    <span class="editor-tab button" data-tab-name="ddl" id="ddl">DDL</span>
+
+                    <span class="editor-tab button" data-tab-name="output" id="output">Output</span>
+
+                    <span style="position: absolute; right: 0;" class="editor-tab button" data-tab-name="run"
+                        id="ctrl-button">Build</span>
+                </div>
+
+                <div class="div-5" id="sandboxEditor">
+                </div>
+            </div>
+
+            <div class="builder-column column-6">
+                <div stackColumnsAt="tablet" class="div-6" data-name="div-3">
+                    <div class="builder-columns columns">
+                        <div class="builder-column column-7">
+                            <span class="span-4 button" id="reset-button">Reset</span>
+                        </div>
+
+                        <div class="builder-column column-8">
+                            <span style="background-color:#00B7DD" class="span-4 button" id="get-started-button">Read
+                                me</span>
+                        </div>
+
+                        <!-- These buttons should only be available when running without communicating with
               a coordinator. Otherwise the coordinator is responsible for exchanging any IDs. -->
-            {% if coordinator == 'none' %}
-            <div class="builder-column column-9">
-              <span class="span-5 button" id="session-id-button">Show SESSION_ID</span>
+                        {% if coordinator == 'none' %}
+                        <div class="builder-column column-9">
+                            <span class="span-5 button" id="session-id-button">Show SESSION_ID</span>
+                        </div>
+
+                        <div class="builder-column column-10">
+                            <span class="span-6 button" id="test-button">Show Subscribe UUID</span>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+
+                <div class="div-7">
+                    <iframe id="godot" src="{{ url_for('static', filename='visual/index.html') }}"
+                        style="position: relative; height: 100%; width: 100%;" frameBorder="0" scrolling="no"></iframe>
+                </div>
             </div>
+        </div>
+    </div>
+    {% endif %}
 
-            <div class="builder-column column-10">
-              <span class="span-6 button" id="test-button">Show Subscribe UUID</span>
+    <!-- Privacy Modal -->
+    <div id="privacy-modal" class="modal">
+        <div id="privacy-modal-content">
+            <p>
+                The Gaia Sandbox system stores two
+                <strong>strictly necessary cookies</strong>.
+                Deleting these cookies will simply reset your Sandbox experience,
+                which will mean you lose any code or edits made in the sandbox.
+            </p>
+            <span class="modal-close-button button">OK</span>
+        </div>
+    </div>
+
+    <!-- Get Started Modal -->
+    <div id="get-started-modal" class="modal">
+        <div id="get-started-content">
+            <div id="get-started-md">
+                <p>
+                    No getting started guide found
+                </p>
             </div>
-            {% endif %}
-
-          </div>
+            <span class="modal-close-button button">OK</span>
         </div>
-
-        <div class="div-7">
-          <iframe id="godot" src="{{ url_for('static', filename='visual/index.html') }}"
-            style="position: relative; height: 100%; width: 100%;" frameBorder="0" scrolling="no"></iframe>
-        </div>
-      </div>
     </div>
-  </div>
-  {% endif %}
-
-  <!-- Privacy Modal -->
-  <div id="privacy-modal" class="modal">
-    <div id="privacy-modal-content">
-      <p>
-        The Gaia Sandbox system stores two
-        <strong>strictly necessary cookies</strong>.
-        Deleting these cookies will simply reset your Sandbox experience,
-        which will mean you lose any code or edits made in the sandbox.
-      </p>
-      <span class="modal-close-button button">OK</span>
-    </div>
-  </div>
-
-  <!-- Get Started Modal -->
-  <div id="get-started-modal" class="modal">
-    <div id="get-started-content">
-      <div id="get-started-md">
-        <p>
-          No getting started guide found
-        </p>
-      </div>
-      <span class="modal-close-button button">OK</span>
-    </div>
-  </div>
 </body>
 
 
@@ -178,11 +188,82 @@
 
 <script src="{{ url_for('static', filename='lib/monaco/vs/loader.js') }}"></script>
 
-
 <!-- Main and MQTT Javascript File -->
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/mqtt_bundle.js') }}"></script>
 
+
+<!-- Bootstrap Tour -->
+<script>
+    // Instance the tour.
+    $(window).on("load", function () {
+        var tour = new Tour({
+            steps: [
+                {
+                    element: "#ruleset",
+                    title: "Title of my ruleset",
+                    content: "Content of my ruleset",
+                    backdrop: true,
+                    autoscroll: true,
+                    smartPlacement: true,
+                    keyboard: true
+                },
+                {
+                    element: "#ddl",
+                    title: "Title of my ddl",
+                    content: "Content of my ddl",
+                    backdrop: true,
+                    autoscroll: true,
+                    smartPlacement: true,
+                    keyboard: true
+                },
+                {
+                    element: "#output",
+                    title: "Title of output button",
+                    content: "Content of output button",
+                    backdrop: true,
+                    autoscroll: true,
+                    smartPlacement: true,
+                    keyboard: true
+                },
+                {
+                    element: "#ctrl-button",
+                    title: "Title of build button",
+                    content: "Content of build button",
+                    backdrop: true,
+                    autoscroll: true,
+                    smartPlacement: true,
+                    keyboard: true
+                },
+                {
+                    element: "#sandboxEditor",
+                    title: "This is the editor for your ruleset/ddl files",
+                    content: "Here you can edit your code",
+                    backdrop: true,
+                    autoscroll: true,
+                    smartPlacement: true,
+                    keyboard: true
+                },
+                {
+                    element: "#sign-up-button",
+                    title: "Title of my sign up button",
+                    content: "Content of my sign up button",
+                    backdrop: true,
+                    autoscroll: true,
+                    smartPlacement: true,
+                    keyboard: true
+                }
+            ]
+        });
+
+        // Initialize the tour.
+        tour.init();
+
+        // Start the tour.
+        tour.start();
+
+    })
+</script>
 
 </body>
 
