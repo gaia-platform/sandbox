@@ -1,6 +1,6 @@
 import sys
 
-from flask import Flask
+from flask import Flask, request
 from flask import render_template
 
 app = Flask(__name__)
@@ -8,12 +8,12 @@ app = Flask(__name__)
 @app.route('/', methods=['GET'])
 def index():
     # return the rendered template
-    return render_template("index.html", coordinator=sys.argv[1], maintenance=sys.argv[2])
+    return render_template("index.html", coordinator=sys.argv[1], maintenance=sys.argv[2], args=request.args)
 
 @app.route('/test', methods=['GET'])
 def index_test():
     # return the rendered template
-    return render_template("index.html", coordinator=sys.argv[1], maintenance="false")
+    return render_template("index.html", coordinator=sys.argv[1], maintenance="false", args=request.args)
 
 @app.route('/health', methods=['GET'])
 def health():

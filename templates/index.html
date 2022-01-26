@@ -66,7 +66,7 @@
 
             <div class="builder-column column-2">
                 <div class="div-2">
-                    <p>Sandbox - beta</p>
+                    <p>Sandbox</p>
                 </div>
             </div>
 
@@ -115,7 +115,12 @@
                         id="ctrl-button">Build</span>
                 </div>
 
-                <div class="div-5" id="sandboxEditor">
+                <div class="div-5" id="sandboxEditor" style="height: 50vh; border: thin solid black;">
+                </div>
+
+                <div class="div-5" style="overflow-y: auto; height: 30vh; border: thin solid black;">
+                    <PRE id="output-new">
+                    </PRE>
                 </div>
             </div>
 
@@ -147,7 +152,9 @@
                 </div>
 
                 <div class="div-7">
-                    <iframe id="godot" src="{{ url_for('static', filename='visual/index.html') }}"
+                    <iframe {% if args['sample']=='amr_swarm' or args['sample']=='access_control' %} id="godot"
+                        src="{{ url_for('static', filename='visual/index.html') }}" {% else %} id="tutorial-content"
+                        src="{{ url_for('static', filename='visual/tutorial.html') }}" {% endif %}
                         style="position: relative; height: 100%; width: 100%;" frameBorder="0" scrolling="no"></iframe>
                 </div>
             </div>
@@ -192,97 +199,8 @@
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/mqtt_bundle.js') }}"></script>
 
-
 <!-- Bootstrap Tour -->
-<script>
-    $(window).on("load", function () {
-
-        // Define tour variable for new tour.
-        var tour = new Tour({
-            steps: [
-                {
-                    element: "#ruleset",
-                    title: "Title of my ruleset",
-                    content: "Content of my ruleset",
-                    backdrop: true,
-                    autoscroll: true,
-                    smartPlacement: true,
-                    keyboard: true,
-                    onNext: function () {
-
-                        // Returns index of current step.
-                        var current_step = tour.getCurrentStep();
-
-                        // Returns next step obj.
-                        var next_step = tour.getStep(current_step + 1)
-
-                        console.log(
-                            {
-                                lineNumber: next_step.lineNumber,
-                                tabId: next_step.tabId
-                            }
-                        )
-                    }
-                },
-                {
-                    element: "#ddl",
-                    title: "Title of my ddl",
-                    content: "Content of my ddl",
-                    lineNumber: 12,
-                    tabId: 'string',
-                    backdrop: true,
-                    autoscroll: true,
-                    smartPlacement: true,
-                    keyboard: true
-                },
-                {
-                    element: "#output",
-                    title: "Title of output button",
-                    content: "Content of output button",
-                    backdrop: true,
-                    autoscroll: true,
-                    smartPlacement: true,
-                    keyboard: true
-                },
-                {
-                    element: "#ctrl-button",
-                    title: "Title of build button",
-                    content: "Content of build button",
-                    backdrop: true,
-                    autoscroll: true,
-                    smartPlacement: true,
-                    keyboard: true
-                },
-                {
-                    element: "#sandboxEditor",
-                    title: "This is the editor for your ruleset/ddl files",
-                    content: "Here you can edit your code",
-                    backdrop: true,
-                    autoscroll: true,
-                    smartPlacement: true,
-                    keyboard: true
-                },
-                {
-                    element: "#sign-up-button",
-                    title: "Title of my sign up button",
-                    content: "Content of my sign up button",
-                    backdrop: true,
-                    autoscroll: true,
-                    smartPlacement: true,
-                    keyboard: true
-                }
-            ]
-        });
-
-
-        // Initialize the tour.
-        tour.init();
-
-        // Start the tour.
-        tour.start();
-
-    })
-</script>
+<script src="{{ url_for('static', filename='js/tour.js') }}"></script>
 
 </body>
 

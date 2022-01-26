@@ -36,7 +36,6 @@
     });
 
 
-
     var get_started = "Get started guide currently unavailable";
 
     var state = null;
@@ -332,6 +331,7 @@
     $("#reset-button").click(function () {
         if (confirm('This will reset all your changes. Continue?')) {
             setCookie("sandboxUUID", window.generateUUID());
+            window.tour.restart();
             location.reload();
         }
     });
