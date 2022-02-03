@@ -192,7 +192,7 @@
                 case 'ready':
                     state.project.current = payload;
                     // setTabText('output', 'Ready');
-                    outputTerminal.writeln(terminal_hostname + '$ Terminal ready')
+                    outputTerminal.writeln(terminal_hostname + '$ Coordinator connected!')
                     window.publishToCoordinator("editor/req", state.project.current + ".ddl");
                     window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
                     window.publishToCoordinator("editor/req", "get_started.md");
@@ -293,7 +293,7 @@
             }
         );
         outputTerminal.open(document.getElementById('outputTerminal'));
-        outputTerminal.writeln(terminal_hostname + '$ Terminal is getting started');
+        outputTerminal.writeln(terminal_hostname + '$ Connecting to coordinator...');
     }
 
     // Sets the new tab name onclick and sets the modal of that tabname
@@ -380,6 +380,23 @@
             location.reload();
         }
     });
+
+    $(".dropdown").click(function () {
+        document.getElementById("dropdown-menu").classList.toggle("show")
+    })
+
+    window.onclick = function (event) {
+        if (!event.target.matches('.dropdown')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+
+            for (let i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
 
     $("#session-id-button").click(function () {
         prompt("Session ID (aka sandboxUUID)", "export SESSION_ID=" + window.sandboxUUID);

@@ -114,7 +114,7 @@
 
                     <span class="editor-tab button" data-tab-name="ddl" id="ddl">DDL</span>
 
-                    <!-- <span class="editor-tab button" data-tab-name="output" id="output">Output</span> -->
+                    <span class="editor-tab button" data-tab-name="cpp" id="cpp">CPP</span>
 
                     <span style="position: absolute; right: 0;" class="editor-tab button" data-tab-name="run"
                         id="ctrl-button">Build</span>
@@ -123,8 +123,7 @@
                 <div class="div-5" id="sandboxEditor" style="height: 50vh; border: thin solid black;">
                 </div>
                 <!-- <h2 id="output-label"> Output</h2> -->
-                <span style="flex-direction: row; width: 7%;" class="editor-tab button" data-tab-name="output"
-                    id="output">Output</span>
+                <span id="output">Output</span>
                 <div class="div-5" id="outputTerminal"
                     style="overflow: scroll; height: 30vh; border: thin solid black;">
                     <!-- <PRE id="output-new">
@@ -140,10 +139,28 @@
                         </div>
 
                         <div class="builder-column column-8">
-                            {% if args['sample']=='amr_swarm' or args['sample']=='access_control' %}
+                            {% if args['scenario']=='amr_swarm' or args['scenario']=='access_control' %}
                             <span style="background-color:#00B7DD" class="span-4 button" id="get-started-button">Read
                                 me</span>
                             {% endif %}
+                        </div>
+
+                        <div class="builder-column column-9">
+                            <form>
+                                <label for="scenario">Pick a Scenario</label>
+                                <select name="scenario" id="scenario" onchange="this.form.submit();">
+                                    <option>Select...</option>
+                                    {% if args['scenario']!='amr_swarm' %}
+                                    <option value="amr_swarm">AMR Swarm</option>
+                                    {% endif %}
+                                    {% if args['scenario']!='access_control' %}
+                                    <option value="access_control">Access Control</option>
+                                    {% endif %}
+                                    {% if args['scenario']!='frequent_flier' %}
+                                    <option value="fequent_flier">Frequent Flier</option>
+                                    {% endif %}
+                                </select>
+                            </form>
                         </div>
 
                         <!-- These buttons should only be available when running without communicating with
@@ -162,7 +179,7 @@
                 </div>
 
                 <div class="div-7">
-                    <iframe {% if args['sample']=='amr_swarm' or args['sample']=='access_control' %} id="godot"
+                    <iframe {% if args['scenario']=='amr_swarm' or args['scenario']=='access_control' %} id="godot"
                         src="{{ url_for('static', filename='visual/index.html') }}" {% else %} id="tutorial-content"
                         src="{{ url_for('static', filename='visual/tutorial.html') }}" {% endif %}
                         style="position: relative; height: 100%; width: 100%;" frameBorder="0" scrolling="no"></iframe>
