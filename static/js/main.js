@@ -38,8 +38,12 @@
 
     var get_started = "Get started guide currently unavailable";
 
+    // Terminal message theme
+    var terminal_hostname = '\x1b[;34m' + "~/gaia_sandbox" + '\x1b[;37m'
+
     var state = null;
     var editor = null;
+    var outputTerminal = null;
     var data = {
         ruleset: {
             model: null,
@@ -48,11 +52,11 @@
         ddl: {
             model: null,
             state: null
-        },
-        output: {
-            model: null,
-            state: null
         }
+        // output: {
+        //     model: null,
+        //     state: null
+        // }
     };
 
     resetState();
@@ -72,6 +76,8 @@
         };
     }
 
+    // Reads the file name and converts it cpp/sql depending on extension.
+    // defaults to text?
     function fileFormat(fileName) {
         switch (fileName) {
             case 'ruleset': return 'cpp';
@@ -83,42 +89,65 @@
         return 'text';
     }
 
+
     function setTabText(fileExt, content) {
-        data[fileExt].model = monaco.editor.createModel(content, fileFormat(fileExt));
-        data[fileExt].state = null;
-        if (fileExt != 'output') {
-            data[fileExt].model.onDidChangeContent((event) => {
-                state.project.edits.add(fileExt);
-                setCtrlButtonLabel();
-            });
+        console.log('Current File extension: ', fileExt)
+        console.log('Current content: ', content)
+
+        if (fileExt == 'output') {
+            outputTerminal.writeln(terminal_hostname + `$ ${content.trim()}`)
+        } else {
+            data[fileExt].model = monaco.editor.createModel(content, fileFormat(fileExt));
+            data[fileExt].state = null;
+            // Changes the text of the Build button if Ruleset or DDL are edited
+            if (fileExt != 'output') {
+                data[fileExt].model.onDidChangeContent((event) => {
+                    state.project.edits.add(fileExt);
+                    setCtrlButtonLabel();
+                });
+            }
+            setTab(fileExt);
         }
-        setTab(fileExt);
     }
 
-    function appendTabText(fileExt, content) {
-        data[fileExt].model = monaco.editor.createModel(data[fileExt].model.getValue() + content, fileFormat(fileExt));
-        setTab(fileExt);
-        editor.revealLine(editor.getModel().getLineCount())
+    // Appends new text for whichever tab is selected ?
+    function appendOutput(fileExt, content) {
+        // console.log('Here is my file extension: ', fileExt)
+        // console.log('Here is my content: ', content)
+        // data[fileExt].model = monaco.editor.createModel(data[fileExt].model.getValue() + content, fileFormat(fileExt));
+        // setTab(fileExt);
+        // editor.revealLine(editor.getModel().getLineCount())
+        outputTerminal.writeln(terminal_hostname + `$ ${content.trim()}`)
     }
 
     function sessionRestoreMessages() {
         if (state.session.loading) {
             if (state.session.countdown > 0) {
-                setTabText('output', 'Restoring session.\nEstimated time remaining: '
+                // setTabText('output', 'Restoring session.\nEstimated time remaining: '
+                //     + Math.floor(state.session.countdown / 60).toString() + ':'
+                //     + (state.session.countdown % 60 < 10 ? '0' : '')
+                //     + (state.session.countdown % 60).toString()
+                //     + '\n');
+                outputTerminal.writeln(terminal_hostname +
+                    '$ Restoring session.\nEstimated time remaining: '
                     + Math.floor(state.session.countdown / 60).toString() + ':'
                     + (state.session.countdown % 60 < 10 ? '0' : '')
                     + (state.session.countdown % 60).toString()
                     + '\n');
             } else if (state.session.countdown == 0) {
-                setTabText('output', 'Taking longer than expected.');
+                // setTabText('output', 'Taking longer than expected.');
+                outputTerminal.writeln(terminal_hostname + 'Taking longer than expected.')
             } else {
-                appendTabText('output', '.');
+                // appendOutput('output', '.');
+                outputTerminal.writeln(terminal_hostname + '.')
             }
             state.session.countdown -= 1;
             setTimeout(sessionRestoreMessages, 1 * 1000);
         }
     }
 
+    // Updates thes state of the Build (ctrl) button
+    // depending on the run/build status
     function setCtrlButtonLabel() {
         if (state.project.edits.size > 0) {
             $("#ctrl-button").html('Save');
@@ -162,7 +191,8 @@
             switch (topicLevels[2].toString()) {
                 case 'ready':
                     state.project.current = payload;
-                    setTabText('output', 'Ready');
+                    // setTabText('output', 'Ready');
+                    outputTerminal.writeln(terminal_hostname + '$ Terminal ready')
                     window.publishToCoordinator("editor/req", state.project.current + ".ddl");
                     window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
                     window.publishToCoordinator("editor/req", "get_started.md");
@@ -192,11 +222,11 @@
         if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'output' && fileExt != 'md') {
             return;
         }
-
+        // Reacting to 'output'
         if (fileExt == 'md') {
             get_started = payload;
         } else if (topicLevels[3] == 'append') {
-            appendTabText(fileExt, payload);
+            appendOutput(fileExt, payload);
         }
         else {
             setTabText(fileExt, payload);
@@ -208,23 +238,26 @@
         window.publishToCoordinator("project/select", state.project.current);
     }
 
+    // Sets the initital editor data before Coordinator loads,
+    // creating the models that each tab will show
     function initEditorData(ruleset, ddl, output) {
         data.ruleset.model = monaco.editor.createModel(ruleset, 'cpp');
         data.ruleset.state = null;
         data.ddl.model = monaco.editor.createModel(ddl, 'sql');
         data.ddl.state = null;
-        data.output.model = monaco.editor.createModel(output, 'text');
-        data.output.state = null;
+        // data.output.model = monaco.editor.createModel(output, 'text');
+        // data.output.state = null;
     }
 
     window.exitProject = function () {
         window.publishToCoordinator("project/exit", "exit");
         resetState();
         initEditorData('no ruleset file loaded', 'no ddl file loaded', 'no output yet');
-        setTab('output');
+        // setTab('output');
         setCtrlButtonLabel();
     }
 
+    // Loads page
     function load() {
         initEditorData(
             "ruleset outgoing_messages\n{\n\ton_insert(outgoing_message)\n\t{\n\t\tcommunication::publish_message(topic, payload);\n\t}\n}",
@@ -250,8 +283,20 @@
                 enabled: false
             }
         });
+        // Load output editor (testing)
+        outputTerminal = new Terminal(
+            {
+                convertEol: true,
+                scrollback: 0,
+                disableStdin: false,
+                fastScrollModifier: 5
+            }
+        );
+        outputTerminal.open(document.getElementById('outputTerminal'));
+        outputTerminal.writeln(terminal_hostname + '$ Terminal is getting started');
     }
 
+    // Sets the new tab name onclick and sets the modal of that tabname
     function setTab(tabName) {
         var currentTabName = $(".selected-tab").attr("data-tab-name");
         data[currentTabName].state = editor.saveViewState();

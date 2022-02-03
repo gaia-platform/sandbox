@@ -24,6 +24,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.12.0/js/bootstrap-tour-standalone.min.js"></script>
+
+    <!-- Xterm.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.css" />
+
 </head>
 
 <body>
@@ -76,15 +81,15 @@
                 </a>
             </div>
 
-            <div class="builder-column get-sdk-column">
+            <!-- <div class="builder-column get-sdk-column">
                 <a href="https://www.gaiaplatform.io/developers" class="a-2" data-name="a-2">
                     Get the SDK
                 </a>
-            </div>
+            </div> -->
 
             <div class="builder-column column-4">
                 <a href="https://www.gaiaplatform.io/sign-up" class="a-3 button" data-name="a-3" id="sign-up-button">
-                    Sign up
+                    Get the SDK
                 </a>
             </div>
         </div>
@@ -109,7 +114,7 @@
 
                     <span class="editor-tab button" data-tab-name="ddl" id="ddl">DDL</span>
 
-                    <span class="editor-tab button" data-tab-name="output" id="output">Output</span>
+                    <!-- <span class="editor-tab button" data-tab-name="output" id="output">Output</span> -->
 
                     <span style="position: absolute; right: 0;" class="editor-tab button" data-tab-name="run"
                         id="ctrl-button">Build</span>
@@ -117,10 +122,13 @@
 
                 <div class="div-5" id="sandboxEditor" style="height: 50vh; border: thin solid black;">
                 </div>
-                <label id="output-label"> Output</label>
-                <div class="div-5" style="overflow-y: auto; height: 30vh; border: thin solid black;">
-                    <PRE id="output-new">
-                    </PRE>
+                <!-- <h2 id="output-label"> Output</h2> -->
+                <span style="flex-direction: row; width: 7%;" class="editor-tab button" data-tab-name="output"
+                    id="output">Output</span>
+                <div class="div-5" id="outputTerminal"
+                    style="overflow: scroll; height: 30vh; border: thin solid black;">
+                    <!-- <PRE id="output-new">
+                    </PRE> -->
                 </div>
             </div>
 
@@ -132,8 +140,10 @@
                         </div>
 
                         <div class="builder-column column-8">
+                            {% if args['sample']=='amr_swarm' or args['sample']=='access_control' %}
                             <span style="background-color:#00B7DD" class="span-4 button" id="get-started-button">Read
                                 me</span>
+                            {% endif %}
                         </div>
 
                         <!-- These buttons should only be available when running without communicating with
