@@ -113,9 +113,9 @@
                     <span class="editor-tab button selected-tab" data-tab-name="ruleset" id="ruleset">Ruleset</span>
 
                     <span class="editor-tab button" data-tab-name="ddl" id="ddl">DDL</span>
-
+                    {% if args['scenario']=='amr_swarm' %}
                     <span class="editor-tab button" data-tab-name="cpp" id="cpp">CPP</span>
-
+                    {% endif %}
                     <span style="position: absolute; right: 0;" class="editor-tab button" data-tab-name="run"
                         id="ctrl-button">Build</span>
                 </div>
@@ -157,7 +157,7 @@
                                     <option value="access_control">Access Control</option>
                                     {% endif %}
                                     {% if args['scenario']!='frequent_flier' %}
-                                    <option value="fequent_flier">Frequent Flier</option>
+                                    <option value="frequent_flier">Frequent Flier</option>
                                     {% endif %}
                                 </select>
                             </form>

@@ -287,7 +287,7 @@
         outputTerminal = new Terminal(
             {
                 convertEol: true,
-                scrollback: 0,
+                scrollback: 100,
                 disableStdin: false,
                 fastScrollModifier: 5
             }
