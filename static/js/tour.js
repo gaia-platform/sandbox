@@ -3,7 +3,8 @@
 
     // Instance the tour.
     $(window).on("load", function () {
-        window.tour = new Tour({
+        // Define tour variable for new tour.
+        var tour = new Tour({
             steps: [
                 {
                     element: "#ruleset",
@@ -12,12 +13,29 @@
                     backdrop: true,
                     autoscroll: true,
                     smartPlacement: true,
-                    keyboard: true
+                    keyboard: true,
+                    onNext: function () {
+
+                        // Returns index of current step.
+                        var current_step = tour.getCurrentStep();
+
+                        // Returns next step obj.
+                        var next_step = tour.getStep(current_step + 1)
+
+                        console.log(
+                            {
+                                lineNumber: next_step.lineNumber,
+                                tabId: next_step.tabId
+                            }
+                        )
+                    }
                 },
                 {
                     element: "#ddl",
                     title: "Title of my ddl",
                     content: "Content of my ddl",
+                    lineNumber: 12,
+                    tabId: 'string',
                     backdrop: true,
                     autoscroll: true,
                     smartPlacement: true,
@@ -49,25 +67,17 @@
                     autoscroll: true,
                     smartPlacement: true,
                     keyboard: true
-                },
-                {
-                    element: "#sign-up-button",
-                    title: "Title of my sign up button",
-                    content: "Content of my sign up button",
-                    backdrop: true,
-                    autoscroll: true,
-                    smartPlacement: true,
-                    keyboard: true
                 }
             ]
         });
 
+
         // Initialize the tour.
-        window.tour.init();
+        tour.init();
 
         // Start the tour.
-        window.tour.start();
+        tour.start();
 
-    });
+    })
 
 })(jQuery);
