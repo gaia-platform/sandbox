@@ -33,6 +33,8 @@
         window.subscribeToTopic("project/#", false);
         window.subscribeToTopic("session", false);
         window.subscribeToTopic("appUUID", false);
+
+        window.selectProject($("#scenario").attr("data-scenario"));
     });
 
 
@@ -50,6 +52,10 @@
             state: null
         },
         ddl: {
+            model: null,
+            state: null
+        },
+        cpp: {
             model: null,
             state: null
         }
@@ -80,7 +86,7 @@
     // defaults to text?
     function fileFormat(fileName) {
         switch (fileName) {
-            case 'ruleset': return 'cpp';
+            case 'ruleset': case 'cpp': return 'cpp';
             case 'ddl': return 'sql';
 
             default:
@@ -178,7 +184,7 @@
             if (payload == 'loading' && !state.session.loading) {
                 state.session.loading = true;
                 state.session.countdown = 2 * 60;
-                sessionRestoreMessages();
+                // sessionRestoreMessages();
             }
             else if (payload == 'loaded' && state.session.loading) {
                 state.session.loading = false;
@@ -195,6 +201,7 @@
                     outputTerminal.writeln(terminal_hostname + '$ Coordinator connected!')
                     window.publishToCoordinator("editor/req", state.project.current + ".ddl");
                     window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
+                    window.publishToCoordinator("editor/req", state.project.current + ".cpp");
                     window.publishToCoordinator("editor/req", "get_started.md");
                     break;
 

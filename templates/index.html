@@ -33,6 +33,7 @@
 
 <body>
     <div id="coordinator" data-coordinator={{coordinator}}></div>
+    <div id="scenario" data-scenario={{scenario}}></div>
     <div stackColumnsAt="tablet" class="div" data-name="div-1">
         <div class="builder-columns columns header">
             <div class="builder-column column">
@@ -113,7 +114,7 @@
                     <span class="editor-tab button selected-tab" data-tab-name="ruleset" id="ruleset">Ruleset</span>
 
                     <span class="editor-tab button" data-tab-name="ddl" id="ddl">DDL</span>
-                    {% if args['scenario']=='amr_swarm' %}
+                    {% if scenario == 'frequent_flier' %}
                     <span class="editor-tab button" data-tab-name="cpp" id="cpp">CPP</span>
                     {% endif %}
                     <span style="position: absolute; right: 0;" class="editor-tab button" data-tab-name="run"
@@ -139,7 +140,7 @@
                         </div>
 
                         <div class="builder-column column-8">
-                            {% if args['scenario']=='amr_swarm' or args['scenario']=='access_control' %}
+                            {% if scenario == 'amr_swarm' or scenario == 'access_control' %}
                             <span style="background-color:#00B7DD" class="span-4 button" id="get-started-button">Read
                                 me</span>
                             {% endif %}
@@ -150,13 +151,13 @@
                                 <label for="scenario">Pick a Scenario</label>
                                 <select name="scenario" id="scenario" onchange="this.form.submit();">
                                     <option>Select...</option>
-                                    {% if args['scenario']!='amr_swarm' %}
+                                    {% if scenario != 'amr_swarm' %}
                                     <option value="amr_swarm">AMR Swarm</option>
                                     {% endif %}
-                                    {% if args['scenario']!='access_control' %}
+                                    {% if scenario != 'access_control' %}
                                     <option value="access_control">Access Control</option>
                                     {% endif %}
-                                    {% if args['scenario']!='frequent_flier' %}
+                                    {% if scenario != 'frequent_flier' %}
                                     <option value="frequent_flier">Frequent Flier</option>
                                     {% endif %}
                                 </select>
@@ -179,7 +180,7 @@
                 </div>
 
                 <div class="div-7">
-                    <iframe {% if args['scenario']=='amr_swarm' or args['scenario']=='access_control' %} id="godot"
+                    <iframe {% if scenario == 'amr_swarm' or scenario == 'access_control' %} id="godot"
                         src="{{ url_for('static', filename='visual/index.html') }}" {% else %} id="tutorial-content"
                         src="{{ url_for('static', filename='visual/tutorial.html') }}" {% endif %}
                         style="position: relative; height: 100%; width: 100%;" frameBorder="0" scrolling="no"></iframe>
