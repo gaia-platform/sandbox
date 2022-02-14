@@ -21,8 +21,6 @@
 
 #include "gaia_coordinator.h"
 #include "json.hpp"
-#include "metrics.hpp"
-#include "metrics_publisher.hpp"
 #include "utils.hpp"
 
 using json = nlohmann::json;
@@ -240,7 +238,6 @@ void on_message(Mqtt::MqttConnection&, const String& topic, const ByteBuf& paylo
                 if (session.agent())
                 {
                     send_message(session.agent().id(), payload_str, topic_vector[3]);
-                    metrics::emit_project_metrics(session, topic_vector[3]);
                 }
 
                 if (topic_vector[3] == "exit")
@@ -317,7 +314,6 @@ int main()
     }
 
     gaia::system::initialize();
-    metrics::create_schema();
 
     begin_transaction();
     dump_db();
