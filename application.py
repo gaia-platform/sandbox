@@ -6,7 +6,7 @@ from flask import render_template
 app = Flask(__name__)
 
 def scenario(args):
-    return args['scenario'] if 'scenario' in args else 'frequent_flier'
+    return args['scenario'] if 'scenario' in args else 'frequent_flyer'
 
 @app.route('/', methods=['GET'])
 def index():

@@ -114,7 +114,7 @@
                     <span class="editor-tab button selected-tab" data-tab-name="ruleset" id="ruleset">Ruleset</span>
 
                     <span class="editor-tab button" data-tab-name="ddl" id="ddl">DDL</span>
-                    {% if scenario == 'frequent_flier' %}
+                    {% if scenario == 'frequent_flyer' %}
                     <span class="editor-tab button" data-tab-name="cpp" id="cpp">CPP</span>
                     {% endif %}
                     <span style="position: absolute; right: 0;" class="editor-tab button" data-tab-name="run"
@@ -157,8 +157,8 @@
                                     {% if scenario != 'access_control' %}
                                     <option value="access_control">Access Control</option>
                                     {% endif %}
-                                    {% if scenario != 'frequent_flier' %}
-                                    <option value="frequent_flier">Frequent Flier</option>
+                                    {% if scenario != 'frequent_flyer' %}
+                                    <option value="frequent_flyer">Frequent Flyer</option>
                                     {% endif %}
                                 </select>
                             </form>
