@@ -35,8 +35,6 @@ func _ready():
 	_connection_var = CommunicationManager.connect("ac_move_to_room", self, "_move_person_to_room")
 	_connection_var = CommunicationManager.connect("ac_reset", self, "_ac_reload")
 
-	CommunicationManager.select_project("access_control_template")
-
 func _ac_reload():
 	get_tree().paused = false
 	get_tree().reload_current_scene()

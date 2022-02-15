@@ -27,7 +27,6 @@
         window.sandboxUUID = storedSandboxUuid;
         window.appUUID = storedAppUUID;
 
-        window.publishToCoordinator("browser", "refresh");
         window.publishToCoordinator("project/stop", "current");
         window.subscribeToTopic("editor/#", false);
         window.subscribeToTopic("project/#", false);
@@ -116,6 +115,9 @@
         }
     }
 
+    function getFileContents(filename) {
+    }
+
     // Appends new text for whichever tab is selected ?
     function appendOutput(fileExt, content) {
         // console.log('Here is my file extension: ', fileExt)
@@ -183,12 +185,14 @@
         if (topicLevels[1] == 'session') {
             if (payload == 'loading' && !state.session.loading) {
                 state.session.loading = true;
-                state.session.countdown = 2 * 60;
-                // sessionRestoreMessages();
+                outputTerminal.writeln(terminal_hostname + '$ Coordinator connected!')
+                window.publishToCoordinator("editor/req", state.project.current + ".ddl");
+                window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
+                window.publishToCoordinator("editor/req", state.project.current + ".cpp");
             }
             else if (payload == 'loaded' && state.session.loading) {
                 state.session.loading = false;
-                window.selectProject(state.project.current);
+                // window.selectProject(state.project.current);
             }
             return;
         }
@@ -196,13 +200,14 @@
         if (topicLevels[1] == 'project') {
             switch (topicLevels[2].toString()) {
                 case 'ready':
+                    /*
                     state.project.current = payload;
                     // setTabText('output', 'Ready');
                     outputTerminal.writeln(terminal_hostname + '$ Coordinator connected!')
                     window.publishToCoordinator("editor/req", state.project.current + ".ddl");
                     window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
                     window.publishToCoordinator("editor/req", state.project.current + ".cpp");
-                    window.publishToCoordinator("editor/req", "get_started.md");
+                    window.publishToCoordinator("editor/req", "get_started.md");*/
                     break;
 
                 case 'build':
@@ -226,12 +231,16 @@
 
         let fileName = topicLevels[2];
         let fileExt = fileName.split('.').pop();
-        if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'output' && fileExt != 'md') {
+        if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'cpp' && fileExt != 'output') {
             return;
         }
         // Reacting to 'output'
         if (fileExt == 'md') {
-            get_started = payload;
+            if (fileName == 'get_started') {
+                get_started = payload;
+            } else {
+                // TODO handle readme
+            }
         } else if (topicLevels[3] == 'append') {
             appendOutput(fileExt, payload);
         }
@@ -241,7 +250,7 @@
     }
 
     window.selectProject = function (projectName) {
-        state.project.current = projectName.replace("_template", "");
+        state.project.current = projectName;
         window.publishToCoordinator("project/select", state.project.current);
     }
 

@@ -88,7 +88,6 @@ func _ready():
 	CommunicationManager.subscribe_to_topic("unload_pl")
 	CommunicationManager.subscribe_to_topic("ship")
 
-	CommunicationManager.select_project("amr_swarm_template")
 	var _connect_to_signal = CommunicationManager.connect("factory_running", self, "_init_app")
 
 	number_of_waypoints = 0
