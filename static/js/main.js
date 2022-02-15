@@ -58,10 +58,6 @@
             model: null,
             state: null
         }
-        // output: {
-        //     model: null,
-        //     state: null
-        // }
     };
 
     resetState();
@@ -173,6 +169,8 @@
     }
 
     window.mainMessageHandler = function (topic, payload) {
+        console.log('Topic: ' + topic);
+        console.log('Payload: ' + payload);
         let topicLevels = topic.split('/');
 
         if (topicLevels[1] == 'appUUID') {
@@ -231,22 +229,15 @@
 
         let fileName = topicLevels[2];
         let fileExt = fileName.split('.').pop();
-        if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'cpp' && fileExt != 'output') {
+
+        if (fileExt == 'output') {
+            outputTerminal.writeln(terminal_hostname + `$ ${payload.trim()}`);
             return;
         }
-        // Reacting to 'output'
-        if (fileExt == 'md') {
-            if (fileName == 'get_started') {
-                get_started = payload;
-            } else {
-                // TODO handle readme
-            }
-        } else if (topicLevels[3] == 'append') {
-            appendOutput(fileExt, payload);
+        if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'cpp') {
+            return;
         }
-        else {
-            setTabText(fileExt, payload);
-        }
+        setTabText(fileExt, payload);
     }
 
     window.selectProject = function (projectName) {
