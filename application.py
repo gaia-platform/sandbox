@@ -6,12 +6,11 @@ from flask import render_template
 app = Flask(__name__)
 
 def scenario(args):
-    return args['scenario'] if 'scenario' in args else 'frequent_flyer'
+    return args['scenario'] if 'scenario' in args else 'frequent_flier'
 
 @app.route('/', methods=['GET'])
 def index():
     # return the rendered template
-
     return render_template("index.html", coordinator=sys.argv[1], maintenance=sys.argv[2], scenario=scenario(request.args))
 
 @app.route('/test', methods=['GET'])
