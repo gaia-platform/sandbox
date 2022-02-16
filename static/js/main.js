@@ -252,13 +252,13 @@
 
     // Sets the initital editor data before Coordinator loads,
     // creating the models that each tab will show
-    function initEditorData(ruleset, ddl, output) {
+    function initEditorData(ruleset, ddl, cpp) {
         data.ruleset.model = monaco.editor.createModel(ruleset, 'cpp');
         data.ruleset.state = null;
         data.ddl.model = monaco.editor.createModel(ddl, 'sql');
         data.ddl.state = null;
-        // data.output.model = monaco.editor.createModel(output, 'text');
-        // data.output.state = null;
+        data.cpp.model = monaco.editor.createModel(cpp, 'cpp');
+        data.cpp.state = null;
     }
 
     window.exitProject = function () {
@@ -272,7 +272,7 @@
     // Loads page
     function load() {
         initEditorData(
-            "ruleset outgoing_messages\n{\n\ton_insert(outgoing_message)\n\t{\n\t\tcommunication::publish_message(topic, payload);\n\t}\n}",
+            "Loading...",
             'Loading...',
             'Loading...'
         );
@@ -305,7 +305,7 @@
             }
         );
         outputTerminal.open(document.getElementById('outputTerminal'));
-        outputTerminal.writeln(terminal_hostname + '$ Connecting to coordinator...');
+        outputTerminal.writeln(terminal_hostname + '$ Terminal Ready!');
     }
 
     // Sets the new tab name onclick and sets the modal of that tabname
