@@ -181,9 +181,9 @@
 
                 <div class="div-7">
                     <iframe {% if scenario == 'amr_swarm' or scenario == 'access_control' %} id="godot"
-                        src="{{ url_for('static', filename='visual/index.html') }}" {% else %} id="tutorial-content"
+                        src="{{ url_for('static', filename='visual/index.html') }}" {% else %} id="tutorial"
                         src="{{ url_for('static', filename='visual/tutorial.html') }}" {% endif %}
-                        style="position: relative; height: 100%; width: 100%;" frameBorder="0" scrolling="no"></iframe>
+                        style="position: relative; height: 100%; width: 100%;" frameBorder="0" scrolling="yes"></iframe>
                 </div>
             </div>
         </div>

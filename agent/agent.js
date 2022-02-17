@@ -133,22 +133,8 @@ function mqttClientReconnectHandler() {
    console.log("reconnect");
 }
 
-function sendFile(projectName, fileName) {
-   var fullFilePath = 'templates/' + projectName + '_template/src/' + fileName;
-   if (!fs.existsSync(fullFilePath)) {
-      fullFilePath = 'templates/' + projectName + '_template/' + fileName;
-   }
-   fs.readFile(fullFilePath, 'utf8' , (err, data) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-      publishToEditor(fileName, data);
-   });
-}
-
 async function saveFile(projectName, fileName, content) {
-   fs.writeFile('templates/' + projectName + '_template/src/' + fileName, content, 'utf8', (err) => {
+   fs.writeFile('templates/' + projectName + '/src/' + fileName, content, 'utf8', (err) => {
       if (err) {
          console.error(err);
          return;
@@ -179,7 +165,7 @@ async function fileExists(file) {
 }
 
 function getBuildDir(projectName) {
-   return `templates/${projectName}_template/build`;
+   return `templates/${projectName}/build`;
 }
 
 function getDataDir(projectName) {
@@ -389,11 +375,7 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
       }
       return;
    }
-   switch (topicTokens[2]) {
-      case 'get':
-         sendFile(topicTokens[1], payload);
-         break;
-   
+   switch (topicTokens[2]) {   
       case 'file':
          saveFile(topicTokens[1], topicTokens[3], payload);
          break;

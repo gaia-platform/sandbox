@@ -34,8 +34,13 @@
         window.subscribeToTopic("appUUID", false);
 
         window.selectProject($("#scenario").attr("data-scenario"));
-    });
 
+        if (state.project.current == 'frequent_flyer') {
+            var readme = 'replace with code to retrieve readme.md contents for frequent_flyer';
+            var result = window.md.render(readme);
+            $("#tutorial").contents().find("#tutorial-content").html(result);
+        }
+    });
 
     var get_started = "Get started guide currently unavailable";
 
