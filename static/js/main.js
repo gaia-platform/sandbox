@@ -112,6 +112,14 @@
     }
 
     function getFileContents(filename) {
+        //GET request to grab filename content
+        fetch(`/files/frequent_flyer.${filename}`)
+            .then(function (response) {
+                return response.text();
+            }).then(function (text) {
+                console.log('GET response text: ', text)
+                setTabText(filename, text)
+            });
     }
 
     // Appends new text for whichever tab is selected ?
@@ -266,10 +274,15 @@
 
     // Loads page
     function load() {
+
+        getFileContents('cpp');
+        getFileContents('ddl');
+        getFileContents('ruleset');
+
         initEditorData(
             "Loading...",
-            'Loading...',
-            'Loading...'
+            "Loading...",
+            "Loading..."
         );
 
         // Set Monaco editor theme
