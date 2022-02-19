@@ -82,8 +82,8 @@
         };
     }
 
-    // Reads the file name and converts it cpp/sql depending on extension.
-    // defaults to text?
+    // Reads the file name and converts it to cpp/sql depending on extension.
+    // Defaults to text.
     function fileFormat(fileName) {
         switch (fileName) {
             case 'ruleset': case 'cpp': return 'cpp';
@@ -129,22 +129,12 @@
 
     // Appends new text for whichever tab is selected ?
     function appendOutput(fileExt, content) {
-        // console.log('Here is my file extension: ', fileExt)
-        // console.log('Here is my content: ', content)
-        // data[fileExt].model = monaco.editor.createModel(data[fileExt].model.getValue() + content, fileFormat(fileExt));
-        // setTab(fileExt);
-        // editor.revealLine(editor.getModel().getLineCount())
         outputTerminal.writeln(terminal_hostname + `$ ${content.trim()}`)
     }
 
     function sessionRestoreMessages() {
         if (state.session.loading) {
             if (state.session.countdown > 0) {
-                // setTabText('output', 'Restoring session.\nEstimated time remaining: '
-                //     + Math.floor(state.session.countdown / 60).toString() + ':'
-                //     + (state.session.countdown % 60 < 10 ? '0' : '')
-                //     + (state.session.countdown % 60).toString()
-                //     + '\n');
                 outputTerminal.writeln(terminal_hostname +
                     '$ Restoring session.\nEstimated time remaining: '
                     + Math.floor(state.session.countdown / 60).toString() + ':'
@@ -152,10 +142,8 @@
                     + (state.session.countdown % 60).toString()
                     + '\n');
             } else if (state.session.countdown == 0) {
-                // setTabText('output', 'Taking longer than expected.');
                 outputTerminal.writeln(terminal_hostname + 'Taking longer than expected.')
             } else {
-                // appendOutput('output', '.');
                 outputTerminal.writeln(terminal_hostname + '.')
             }
             state.session.countdown -= 1;
@@ -163,8 +151,7 @@
         }
     }
 
-    // Updates thes state of the Build (ctrl) button
-    // depending on the run/build status
+    // Updates thes state of the Build (ctrl) button depending on the run/build status.
     function setCtrlButtonLabel() {
         if (state.project.edits.size > 0) {
             $("#ctrl-button").html('Save');
@@ -211,14 +198,12 @@
         if (topicLevels[1] == 'project') {
             switch (topicLevels[2].toString()) {
                 case 'ready':
-                    /*
                     state.project.current = payload;
-                    // setTabText('output', 'Ready');
                     outputTerminal.writeln(terminal_hostname + '$ Coordinator connected!')
                     window.publishToCoordinator("editor/req", state.project.current + ".ddl");
                     window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
                     window.publishToCoordinator("editor/req", state.project.current + ".cpp");
-                    window.publishToCoordinator("editor/req", "get_started.md");*/
+                    window.publishToCoordinator("editor/req", "get_started.md");
                     break;
 
                 case 'build':
@@ -273,7 +258,6 @@
         window.publishToCoordinator("project/exit", "exit");
         resetState();
         initEditorData('no ruleset file loaded', 'no ddl file loaded', 'no output yet');
-        // setTab('output');
         setCtrlButtonLabel();
     }
 

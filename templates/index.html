@@ -82,12 +82,6 @@
                 </a>
             </div>
 
-            <!-- <div class="builder-column get-sdk-column">
-                <a href="https://www.gaiaplatform.io/developers" class="a-2" data-name="a-2">
-                    Get the SDK
-                </a>
-            </div> -->
-
             <div class="builder-column column-4">
                 <a href="https://www.gaiaplatform.io/sign-up" class="a-3 button" data-name="a-3" id="sign-up-button">
                     Get the SDK
@@ -123,12 +117,9 @@
 
                 <div class="div-5" id="sandboxEditor" style="height: 50vh; border: thin solid black;">
                 </div>
-                <!-- <h2 id="output-label"> Output</h2> -->
                 <span id="output">Output</span>
                 <div class="div-5" id="outputTerminal"
                     style="overflow: scroll; height: 30vh; border: thin solid black;">
-                    <!-- <PRE id="output-new">
-                    </PRE> -->
                 </div>
             </div>
 
@@ -180,7 +171,7 @@
                 </div>
 
                 <div class="div-7">
-                    <iframe {% if scenario == 'amr_swarm' or scenario == 'access_control' %} id="godot"
+                    <iframe {% if scenario=='amr_swarm' or scenario=='access_control' %} id="godot"
                         src="{{ url_for('static', filename='visual/index.html') }}" {% else %} id="tutorial"
                         src="{{ url_for('static', filename='visual/tutorial.html') }}" {% endif %}
                         style="position: relative; height: 100%; width: 100%;" frameBorder="0" scrolling="yes"></iframe>
