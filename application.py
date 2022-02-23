@@ -22,6 +22,12 @@ def index_test():
 def health():
     return 'OK'
 
+@app.route('/files/<filename>', methods=['GET'])
+def files(filename):
+    with open("examples/frequent_flyer/src/{}".format(filename), "r") as f:
+        content = f.read()
+    return content
+
 if __name__ == '__main__':
     try:
         app.run(host='0.0.0.0')
