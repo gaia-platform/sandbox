@@ -18,16 +18,20 @@ def index_test():
     # return the rendered template
     return render_template("index.html", coordinator=sys.argv[1], maintenance="false", scenario=scenario(request.args))
 
+@app.route('/pirates', methods=['GET'])
+def pirates():
+    # return the rendered template
+    return render_template("pirates.html", coordinator=sys.argv[1], maintenance="false")
+
 @app.route('/health', methods=['GET'])
 def health():
     return 'OK'
 
-@app.route('/files/<filename>', methods=['GET'])
-def files(filename):
-    with open("examples/frequent_flyer/src/{}".format(filename), "r") as f:
+@app.route('/files/<path:filepath>', methods=['GET'])
+def files(filepath):
+    with open("examples/{}".format(filepath), "r") as f:
         content = f.read()
     return content
-
 if __name__ == '__main__':
     try:
         app.run(host='0.0.0.0')
