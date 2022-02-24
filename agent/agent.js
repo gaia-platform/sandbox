@@ -34,6 +34,10 @@ const receiveKeepAliveInterval = 3;  // in minutes
 
 // Agent-specific variables
 const projects = {
+   'frequent_flyer': {
+      command: '../start_frequent_flyer.sh',
+      args: ['']
+   },
    'access_control': {
       command: '../start_access_control.sh',
       args: ['']
@@ -134,7 +138,7 @@ function mqttClientReconnectHandler() {
 }
 
 async function saveFile(projectName, fileName, content) {
-   fs.writeFile('templates/' + projectName + '/src/' + fileName, content, 'utf8', (err) => {
+   fs.writeFile('examples/' + projectName + '/src/' + fileName, content, 'utf8', (err) => {
       if (err) {
          console.error(err);
          return;
@@ -165,7 +169,7 @@ async function fileExists(file) {
 }
 
 function getBuildDir(projectName) {
-   return `templates/${projectName}/build`;
+   return `examples/${projectName}/build`;
 }
 
 function getDataDir(projectName) {
@@ -414,7 +418,7 @@ function agentInit() {
    
    // amr_swarm is the first project shown to users. We must set them up
    // in reverse order so amr_swarm's database is the most recently selected.
-   projectSetup('access_control').then(() => projectSetup('amr_swarm'));
+   // projectSetup('access_control').then(() => projectSetup('amr_swarm'));
    receiveKeepAlive();
 }
 

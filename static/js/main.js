@@ -2,6 +2,7 @@
     "use strict";
 
     $(window).on('load', function () {
+        console.log('$(window).on(load ...');
         // Load Monaco Editor
         require.config({ paths: { vs: "static/lib/monaco/vs" } });
 
@@ -97,8 +98,8 @@
 
 
     function setTabText(fileExt, content) {
-        console.log('Current File extension: ', fileExt)
-        console.log('Current content: ', content)
+        //console.log('Current File extension: ', fileExt)
+        //console.log('Current content: ', content)
 
         if (fileExt == 'output') {
             outputTerminal.writeln(terminal_hostname + `$ ${content.trim()}`)
@@ -122,7 +123,7 @@
             .then(function (response) {
                 return response.text();
             }).then(function (text) {
-                console.log('GET response text: ', text)
+                //console.log('GET response text: ', text)
                 setTabText(filename, text)
             });
     }
@@ -169,8 +170,8 @@
     }
 
     window.mainMessageHandler = function (topic, payload) {
-        console.log('Topic: ' + topic);
-        console.log('Payload: ' + payload);
+        //console.log('Topic: ' + topic);
+        //console.log('Payload: ' + payload);
         let topicLevels = topic.split('/');
 
         if (topicLevels[1] == 'appUUID') {
@@ -184,9 +185,11 @@
             if (payload == 'loading' && !state.session.loading) {
                 state.session.loading = true;
                 outputTerminal.writeln(terminal_hostname + '$ Coordinator connected!')
+                /*
                 window.publishToCoordinator("editor/req", state.project.current + ".ddl");
                 window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
                 window.publishToCoordinator("editor/req", state.project.current + ".cpp");
+                */
             }
             else if (payload == 'loaded' && state.session.loading) {
                 state.session.loading = false;
@@ -200,10 +203,12 @@
                 case 'ready':
                     state.project.current = payload;
                     outputTerminal.writeln(terminal_hostname + '$ Coordinator connected!')
+                    /*
                     window.publishToCoordinator("editor/req", state.project.current + ".ddl");
                     window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
                     window.publishToCoordinator("editor/req", state.project.current + ".cpp");
                     window.publishToCoordinator("editor/req", "get_started.md");
+                    */
                     break;
 
                 case 'build':
@@ -263,6 +268,7 @@
 
     // Loads page
     function load() {
+        console.log('function load() ...');
 
         getFileContents('cpp');
         getFileContents('ddl');

@@ -11,10 +11,10 @@ table session (
     last_timestamp uint64,
     created_timestamp uint64,
     current_project_name string,
+    send_project_files bool,
     agent references agent,
     is_test bool,
     projects references project[],
-    editor_file_requests references editor_file_request[],
     editor_contents references editor_content[]
 )
 
@@ -38,12 +38,6 @@ table project_file (
     content string,
     project references project,
     editor_contents references editor_content[]
-)
-
-table editor_file_request (
-    name string,
-    timestamp uint64,
-    session references session
 )
 
 table editor_content (

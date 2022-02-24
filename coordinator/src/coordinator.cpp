@@ -82,6 +82,7 @@ void dump_db(const string& filter = "")
         printf("session:              %s\n", s.id());
         printf("is_active:            %s\n", s.is_active() ? "YES" : "NO");
         printf("current_project_name: %s\n", s.current_project_name());
+        printf("send_project_files:   %s\n", s.send_project_files() ? "TRUE" : "FALSE");
         printf("last_timestamp:       %lu\n", s.last_timestamp());
         printf("created_timestamp:    %lu\n", s.created_timestamp());
         if (s.agent())
@@ -140,14 +141,6 @@ session_t get_session(const string& id)
     }
     gaia_log::app().debug("Session with id {} already exists", id);
     return *session_iter;
-}
-
-editor_file_request_t editor_file_request(const string& name)
-{
-    editor_file_request_writer w;
-    w.name = name;
-    w.timestamp = current_time_seconds();
-    return editor_file_request_t::get(w.insert_row());
 }
 
 project_file_t project_file(const string& name, const string& content)
@@ -246,7 +239,14 @@ void on_message(Mqtt::MqttConnection&, const String& topic, const ByteBuf& paylo
                 }
                 else if (topic_vector[3] == "select")
                 {
-                    session_w.current_project_name = payload_str.c_str();
+                    if (strcmp(payload_str.c_str(), session.current_project_name()) == 0)
+                    {
+                        session_w.send_project_files = true;
+                    }
+                    else
+                    {
+                        session_w.current_project_name = payload_str.c_str();
+                    }
                 }
             }
         }
@@ -255,11 +255,6 @@ void on_message(Mqtt::MqttConnection&, const String& topic, const ByteBuf& paylo
             if (topic_vector.size() < 4)
             {
                 gaia_log::app().error("Unexpected topic: {} payload: {}", topic.c_str(), trim_to_size(payload_str));
-            }
-            else if (topic_vector[3] == "req")
-            {
-                editor_file_request_t activity = editor_file_request(payload_str);
-                session.editor_file_requests().insert(activity);
             }
             else if (topic_vector.size() == 5 && topic_vector[3] == "file")
             {
