@@ -149,11 +149,6 @@ func publish_to_app(topic: String, payload):
 		print("%s: %s" % [topic, payload])
 
 
-func select_project(project_name):
-	if is_working:
-		JavaScript.eval("parent.selectProject('%s');" % project_name)
-
-
 func exit_project():
 	if is_working:
 		JavaScript.eval("parent.exitProject();")

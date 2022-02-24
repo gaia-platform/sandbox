@@ -22,9 +22,6 @@ std::string trim_to_size(const std::string& string);
 
 std::string get_uuid();
 
-
-void create_fake_metrics();
-
 } // namespace utils
 } // namespace coordinator
 } // namespace gaia

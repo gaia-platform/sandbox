@@ -5,3 +5,6 @@
 	path = agent/templates/access_control_template
 	url = https://github.com/gaia-platform/access_control_template
 	branch = main
+[submodule "examples"]
+	path = examples
+	url = https://github.com/gaia-platform/examples

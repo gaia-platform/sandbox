@@ -48,13 +48,10 @@ translate_ruleset(
 
 add_executable(coordinator
   src/coordinator.cpp
-  src/metrics.cpp
-  src/metrics_publisher.cpp
   src/utils.cpp
 )
 
 find_package(aws-crt-cpp REQUIRED)
-find_library(PQXX_LIB pqxx)
 
 target_add_gaia_generated_sources(coordinator)
 add_dependencies(coordinator translate_coordinator_ruleset)
@@ -65,4 +62,4 @@ target_include_directories(coordinator
     ${GAIA_INC}
 )
 target_link_directories(coordinator PRIVATE ${GAIA_LIB_DIR})
-target_link_libraries(coordinator PRIVATE AWS::aws-crt-cpp gaia rt pqxx Threads::Threads)
+target_link_libraries(coordinator PRIVATE AWS::aws-crt-cpp gaia rt Threads::Threads)

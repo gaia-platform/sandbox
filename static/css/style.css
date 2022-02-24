@@ -374,6 +374,20 @@
   background-color: #3a2680;
 }
 
+/* Output Label */
+
+#output {
+    display: flex;
+    flex-direction: row;
+    width: 7%;
+    margin-top: 3px;
+    padding: 12px 18px 12px 18px;
+    color: white;
+    background-color: #615f5f;
+    text-align: center;
+    font-family: "Roboto", sans-serif;
+}
+
 /* Privacy Modal */
 
 #privacy-modal {
