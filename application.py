@@ -29,9 +29,10 @@ def health():
 
 @app.route('/files/<path:filepath>', methods=['GET'])
 def files(filepath):
-    with open("examples/{}".format(filepath), "r") as f:
+    with open("agent/examples/{}".format(filepath), "r") as f:
         content = f.read()
     return content
+
 if __name__ == '__main__':
     try:
         app.run(host='0.0.0.0')
