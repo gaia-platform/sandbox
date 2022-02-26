@@ -202,6 +202,7 @@ ruleset coordinator_ruleset: serial_group()
                     for (P->PF:project_file)
                     {
                         send_message(session.id, "editor", PF.name, PF.content);
+                        send_message(agent.id, P.name, "file", PF.name, PF.content);
                     }
                     return;
                 }
