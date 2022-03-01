@@ -35,7 +35,7 @@ const receiveKeepAliveInterval = 3;  // in minutes
 // Agent-specific variables
 const projects = {
    'frequent_flyer': {
-      command: '../start_frequent_flyer.sh',
+      command: './frequent_flyer',
       args: ['']
    },
    'access_control': {
@@ -283,11 +283,11 @@ async function makeBuild(projectName) {
    });
 
    makeProcess.stdout.on('data', chunk => {
-      publishToEditor('output/append', chunk);
+      publishToEditor('output', chunk);
       process.stdout.write(chunk.toString());
    });
    makeProcess.stderr.on('data', chunk => {
-      publishToEditor('output/append', chunk);
+      publishToEditor('output', chunk);
       process.stderr.write(chunk.toString());
    });
 
@@ -318,20 +318,21 @@ function runProject(projectName) {
       stdio: ['inherit', 'pipe', 'pipe']
    });
 
-   publishToEditor('output/append', 'Running application...\n');
+   publishToEditor('output', 'Running application...\n\n');
    mqttClient.publish(sessionId + '/project/program', 'running');
 
    projectProcess.stdout.on('data', chunk => {
-      publishToEditor('output/append', chunk);
+      publishToEditor('output', chunk);
       process.stdout.write(chunk.toString());
    });
    projectProcess.stderr.on('data', chunk => {
-      publishToEditor('output/append', chunk);
+      publishToEditor('output', chunk);
       process.stderr.write(chunk.toString());
    });
    
    projectProcess.on('close', code => {
       console.log(`${projectName} exited with code ${code}.`);
+      publishToEditor('output', `${projectName} exited with code ${code}.`);
       mqttClient.publish(sessionId + '/project/program', 'stopped');
       projectProcess = null;
    });

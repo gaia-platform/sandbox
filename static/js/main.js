@@ -233,7 +233,7 @@
         projects[state.project.current].forEach(element => {
             getFileContents(state.project.current + '/' + element);
         });
-        
+
         initEditorData(
             "Loading...",
             "Loading...",
