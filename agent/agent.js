@@ -31,6 +31,9 @@ process.env.REMOTE_CLIENT_ID = sessionId;
 
 const sendKeepAliveInterval = 1;  // in minutes
 const receiveKeepAliveInterval = 3;  // in minutes
+const agentInitRetryInterval = 3;  // in seconds
+
+var agentInitRetries = 5;
 
 // Agent-specific variables
 const projects = {
@@ -129,6 +132,7 @@ function mqttClientConnectHandler() {
    if (sessionId == 'standby') {
       // TODO: build all the projects while in standby mode
    } else {
+      console.log('connect, sessionId: ' + sessionId);
       mqttClient.publish(sessionId + '/session', 'loaded');      
    }
 }
@@ -215,6 +219,9 @@ async function selectProject(projectName) {
    stopGaiaDbServer();
    await purgeGaiaDbData(projectName);
    startGaiaDbServer(projectName);
+
+   await cleanBuildDirectory(projectName);
+   await cmakeConfigure(projectName);
 
    console.log(`Selected project ${projectName}.`);
 }
@@ -332,7 +339,7 @@ function runProject(projectName) {
    
    projectProcess.on('close', code => {
       console.log(`${projectName} exited with code ${code}.`);
-      publishToEditor('output', `${projectName} exited with code ${code}.`);
+      publishToEditor('output', `${projectName} exited.`);
       mqttClient.publish(sessionId + '/project/program', 'stopped');
       projectProcess = null;
    });
@@ -390,17 +397,16 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
    }
 }
 
-async function projectSetup(projectName) {
-   await selectProject(projectName);
-   await cleanBuildDirectory(projectName);
-   await cmakeConfigure(projectName);
-}
-
 function agentInit() {
+   if (--agentInitRetries == 0) {
+      process.exit(1);
+   }
+
    AWS.config.credentials.get(function (err, data) {
       if (err) {
          console.error(`error retrieving identity: ${err}`);
-         process.exit(1);
+         setTimeout(agentInit, agentInitRetryInterval * 1000);
+         return;
       }
 
       console.log(`retrieved identity: ${AWS.config.credentials.identityId}`);
@@ -411,15 +417,13 @@ function agentInit() {
       cognitoIdentity.getCredentialsForIdentity(params, function (err, data) {
          if (err) {
             console.log(`error retrieving credentials: ${err}`);
-            process.exit(1);
+            setTimeout(agentInit, agentInitRetryInterval * 1000);
+            return;
          }
          connect(data.Credentials);
       });
    });
    
-   // amr_swarm is the first project shown to users. We must set them up
-   // in reverse order so amr_swarm's database is the most recently selected.
-   // projectSetup('access_control').then(() => projectSetup('amr_swarm'));
    receiveKeepAlive();
 }
 
