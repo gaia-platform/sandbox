@@ -38,7 +38,7 @@
     });
 
     // Terminal message theme
-    var terminal_hostname = '\x1b[;34m' + "~/gaia_sandbox" + '\x1b[;37m'
+    var terminal_hostname = '\x1b[;34m' + "~/" + '\x1b[;37m'
 
     var state = null;
     var editor = null;
@@ -263,11 +263,46 @@
                 convertEol: true,
                 scrollback: 100,
                 disableStdin: false,
-                fastScrollModifier: 5
+                fastScrollModifier: 5,
+                cursorBlink: true
             }
         );
+
+        // Keeps track of current command.
+        let curr_line = "";
+
+        // Keeps track of commands.
+        const entries = [];
+
         outputTerminal.open(document.getElementById('outputTerminal'));
         outputTerminal.writeln(terminal_hostname + '$ Terminal Ready!');
+
+        // Creates terminal input functionality based on key that is pressed
+        outputTerminal.on('key', function (key, event) {
+
+            // Creates Enter functionality.
+            if (event.keyCode === 13) {
+                if (curr_line) {
+                    entries.push(curr_line);
+                    outputTerminal.write("\r\n");
+                }
+                // Creates Backspace functionality.
+            } else if (event.keyCode === 8) {
+                if (curr_line) {
+                    curr_line = curr_line.slice(0, curr_line.length - 1);
+                    outputTerminal.write("\b \b");
+                }
+                // Creates standard terminal input.
+            } else {
+                curr_line += key;
+                outputTerminal.write(key)
+            }
+        });
+        // Implements pasting functionality
+        outputTerminal.on("paste", function (data) {
+            curr_line += data;
+            outputTerminal.write(data)
+        })
     }
 
     // Sets the new tab name onclick and sets the modal of that tabname
