@@ -24,7 +24,8 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get install --assume-yes \
   jq \
   nano \
   tzdata \
-  git
+  git \
+  debconf
 
 # The default Ubuntu's Cmake version is not compatible with Gaia.
 # We need to install a specific version.
@@ -38,17 +39,20 @@ RUN apt-get install --assume-yes cmake
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "./"]
 RUN npm install --production --silent && mv node_modules ../
 
+RUN echo "debconf debconf/frontend select noninteractive" | debconf-set-selections
+
 # Gaia Install
 COPY ${GAIA_SDK_FILE} /usr/src/app/gaia.deb
 RUN apt-get --assume-yes install /usr/src/app/gaia.deb
 
 # AWS IoT SDK Install
-RUN git clone --recursive --branch v1.14.2 https://github.com/aws/aws-iot-device-sdk-cpp-v2.git \
-    && cd aws-iot-device-sdk-cpp-v2 \
-    && mkdir aws-iot-device-sdk-cpp-v2-build \
-    && cd aws-iot-device-sdk-cpp-v2-build \
-    && cmake -DCMAKE_BUILD_TYPE="Release" .. \
-    && cmake --build . --target install -- -j$(nproc)
+# disable temporarily while only supporting frequent flyer
+#RUN git clone --recursive --branch v1.14.2 https://github.com/aws/aws-iot-device-sdk-cpp-v2.git \
+#    && cd aws-iot-device-sdk-cpp-v2 \
+#    && mkdir aws-iot-device-sdk-cpp-v2-build \
+#    && cd aws-iot-device-sdk-cpp-v2-build \
+#    && cmake -DCMAKE_BUILD_TYPE="Release" .. \
+#    && cmake --build . --target install -- -j$(nproc)
 
 # Make sure we are not running as root.
 #RUN groupadd -g 999 appuser && \
