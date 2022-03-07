@@ -16,10 +16,8 @@ using namespace gaia::coordinator::utils;
 void publish_message(const string& topic, const string& payload);
 
 const uint32_t c_standby_containers = 1;
-const uint64_t c_agent_timeout = 24000;
-const uint64_t c_session_timeout = 3600000;
-
-// const uint64_t c_session_timeout = 1200000; // for testing
+const uint64_t c_agent_timeout = 240;
+const uint64_t c_session_timeout = 36000;
 
 extern string g_env_coordinator_name;
 
@@ -58,7 +56,6 @@ void start_gaia_container(const string& session_id,
                           const string& agent_id)
 {
     gaia_log::app().info("Sending start for session_id {} with agent_id {}", session_id, agent_id);
-    return;
 
     json j;
     j["session_id"] = session_id;
