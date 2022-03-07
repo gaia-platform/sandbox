@@ -2,6 +2,3 @@
 	path = agent/examples
 	url = https://github.com/gaia-platform/examples.git
 	branch = steve-add-sandbox-examples
-[submodule "examples"]
-	path = examples
-	url = ./agent/examples/
