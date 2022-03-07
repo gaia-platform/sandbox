@@ -2,6 +2,7 @@
     "use strict";
 
     $(window).on('load', function () {
+        console.log('$(window).on(load ...');
         // Load Monaco Editor
         require.config({ paths: { vs: "static/lib/monaco/vs" } });
 
@@ -17,6 +18,8 @@
 
             // Show privacy message (since the cookie is new)
             $("#privacy-modal").show();
+        } else {
+            initTour();
         }
         let storedAppUUID = getCookie("appUUID");
         if (!storedAppUUID) {
@@ -34,18 +37,10 @@
         window.subscribeToTopic("appUUID", false);
 
         window.selectProject($("#scenario").attr("data-scenario"));
-
-        if (state.project.current == 'frequent_flyer') {
-            var readme = 'replace with code to retrieve readme.md contents for frequent_flyer';
-            var result = window.md.render(readme);
-            $("#tutorial").contents().find("#tutorial-content").html(result);
-        }
     });
 
-    var get_started = "Get started guide currently unavailable";
-
     // Terminal message theme
-    var terminal_hostname = '\x1b[;34m' + "~/gaia_sandbox" + '\x1b[;37m'
+    var terminal_hostname = '\x1b[;34m' + "~/" + '\x1b[;37m'
 
     var state = null;
     var editor = null;
@@ -64,8 +59,20 @@
             state: null
         }
     };
+    var projects = {
+        frequent_flyer: ['src/frequent_flyer.cpp', 'src/frequent_flyer.ddl', 'src/frequent_flyer.ruleset', 'README.md'],
+        access_control: ['src/access_control.ddl', 'src/access_control.ruleset', 'get_started.md']
+    };
 
     resetState();
+
+    function initTour() {
+        // Initialize the tour.
+        window.tour.init();
+
+        // Start the tour.
+        window.tour.start();
+    }
 
     function resetState() {
         state = {
@@ -84,8 +91,8 @@
 
     // Reads the file name and converts it to cpp/sql depending on extension.
     // Defaults to text.
-    function fileFormat(fileName) {
-        switch (fileName) {
+    function fileFormat(fileExt) {
+        switch (fileExt) {
             case 'ruleset': case 'cpp': return 'cpp';
             case 'ddl': return 'sql';
 
@@ -95,13 +102,16 @@
         return 'text';
     }
 
-
     function setTabText(fileExt, content) {
-        console.log('Current File extension: ', fileExt)
-        console.log('Current content: ', content)
-
         if (fileExt == 'output') {
-            outputTerminal.writeln(terminal_hostname + `$ ${content.trim()}`)
+            outputTerminal.write(`\n${content}`);
+        } else if (fileExt == 'md') {
+            var result = window.md.render(content);
+            if (state.project.current == 'frequent_flyer') {
+                $("#tutorial").contents().find("#tutorial-content").html(result);
+            } else {
+                $("#get-started-md").html(result);
+            }
         } else {
             data[fileExt].model = monaco.editor.createModel(content, fileFormat(fileExt));
             data[fileExt].state = null;
@@ -116,39 +126,14 @@
         }
     }
 
-    function getFileContents(filename) {
+    function getFileContents(filepath) {
         //GET request to grab filename content
-        fetch(`/files/frequent_flyer.${filename}`)
+        fetch(`/files/${filepath}`)
             .then(function (response) {
                 return response.text();
             }).then(function (text) {
-                console.log('GET response text: ', text)
-                setTabText(filename, text)
+                setTabText(filepath.split('.')[1], text);
             });
-    }
-
-    // Appends new text for whichever tab is selected ?
-    function appendOutput(fileExt, content) {
-        outputTerminal.writeln(terminal_hostname + `$ ${content.trim()}`)
-    }
-
-    function sessionRestoreMessages() {
-        if (state.session.loading) {
-            if (state.session.countdown > 0) {
-                outputTerminal.writeln(terminal_hostname +
-                    '$ Restoring session.\nEstimated time remaining: '
-                    + Math.floor(state.session.countdown / 60).toString() + ':'
-                    + (state.session.countdown % 60 < 10 ? '0' : '')
-                    + (state.session.countdown % 60).toString()
-                    + '\n');
-            } else if (state.session.countdown == 0) {
-                outputTerminal.writeln(terminal_hostname + 'Taking longer than expected.')
-            } else {
-                outputTerminal.writeln(terminal_hostname + '.')
-            }
-            state.session.countdown -= 1;
-            setTimeout(sessionRestoreMessages, 1 * 1000);
-        }
     }
 
     // Updates thes state of the Build (ctrl) button depending on the run/build status.
@@ -169,8 +154,6 @@
     }
 
     window.mainMessageHandler = function (topic, payload) {
-        console.log('Topic: ' + topic);
-        console.log('Payload: ' + payload);
         let topicLevels = topic.split('/');
 
         if (topicLevels[1] == 'appUUID') {
@@ -183,14 +166,10 @@
         if (topicLevels[1] == 'session') {
             if (payload == 'loading' && !state.session.loading) {
                 state.session.loading = true;
-                outputTerminal.writeln(terminal_hostname + '$ Coordinator connected!')
-                window.publishToCoordinator("editor/req", state.project.current + ".ddl");
-                window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
-                window.publishToCoordinator("editor/req", state.project.current + ".cpp");
             }
-            else if (payload == 'loaded' && state.session.loading) {
+            else if (payload == 'loaded') {
                 state.session.loading = false;
-                // window.selectProject(state.project.current);
+                window.selectProject($("#scenario").attr("data-scenario"));
             }
             return;
         }
@@ -199,11 +178,6 @@
             switch (topicLevels[2].toString()) {
                 case 'ready':
                     state.project.current = payload;
-                    outputTerminal.writeln(terminal_hostname + '$ Coordinator connected!')
-                    window.publishToCoordinator("editor/req", state.project.current + ".ddl");
-                    window.publishToCoordinator("editor/req", state.project.current + ".ruleset");
-                    window.publishToCoordinator("editor/req", state.project.current + ".cpp");
-                    window.publishToCoordinator("editor/req", "get_started.md");
                     break;
 
                 case 'build':
@@ -229,7 +203,7 @@
         let fileExt = fileName.split('.').pop();
 
         if (fileExt == 'output') {
-            outputTerminal.writeln(terminal_hostname + `$ ${payload.trim()}`);
+            outputTerminal.write(`\n${payload}`);
             return;
         }
         if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'cpp') {
@@ -263,10 +237,11 @@
 
     // Loads page
     function load() {
+        console.log('function load() ...', state.project.current);
 
-        getFileContents('cpp');
-        getFileContents('ddl');
-        getFileContents('ruleset');
+        projects[state.project.current].forEach(element => {
+            getFileContents(state.project.current + '/' + element);
+        });
 
         initEditorData(
             "Loading...",
@@ -298,11 +273,44 @@
                 convertEol: true,
                 scrollback: 100,
                 disableStdin: false,
-                fastScrollModifier: 5
+                fastScrollModifier: 5,
+                cursorBlink: true
             }
         );
+
+        // Keeps track of current command.
+        let curr_line = '';
+
         outputTerminal.open(document.getElementById('outputTerminal'));
-        outputTerminal.writeln(terminal_hostname + '$ Terminal Ready!');
+
+        // Creates terminal input functionality based on key that is pressed
+        outputTerminal.on('key', function (key, event) {
+
+            // Creates Enter functionality.
+            if (event.keyCode === 13) {
+                if (curr_line == '') {
+                    curr_line = ' ';
+                }
+                window.publishToCoordinator('editor/terminal_input', curr_line);
+                curr_line = '';
+                outputTerminal.write("\n");
+            // Creates Backspace functionality.
+            } else if (event.keyCode === 8) {
+                if (curr_line) {
+                    curr_line = curr_line.slice(0, curr_line.length - 1);
+                    outputTerminal.write("\b \b");
+                }
+            // Creates standard terminal input.
+            } else {
+                curr_line += key;
+                outputTerminal.write(key)
+            }
+        });
+        // Implements pasting functionality
+        outputTerminal.on("paste", function (data) {
+            curr_line += data;
+            outputTerminal.write(data)
+        })
     }
 
     // Sets the new tab name onclick and sets the modal of that tabname
@@ -407,6 +415,10 @@
         }
     }
 
+    $("#privacy-modal-confirm").click(function () {
+        initTour();
+    });
+
     $("#session-id-button").click(function () {
         prompt("Session ID (aka sandboxUUID)", "export SESSION_ID=" + window.sandboxUUID);
     });
@@ -420,8 +432,6 @@
     });
 
     $("#get-started-button").click(function () {
-        var result = window.md.render(get_started);
-        $("#get-started-md").html(result);
         $("#get-started-modal").show();
     });
 

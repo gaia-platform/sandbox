@@ -31,9 +31,16 @@ process.env.REMOTE_CLIENT_ID = sessionId;
 
 const sendKeepAliveInterval = 1;  // in minutes
 const receiveKeepAliveInterval = 3;  // in minutes
+const agentInitRetryInterval = 3;  // in seconds
+
+var agentInitRetries = 5;
 
 // Agent-specific variables
 const projects = {
+   'frequent_flyer': {
+      command: './frequent_flyer',
+      args: ['']
+   },
    'access_control': {
       command: '../start_access_control.sh',
       args: ['']
@@ -125,6 +132,7 @@ function mqttClientConnectHandler() {
    if (sessionId == 'standby') {
       // TODO: build all the projects while in standby mode
    } else {
+      console.log('connect, sessionId: ' + sessionId);
       mqttClient.publish(sessionId + '/session', 'loaded');      
    }
 }
@@ -134,7 +142,7 @@ function mqttClientReconnectHandler() {
 }
 
 async function saveFile(projectName, fileName, content) {
-   fs.writeFile('templates/' + projectName + '/src/' + fileName, content, 'utf8', (err) => {
+   fs.writeFile('examples/' + projectName + '/src/' + fileName, content, 'utf8', (err) => {
       if (err) {
          console.error(err);
          return;
@@ -165,7 +173,7 @@ async function fileExists(file) {
 }
 
 function getBuildDir(projectName) {
-   return `templates/${projectName}/build`;
+   return `examples/${projectName}/build`;
 }
 
 function getDataDir(projectName) {
@@ -211,6 +219,9 @@ async function selectProject(projectName) {
    stopGaiaDbServer();
    await purgeGaiaDbData(projectName);
    startGaiaDbServer(projectName);
+
+   await cleanBuildDirectory(projectName);
+   await cmakeConfigure(projectName);
 
    console.log(`Selected project ${projectName}.`);
 }
@@ -279,11 +290,11 @@ async function makeBuild(projectName) {
    });
 
    makeProcess.stdout.on('data', chunk => {
-      publishToEditor('output/append', chunk);
+      publishToEditor('output', chunk.toString().trim());
       process.stdout.write(chunk.toString());
    });
    makeProcess.stderr.on('data', chunk => {
-      publishToEditor('output/append', chunk);
+      publishToEditor('output', chunk.toString().trim());
       process.stderr.write(chunk.toString());
    });
 
@@ -311,23 +322,23 @@ function runProject(projectName) {
       env: { 'SESSION_ID': sessionId, 'REMOTE_CLIENT_ID': sessionId },
       shell: '/bin/bash',
       // Inherit Node's stdin, pipe the stdout, pipe the stderr
-      stdio: ['inherit', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe']
    });
 
-   publishToEditor('output/append', 'Running application...\n');
    mqttClient.publish(sessionId + '/project/program', 'running');
 
    projectProcess.stdout.on('data', chunk => {
-      publishToEditor('output/append', chunk);
+      publishToEditor('output', chunk);
       process.stdout.write(chunk.toString());
    });
    projectProcess.stderr.on('data', chunk => {
-      publishToEditor('output/append', chunk);
+      publishToEditor('output', chunk);
       process.stderr.write(chunk.toString());
    });
    
    projectProcess.on('close', code => {
       console.log(`${projectName} exited with code ${code}.`);
+      publishToEditor('output', `${projectName} exited.`);
       mqttClient.publish(sessionId + '/project/program', 'stopped');
       projectProcess = null;
    });
@@ -380,22 +391,25 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
          saveFile(topicTokens[1], topicTokens[3], payload);
          break;
    
+      case 'terminal_input':
+         projectProcess.stdin.write(payload + '\n');
+         break;
+   
       default:
          break;
    }
 }
 
-async function projectSetup(projectName) {
-   await selectProject(projectName);
-   await cleanBuildDirectory(projectName);
-   await cmakeConfigure(projectName);
-}
-
 function agentInit() {
+   if (--agentInitRetries == 0) {
+      process.exit(1);
+   }
+
    AWS.config.credentials.get(function (err, data) {
       if (err) {
          console.error(`error retrieving identity: ${err}`);
-         process.exit(1);
+         setTimeout(agentInit, agentInitRetryInterval * 1000);
+         return;
       }
 
       console.log(`retrieved identity: ${AWS.config.credentials.identityId}`);
@@ -406,15 +420,13 @@ function agentInit() {
       cognitoIdentity.getCredentialsForIdentity(params, function (err, data) {
          if (err) {
             console.log(`error retrieving credentials: ${err}`);
-            process.exit(1);
+            setTimeout(agentInit, agentInitRetryInterval * 1000);
+            return;
          }
          connect(data.Credentials);
       });
    });
    
-   // amr_swarm is the first project shown to users. We must set them up
-   // in reverse order so amr_swarm's database is the most recently selected.
-   projectSetup('access_control').then(() => projectSetup('amr_swarm'));
    receiveKeepAlive();
 }
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Push the gaia-sandobox-agent image into the AWS ECR (container repository).
+# Push the gaia-sandbox-agent image into the AWS ECR (container repository).
 # Before calling this script:
 # - Build the latest version of the image using the docker_build.sh script
 # - Have the gaia-sandbox credentials stored into your ~/.aws/credentials file.
@@ -9,7 +9,7 @@ export AWS_PROFILE="gaia-sandbox"
 export AWS_DEFAULT_REGION="us-west-2"
 
 GAIA_ECR_REPO="gaia-sandbox"
-GAIA_DOCKER_IMAGE="gaia-sandobox-agent"
+GAIA_DOCKER_IMAGE="gaia-sandbox-agent"
 
 GAIA_SANDBOX_REPO_URI=`aws ecr describe-repositories --repository-names $GAIA_ECR_REPO \
                                                      --query "repositories[0].repositoryUri" \

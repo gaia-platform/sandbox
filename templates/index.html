@@ -119,7 +119,7 @@
                 </div>
                 <span id="output">Output</span>
                 <div class="div-5" id="outputTerminal"
-                    style="overflow: scroll; height: 30vh; border: thin solid black;">
+                    style="height: 30vh; border: thin solid black;">
                 </div>
             </div>
 
@@ -137,6 +137,8 @@
                             {% endif %}
                         </div>
 
+                        <!-- Temporarily disable scenarios other than Frequent FlyerThese. -->
+                        <!--
                         <div class="builder-column column-9">
                             <form>
                                 <label for="scenario">Pick a Scenario</label>
@@ -154,6 +156,7 @@
                                 </select>
                             </form>
                         </div>
+                        -->
 
                         <!-- These buttons should only be available when running without communicating with
               a coordinator. Otherwise the coordinator is responsible for exchanging any IDs. -->
@@ -190,7 +193,7 @@
                 Deleting these cookies will simply reset your Sandbox experience,
                 which will mean you lose any code or edits made in the sandbox.
             </p>
-            <span class="modal-close-button button">OK</span>
+            <span id="privacy-modal-confirm" class="modal-close-button button">OK</span>
         </div>
     </div>
 
@@ -214,12 +217,12 @@
 
 <script src="{{ url_for('static', filename='lib/monaco/vs/loader.js') }}"></script>
 
+<!-- Bootstrap Tour -->
+<script src="{{ url_for('static', filename='js/tour.js') }}"></script>
+
 <!-- Main and MQTT Javascript File -->
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 <script src="{{ url_for('static', filename='dist/mqtt_bundle.js') }}"></script>
-
-<!-- Bootstrap Tour -->
-<script src="{{ url_for('static', filename='js/tour.js') }}"></script>
 
 </body>
 

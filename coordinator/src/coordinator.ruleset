@@ -17,9 +17,7 @@ void publish_message(const string& topic, const string& payload);
 
 const uint32_t c_standby_containers = 1;
 const uint64_t c_agent_timeout = 240;
-const uint64_t c_session_timeout = 3600;
-
-// const uint64_t c_session_timeout = 1200000; // for testing
+const uint64_t c_session_timeout = 36000;
 
 extern string g_env_coordinator_name;
 
@@ -186,6 +184,36 @@ ruleset coordinator_ruleset: serial_group()
                                         created_timestamp:(uint64_t)time(nullptr)));
     }
 
+    {
+        if (@session.send_project_files)
+        {
+            gaia_log::app().info("Sending project {} files.", session.current_project_name);
+
+            session.send_project_files = false;
+
+            for (session->P:project)
+            {
+                if (strcmp(P.name, session.current_project_name) == 0)
+                {
+                    gaia_log::app().info("Found existing project {}.", P.name);
+                    for (P->PF:project_file)
+                    {
+                        send_message(session.id, "editor", PF.name, PF.content);
+                        send_message(agent.id, P.name, "file", PF.name, PF.content);
+                    }
+                    return;
+                }
+            }
+
+            gaia_log::app().info("No existing project {} found. Creating new one.", session.current_project_name);
+
+            project_writer w;
+            w.name = session.current_project_name;
+            auto project_ = project_t::get(w.insert_row());
+            session.projects.connect(project_);
+        }
+    }
+
     on_update(session.current_project_name)
     {
         gaia_log::app().info("Current project name change to {}.", session.current_project_name);
@@ -195,24 +223,21 @@ ruleset coordinator_ruleset: serial_group()
             return;
         }
 
-        for (session->P:project)
+        send_message(agent.id, "project", "select", session.current_project_name);
+        session.send_project_files = true;
+    }
+
+    on_update(session.terminal_input)
+    {
+        if (strlen(session.terminal_input) == 0)
         {
-            if (strcmp(P.name, session.current_project_name) == 0)
-            {
-                gaia_log::app().info("Found existing project {}.", P.name);
-                send_message(agent.id, "project", "select", P.name);
-                return;
-            }
+            return;
         }
 
-        gaia_log::app().info("No existing project {} found. Creating new one.", session.current_project_name);
+        gaia_log::app().info("Terminal input {}.", session.terminal_input);
 
-        project_writer w;
-        w.name = session.current_project_name;
-        auto project_ = project_t::get(w.insert_row());
-        session.projects.connect(project_);
-
-        send_message(agent.id, "project", "select", session.current_project_name);
+        send_message(agent.id, "editor", "terminal_input", session.terminal_input);
+        session.terminal_input = "";
     }
 
     on_change(agent.in_use)
@@ -231,31 +256,6 @@ ruleset coordinator_ruleset: serial_group()
             start_gaia_container("standby", agent.id);
         }
         add_standby_gaia_container();
-    }
-
-    on_insert(editor_file_request)
-    {
-        gaia_log::app().info("Editor file request activity");
-
-        for (session->P:project)
-        {
-            if (strcmp(P.name, session.current_project_name) == 0)
-            {
-                for (P->PF:project_file)
-                {
-                    if (strcmp(PF.name, editor_file_request.name) == 0)
-                    {
-                        send_message(session.id, "editor", PF.name, PF.content);
-                        send_message(agent.id, P.name, PF.name, PF.content);
-                        return;
-                    }
-                }
-
-                gaia_log::app().info("No file '{}' found, reporting to editor.", editor_file_request.name);
-                send_message(session.id, "editor", editor_file_request.name, "not found");
-                return;
-            }
-        }
     }
 
     on_insert(editor_content)
