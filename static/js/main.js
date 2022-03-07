@@ -18,6 +18,8 @@
 
             // Show privacy message (since the cookie is new)
             $("#privacy-modal").show();
+        } else {
+            initTour();
         }
         let storedAppUUID = getCookie("appUUID");
         if (!storedAppUUID) {
@@ -64,6 +66,14 @@
 
     resetState();
 
+    function initTour() {
+        // Initialize the tour.
+        window.tour.init();
+
+        // Start the tour.
+        window.tour.start();
+    }
+
     function resetState() {
         state = {
             project: {
@@ -94,7 +104,7 @@
 
     function setTabText(fileExt, content) {
         if (fileExt == 'output') {
-            outputTerminal.writeln(terminal_hostname + `$ ${content.trim()}`)
+            outputTerminal.write(`\n${content}`);
         } else if (fileExt == 'md') {
             var result = window.md.render(content);
             if (state.project.current == 'frequent_flyer') {
@@ -193,7 +203,7 @@
         let fileExt = fileName.split('.').pop();
 
         if (fileExt == 'output') {
-            outputTerminal.writeln(terminal_hostname + `$ ${payload.trim()}`);
+            outputTerminal.write(`\n${payload}`);
             return;
         }
         if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'cpp') {
@@ -269,30 +279,28 @@
         );
 
         // Keeps track of current command.
-        let curr_line = "";
-
-        // Keeps track of commands.
-        const entries = [];
+        let curr_line = '';
 
         outputTerminal.open(document.getElementById('outputTerminal'));
-        outputTerminal.writeln(terminal_hostname + '$ Terminal Ready!');
 
         // Creates terminal input functionality based on key that is pressed
         outputTerminal.on('key', function (key, event) {
 
             // Creates Enter functionality.
             if (event.keyCode === 13) {
-                if (curr_line) {
-                    entries.push(curr_line);
-                    outputTerminal.write("\r\n");
+                if (curr_line == '') {
+                    curr_line = ' ';
                 }
-                // Creates Backspace functionality.
+                window.publishToCoordinator('editor/terminal_input', curr_line);
+                curr_line = '';
+                outputTerminal.write("\n");
+            // Creates Backspace functionality.
             } else if (event.keyCode === 8) {
                 if (curr_line) {
                     curr_line = curr_line.slice(0, curr_line.length - 1);
                     outputTerminal.write("\b \b");
                 }
-                // Creates standard terminal input.
+            // Creates standard terminal input.
             } else {
                 curr_line += key;
                 outputTerminal.write(key)
@@ -385,8 +393,7 @@
     $("#reset-button").click(function () {
         if (confirm('This will reset all your changes. Continue?')) {
             setCookie("sandboxUUID", window.generateUUID());
-            // this is failing and do not now why yet.
-            // window.tour.restart();
+            window.tour.restart();
             location.reload();
         }
     });
@@ -407,6 +414,10 @@
             }
         }
     }
+
+    $("#privacy-modal-confirm").click(function () {
+        initTour();
+    });
 
     $("#session-id-button").click(function () {
         prompt("Session ID (aka sandboxUUID)", "export SESSION_ID=" + window.sandboxUUID);

@@ -230,6 +230,19 @@ ruleset coordinator_ruleset: serial_group()
         session.send_project_files = true;
     }
 
+    on_update(session.terminal_input)
+    {
+        if (strlen(session.terminal_input) == 0)
+        {
+            return;
+        }
+
+        gaia_log::app().info("Terminal input {}.", session.terminal_input);
+
+        send_message(agent.id, "editor", "terminal_input", session.terminal_input);
+        session.terminal_input = "";
+    }
+
     on_change(agent.in_use)
     {
         add_standby_gaia_container();

@@ -274,6 +274,10 @@ void on_message(Mqtt::MqttConnection&, const String& topic, const ByteBuf& paylo
                     }
                 }
             }
+            else if (topic_vector[3] == "terminal_input")
+            {
+                session_w.terminal_input = payload_str;
+            }
         }
         session_w.update_row();
     }

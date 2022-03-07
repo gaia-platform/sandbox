@@ -290,11 +290,11 @@ async function makeBuild(projectName) {
    });
 
    makeProcess.stdout.on('data', chunk => {
-      publishToEditor('output', chunk);
+      publishToEditor('output', chunk.toString().trim());
       process.stdout.write(chunk.toString());
    });
    makeProcess.stderr.on('data', chunk => {
-      publishToEditor('output', chunk);
+      publishToEditor('output', chunk.toString().trim());
       process.stderr.write(chunk.toString());
    });
 
@@ -322,10 +322,9 @@ function runProject(projectName) {
       env: { 'SESSION_ID': sessionId, 'REMOTE_CLIENT_ID': sessionId },
       shell: '/bin/bash',
       // Inherit Node's stdin, pipe the stdout, pipe the stderr
-      stdio: ['inherit', 'pipe', 'pipe']
+      stdio: ['pipe', 'pipe', 'pipe']
    });
 
-   publishToEditor('output', 'Running application...\n\n');
    mqttClient.publish(sessionId + '/project/program', 'running');
 
    projectProcess.stdout.on('data', chunk => {
@@ -390,6 +389,10 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
    switch (topicTokens[2]) {   
       case 'file':
          saveFile(topicTokens[1], topicTokens[3], payload);
+         break;
+   
+      case 'terminal_input':
+         projectProcess.stdin.write(payload + '\n');
          break;
    
       default:

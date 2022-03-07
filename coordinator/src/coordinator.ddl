@@ -11,6 +11,7 @@ table session (
     last_timestamp uint64,
     created_timestamp uint64,
     current_project_name string,
+    terminal_input string,
     send_project_files bool,
     agent references agent,
     is_test bool,
