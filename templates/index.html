@@ -104,10 +104,10 @@
         <div class="builder-columns columns">
             <div class="builder-column column-5">
                 <div class="div-4" style="width: 100%;">
+                    <span class="editor-tab button" data-tab-name="ddl" id="ddl">DDL</span>
 
                     <span class="editor-tab button selected-tab" data-tab-name="ruleset" id="ruleset">Ruleset</span>
 
-                    <span class="editor-tab button" data-tab-name="ddl" id="ddl">DDL</span>
                     {% if scenario == 'frequent_flyer' %}
                     <span class="editor-tab button" data-tab-name="cpp" id="cpp">CPP</span>
                     {% endif %}
@@ -208,10 +208,6 @@
             <span class="modal-close-button button">OK</span>
         </div>
     </div>
-
-    <!-- JavaScript Libraries -->
-    <script src="{{ url_for('static', filename='lib/jquery/jquery.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='lib/jquery/jquery-migrate.min.js') }}"></script>
 
     <script src="{{ url_for('static', filename='lib/monaco/vs/loader.js') }}"></script>
 

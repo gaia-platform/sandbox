@@ -1,33 +1,10 @@
 window.tour = new Tour({
     steps: [
         {
-            element: "#ruleset",
-            title: "Title of my ruleset",
-            content: "Content of my ruleset",
-            backdrop: true,
-            autoscroll: true,
-            smartPlacement: true,
-            keyboard: true,
-            onNext: function () {
-
-                // Returns index of current step.
-                var current_step = tour.getCurrentStep();
-
-                // Returns next step obj.
-                var next_step = tour.getStep(current_step + 1)
-
-                console.log(
-                    {
-                        lineNumber: next_step.lineNumber,
-                        tabId: next_step.tabId
-                    }
-                )
-            }
-        },
-        {
             element: "#ddl",
-            title: "Title of my ddl",
-            content: "Content of my ddl",
+            title: "Define the Data Model",
+            content: "Defining the Data Model is the first step in creating a Gaia application. Gaia provides a SQL like Data Definition Language (DDL). " +
+                "You can define tables, fields and relationships between tables. Gaia generates C++ code to easily create/read/update/delete the data.",
             lineNumber: 12,
             tabId: 'string',
             backdrop: true,
@@ -36,9 +13,10 @@ window.tour = new Tour({
             keyboard: true
         },
         {
-            element: "#output",
-            title: "Title of output button",
-            content: "Content of output button",
+            element: "#ruleset",
+            title: "Define the Business Logic",
+            content: "Create business logic using rules. Rules are defined within a ruleset using the Gaia Declarative language which is a superset of C++." +
+                "The Gaia Declarative Language allows to declaratively access your data, as defined in the DDL, and react to its changes.",
             backdrop: true,
             autoscroll: true,
             smartPlacement: true,
@@ -46,17 +24,17 @@ window.tour = new Tour({
         },
         {
             element: "#ctrl-button",
-            title: "Title of build button",
-            content: "Content of build button",
+            title: "Build your application!",
+            content: "Builds the project running the gaia tools to convert the DDL and Ruleset into C++ source code.",
             backdrop: true,
             autoscroll: true,
             smartPlacement: true,
             keyboard: true
         },
         {
-            element: "#sandboxEditor",
-            title: "This is the editor for your ruleset/ddl files",
-            content: "Here you can edit your code",
+            element: "#output",
+            title: "Terminal",
+            content: "See the output of your program!",
             backdrop: true,
             autoscroll: true,
             smartPlacement: true,
