@@ -39,12 +39,11 @@
         window.selectProject($("#scenario").attr("data-scenario"));
     });
 
-    // Terminal message theme
-    var terminal_hostname = '\x1b[;34m' + "~/" + '\x1b[;37m'
-
+    var cursorTimer = null;
+    var cursorVisible = false;
+    var outputTerminalContent = '';
     var state = null;
     var editor = null;
-    var outputTerminal = null;
     var data = {
         ruleset: {
             model: null,
@@ -89,6 +88,16 @@
         };
     }
 
+    $("#outputTerminal").focus(function() {
+        $("#sandboxEditor").css("height","20vh");
+        $("#outputTerminalDiv").css("height","60vh");
+    });
+
+    $("#outputTerminal").blur(function() {
+        $("#sandboxEditor").css("height","60vh");
+        $("#outputTerminalDiv").css("height","20vh");
+    });
+
     // Reads the file name and converts it to cpp/sql depending on extension.
     // Defaults to text.
     function fileFormat(fileExt) {
@@ -102,9 +111,38 @@
         return 'text';
     }
 
+    function stopCursorBlink() {
+        if (cursorTimer) {
+            clearInterval(cursorTimer);
+            cursorTimer = null;
+            $("#outputTerminal").val(outputTerminalContent);
+        }
+    }
+
+    function blinkCursor() {
+        if (cursorTimer) {
+            return;
+        }
+        cursorTimer = setInterval(function() {
+            if (cursorVisible) {
+                $("#outputTerminal").val(outputTerminalContent);
+            } else {
+                $("#outputTerminal").val(outputTerminalContent + '|');
+            }
+            cursorVisible = !cursorVisible;
+        }, 500);
+    }
+
+    function appendOutput(content) {
+        outputTerminalContent += content;
+        $("#outputTerminal").val(outputTerminalContent);
+        var outputElement = document.getElementById("outputTerminal");
+        outputElement.scrollTop = outputElement.scrollHeight;
+    }
+
     function setTabText(fileExt, content) {
         if (fileExt == 'output') {
-            outputTerminal.write(`\n${content}`);
+            appendOutput(`\n${content}`);
         } else if (fileExt == 'md') {
             var result = window.md.render(content);
             if (state.project.current == 'frequent_flyer') {
@@ -138,9 +176,12 @@
 
     // Updates thes state of the Build (ctrl) button depending on the run/build status.
     function setCtrlButtonLabel() {
+        stopCursorBlink();
         if (state.project.edits.size > 0) {
             $("#ctrl-button").html('Save');
         } else if (state.project.runStatus == 'running') {
+            blinkCursor();
+            $("#outputTerminal").focus();
             $("#ctrl-button").html('Stop');
         } else if (state.project.buildStatus == 'success') {
             $("#ctrl-button").html('Run');
@@ -203,7 +244,7 @@
         let fileExt = fileName.split('.').pop();
 
         if (fileExt == 'output') {
-            outputTerminal.write(`\n${payload}`);
+            appendOutput(`\n${payload}`);
             return;
         }
         if (fileExt != 'ruleset' && fileExt != 'ddl' && fileExt != 'cpp') {
@@ -263,54 +304,38 @@
         // Load editor
         editor = monaco.editor.create(document.getElementById('sandboxEditor'), {
             model: data.ruleset.model,
+            automaticLayout: true,
             minimap: {
                 enabled: false
             }
         });
-        // Load output editor (testing)
-        outputTerminal = new Terminal(
-            {
-                convertEol: true,
-                scrollback: 100,
-                disableStdin: false,
-                fastScrollModifier: 5,
-                cursorBlink: true
-            }
-        );
 
         // Keeps track of current command.
         let curr_line = '';
 
-        outputTerminal.open(document.getElementById('outputTerminal'));
-
         // Creates terminal input functionality based on key that is pressed
-        outputTerminal.on('key', function (key, event) {
-
+        $("#outputTerminal").on('keypress', function(e) {
+            console.log('keypress: ' + String.fromCharCode(e.which));
             // Creates Enter functionality.
-            if (event.keyCode === 13) {
+            if (e.which == 13) {
                 if (curr_line == '') {
                     curr_line = ' ';
                 }
                 window.publishToCoordinator('editor/terminal_input', curr_line);
                 curr_line = '';
-                outputTerminal.write("\n");
+                appendOutput("\n");
             // Creates Backspace functionality.
-            } else if (event.keyCode === 8) {
+            } else if (e.which == 8) {
                 if (curr_line) {
                     curr_line = curr_line.slice(0, curr_line.length - 1);
-                    outputTerminal.write("\b \b");
+                    appendOutput("\b \b");
                 }
             // Creates standard terminal input.
             } else {
-                curr_line += key;
-                outputTerminal.write(key)
+                curr_line += String.fromCharCode(e.which);
+                appendOutput(String.fromCharCode(e.which));
             }
         });
-        // Implements pasting functionality
-        outputTerminal.on("paste", function (data) {
-            curr_line += data;
-            outputTerminal.write(data)
-        })
     }
 
     // Sets the new tab name onclick and sets the modal of that tabname
@@ -383,6 +408,8 @@
             || state.project.buildStatus == 'building') {
             window.publishToCoordinator('project/stop', 'current');
         } else if (state.project.buildStatus == 'success') {
+            $("#outputTerminal").empty();
+            outputTerminalContent = '';
             window.messages.push(JSON.stringify({ topic: "reset", payload: "reset" }));
             window.publishToCoordinator('project/run', state.project.current);
         } else {

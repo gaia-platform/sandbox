@@ -24,11 +24,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tour/0.12.0/js/bootstrap-tour-standalone.min.js"></script>
-
-    <!-- Xterm.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.css" />
-
 </head>
 
 <body>
@@ -115,11 +110,12 @@
                         id="ctrl-button">Build</span>
                 </div>
 
-                <div class="div-5" id="sandboxEditor" style="height: 50vh; border: thin solid black;">
+                <div class="div-5" id="sandboxEditor" style="height: 60vh; border: thin solid black;">
                 </div>
                 <span id="output">Output</span>
-                <div class="div-5" id="outputTerminal"
-                    style="height: 30vh; border: thin solid black;">
+                <div class="div-5" id="outputTerminalDiv"
+                    style="height: 20vh; border: thin solid black;">
+                    <textarea id="outputTerminal" name="outputTerminal" readonly></textarea>
                 </div>
             </div>
 
