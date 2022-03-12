@@ -17,7 +17,7 @@ void publish_message(const string& topic, const string& payload);
 
 const uint32_t c_standby_containers = 1;
 const uint64_t c_agent_timeout = 240;
-const uint64_t c_session_timeout = 36000;
+const uint64_t c_session_timeout = 3600;
 
 extern string g_env_coordinator_name;
 
@@ -100,7 +100,7 @@ ruleset coordinator_ruleset: serial_group()
                 add_standby_gaia_container();
                 return;
             }
-        }       
+        }
     }
 
     on_update(agent.last_timestamp)
