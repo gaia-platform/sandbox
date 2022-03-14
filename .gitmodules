@@ -1,0 +1,3 @@
+[submodule "agent/examples"]
+	path = agent/examples
+	url = https://github.com/gaia-platform/examples.git
