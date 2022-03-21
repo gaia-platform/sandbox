@@ -82,7 +82,7 @@
                 edits: new Set()
             },
             session: {
-                loading: false,
+                loading: true,
                 loadCountdown: 0
             }
         };
@@ -177,7 +177,9 @@
     // Updates thes state of the Build (ctrl) button depending on the run/build status.
     function setCtrlButtonLabel() {
         stopCursorBlink();
-        if (state.project.edits.size > 0) {
+        if (state.session.loading) {
+            $("#ctrl-button").html('Loading');
+        } else if (state.project.edits.size > 0) {
             $("#ctrl-button").html('Save');
         } else if (state.project.runStatus == 'running') {
             blinkCursor();
@@ -209,7 +211,6 @@
                 state.session.loading = true;
             }
             else if (payload == 'loaded') {
-                state.session.loading = false;
                 window.selectProject($("#scenario").attr("data-scenario"));
             }
             return;
@@ -218,6 +219,7 @@
         if (topicLevels[1] == 'project') {
             switch (topicLevels[2].toString()) {
                 case 'ready':
+                    state.session.loading = false;
                     state.project.current = payload;
                     break;
 
@@ -254,6 +256,7 @@
     }
 
     window.selectProject = function (projectName) {
+        state.session.loading = true;
         state.project.current = projectName;
         window.publishToCoordinator("project/select", state.project.current);
     }
@@ -397,6 +400,9 @@
     });
 
     $("#ctrl-button").click(function () {
+        if (state.session.loading) {
+            return;
+        }
         if (state.project.edits.size > 0) {
             state.project.edits.forEach(function (fileExt) {
                 window.publishToCoordinator('editor/file/' + state.project.current + '.' + fileExt,
