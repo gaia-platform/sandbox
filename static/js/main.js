@@ -60,6 +60,8 @@
     };
     var projects = {
         frequent_flyer: ['src/frequent_flyer.cpp', 'src/frequent_flyer.ddl', 'src/frequent_flyer.ruleset', 'README.md'],
+        direct_access: ['hospital.ddl', 'hospital.cpp'],
+        rules: ['clinic.ddl', 'clinic.ruleset'],
         access_control: ['src/access_control.ddl', 'src/access_control.ruleset', 'get_started.md']
     };
 
@@ -344,7 +346,9 @@
     // Sets the new tab name onclick and sets the modal of that tabname
     function setTab(tabName) {
         var currentTabName = $(".selected-tab").attr("data-tab-name");
-        data[currentTabName].state = editor.saveViewState();
+        if (currentTabName) {
+            data[currentTabName].state = editor.saveViewState();
+        }
         $(".editor-tab").removeClass("selected-tab");
         var newTab = $('[data-tab-name="' + tabName + '"]');
         newTab.addClass("selected-tab");
