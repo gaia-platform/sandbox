@@ -108,6 +108,15 @@
                     {% if scenario == 'frequent_flyer' or scenario == 'direct_access' %}
                     <span class="editor-tab button" data-tab-name="cpp" id="cpp">CPP</span>
                     {% endif %}
+                    <span id="scenario-name">
+                        {% if scenario == 'frequent_flyer' %}
+                        Frequent Flyer Example
+                        {% elif scenario == 'direct_access' %}
+                        Direct Access Tutorial
+                        {% elif scenario == 'rules' %}
+                        Rules Tutorial
+                        {% endif %}
+                    </span>
                     <span style="position: absolute; right: 0;" class="editor-tab button" data-tab-name="run"
                         id="ctrl-button">Loading</span>
                 </div>
