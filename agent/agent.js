@@ -150,7 +150,10 @@ function mqttClientReconnectHandler() {
 }
 
 async function saveFile(projectName, fileName, content) {
-   fs.writeFile('examples/' + projectName + '/src/' + fileName, content, 'utf8', (err) => {
+   if (projectName == 'frequent_flyer') {
+      fileName = 'src/' + fileName;
+   }
+   fs.writeFile('examples/' + projectName + '/' + fileName, content, 'utf8', (err) => {
       if (err) {
          console.error(err);
          return;
