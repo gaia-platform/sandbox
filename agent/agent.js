@@ -41,6 +41,14 @@ const projects = {
       command: './frequent_flyer',
       args: ['']
    },
+   'rules': {
+      command: './rules',
+      args: ['']
+   },
+   'direct_access': {
+      command: './direct_access',
+      args: ['']
+   },
    'access_control': {
       command: '../start_access_control.sh',
       args: ['']
@@ -123,7 +131,7 @@ function receiveKeepAlive() {
    receiveKeepAliveTimeout = setTimeout(exitAgent, receiveKeepAliveInterval * 60 * 1000);
 }
 
-function mqttClientConnectHandler() { 
+function mqttClientConnectHandler() {
    console.log('connect, clientId: ' + agentId);
 
    mqttClient.subscribe(agentId + '/#');
@@ -133,7 +141,7 @@ function mqttClientConnectHandler() {
       // TODO: build all the projects while in standby mode
    } else {
       console.log('connect, sessionId: ' + sessionId);
-      mqttClient.publish(sessionId + '/session', 'loaded');      
+      mqttClient.publish(sessionId + '/session', 'loaded');
    }
 }
 
@@ -142,7 +150,10 @@ function mqttClientReconnectHandler() {
 }
 
 async function saveFile(projectName, fileName, content) {
-   fs.writeFile('examples/' + projectName + '/src/' + fileName, content, 'utf8', (err) => {
+   if (projectName == 'frequent_flyer') {
+      fileName = 'src/' + fileName;
+   }
+   fs.writeFile('examples/' + projectName + '/' + fileName, content, 'utf8', (err) => {
       if (err) {
          console.error(err);
          return;
@@ -335,7 +346,7 @@ function runProject(projectName) {
       publishToEditor('output', chunk);
       process.stderr.write(chunk.toString());
    });
-   
+
    projectProcess.on('close', code => {
       console.log(`${projectName} exited with code ${code}.`);
       publishToEditor('output', `${projectName} exited.`);
@@ -357,7 +368,7 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
          case 'select':
             selectProject(topicTokens[1]).then(() => mqttClient.publish(sessionId + '/project/ready', topicTokens[1]));
             break;
-      
+
          case 'stop':
             stopProcesses();
             break;
@@ -380,21 +391,21 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
                exitAgent();
             }
             break;
-               
+
          default:
             break;
       }
       return;
    }
-   switch (topicTokens[2]) {   
+   switch (topicTokens[2]) {
       case 'file':
          saveFile(topicTokens[1], topicTokens[3], payload);
          break;
-   
+
       case 'terminal_input':
          projectProcess.stdin.write(payload + '\n');
          break;
-   
+
       default:
          break;
    }
@@ -426,7 +437,7 @@ function agentInit() {
          connect(data.Credentials);
       });
    });
-   
+
    receiveKeepAlive();
 }
 

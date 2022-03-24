@@ -59,8 +59,10 @@
         }
     };
     var projects = {
-        frequent_flyer: ['src/frequent_flyer.cpp', 'src/frequent_flyer.ddl', 'src/frequent_flyer.ruleset', 'README.md'],
-        access_control: ['src/access_control.ddl', 'src/access_control.ruleset', 'get_started.md']
+        frequent_flyer: { prefix: 'frequent_flyer', files: ['src/frequent_flyer.cpp', 'src/frequent_flyer.ddl', 'src/frequent_flyer.ruleset', 'README.md'] },
+        direct_access: { prefix: 'hospital', files: ['hospital.ddl', 'hospital.cpp'] },
+        rules: { prefix: 'clinic', files: ['clinic.ddl', 'clinic.ruleset'] },
+        access_control: { prefix: 'access_control', files: ['src/access_control.ddl', 'src/access_control.ruleset', 'get_started.md']}
     };
 
     resetState();
@@ -283,7 +285,7 @@
     function load() {
         console.log('function load() ...', state.project.current);
 
-        projects[state.project.current].forEach(element => {
+        projects[state.project.current].files.forEach(element => {
             getFileContents(state.project.current + '/' + element);
         });
 
@@ -344,7 +346,9 @@
     // Sets the new tab name onclick and sets the modal of that tabname
     function setTab(tabName) {
         var currentTabName = $(".selected-tab").attr("data-tab-name");
-        data[currentTabName].state = editor.saveViewState();
+        if (currentTabName) {
+            data[currentTabName].state = editor.saveViewState();
+        }
         $(".editor-tab").removeClass("selected-tab");
         var newTab = $('[data-tab-name="' + tabName + '"]');
         newTab.addClass("selected-tab");
@@ -405,7 +409,7 @@
         }
         if (state.project.edits.size > 0) {
             state.project.edits.forEach(function (fileExt) {
-                window.publishToCoordinator('editor/file/' + state.project.current + '.' + fileExt,
+                window.publishToCoordinator('editor/file/' + projects[state.project.current].prefix + '.' + fileExt,
                     data[fileExt].model.getValue());
             });
             state.project.edits = new Set();
