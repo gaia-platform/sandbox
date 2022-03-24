@@ -60,6 +60,7 @@ const projects = {
 }
 
 var receiveKeepAliveTimeout;
+var outputQueueTimer = null;
 var outputQueue = [];
 
 // Processes
@@ -112,8 +113,6 @@ function connect(credentials)
 function exitAgent() {
    process.exit(0);
 }
-
-var outputQueueTimer = null;
 
 function processOutputQueue() {
    if (outputQueue.length == 0) {
