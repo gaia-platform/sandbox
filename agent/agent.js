@@ -32,6 +32,7 @@ process.env.REMOTE_CLIENT_ID = sessionId;
 const sendKeepAliveInterval = 1;  // in minutes
 const receiveKeepAliveInterval = 3;  // in minutes
 const agentInitRetryInterval = 3;  // in seconds
+const sendOutputInterval = 15;  // in milliseconds
 
 var agentInitRetries = 5;
 
@@ -60,6 +61,8 @@ const projects = {
 }
 
 var receiveKeepAliveTimeout;
+var outputQueueTimer = null;
+var outputQueue = [];
 
 // Processes
 var gaiaDbServer = null;
@@ -112,13 +115,26 @@ function exitAgent() {
    process.exit(0);
 }
 
+function processOutputQueue() {
+   if (outputQueue.length == 0) {
+      outputQueueTimer = null;
+      return;
+   }
+   var output = outputQueue.shift();
+   console.log('publish to:' + sessionId + '/editor/' + output.file);
+   mqttClient.publish(sessionId + '/editor/' + output.file, output.contents);
+   outputQueueTimer = setTimeout(processOutputQueue, sendOutputInterval);
+}
+
 function publishToEditor(file, contents) {
-   console.log('publish to:' + sessionId + "/editor/" + file);
-   mqttClient.publish(sessionId + "/editor/" + file, contents);
+   outputQueue.push({ file: file, contents: contents.toString().trim()});
+   if (!outputQueueTimer) {
+      processOutputQueue();
+   }
 }
 
 function publishToCoordinator(action, payload) {
-   mqttClient.publish(coordinatorName + "/" + agentId + "/agent/" + action, payload);
+   mqttClient.publish(coordinatorName + '/' + agentId + '/agent/' + action, payload);
 }
 
 function sendKeepAlive() {
@@ -403,7 +419,7 @@ function mqttClientMessageHandler(topic, payload) { // Message handler
          break;
 
       case 'terminal_input':
-         projectProcess.stdin.write(payload + '\n');
+         projectProcess.stdin.write(payload.toString().trim() + '\n');
          break;
 
       default:
