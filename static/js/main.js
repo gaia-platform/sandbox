@@ -59,10 +59,29 @@
         }
     };
     var projects = {
-        frequent_flyer: { prefix: 'frequent_flyer', files: ['src/frequent_flyer.cpp', 'src/frequent_flyer.ddl', 'src/frequent_flyer.ruleset', 'README.md'] },
-        direct_access: { prefix: 'hospital', files: ['hospital.ddl', 'hospital.cpp'] },
-        rules: { prefix: 'clinic', files: ['clinic.ddl', 'clinic.ruleset'] },
-        access_control: { prefix: 'access_control', files: ['src/access_control.ddl', 'src/access_control.ruleset', 'get_started.md']}
+        frequent_flyer: {
+            prefix: 'frequent_flyer',
+            files: ['src/frequent_flyer.cpp', 'src/frequent_flyer.ddl', 'src/frequent_flyer.ruleset', 'README.md']
+        },
+        direct_access: {
+            prefix: 'hospital',
+            files: ['hospital.ddl', 'hospital.cpp']
+        },
+        rules: {
+            prefix: 'clinic',
+            files: ['clinic.ddl', 'clinic.ruleset'],
+            tutorial: {
+                fileExt: 'ruleset',
+                lines: [
+                    37,93,51,120,148,209,187,233,257,296,339,388,403,423,443,466,
+                    504,543,573,611,639,660,710,728,770,795,819,845,870,903,917
+                ]
+            }
+        },
+        access_control: {
+            prefix: 'access_control',
+            files: ['src/access_control.ddl', 'src/access_control.ruleset', 'get_started.md']
+        }
     };
 
     resetState();
@@ -81,7 +100,8 @@
                 current: null,
                 buildStatus: 'unknown',
                 runStatus: 'stopped',
-                edits: new Set()
+                edits: new Set(),
+                tutorialStep: 0
             },
             session: {
                 loading: true,
@@ -91,8 +111,8 @@
     }
 
     $("#outputTerminal").focus(function() {
-        $("#sandboxEditor").css("height","20vh");
-        $("#outputTerminalDiv").css("height","60vh");
+        $("#sandboxEditor").css("height", (projects[state.project.current].tutorial ? "40vh" : "20vh"));
+        $("#outputTerminalDiv").css("height", (projects[state.project.current].tutorial ? "40vh" : "60vh"));
     });
 
     $("#outputTerminal").blur(function() {
@@ -281,6 +301,21 @@
         setCtrlButtonLabel();
     }
 
+    function nextTutorialPosition() {
+        var tutorial = projects[state.project.current].tutorial;
+        if (!tutorial || state.project.tutorialStep >= tutorial.lines.length) {
+            return;
+        }
+        setTab(tutorial.fileExt);
+        editor.revealLineInCenter(tutorial.lines[state.project.tutorialStep]);
+        state.project.tutorialStep++;
+    }
+
+    function firstTutorialPosition() {
+        state.project.tutorialStep = 0;
+        nextTutorialPosition();
+    }
+
     // Loads page
     function load() {
         console.log('function load() ...', state.project.current);
@@ -329,6 +364,7 @@
                 window.publishToCoordinator('editor/terminal_input', curr_line);
                 curr_line = '';
                 appendOutput("\n");
+                nextTutorialPosition();
             // Creates Backspace functionality.
             } else if (e.which == 8) {
                 if (curr_line) {
@@ -347,6 +383,9 @@
     function setTab(tabName) {
         var currentTabName = $(".selected-tab").attr("data-tab-name");
         if (currentTabName) {
+            if (currentTabName == tabName) {
+                return;
+            }
             data[currentTabName].state = editor.saveViewState();
         }
         $(".editor-tab").removeClass("selected-tab");
@@ -418,6 +457,7 @@
             || state.project.buildStatus == 'building') {
             window.publishToCoordinator('project/stop', 'current');
         } else if (state.project.buildStatus == 'success') {
+            firstTutorialPosition();
             $("#outputTerminal").empty();
             outputTerminalContent = '';
             window.messages.push(JSON.stringify({ topic: "reset", payload: "reset" }));
