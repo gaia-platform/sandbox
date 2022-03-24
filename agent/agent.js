@@ -32,6 +32,7 @@ process.env.REMOTE_CLIENT_ID = sessionId;
 const sendKeepAliveInterval = 1;  // in minutes
 const receiveKeepAliveInterval = 3;  // in minutes
 const agentInitRetryInterval = 3;  // in seconds
+const sendOutputInterval = 15;  // in milliseconds
 
 var agentInitRetries = 5;
 
@@ -122,7 +123,7 @@ function processOutputQueue() {
    var output = outputQueue.shift();
    console.log('publish to:' + sessionId + '/editor/' + output.file);
    mqttClient.publish(sessionId + '/editor/' + output.file, output.contents);
-   outputQueueTimer = setTimeout(processOutputQueue, 10);
+   outputQueueTimer = setTimeout(processOutputQueue, sendOutputInterval);
 }
 
 function publishToEditor(file, contents) {
