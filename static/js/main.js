@@ -112,11 +112,11 @@
 
     $("#outputTerminal").focus(function() {
         $("#sandboxEditor").css("height", (projects[state.project.current].tutorial ? "40vh" : "20vh"));
-        $("#outputTerminalDiv").css("height", (projects[state.project.current].tutorial ? "40vh" : "60vh"));
+        $("#outputTerminalDiv").css("height", (projects[state.project.current].tutorial ? "38vh" : "58vh"));
     });
 
     $("#outputTerminal").blur(function() {
-        $("#sandboxEditor").css("height","60vh");
+        $("#sandboxEditor").css("height","58vh");
         $("#outputTerminalDiv").css("height","20vh");
     });
 
