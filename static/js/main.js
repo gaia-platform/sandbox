@@ -59,6 +59,10 @@
         }
     };
     var projects = {
+        hello_world: {
+            prefix: 'hello_world',
+            files: ['hello_world.cpp', 'hello_world.ddl', 'hello_world.ruleset', 'README.md']
+        },
         frequent_flyer: {
             prefix: 'frequent_flyer',
             files: ['src/frequent_flyer.cpp', 'src/frequent_flyer.ddl', 'src/frequent_flyer.ruleset', 'README.md']
@@ -167,7 +171,7 @@
             appendOutput(`\n${content}`);
         } else if (fileExt == 'md') {
             var result = window.md.render(content);
-            if (state.project.current == 'frequent_flyer') {
+            if (state.project.current == 'frequent_flyer' || state.project.current == 'hello_world') {
                 $("#tutorial").contents().find("#tutorial-content").html(result);
             } else {
                 $("#get-started-md").html(result);

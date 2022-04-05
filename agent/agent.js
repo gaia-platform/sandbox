@@ -38,6 +38,10 @@ var agentInitRetries = 5;
 
 // Agent-specific variables
 const projects = {
+   'hello_world': {
+      command: './hello_world',
+      args: ['']
+   },
    'frequent_flyer': {
       command: './frequent_flyer',
       args: ['']
