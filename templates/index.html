@@ -105,11 +105,13 @@
                     <span class="editor-tab button selected-tab" data-tab-name="ruleset" id="ruleset">Ruleset</span>
                     {% endif %}
 
-                    {% if scenario == 'frequent_flyer' or scenario == 'direct_access' %}
+                    {% if scenario == 'hello_world' or scenario == 'frequent_flyer' or scenario == 'direct_access' %}
                     <span class="editor-tab button" data-tab-name="cpp" id="cpp">CPP</span>
                     {% endif %}
                     <span id="scenario-name">
-                        {% if scenario == 'frequent_flyer' %}
+                        {% if scenario == 'hello_world' %}
+                        Hello World
+                        {% elif scenario == 'frequent_flyer' %}
                         Frequent Flyer Example
                         {% elif scenario == 'direct_access' %}
                         Direct Access Tutorial
@@ -154,6 +156,7 @@
                                     <option value="amr_swarm">AMR Swarm</option>
                                     <option value="access_control">Access Control</option>
                                     -->
+                                    <option value="hello_world">Hello World</option>
                                     <option value="frequent_flyer">Frequent Flyer</option>
                                     <option value="direct_access">Direct Access Tutorial</option>
                                     <option value="rules">Rules Tutorial</option>
