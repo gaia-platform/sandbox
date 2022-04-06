@@ -2,7 +2,7 @@
 var AWS = require('aws-sdk');
 var AWSIoTData = require('aws-iot-device-sdk');
 var moment = require('moment');
-window.md = require('markdown-it')();
+window.md = require('markdown-it')({ html: true });
 
 console.log('Loaded AWS SDK for JavaScript and AWS IoT SDK for Node.js');
 
